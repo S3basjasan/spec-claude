@@ -1,0 +1,100 @@
+<?php
+
+namespace Tests\Unit\Estructura\Preguntas;
+
+use App\Modules\Estructura\Domain\Entities\RegistroPreguntas;
+use App\Modules\Estructura\Domain\Exceptions\CompetenciaNoDisponible;
+use App\Modules\Estructura\Domain\Exceptions\CompetenciaYaTienePreguntas;
+use App\Modules\Estructura\Domain\Exceptions\PreguntasNoEncontradas;
+use App\Modules\Estructura\Domain\Exceptions\RegistroModificado;
+use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
+use App\Modules\Estructura\Domain\ValueObjects\CompetenciaAsociada;
+use App\Modules\Estructura\Domain\ValueObjects\EstadoCompetencia;
+use App\Modules\Estructura\Domain\ValueObjects\PaginaRegistrosPreguntas;
+use App\Modules\Estructura\Domain\ValueObjects\TipoCompetencia;
+
+/**
+ * Doble en memoria del repositorio de preguntas para probar los casos de uso sin base de datos.
+ */
+class RepositorioPreguntasEnMemoria implements PreguntaRepositoryInterface
+{
+    /** @var array<int, CompetenciaAsociada> */
+    public array $competencias = [];
+
+    /** @var array<int, RegistroPreguntas> */
+    public array $registros = [];
+
+    public ?int $ultimoActor = null;
+
+    public int $escrituras = 0;
+
+    public function agregarCompetencia(string $nombre, EstadoCompetencia $estado = EstadoCompetencia::Activo, TipoCompetencia $tipo = TipoCompetencia::Cardinal): CompetenciaAsociada
+    {
+        $id = count($this->competencias) + 1;
+
+        return $this->competencias[$id] = new CompetenciaAsociada($id, sprintf('COMP-%04d', $id), $nombre, "Descripción de $nombre", $tipo, $estado);
+    }
+
+    public function listar(?string $q, ?TipoCompetencia $tipo, ?EstadoCompetencia $estado, int $pagina, int $porPagina): PaginaRegistrosPreguntas
+    {
+        $items = array_filter($this->registros, fn (RegistroPreguntas $r) => ($q === null || $q === '' || str_contains(mb_strtolower($r->competencia->nombre), mb_strtolower($q)))
+            && ($tipo === null || $r->competencia->tipo === $tipo)
+            && ($estado === null || $r->competencia->estado === $estado));
+        usort($items, fn ($a, $b) => strcmp($a->competencia->nombre, $b->competencia->nombre));
+
+        return new PaginaRegistrosPreguntas(array_slice($items, ($pagina - 1) * $porPagina, $porPagina), count($items));
+    }
+
+    public function obtener(int $competenciaId): ?RegistroPreguntas
+    {
+        return $this->registros[$competenciaId] ?? null;
+    }
+
+    public function obtenerPorCompetencias(array $competenciaIds): array
+    {
+        return array_values(array_intersect_key($this->registros, array_flip($competenciaIds)));
+    }
+
+    public function obtenerActivos(): array
+    {
+        return array_values(array_filter($this->registros, fn (RegistroPreguntas $r) => $r->competenciaActiva()));
+    }
+
+    public function disponibles(): array
+    {
+        return array_values(array_filter(
+            $this->competencias,
+            fn (CompetenciaAsociada $c) => $c->estado === EstadoCompetencia::Activo && ! isset($this->registros[$c->id]),
+        ));
+    }
+
+    public function crear(int $competenciaId, array $preguntas, ?int $actorId): RegistroPreguntas
+    {
+        $competencia = $this->competencias[$competenciaId] ?? null;
+        if ($competencia === null || $competencia->estado !== EstadoCompetencia::Activo) {
+            throw new CompetenciaNoDisponible;
+        }
+        if (isset($this->registros[$competenciaId])) {
+            throw new CompetenciaYaTienePreguntas;
+        }
+        $this->ultimoActor = $actorId;
+        $this->escrituras++;
+
+        return $this->registros[$competenciaId] = new RegistroPreguntas($competencia, 1, $actorId, null, $preguntas);
+    }
+
+    public function actualizar(int $competenciaId, int $versionEsperada, array $preguntas, ?int $actorId): RegistroPreguntas
+    {
+        $actual = $this->registros[$competenciaId] ?? throw new PreguntasNoEncontradas;
+        if ($actual->version !== $versionEsperada) {
+            throw new RegistroModificado;
+        }
+        if ($actual->preguntas === $preguntas) {
+            return $actual;
+        }
+        $this->ultimoActor = $actorId;
+        $this->escrituras++;
+
+        return $this->registros[$competenciaId] = new RegistroPreguntas($actual->competencia, $actual->version + 1, $actual->creadoPor, $actorId, $preguntas);
+    }
+}

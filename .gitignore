@@ -1,0 +1,107 @@
+# ============================================================
+# .gitignore raíz (monorepo: backend Laravel + frontend Vite/React)
+# Los .gitignore de backend/ y frontend/ siguen aplicando en su carpeta.
+# ============================================================
+
+# --- Dependencias ---
+node_modules/
+vendor/
+.pnp
+.pnp.*
+.yarn/
+
+# --- Variables de entorno y secretos ---
+# Se versiona solo la plantilla .env.example
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+auth.json
+
+# --- Bases de datos locales (SQLite) ---
+*.sqlite
+*.sqlite3
+*.db
+
+# --- Build / salida generada ---
+dist/
+dist-ssr/
+build/
+coverage/
+*.tsbuildinfo
+.vite/
+.eslintcache
+
+# Laravel
+backend/public/build/
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/storage/pail
+.phpunit.cache/
+.phpunit.result.cache
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+Homestead.json
+Homestead.yaml
+
+# --- Resultados de pruebas (Playwright / E2E) ---
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Archivos temporales y de respaldo ---
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Editores / IDEs ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.nova/
+.zed/
+.cursor/
+.codex/
+.phpactor.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Claude Code (config local por máquina; los skills de .claude/skills sí se versionan) ---
+.claude/settings.local.json
+.claude/*.local.*
+CLAUDE.local.md
+
+# --- Archivos comprimidos / instaladores ---
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z

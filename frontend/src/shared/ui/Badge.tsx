@@ -1,0 +1,15 @@
+import type { ReactNode } from 'react'
+
+type BadgeVariant = 'default' | 'neutral'
+
+const variants: Record<BadgeVariant, string> = {
+  default: 'bg-soft text-accent',
+  // Estados inactivos: fondo `--border` y texto `--muted` (design/DESIGN.md §4).
+  neutral: 'bg-border text-muted',
+}
+
+export function Badge({ children, variant = 'default' }: { children: ReactNode; variant?: BadgeVariant }) {
+  return (
+    <span className={`inline-block rounded-full px-2.5 py-[3px] text-[13px] font-semibold ${variants[variant]}`}>{children}</span>
+  )
+}

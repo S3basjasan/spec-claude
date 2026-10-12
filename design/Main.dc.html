@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Inicio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.menuitem:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.menuitem{display:flex;align-items:center;height:44px;padding:0 12px;border-radius:6px;color:var(--text);text-decoration:none;font-size:15px}
+.menuitem:hover{background:var(--soft)}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border); position: relative">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="true">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div role="menu" style="position: absolute; right: 24px; top: 60px; width: 220px; padding: 6px; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 5">
+      <div style="padding: 8px 12px 10px; border-bottom: 1px solid var(--border); margin-bottom: 6px">
+        <div style="font-size: 14px; font-weight: 600">Marta Ríos</div>
+        <div style="font-size: 13px; color: var(--muted)">Administradora</div>
+      </div>
+      <a class="menuitem" role="menuitem" href="#">Mi perfil</a>
+      <a class="menuitem" role="menuitem" href="#">Ajustes</a>
+      <a class="menuitem" role="menuitem" href="#" style="color: var(--danger)">Cerrar sesión</a>
+    </div>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="#" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Inicio</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg>Competencias</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"/></svg>Empleados</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Vacantes</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+        <div>
+          <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Buenas tardes, Marta</h1>
+          <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Este es el resumen de tu organización.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+              <div style="font-size: 14px; color: var(--muted)">{{s.label}}</div>
+              <div style="margin-top: 8px; font-size: 32px; font-weight: 700; letter-spacing: -0.02em">{{s.value}}</div>
+              <div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{s.hint}}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 16px">
+          <section style="flex: 2 1 420px; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px">
+            <h2 style="margin: 0; padding: 18px 20px; font-size: 16px; border-bottom: 1px solid var(--border)">Actividad reciente</h2>
+            <ul style="list-style: none; margin: 0; padding: 0">
+              <sc-for list="{{activity}}" as="a" hint-placeholder-count="4">
+                <li style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border)">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none"></span>
+                  <span style="flex: 1; font-size: 15px">{{a.text}}</span>
+                  <span style="font-size: 13px; color: var(--muted)">{{a.when}}</span>
+                </li>
+              </sc-for>
+            </ul>
+          </section>
+          <section style="flex: 1 1 260px; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+            <h2 style="margin: 0; font-size: 16px">Accesos rápidos</h2>
+            <a href="#" style="display: flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 8px; background: var(--accent); color: var(--onaccent); text-decoration: none; font-weight: 600; font-size: 15px">Nueva competencia</a>
+            <a href="#" style="display: flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border); color: var(--text); text-decoration: none; font-weight: 500; font-size: 15px">Registrar empleado</a>
+            <a href="#" style="display: flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border); color: var(--text); text-decoration: none; font-weight: 500; font-size: 15px">Publicar vacante</a>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A' };
+    const t = this.props.dark ? dark : light;
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
+      stats: [
+        { label: 'Empleados activos', value: '248', hint: 'Datos de ejemplo' },
+        { label: 'Vacantes abiertas', value: '12', hint: 'Datos de ejemplo' },
+        { label: 'Competencias', value: '36', hint: 'Datos de ejemplo' },
+        { label: 'Evaluaciones pendientes', value: '9', hint: 'Datos de ejemplo' }
+      ],
+      activity: [
+        { text: 'Se creó la competencia “Trabajo en equipo”', when: 'Hace 2 h' },
+        { text: 'Se actualizó la competencia “Liderazgo”', when: 'Ayer' },
+        { text: 'Se publicó la vacante “Analista de datos”', when: 'Ayer' },
+        { text: 'Se registró un nuevo empleado', when: 'Hace 3 días' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Estados de vista</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.sk{background:var(--border);border-radius:6px;animation:pulse 1.4s ease-in-out infinite}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 820px; box-sizing: border-box; padding: 40px; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 24px; {{themeStyle}}">
+
+  <section aria-label="Estado de carga" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+    <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Cargando · skeleton</div>
+    <sc-for list="{{skeletons}}" as="s" hint-placeholder-count="4">
+      <div style="display: flex; align-items: center; gap: 16px; padding: 10px 0; border-top: 1px solid var(--border)">
+        <div class="sk" style="width: 40px; height: 14px"></div>
+        <div class="sk" style="width: 180px; height: 14px"></div>
+        <div class="sk" style="flex: 1; height: 14px"></div>
+        <div class="sk" style="width: 72px; height: 22px; border-radius: 999px"></div>
+      </div>
+    </sc-for>
+  </section>
+
+  <section aria-label="Estado vacío" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column">
+    <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Vacío</div>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      </div>
+      <h2 style="margin: 0; font-size: 18px">Sin resultados</h2>
+      <p style="margin: 0; max-width: 320px; color: var(--muted); font-size: 15px">No hay competencias que coincidan con tu búsqueda. Prueba con otros términos o crea una nueva.</p>
+      <button style="margin-top: 6px; height: 44px; padding: 0 18px; border-radius: 8px; border: 0; background: var(--accent); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Nueva competencia</button>
+    </div>
+  </section>
+
+  <section aria-label="Estado de error" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column">
+    <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Error con reintento</div>
+    <div role="alert" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center">
+      <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; justify-content: center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/></svg>
+      </div>
+      <h2 style="margin: 0; font-size: 18px">No se pudo cargar el listado</h2>
+      <p style="margin: 0; max-width: 320px; color: var(--muted); font-size: 15px">Hubo un problema al conectar con el servidor. Inténtalo de nuevo.</p>
+      <button style="margin-top: 6px; height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Reintentar</button>
+    </div>
+  </section>
+
+  <section aria-label="Confirmación de borrado" style="background: var(--soft); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column">
+    <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Confirmar acción destructiva</div>
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center">
+      <div role="alertdialog" aria-labelledby="dlg-t" aria-describedby="dlg-d" style="width: 380px; max-width: 100%; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.14)">
+        <h2 id="dlg-t" style="margin: 0 0 8px; font-size: 18px">¿Eliminar competencia?</h2>
+        <p id="dlg-d" style="margin: 0 0 20px; color: var(--muted); font-size: 15px">Se eliminará “Trabajo en equipo”. Esta acción no se puede deshacer.</p>
+        <div style="display: flex; justify-content: flex-end; gap: 12px">
+          <button style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 500; font-size: 15px; cursor: pointer">Cancelar</button>
+          <button style="height: 44px; padding: 0 18px; border-radius: 8px; border: 0; background: var(--danger); color: var(--onDanger); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', onDanger: '#FFFFFF' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', onDanger: '#2A0B09' };
+    const t = this.props.dark ? dark : light;
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
+      skeletons: [1, 2, 3, 4, 5]
+    };
+  }
+}
+</script>
+</body>
+</html>

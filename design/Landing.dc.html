@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Página de inicio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a:focus-visible{outline:2px solid #0F6F69;outline-offset:2px}
+.tlink{color:#5A6573;text-decoration:none;font-size:15px;font-weight:500}.tlink:hover{color:#12171D}
+.flink{color:#5A6573;text-decoration:none}.flink:hover{color:#12171D;text-decoration:underline}
+.pbtn:hover{background:#0B5B56}
+.sbtn:hover{background:#E3F2F0}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column; background: #F5F6F8; color: #12171D; font-family: 'Public Sans', system-ui, sans-serif">
+
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E2E5EA">
+    <div style="max-width: 1200px; margin: 0 auto; min-height: 64px; box-sizing: border-box; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div style="width: 32px; height: 32px; border-radius: 8px; background: #0F6F69; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+        <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+      </div>
+      <nav aria-label="Secciones" style="display: flex; flex-wrap: wrap; gap: 24px; flex: 1">
+        <a class="tlink" href="#funciones">Funciones</a>
+        <a class="tlink" href="#">Ayuda</a>
+      </nav>
+      <a class="pbtn" href="#" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 8px; background: #0F6F69; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 15px">Iniciar sesión</a>
+    </div>
+  </header>
+
+  <main style="flex: 1">
+    <section style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 88px 24px 64px; display: flex; flex-wrap: wrap; align-items: center; gap: 48px">
+      <div style="flex: 1 1 440px; min-width: 0">
+        <p style="margin: 0 0 16px; font-size: 14px; font-weight: 600; color: #0F6F69; letter-spacing: 0.04em; text-transform: uppercase">Gestión de talento humano</p>
+        <h1 style="margin: 0; font-size: 48px; line-height: 1.1; letter-spacing: -0.03em; font-weight: 700">Selección de personal, competencias y vacantes en un solo lugar.</h1>
+        <p style="margin: 20px 0 0; font-size: 18px; line-height: 1.55; color: #5A6573; max-width: 560px">Define competencias, publica vacantes y da seguimiento a cada candidato con un flujo claro para tu equipo de recursos humanos.</p>
+        <div style="margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px">
+          <a class="pbtn" href="#" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 8px; background: #0F6F69; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 16px">Iniciar sesión</a>
+          <a class="sbtn" href="#funciones" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 8px; border: 1px solid #E2E5EA; background: #FFFFFF; color: #12171D; text-decoration: none; font-weight: 600; font-size: 16px">Ver funciones</a>
+        </div>
+      </div>
+      <div aria-hidden="true" style="flex: 1 1 420px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 16px; padding: 20px; box-shadow: 0 12px 32px rgba(18,23,29,0.08); display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; gap: 8px">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #E2E5EA"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #E2E5EA"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #E2E5EA"></span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px">
+          <sc-for list="{{preview}}" as="p" hint-placeholder-count="4">
+            <div style="border: 1px solid #E2E5EA; border-radius: 10px; padding: 14px">
+              <div style="font-size: 13px; color: #5A6573">{{p.label}}</div>
+              <div style="margin-top: 6px; font-size: 24px; font-weight: 700">{{p.value}}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="height: 10px; border-radius: 5px; background: #E3F2F0"></div>
+        <div style="height: 10px; width: 70%; border-radius: 5px; background: #E2E5EA"></div>
+        <div style="height: 10px; width: 50%; border-radius: 5px; background: #E2E5EA"></div>
+      </div>
+    </section>
+
+    <section id="funciones" style="max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 0 24px 88px">
+      <h2 style="margin: 0 0 24px; font-size: 24px; letter-spacing: -0.02em">Qué puedes hacer</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+        <div style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; padding: 24px">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #E3F2F0; color: #0F6F69; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg></div>
+          <h3 style="margin: 16px 0 6px; font-size: 17px">Competencias</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5A6573">Crea y organiza el catálogo de competencias que evalúas en cada proceso.</p>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; padding: 24px">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #E3F2F0; color: #0F6F69; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg></div>
+          <h3 style="margin: 16px 0 6px; font-size: 17px">Vacantes</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5A6573">Publica vacantes y vincúlalas con las competencias que requiere cada cargo.</p>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2E5EA; border-radius: 12px; padding: 24px">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: #E3F2F0; color: #0F6F69; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"/></svg></div>
+          <h3 style="margin: 16px 0 6px; font-size: 17px">Empleados</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5A6573">Mantén el registro de tu equipo y el historial de cada evaluación.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: #5A6573; background: #FFFFFF; border-top: 1px solid #E2E5EA">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      preview: [
+        { label: 'Vacantes abiertas', value: '12' },
+        { label: 'Candidatos', value: '84' },
+        { label: 'Competencias', value: '36' },
+        { label: 'Entrevistas hoy', value: '5' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
