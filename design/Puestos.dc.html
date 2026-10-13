@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Puestos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.prow{width:100%;display:flex;align-items:center;gap:16px;min-height:64px;box-sizing:border-box;padding:12px 20px;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.prow:hover{background:var(--soft)}
+.prow[aria-expanded="true"]{background:var(--soft)}
+.chev{transition:transform .2s ease}
+.prow[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sec h3{margin:0 0 10px;font-size:15px}
+</style>
+</helmet>
+<div style="min-height: 1560px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg>Competencias</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>Puestos</a>
+      <a class="nav" href="Organigrama.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="5" rx="1"/><rect x="2" y="16" width="8" height="5" rx="1"/><rect x="14" y="16" width="8" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg>Organigrama</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Perfilamiento</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"/></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Vacantes</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Puestos</h1>
+          <a href="#" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 8px; background: var(--accent); color: var(--onaccent); text-decoration: none; font-weight: 600; font-size: 15px">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo puesto
+          </a>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <div style="position: relative; flex: 0 1 360px; min-width: 220px">
+            <label for="qp" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar puesto</label>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+            <input id="qp" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar por código o nombre" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+          </div>
+          <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+        </div>
+
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+          <div aria-hidden="true" style="display: flex; gap: 16px; padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border)">
+            <span style="flex: 0 0 90px">Código</span>
+            <span style="flex: 1 1 200px; min-width: 0">Nombre</span>
+            <span style="flex: 1.3 1 240px; min-width: 0">Descripción</span>
+            <span style="flex: 0 0 90px">Estado</span>
+            <span style="flex: 0 0 20px"></span>
+          </div>
+          <ul style="list-style: none; margin: 0; padding: 0">
+            <sc-for list="{{puestos}}" as="p" hint-placeholder-count="6">
+              <li style="border-top: 1px solid var(--border)">
+                <h2 style="margin: 0; font-size: inherit; font-weight: inherit">
+                  <button class="prow" aria-expanded="{{p.expanded}}" aria-controls="{{p.panelId}}" onClick="{{p.toggle}}">
+                    <span style="flex: 0 0 90px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">{{p.codigo}}</span>
+                    <span style="flex: 1 1 200px; min-width: 0; font-size: 16px; font-weight: 600">{{p.nombre}}</span>
+                    <span style="flex: 1.3 1 240px; min-width: 0; font-size: 14px; line-height: 1.4; color: var(--muted)">{{p.descripcion}}</span>
+                    <span style="flex: 0 0 90px"><span style="{{p.badgeStyle}}">{{p.estado}}</span></span>
+                    <svg class="chev" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 20px"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                </h2>
+                <sc-if value="{{p.open}}" hint-placeholder-val="{{false}}">
+                  <div id="{{p.panelId}}" role="region" aria-label="Información de {{p.nombre}}" style="border-top: 1px solid var(--border); background: var(--bg); padding: 24px; display: flex; flex-direction: column; gap: 20px">
+
+                    <section class="sec" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px">
+                      <h3>Misión</h3>
+                      <p style="margin: 0; font-size: 15px; line-height: 1.6">{{p.mision}}</p>
+                    </section>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start">
+                    <section class="sec" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px">
+                      <h3>Funciones</h3>
+                      <ol style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6; display: flex; flex-direction: column; gap: 4px">
+                        <sc-for list="{{p.funciones}}" as="f" hint-placeholder-count="4">
+                          <li>{{f}}</li>
+                        </sc-for>
+                      </ol>
+                    </section>
+
+                    <section class="sec" style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px">
+                      <h3>Requisitos</h3>
+                      <ul style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6; display: flex; flex-direction: column; gap: 4px">
+                        <sc-for list="{{p.requisitos}}" as="r" hint-placeholder-count="3">
+                          <li><b>{{r.k}}:</b> {{r.v}}</li>
+                        </sc-for>
+                      </ul>
+                    </section>
+                    </div>
+
+                    <section class="sec">
+                      <h3>Competencias</h3>
+                      <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0 16px">
+                        <table style="width: 100%; min-width: 440px; border-collapse: collapse; font-size: 15px">
+                          <thead>
+                            <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                              <th scope="col" style="padding: 10px 0; font-weight: 600">Competencia</th>
+                              <th scope="col" style="padding: 10px 12px; font-weight: 600">Clasificación</th>
+                              <th scope="col" style="padding: 10px 0; font-weight: 600; text-align: right">Grado requerido</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <sc-for list="{{p.competencias}}" as="c" hint-placeholder-count="4">
+                              <tr style="border-top: 1px solid var(--border)">
+                                <td style="padding: 12px 0; font-weight: 600">{{c.nombre}}</td>
+                                <td style="padding: 12px; color: var(--muted)">{{c.clas}}</td>
+                                <td style="padding: 12px 0; text-align: right"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 28px; padding: 0 8px; box-sizing: border-box; border-radius: 6px; background: var(--accent); color: var(--onaccent); font-size: 14px; font-weight: 700">{{c.grado}}</span></td>
+                              </tr>
+                            </sc-for>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </sc-if>
+              </li>
+            </sc-for>
+          </ul>
+          <sc-if value="{{sinPuestos}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted)">Ningún puesto coincide con la búsqueda.</p>
+          </sc-if>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1560}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { abierto: 'PU-014', q: '' };
+  }
+  renderVals() {
+    const t = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    const badge = {
+      'Activo': 'background:#E3F2F0;color:#0F6F69;',
+      'Inactivo': 'background:#ECEEF1;color:#475260;'
+    };
+    const base = 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;';
+    const puestos = [
+      {
+        codigo: 'PU-014', nombre: 'Analista de datos', estado: 'Activo',
+        mision: 'Transformar los datos de la organización en información confiable que apoye la toma de decisiones de las áreas de negocio.',
+        descripcion: 'Convierte datos en reportes para decidir mejor.',
+        funciones: [
+          'Recopilar, limpiar y consolidar datos de distintas fuentes.',
+          'Construir reportes y tableros para las áreas de negocio.',
+          'Identificar tendencias y proponer mejoras basadas en datos.',
+          'Documentar modelos de datos y definiciones de indicadores.'
+        ],
+        requisitos: [
+          { k: 'Formación', v: 'Título de tercer nivel en Ingeniería de Sistemas, Estadística o afines.' },
+          { k: 'Experiencia', v: '2 años en análisis de datos o inteligencia de negocio.' },
+          { k: 'Conocimientos', v: 'SQL, herramientas de visualización, estadística descriptiva.' }
+        ],
+        competencias: [
+          { nombre: 'Análisis de datos', clas: 'Específica', grado: 'A' },
+          { nombre: 'Orientación a resultados', clas: 'Cardinal', grado: 'B' },
+          { nombre: 'Comunicación efectiva', clas: 'Cardinal', grado: 'B' },
+          { nombre: 'Trabajo en equipo', clas: 'Cardinal', grado: 'C' }
+        ]
+      },
+      {
+        codigo: 'PU-003', nombre: 'Jefe de talento humano', estado: 'Activo',
+        mision: 'Dirigir la gestión del talento de la organización para atraer, desarrollar y retener a las personas que necesita la estrategia.',
+        descripcion: 'Lidera la gestión del talento de la organización.',
+        funciones: [
+          'Definir y ejecutar el plan anual de talento humano.',
+          'Liderar los procesos de selección, inducción y evaluación del desempeño.',
+          'Gestionar el clima laboral y los planes de capacitación.',
+          'Asegurar el cumplimiento de la normativa laboral vigente.'
+        ],
+        requisitos: [
+          { k: 'Formación', v: 'Título en Psicología Organizacional, Administración o afines; deseable maestría.' },
+          { k: 'Experiencia', v: '5 años en gestión de talento humano, 2 de ellos liderando equipos.' },
+          { k: 'Conocimientos', v: 'Legislación laboral, gestión por competencias, indicadores de talento.' }
+        ],
+        competencias: [
+          { nombre: 'Liderazgo', clas: 'Gerencial', grado: 'A' },
+          { nombre: 'Gestión del cambio', clas: 'Gerencial', grado: 'A' },
+          { nombre: 'Comunicación efectiva', clas: 'Cardinal', grado: 'A' },
+          { nombre: 'Orientación a resultados', clas: 'Cardinal', grado: 'B' }
+        ]
+      },
+      {
+        codigo: 'PU-021', nombre: 'Desarrollador de software', estado: 'Activo',
+        mision: 'Diseñar, construir y mantener soluciones de software estables y seguras que respondan a las necesidades del negocio.',
+        descripcion: 'Construye y mantiene las aplicaciones del negocio.',
+        funciones: [
+          'Desarrollar funcionalidades según las historias de usuario priorizadas.',
+          'Escribir pruebas automatizadas y participar en revisiones de código.',
+          'Corregir incidencias y mejorar el rendimiento de las aplicaciones.',
+          'Documentar componentes y decisiones técnicas.'
+        ],
+        requisitos: [
+          { k: 'Formación', v: 'Título de tercer nivel en Ingeniería de Software, Sistemas o afines.' },
+          { k: 'Experiencia', v: '3 años desarrollando aplicaciones web.' },
+          { k: 'Conocimientos', v: 'Control de versiones, bases de datos relacionales, APIs REST.' }
+        ],
+        competencias: [
+          { nombre: 'Pensamiento analítico', clas: 'Específica', grado: 'A' },
+          { nombre: 'Aprendizaje continuo', clas: 'Específica', grado: 'B' },
+          { nombre: 'Trabajo en equipo', clas: 'Cardinal', grado: 'B' },
+          { nombre: 'Orientación a resultados', clas: 'Cardinal', grado: 'B' }
+        ]
+      },
+      {
+        codigo: 'PU-030', nombre: 'Asistente contable', estado: 'Inactivo',
+        mision: 'Apoyar el registro contable y la preparación de información financiera oportuna y exacta.',
+        descripcion: 'Apoya el registro contable y tributario.',
+        funciones: [
+          'Registrar facturas, pagos y comprobantes en el sistema contable.',
+          'Elaborar conciliaciones bancarias mensuales.',
+          'Preparar insumos para las declaraciones tributarias.',
+          'Archivar y custodiar la documentación de soporte.'
+        ],
+        requisitos: [
+          { k: 'Formación', v: 'Tecnología o estudios en curso de Contabilidad y Auditoría.' },
+          { k: 'Experiencia', v: '1 año en funciones contables.' },
+          { k: 'Conocimientos', v: 'Normativa tributaria local, hojas de cálculo, sistemas contables.' }
+        ],
+        competencias: [
+          { nombre: 'Atención al detalle', clas: 'Específica', grado: 'A' },
+          { nombre: 'Organización', clas: 'Específica', grado: 'B' },
+          { nombre: 'Integridad', clas: 'Cardinal', grado: 'A' },
+          { nombre: 'Trabajo en equipo', clas: 'Cardinal', grado: 'C' }
+        ]
+      },
+      {
+        codigo: 'PU-018', nombre: 'Ejecutivo comercial', estado: 'Activo',
+        mision: 'Generar y mantener relaciones con clientes para alcanzar las metas de venta de su cartera.',
+        descripcion: 'Gestiona clientes y cumple metas de venta.',
+        funciones: [
+          'Prospectar y visitar clientes potenciales.',
+          'Preparar propuestas y cotizaciones comerciales.',
+          'Dar seguimiento a la cartera asignada y a la cobranza.',
+          'Registrar oportunidades y actividades en el CRM.'
+        ],
+        requisitos: [
+          { k: 'Formación', v: 'Título en Administración, Marketing o afines.' },
+          { k: 'Experiencia', v: '2 años en ventas consultivas.' },
+          { k: 'Conocimientos', v: 'Técnicas de negociación, manejo de CRM.' }
+        ],
+        competencias: [
+          { nombre: 'Orientación al cliente', clas: 'Cardinal', grado: 'A' },
+          { nombre: 'Negociación', clas: 'Específica', grado: 'A' },
+          { nombre: 'Comunicación efectiva', clas: 'Cardinal', grado: 'B' },
+          { nombre: 'Orientación a resultados', clas: 'Cardinal', grado: 'A' }
+        ]
+      },
+      {
+        codigo: 'PU-025', nombre: 'Coordinador de operaciones', estado: 'Inactivo',
+        mision: 'Coordinar los procesos operativos para que se cumplan los estándares de calidad, tiempo y costo.',
+        descripcion: 'Coordina la operación diaria y los turnos.',
+        funciones: [
+          'Planificar la asignación de recursos y turnos.',
+          'Controlar indicadores operativos y reportar desviaciones.',
+          'Proponer mejoras a los procesos y procedimientos.',
+          'Velar por el cumplimiento de las normas de seguridad.'
+        ],
+        requisitos: [
+          { k: 'Formación', v: 'Título en Ingeniería Industrial, Administración o afines.' },
+          { k: 'Experiencia', v: '3 años en operaciones, 1 de ellos coordinando equipos.' },
+          { k: 'Conocimientos', v: 'Mejora continua, planificación operativa, seguridad industrial.' }
+        ],
+        competencias: [
+          { nombre: 'Planificación', clas: 'Específica', grado: 'A' },
+          { nombre: 'Liderazgo', clas: 'Gerencial', grado: 'B' },
+          { nombre: 'Solución de problemas', clas: 'Específica', grado: 'B' },
+          { nombre: 'Trabajo en equipo', clas: 'Cardinal', grado: 'B' }
+        ]
+      }
+    ];
+    const { abierto, q } = this.state;
+    const nq = norm(q);
+    const visibles = puestos
+      .filter((p) => nq === '' || norm(p.codigo).includes(nq) || norm(p.nombre).includes(nq))
+      .map((p) => ({
+        ...p,
+        open: abierto === p.codigo,
+        expanded: abierto === p.codigo ? 'true' : 'false',
+        panelId: 'panel-' + p.codigo,
+        badgeStyle: base + badge[p.estado],
+        toggle: () => this.setState({ abierto: abierto === p.codigo ? null : p.codigo })
+      }));
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
+      q,
+      setQ: (e) => this.setState({ q: e.target.value }),
+      puestos: visibles,
+      sinPuestos: visibles.length === 0,
+      resumen: visibles.length + (visibles.length === 1 ? ' puesto' : ' puestos')
+    };
+  }
+}
+</script>
+</body>
+</html>
