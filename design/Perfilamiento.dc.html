@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Perfilamiento de puestos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.sbtn:hover:not(:disabled){background:var(--soft)}
+.prow{width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;min-height:72px;box-sizing:border-box;padding:14px 20px;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.prow:hover{background:var(--soft)}
+.prow[aria-expanded="true"]{background:var(--soft)}
+.chev{transition:transform .2s ease}
+.prow[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sec h3{margin:0 0 12px;font-size:15px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:13px;font-weight:600;color:var(--muted)}
+.inp{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;line-height:1.5;resize:vertical}
+.sel{height:44px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px}
+.tbl{width:100%;min-width:520px;border-collapse:collapse;font-size:15px}
+.tbl th{padding:10px 12px;text-align:left;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap}
+.tbl td{padding:8px 12px;border-top:1px solid var(--border);vertical-align:middle}
+.lnk{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 10px;border-radius:8px;border:0;background:transparent;color:var(--danger);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.lnk:hover{background:var(--dangersoft)}
+</style>
+</helmet>
+<div style="min-height: 1100px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>Puestos</a>
+      <a class="nav" href="Organigrama.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="5" rx="1"/><rect x="2" y="16" width="8" height="5" rx="1"/><rect x="14" y="16" width="8" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg>Organigrama</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Perfilamiento</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"/></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Vacantes</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+        <div>
+          <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Perfilamiento de puestos</h1>
+          <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Define los requisitos y las competencias que exige cada puesto.</p>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <div style="position: relative; flex: 0 1 360px; min-width: 220px">
+            <label for="qp" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar puesto</label>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+            <input id="qp" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar puesto o área" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+          </div>
+          <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+        </div>
+
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+          <div aria-hidden="true" style="display: flex; flex-wrap: wrap; gap: 16px; padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border)">
+            <span style="flex: 2 1 220px">Puesto</span>
+            <span style="flex: 1 1 140px">Área</span>
+            <span style="flex: 0 0 130px">Competencias</span>
+            <span style="flex: 0 0 150px">Estado del perfil</span>
+            <span style="flex: 0 0 20px"></span>
+          </div>
+          <ul style="list-style: none; margin: 0; padding: 0">
+            <sc-for list="{{puestos}}" as="p" hint-placeholder-count="6">
+              <li style="border-top: 1px solid var(--border)">
+                <h2 style="margin: 0; font-size: inherit; font-weight: inherit">
+                  <button class="prow" aria-expanded="{{p.expanded}}" aria-controls="{{p.panelId}}" onClick="{{p.toggle}}">
+                    <span style="flex: 2 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                      <span style="font-size: 16px; font-weight: 600">{{p.nombre}}</span>
+                      <span style="font-size: 13px; color: var(--muted)">{{p.codigo}}</span>
+                    </span>
+                    <span style="flex: 1 1 140px; font-size: 15px; color: var(--muted)">{{p.area}}</span>
+                    <span style="flex: 0 0 130px; font-size: 15px; color: var(--muted)">{{p.nComps}}</span>
+                    <span style="flex: 0 0 150px"><span style="{{p.badgeStyle}}">{{p.estado}}</span></span>
+                    <svg class="chev" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 20px"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                </h2>
+                <sc-if value="{{p.open}}" hint-placeholder-val="{{false}}">
+                  <div id="{{p.panelId}}" role="region" aria-label="Perfil de {{p.nombre}}" style="border-top: 1px solid var(--border); background: var(--bg); padding: 24px; display: flex; flex-direction: column; gap: 24px">
+
+                    <section class="sec">
+                      <h3>Requisitos del puesto</h3>
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+                        <div class="fld">
+                          <label for="{{p.idFormacion}}">Formación</label>
+                          <textarea class="inp" id="{{p.idFormacion}}" rows="3" value="{{p.formacion}}" onChange="{{p.onFormacion}}"></textarea>
+                        </div>
+                        <div class="fld">
+                          <label for="{{p.idExperiencia}}">Experiencia</label>
+                          <textarea class="inp" id="{{p.idExperiencia}}" rows="3" value="{{p.experiencia}}" onChange="{{p.onExperiencia}}"></textarea>
+                        </div>
+                        <div class="fld">
+                          <label for="{{p.idConocimientos}}">Conocimientos</label>
+                          <textarea class="inp" id="{{p.idConocimientos}}" rows="3" value="{{p.conocimientos}}" onChange="{{p.onConocimientos}}"></textarea>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="sec">
+                      <h3>Competencias requeridas</h3>
+                      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow-x: auto">
+                        <table class="tbl">
+                          <thead>
+                            <tr>
+                              <th scope="col">Competencia</th>
+                              <th scope="col">Clasificación</th>
+                              <th scope="col">Grado requerido</th>
+                              <th scope="col"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Acciones</span></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <sc-for list="{{p.comps}}" as="c" hint-placeholder-count="4">
+                              <tr>
+                                <td style="font-weight: 600">{{c.nombre}}</td>
+                                <td style="color: var(--muted)">{{c.clas}}</td>
+                                <td>
+                                  <label for="{{c.selId}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Grado de {{c.nombre}}</label>
+                                  <select class="sel" id="{{c.selId}}" value="{{c.grado}}" onChange="{{c.onGrado}}">
+                                    <option value="A">Grado A</option>
+                                    <option value="B">Grado B</option>
+                                    <option value="C">Grado C</option>
+                                  </select>
+                                </td>
+                                <td style="text-align: right">
+                                  <button class="lnk" aria-label="Quitar {{c.nombre}}" onClick="{{c.onQuitar}}">
+                                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Quitar
+                                  </button>
+                                </td>
+                              </tr>
+                            </sc-for>
+                          </tbody>
+                        </table>
+                        <sc-if value="{{p.sinComps}}" hint-placeholder-val="{{false}}">
+                          <p style="margin: 0; padding: 16px; font-size: 15px; color: var(--muted)">Este puesto aún no tiene competencias. Agrega al menos una.</p>
+                        </sc-if>
+                      </div>
+
+                      <div style="margin-top: 12px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+                        <div class="fld" style="flex: 0 1 320px; min-width: 220px">
+                          <label for="{{p.idAgregar}}">Agregar competencia</label>
+                          <select class="sel" id="{{p.idAgregar}}" value="{{p.agregar}}" onChange="{{p.onAgregarSel}}">
+                            <option value="">Elegir competencia…</option>
+                            <sc-for list="{{p.disponibles}}" as="d" hint-placeholder-count="4">
+                              <option value="{{d.nombre}}">{{d.etiqueta}}</option>
+                            </sc-for>
+                          </select>
+                        </div>
+                        <button class="sbtn" disabled="{{p.sinSel}}" onClick="{{p.onAgregar}}" style="{{p.addStyle}}">
+                          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Agregar
+                        </button>
+                      </div>
+                    </section>
+
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--border); padding-top: 16px">
+                      <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{p.estadoCambios}}</span>
+                      <div style="display: flex; gap: 8px">
+                        <button class="sbtn" disabled="{{p.sinCambios}}" onClick="{{p.onDescartar}}" style="{{p.discardStyle}}">Descartar cambios</button>
+                        <button disabled="{{p.sinCambios}}" onClick="{{p.onGuardar}}" style="{{p.saveStyle}}">
+                          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Guardar perfil
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+              </li>
+            </sc-for>
+          </ul>
+          <sc-if value="{{sinPuestos}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted)">Ningún puesto coincide con la búsqueda.</p>
+          </sc-if>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const ini = {
+      'PU-014': { formacion: 'Título de tercer nivel en Ingeniería de Sistemas, Estadística o afines.', experiencia: '2 años en análisis de datos o inteligencia de negocio.', conocimientos: 'SQL, herramientas de visualización, estadística descriptiva.', comps: [{ n: 'Análisis de datos', g: 'A' }, { n: 'Orientación a resultados', g: 'B' }, { n: 'Comunicación efectiva', g: 'B' }, { n: 'Trabajo en equipo', g: 'C' }] },
+      'PU-003': { formacion: 'Título en Psicología Organizacional, Administración o afines; deseable maestría.', experiencia: '5 años en gestión de talento humano, 2 de ellos liderando equipos.', conocimientos: 'Legislación laboral, gestión por competencias, indicadores de talento.', comps: [{ n: 'Liderazgo', g: 'A' }, { n: 'Gestión del cambio', g: 'A' }, { n: 'Comunicación efectiva', g: 'A' }, { n: 'Orientación a resultados', g: 'B' }] },
+      'PU-021': { formacion: 'Título de tercer nivel en Ingeniería de Software, Sistemas o afines.', experiencia: '3 años desarrollando aplicaciones web.', conocimientos: 'Control de versiones, bases de datos relacionales, APIs REST.', comps: [{ n: 'Pensamiento analítico', g: 'A' }, { n: 'Aprendizaje continuo', g: 'B' }, { n: 'Trabajo en equipo', g: 'B' }, { n: 'Orientación a resultados', g: 'B' }] },
+      'PU-030': { formacion: 'Tecnología o estudios en curso de Contabilidad y Auditoría.', experiencia: '1 año en funciones contables.', conocimientos: 'Normativa tributaria local, hojas de cálculo, sistemas contables.', comps: [{ n: 'Atención al detalle', g: 'A' }, { n: 'Organización', g: 'B' }, { n: 'Integridad', g: 'A' }, { n: 'Trabajo en equipo', g: 'C' }] },
+      'PU-018': { formacion: 'Título en Administración, Marketing o afines.', experiencia: '2 años en ventas consultivas.', conocimientos: 'Técnicas de negociación, manejo de CRM.', comps: [{ n: 'Orientación al cliente', g: 'A' }, { n: 'Negociación', g: 'A' }, { n: 'Comunicación efectiva', g: 'B' }, { n: 'Orientación a resultados', g: 'A' }] },
+      'PU-025': { formacion: 'Título en Ingeniería Industrial, Administración o afines.', experiencia: '3 años en operaciones, 1 de ellos coordinando equipos.', conocimientos: 'Mejora continua, planificación operativa, seguridad industrial.', comps: [{ n: 'Planificación', g: 'A' }, { n: 'Liderazgo', g: 'B' }, { n: 'Solución de problemas', g: 'B' }, { n: 'Trabajo en equipo', g: 'B' }] }
+    };
+    this.state = {
+      abierto: 'PU-014',
+      q: '',
+      agregar: '',
+      perfiles: JSON.parse(JSON.stringify(ini)),
+      base: JSON.parse(JSON.stringify(ini))
+    };
+  }
+  renderVals() {
+    const t = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    const { abierto, q, agregar, perfiles, base } = this.state;
+
+    const catalogo = {
+      'Análisis de datos': 'Específica', 'Pensamiento analítico': 'Específica', 'Aprendizaje continuo': 'Específica',
+      'Atención al detalle': 'Específica', 'Organización': 'Específica', 'Negociación': 'Específica',
+      'Planificación': 'Específica', 'Solución de problemas': 'Específica',
+      'Orientación a resultados': 'Cardinal', 'Comunicación efectiva': 'Cardinal', 'Trabajo en equipo': 'Cardinal',
+      'Integridad': 'Cardinal', 'Orientación al cliente': 'Cardinal',
+      'Liderazgo': 'Gerencial', 'Gestión del cambio': 'Gerencial'
+    };
+    const lista = [
+      { codigo: 'PU-014', nombre: 'Analista de datos', area: 'Tecnología' },
+      { codigo: 'PU-003', nombre: 'Jefe de talento humano', area: 'Talento humano' },
+      { codigo: 'PU-021', nombre: 'Desarrollador de software', area: 'Tecnología' },
+      { codigo: 'PU-030', nombre: 'Asistente contable', area: 'Finanzas' },
+      { codigo: 'PU-018', nombre: 'Ejecutivo comercial', area: 'Ventas' },
+      { codigo: 'PU-025', nombre: 'Coordinador de operaciones', area: 'Operaciones' }
+    ];
+
+    const pill = 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;';
+    const setPerfil = (cod, parche) => this.setState({ perfiles: { ...perfiles, [cod]: { ...perfiles[cod], ...parche } } });
+    const nq = norm(q);
+
+    const puestos = lista
+      .filter((p) => nq === '' || norm(p.nombre).includes(nq) || norm(p.area).includes(nq))
+      .map((p) => {
+        const cod = p.codigo;
+        const f = perfiles[cod];
+        const dirty = JSON.stringify(f) !== JSON.stringify(base[cod]);
+        const completo = f.formacion.trim() !== '' && f.experiencia.trim() !== '' && f.conocimientos.trim() !== '' && f.comps.length > 0;
+        const usadas = f.comps.map((c) => c.n);
+        const disponibles = Object.keys(catalogo).filter((n) => usadas.indexOf(n) === -1).map((n) => ({ nombre: n, etiqueta: n + ' · ' + catalogo[n] }));
+        const estado = dirty ? 'Cambios sin guardar' : (completo ? 'Perfil completo' : 'Perfil incompleto');
+        const badge = dirty ? 'background:#FDF1E1;color:#8A4B00;' : (completo ? 'background:#E3F2F0;color:#0F6F69;' : 'background:#ECEEF1;color:#475260;');
+        const btnBase = 'display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;font:inherit;font-size:15px;font-weight:600;';
+        const off = 'opacity:.45;cursor:not-allowed;';
+        const on = 'cursor:pointer;';
+        const sinSel = agregar === '';
+        return {
+          codigo: cod, nombre: p.nombre, area: p.area,
+          open: abierto === cod,
+          expanded: abierto === cod ? 'true' : 'false',
+          panelId: 'panel-' + cod,
+          nComps: f.comps.length + (f.comps.length === 1 ? ' competencia' : ' competencias'),
+          estado, badgeStyle: pill + badge,
+          toggle: () => this.setState({ abierto: abierto === cod ? null : cod, agregar: '' }),
+          idFormacion: 'fo-' + cod, idExperiencia: 'ex-' + cod, idConocimientos: 'co-' + cod, idAgregar: 'ag-' + cod,
+          formacion: f.formacion, experiencia: f.experiencia, conocimientos: f.conocimientos,
+          onFormacion: (e) => setPerfil(cod, { formacion: e.target.value }),
+          onExperiencia: (e) => setPerfil(cod, { experiencia: e.target.value }),
+          onConocimientos: (e) => setPerfil(cod, { conocimientos: e.target.value }),
+          comps: f.comps.map((c, i) => ({
+            nombre: c.n, clas: catalogo[c.n], grado: c.g, selId: 'gr-' + cod + '-' + i,
+            onGrado: (e) => setPerfil(cod, { comps: f.comps.map((x, j) => (j === i ? { n: x.n, g: e.target.value } : x)) }),
+            onQuitar: () => setPerfil(cod, { comps: f.comps.filter((x, j) => j !== i) })
+          })),
+          sinComps: f.comps.length === 0,
+          disponibles, agregar,
+          onAgregarSel: (e) => this.setState({ agregar: e.target.value }),
+          sinSel,
+          addStyle: btnBase + 'border:1px solid var(--border);background:var(--surface);color:var(--text);' + (sinSel ? off : on),
+          onAgregar: () => {
+            if (agregar === '') return;
+            this.setState({ perfiles: { ...perfiles, [cod]: { ...f, comps: f.comps.concat([{ n: agregar, g: 'C' }]) } }, agregar: '' });
+          },
+          sinCambios: !dirty,
+          estadoCambios: dirty ? 'Tienes cambios sin guardar en este perfil.' : (completo ? 'El perfil tiene toda la información requerida.' : 'Completa los requisitos y agrega al menos una competencia.'),
+          discardStyle: btnBase + 'border:1px solid var(--border);background:var(--surface);color:var(--text);' + (dirty ? on : off),
+          saveStyle: btnBase + 'border:0;background:var(--accent);color:var(--onaccent);' + (dirty ? on : off),
+          onDescartar: () => this.setState({ perfiles: { ...perfiles, [cod]: JSON.parse(JSON.stringify(base[cod])) }, agregar: '' }),
+          onGuardar: () => this.setState({ base: { ...base, [cod]: JSON.parse(JSON.stringify(f)) } })
+        };
+      });
+
+    const completos = lista.filter((p) => {
+      const f = perfiles[p.codigo];
+      return f.formacion.trim() !== '' && f.experiencia.trim() !== '' && f.conocimientos.trim() !== '' && f.comps.length > 0;
+    }).length;
+
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
+      q,
+      setQ: (e) => this.setState({ q: e.target.value, agregar: '' }),
+      puestos,
+      sinPuestos: puestos.length === 0,
+      resumen: completos + ' de ' + lista.length + ' perfiles completos'
+    };
+  }
+}
+</script>
+</body>
+</html>

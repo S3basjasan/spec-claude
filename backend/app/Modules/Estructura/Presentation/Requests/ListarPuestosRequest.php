@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Modules\Estructura\Presentation\Requests;
+
+use App\Modules\Estructura\Application\DTO\FiltroPuestosDTO;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class ListarPuestosRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    public function rules(): array
+    {
+        return [
+            'q' => ['nullable', 'string', 'max:50'],
+            'estado' => ['nullable', 'string', Rule::in(['Activo', 'Inactivo', 'Todos'])],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'between:1,50'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'q.max' => 'La búsqueda no puede superar los 50 caracteres.',
+            'estado.in' => 'El estado debe ser Activo, Inactivo o Todos.',
+            'page.integer' => 'La página debe ser un número entero.',
+            'page.min' => 'La página debe ser 1 o mayor.',
+            'per_page.integer' => 'El tamaño de página debe ser un número entero.',
+            'per_page.between' => 'El tamaño de página debe estar entre 1 y 50.',
+        ];
+    }
+
+    /**
+     * Resuelve el estado efectivo según el rol: quien no es administrador solo recibe puestos `Activo`
+     * (el parámetro se ignora); el administrador recibe `Activo` por defecto, o `Inactivo`/`Todos` si lo pide.
+     */
+    public function filtro(bool $esAdministrador): FiltroPuestosDTO
+    {
+        $pedido = $esAdministrador ? ($this->validated('estado') ?? 'Activo') : 'Activo';
+
+        return new FiltroPuestosDTO(
+            $this->validated('q'),
+            $pedido === 'Todos' ? null : $pedido,
+            (int) ($this->validated('page') ?? 1),
+            (int) ($this->validated('per_page') ?? 10),
+        );
+    }
+}

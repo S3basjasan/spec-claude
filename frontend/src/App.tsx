@@ -16,13 +16,17 @@ import { RequireAdmin as RequireAdminPreguntas } from './modules/estructura/preg
 import { preguntasNav } from './modules/estructura/preguntas/nav'
 import { PreguntasFormPage } from './modules/estructura/preguntas/pages/PreguntasFormPage'
 import { PreguntasPage } from './modules/estructura/preguntas/pages/PreguntasPage'
+import { RequireAdmin as RequireAdminPuestos } from './modules/estructura/puestos/components/RequireAdmin'
+import { puestosNav } from './modules/estructura/puestos/nav'
+import { PuestoFormPage } from './modules/estructura/puestos/pages/PuestoFormPage'
+import { PuestosPage } from './modules/estructura/puestos/pages/PuestosPage'
 import { inicioNav } from './modules/inicio/nav'
 import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -65,6 +69,11 @@ function App() {
             <Route element={<RequireAdminPreguntas />}>
               <Route path="preguntas/nuevo" element={<PreguntasFormPage />} />
               <Route path="preguntas/:competenciaId/editar" element={<PreguntasFormPage />} />
+            </Route>
+            <Route path="puestos" element={<PuestosPage />} />
+            <Route element={<RequireAdminPuestos />}>
+              <Route path="puestos/nuevo" element={<PuestoFormPage />} />
+              <Route path="puestos/:puestoId/editar" element={<PuestoFormPage />} />
             </Route>
           </Route>
         </Route>

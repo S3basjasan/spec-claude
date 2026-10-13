@@ -1,6 +1,14 @@
 <?php
 
+use App\Modules\Estructura\Domain\ValueObjects\AsignacionDeCompetencia;
+use App\Modules\Estructura\Domain\ValueObjects\DatosPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\TipoFuncion;
+use App\Modules\Estructura\Domain\ValueObjects\TipoRequisito;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Database\Factories\RegistroComportamientosFactory;
 use Database\Factories\RegistroPreguntasFactory;
@@ -156,4 +164,88 @@ function registroPreguntasDe(array $competencia = [], ?int $actor = null): Model
         ->create(['competencia_id' => $modelo->id, 'created_by' => $actor]);
 
     return $modelo;
+}
+
+/**
+ * Cuerpo válido para crear o actualizar un puesto: una competencia, dos funciones y dos requisitos.
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function datosPuesto(int $competenciaId, array $cambios = []): array
+{
+    return array_replace([
+        'nombre' => 'Analista de datos',
+        'descripcion' => 'Convierte datos en reportes para decidir mejor.',
+        'mision' => 'Transformar los datos de la organización en información confiable.',
+        'funciones' => [
+            ['descripcion' => 'Recopilar y consolidar datos.', 'tipo' => 'Esencial'],
+            ['descripcion' => 'Documentar indicadores.', 'tipo' => 'Complementaria'],
+        ],
+        'requisitos' => [
+            ['tipo' => 'Formacion', 'descripcion' => 'Título de tercer nivel afín.'],
+            ['tipo' => 'Experiencia', 'descripcion' => '2 años en análisis de datos.'],
+        ],
+        'competencias' => [
+            ['competencia_id' => $competenciaId, 'grado_requerido' => 'B'],
+        ],
+    ], $cambios);
+}
+
+/**
+ * Crea un puesto válido con las listas mínimas y, opcionalmente, posiciones de cada estado.
+ *
+ * @param  array<string, mixed>  $atributos  Atributos del puesto (nombre, estado…).
+ */
+function puestoDe(array $atributos = [], int $ocupadas = 0, int $vacantes = 0, int $suprimidas = 0): PuestoModel
+{
+    return PuestoModel::factory()->conPosiciones($ocupadas, $vacantes, $suprimidas)->create($atributos);
+}
+
+/**
+ * Crea posiciones de un puesto con el estado indicado.
+ */
+function posicionesDe(PuestoModel|int $puesto, string $estado, int $cantidad = 1): void
+{
+    $id = $puesto instanceof PuestoModel ? $puesto->id : $puesto;
+
+    for ($i = 0; $i < $cantidad; $i++) {
+        PosicionModel::query()->create(['puesto_id' => $id, 'estado' => $estado]);
+    }
+}
+
+/**
+ * Contenido de un puesto como value object de dominio (para los casos de uso, sin HTTP).
+ */
+function datosDePuesto(string $nombre = 'Analista', int $competenciaId = 1, string $grado = 'B'): DatosPuesto
+{
+    return new DatosPuesto(
+        "  $nombre  ",
+        'Descripción',
+        'Misión',
+        [new FuncionPuesto(1, 'Función esencial', TipoFuncion::Esencial)],
+        [new RequisitoPuesto(TipoRequisito::Formacion, 'Título'), new RequisitoPuesto(TipoRequisito::Experiencia, '2 años')],
+        [new AsignacionDeCompetencia($competenciaId, $grado)],
+    );
+}
+
+/**
+ * Cuerpo de un PUT que repite exactamente el contenido actual del puesto (más los cambios indicados).
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function cuerpoDelPuesto(PuestoModel $puesto, array $cambios = []): array
+{
+    $puesto = $puesto->fresh(['funciones', 'requisitos', 'competenciasAsignadas']);
+
+    return array_replace([
+        'nombre' => $puesto->nombre,
+        'descripcion' => $puesto->descripcion,
+        'mision' => $puesto->mision,
+        'funciones' => $puesto->funciones->map(fn ($f) => ['descripcion' => $f->descripcion, 'tipo' => $f->tipo])->all(),
+        'requisitos' => $puesto->requisitos->map(fn ($r) => ['tipo' => $r->tipo, 'descripcion' => $r->descripcion])->all(),
+        'competencias' => $puesto->competenciasAsignadas->map(fn ($c) => ['competencia_id' => $c->competencia_id, 'grado_requerido' => $c->grado_requerido])->all(),
+        'version' => $puesto->version,
+    ], $cambios);
 }

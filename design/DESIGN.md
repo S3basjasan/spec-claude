@@ -124,6 +124,9 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Alert – neutro** | Variante informativa del Alert: fondo `--soft`, texto `--text`, borde `--border`, icono de información, `role="status"`. Para avisos que no son un error (p. ej. "La competencia asociada está inactiva"). |
 | **Combobox** | Campo de texto (mismo estilo que Input) que filtra una lista de opciones al escribir, sin distinguir mayúsculas. `role="combobox"` con `aria-expanded`, `aria-controls` y `aria-activedescendant` hacia un `listbox` de `Card` con sombra (máx. 240px de alto con scroll); cada opción es `role="option"` con nombre (15px) y descripción opcional (13px `--muted`); la opción activa usa fondo `--soft`. Flechas arriba/abajo mueven la opción activa, **Enter** la selecciona, **Escape** cierra y **Tab** sale; al elegir, el campo muestra la etiqueta elegida. Sin coincidencias muestra "Sin resultados" (13px `--muted`) dentro de la lista. Error: igual que Input (borde `--danger` + `aria-invalid`). |
 | **Lista de campos** | Grupo de campos de texto repetibles dentro de un `fieldset` con `legend`. Cada campo es un Input con **contador** `n/máximo` (13px `--muted`) debajo y un IconButton **Quitar** (`aria-label` "Quitar comportamiento N del grado X", deshabilitado en el mínimo, opacidad 0.45). Debajo, un botón secundario **Agregar …** con icono + (deshabilitado en el máximo). Mínimo 1 y máximo 4 campos; error por campo (13px `--danger`, enlazado con `aria-describedby`). |
+| **Fila de tipo y texto** | Fila repetible dentro de un `fieldset` (funciones y requisitos de un puesto): `SelectField` de tipo (ancho fijo 190px) + Input de texto con **contador** `n/máximo` debajo + IconButton **Quitar** (`aria-label` "Quitar función N" / "Quitar requisito N"). En pantallas estrechas el selector pasa arriba del texto. Debajo del grupo, botón secundario **Agregar …** con icono + (deshabilitado en el máximo de 20). Error por campo (13px `--danger`, enlazado con `aria-describedby`) y error de grupo bajo el `legend`. |
+| **Reordenar (Subir / Bajar)** | Dos IconButton 44×44 por fila ("Subir función N", "Bajar función N"), deshabilitados en los extremos (opacidad 0.45). Tras moverla, la numeración se recalcula desde 1 y un `role="status"` (`aria-live="polite"`) anuncia "Función movida a la posición N de M". No se usa arrastrar y soltar, de modo que la reordenación funciona con teclado y lector de pantalla (WCAG 2.5.7). |
+| **Fila de competencia** | `Combobox` con las competencias activas aún no elegidas + datos de solo lectura (código, tipo y estado en `Badge`) + `SelectField` de **grado requerido** con los grados de la competencia (se reinicia al cambiar de competencia) + IconButton Quitar. Si la competencia asignada está **inactiva**: nombre con `Badge` neutro "Inactiva", grado **bloqueado** (texto con el grado y aviso de 13px `--muted`: "La competencia está inactiva: solo puedes dejarla como está o quitarla") y solo Quitar. |
 | **Skeleton** | Bloques `--border` con animación de pulso (1.4s); imita la forma del contenido real. |
 | **EmptyState / ErrorState** | Ver patrón Estados. |
 | **Breadcrumb** | 14px `--muted`, separador "/", último ítem en `--text`. |
@@ -150,6 +153,8 @@ Referencia: `Competencias.dc.html`. Para cualquier catálogo o lista de registro
 
 9. Cuando el detalle es una **lista fija de textos numerados** (p. ej. las cuatro preguntas de una competencia), la fila desplegable muestra un título (`h3`) y una **lista ordenada** `<ol>` con los textos en su orden, con el mismo aviso neutro si el recurso depende de algo inactivo.
 
+10. Cuando el detalle de cada fila es la **definición completa de un recurso** (p. ej. un puesto), **toda la fila es el botón** que la despliega (`h2` con botón `aria-expanded` y `aria-controls`, y panel `role="region"` con `aria-label`), con chevron a la derecha; solo una fila permanece abierta. Referencia: `Puestos.dc.html`. El panel muestra bloques en tarjetas `--surface`: Misión (texto), Funciones (`<ol>` con el tipo de cada una en `Badge`), Requisitos (`<ul>` agrupado por tipo, con un `h4` por tipo) y Competencias (tabla con competencia, tipo y grado requerido en insignia `--accent`; las inactivas con `Badge` neutro). Los botones **Editar** y **Activar/Desactivar** van al final del panel, solo para quien gestiona el recurso; Desactivar pasa por ConfirmDialog y, si el backend lo rechaza, el diálogo muestra el motivo con la cantidad. El filtro de estado y la paginación siguen el punto 7. El mensaje de lista sin coincidencias es "Ningún puesto coincide con la búsqueda.".
+
 ### Formulario
 Referencia: `Formulario.dc.html`. Para crear y editar.
 
@@ -160,6 +165,7 @@ Referencia: `Formulario.dc.html`. Para crear y editar.
 5. Grupos de campos relacionados en `fieldset` con `legend` (por ejemplo, los 4 grados).
 6. Acciones al final, alineadas a la derecha: Cancelar (secundario, vuelve al listado) y Guardar (primario).
 7. Cuando la cantidad de textos es fija (p. ej. cuatro preguntas), el formulario usa **campos de texto numerados fijos** (Input con etiqueta "Pregunta 1"…"Pregunta 4", contador `n/máximo` debajo y error por campo), sin Agregar ni Quitar; no se usa la Lista de campos.
+8. El **formulario de un puesto** usa cuatro `fieldset` en una sola Card de 760px: Datos generales (código en solo lectura o "Se asigna al guardar", nombre, descripción y misión con contador), Funciones (Fila de tipo y texto con Subir/Bajar), Requisitos (Fila de tipo y texto) y Competencias (Fila de competencia). Cada lista admite de 1 a 20 filas. Los errores de lista (p. ej. "Incluye al menos una función esencial.") se muestran bajo el `legend` del grupo y los de fila junto al campo. Referencia: `PuestosFormulario.dc.html`.
 
 ### Estados
 Referencia: `Estados.dc.html`. Toda vista que carga datos debe cubrir los cuatro.
@@ -187,6 +193,7 @@ Se usa **Tabler Icons** (`@tabler/icons-react`), trazo 1.75, 20px en el menú y 
 |---|---|
 | Inicio | `IconHome` |
 | Competencias | `IconAward` |
+| Puestos | `IconFileText` |
 | Empleados | `IconUsers` |
 | Vacantes | `IconBriefcase` |
 | Ajustes | `IconAdjustmentsHorizontal` |
@@ -243,3 +250,9 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `Competencias.dc.html` y `Formulario.dc.html` no tienen un selector con búsqueda ni campos de texto repetibles | Se añaden **Combobox** (selector de competencia al crear comportamientos) y **Lista de campos** (1 a 4 comportamientos por grado) en §4; el listado de comportamientos reutiliza la estructura de `Competencias.dc.html` con Código y Estado, sin Activar/Desactivar/Eliminar (el estado lo gestiona el módulo de competencias) |
 | `Estados.dc.html` solo define alertas de error | Se añade el **Alert neutro** para avisos informativos ("La competencia asociada está inactiva") |
 | `Formulario.dc.html` no define textos numerados ni listas de resultados numeradas | El formulario de preguntas usa cuatro campos numerados fijos con contador (§5 Formulario, punto 7) y el listado despliega una lista ordenada `<ol>` (§5 Listado, punto 9); reutiliza Combobox y Alert neutro de 002 |
+| `Puestos.dc.html` usa "Clasificación" en la tabla de competencias | La spec usa "Tipo" |
+| `Puestos.dc.html` usa "Conocimientos" como tipo de requisito y una competencia "Gerencial" | Los tipos de requisito son Formación, Experiencia y Capacitación; los de competencia, Cardinal y Específica |
+| `Puestos.dc.html` lista las funciones sin tipo y los requisitos como `Tipo: texto` sin agrupar | Las funciones muestran su tipo (Esencial o Complementaria) y los requisitos se agrupan por tipo |
+| `Puestos.dc.html` no incluye filtro de estado, paginación, Editar, Activar/Desactivar, diálogo de confirmación ni indicador de competencia inactiva | La spec los pide (los de gestión, solo para el Administrador): ver §5 Listado, punto 10 |
+| `Puestos.dc.html` no tiene formulario y su menú trae Organigrama y Perfilamiento | El formulario es `PuestosFormulario.dc.html` (§5 Formulario, punto 8); Organigrama y Perfilamiento son otras features y no se implementan en 004 |
+| Los demás tableros no definen filas repetibles de tipo y texto, reordenación ni fila de competencia | Se añaden en §4: Fila de tipo y texto, Reordenar (Subir/Bajar) y Fila de competencia |

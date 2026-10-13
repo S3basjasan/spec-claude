@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getPreguntasPorCompetencias(array $competenciaIds) Registros de preguntas de las competencias indicadas, incluidas las inactivas.
  * @method static bool tienePreguntasActivas(int $competenciaId) Indica si la competencia está activa y tiene registro de preguntas (válido para nuevas asignaciones).
  * @method static array getPreguntasActivas() Registros de preguntas de competencias activas ordenados por nombre.
+ * @method static array|null getPuesto(int $id) Puesto con sus funciones, requisitos y competencias (activo o inactivo), o null.
+ * @method static array getPuestosPorIds(array $ids) Puestos existentes entre los ids dados, incluidos los inactivos.
+ * @method static bool existePuesto(int $id) Indica si el puesto existe (activo o inactivo).
+ * @method static bool puestoEstaActivo(int $id) Indica si existe y está activo (único válido para crear nuevas posiciones).
+ * @method static array getPuestosActivos() Puestos activos {id, codigo, nombre, descripcion} ordenados por nombre.
  *
  * @see EstructuraService
  */

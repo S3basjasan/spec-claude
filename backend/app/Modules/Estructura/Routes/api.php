@@ -3,6 +3,7 @@
 use App\Modules\Estructura\Presentation\Controllers\CompetenciaController;
 use App\Modules\Estructura\Presentation\Controllers\ComportamientoController;
 use App\Modules\Estructura\Presentation\Controllers\PreguntaController;
+use App\Modules\Estructura\Presentation\Controllers\PuestoController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas del módulo Estructura.
@@ -65,5 +66,28 @@ Route::prefix('api/preguntas')->middleware('api')->group(function () {
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::post('/', [PreguntaController::class, 'store'])->name('preguntas.store');
         Route::put('/{competenciaId}', [PreguntaController::class, 'update'])->whereNumber('competenciaId')->name('preguntas.update');
+    });
+});
+
+// Catálogo de puestos (feature 004). Prefijo /api/puestos por contrato. No existe DELETE: los puestos nunca se
+// eliminan, se activan y desactivan.
+Route::prefix('api/puestos')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [PuestoController::class, 'index'])->name('puestos.index');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        // Antes de `/{puestoId}` para que el texto no se interprete como identificador.
+        Route::get('/competencias-disponibles', [PuestoController::class, 'disponibles'])->name('puestos.disponibles');
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/{puestoId}', [PuestoController::class, 'show'])->whereNumber('puestoId')->name('puestos.show');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::post('/', [PuestoController::class, 'store'])->name('puestos.store');
+        Route::put('/{puestoId}', [PuestoController::class, 'update'])->whereNumber('puestoId')->name('puestos.update');
+        Route::patch('/{puestoId}/estado', [PuestoController::class, 'estado'])->whereNumber('puestoId')->name('puestos.estado');
     });
 });
