@@ -37,6 +37,11 @@ class CompetenciaModel extends Model
         return $this->hasOne(RegistroPreguntasModel::class, 'competencia_id');
     }
 
+    public function puestoCompetencias(): HasMany
+    {
+        return $this->hasMany(PuestoCompetenciaModel::class, 'competencia_id');
+    }
+
     public function historialDeEstado(): HasMany
     {
         return $this->hasMany(CompetenciaEstadoHistorialModel::class, 'competencia_id')->orderBy('id');

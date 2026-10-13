@@ -5,15 +5,17 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   error?: string
   hint?: string
+  /** Oculta el label visualmente (queda para lectores de pantalla), p. ej. en filas repetibles. */
+  hideLabel?: boolean
   ref?: Ref<HTMLInputElement>
 }
 
 /** FormField + Input del design system: label arriba, ayuda o error debajo, enlazados por aria. */
-export function TextField({ id, label, error, hint, ref, className = '', ...props }: TextFieldProps) {
+export function TextField({ id, label, error, hint, hideLabel = false, ref, className = '', ...props }: TextFieldProps) {
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold">
+      <label htmlFor={id} className={hideLabel ? 'sr-only' : 'text-sm font-semibold'}>
         {label}
       </label>
       <input

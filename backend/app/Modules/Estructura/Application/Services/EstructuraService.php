@@ -3,11 +3,16 @@
 namespace App\Modules\Estructura\Application\Services;
 
 use App\Modules\Estructura\Domain\Entities\Competencia;
+use App\Modules\Estructura\Domain\Entities\Puesto;
 use App\Modules\Estructura\Domain\Entities\RegistroComportamientos;
 use App\Modules\Estructura\Domain\Entities\RegistroPreguntas;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
+use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
+use App\Modules\Estructura\Domain\ValueObjects\CompetenciaDePuesto;
+use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
 
 /**
  * Servicio inter-módulos del Módulo Estructura.
@@ -22,6 +27,7 @@ class EstructuraService
         private readonly CompetenciaRepositoryInterface $competencias,
         private readonly ComportamientoRepositoryInterface $comportamientos,
         private readonly PreguntaRepositoryInterface $preguntas,
+        private readonly PuestoRepositoryInterface $puestos,
     ) {}
 
     /**
@@ -166,6 +172,91 @@ class EstructuraService
     public function getPreguntasActivas(): array
     {
         return array_map($this->preguntasAArreglo(...), $this->preguntas->obtenerActivos());
+    }
+
+    /**
+     * Puesto con sus funciones, requisitos y competencias (activo o inactivo, para registros históricos), o null.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getPuesto(int $id): ?array
+    {
+        $puesto = $this->puestos->obtener($id);
+
+        return $puesto === null ? null : $this->puestoAArreglo($puesto);
+    }
+
+    /**
+     * Puestos existentes entre los ids dados, incluidos los inactivos.
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, array<string, mixed>>
+     */
+    public function getPuestosPorIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return array_map($this->puestoAArreglo(...), $this->puestos->obtenerPorIds(array_values(array_unique($ids))));
+    }
+
+    public function existePuesto(int $id): bool
+    {
+        return $this->puestos->obtener($id) !== null;
+    }
+
+    /** Solo los puestos activos pueden usarse para crear nuevas posiciones. */
+    public function puestoEstaActivo(int $id): bool
+    {
+        return $this->puestos->obtener($id)?->activo() ?? false;
+    }
+
+    /**
+     * Puestos activos ordenados por nombre, para el selector de nuevas posiciones.
+     *
+     * @return array<int, array{id: int, codigo: string, nombre: string, descripcion: string}>
+     */
+    public function getPuestosActivos(): array
+    {
+        return array_map(fn (Puesto $puesto) => [
+            'id' => $puesto->id,
+            'codigo' => $puesto->codigo,
+            'nombre' => $puesto->nombre,
+            'descripcion' => $puesto->descripcion,
+        ], $this->puestos->obtenerActivos());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function puestoAArreglo(Puesto $puesto): array
+    {
+        return [
+            'id' => $puesto->id,
+            'codigo' => $puesto->codigo,
+            'nombre' => $puesto->nombre,
+            'descripcion' => $puesto->descripcion,
+            'mision' => $puesto->mision,
+            'estado' => $puesto->estado->value,
+            'funciones' => array_map(fn (FuncionPuesto $f) => [
+                'orden' => $f->orden,
+                'descripcion' => $f->descripcion,
+                'tipo' => $f->tipo->value,
+            ], $puesto->funciones),
+            'requisitos' => array_map(fn (RequisitoPuesto $r) => [
+                'tipo' => $r->tipo->value,
+                'descripcion' => $r->descripcion,
+            ], $puesto->requisitos),
+            'competencias' => array_map(fn (CompetenciaDePuesto $c) => [
+                'competencia_id' => $c->competencia->id,
+                'codigo' => $c->competencia->codigo,
+                'nombre' => $c->competencia->nombre,
+                'tipo' => $c->competencia->tipo->value,
+                'estado' => $c->competencia->estado->value,
+                'grado_requerido' => $c->gradoRequerido,
+            ], $puesto->competencias),
+        ];
     }
 
     /**
