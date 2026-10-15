@@ -5,6 +5,7 @@ use App\Modules\Desarrollo\Application\Ports\NivelesDeColaboradorInterface;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\CompetenciaCursoModel;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\CompetenciaFormativaModel;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\CompetenciaMicrocontenidoModel;
+use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\ValueObjects\AsignacionDeCompetencia;
 use App\Modules\Estructura\Domain\ValueObjects\DatosPuesto;
 use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
@@ -14,6 +15,8 @@ use App\Modules\Estructura\Domain\ValueObjects\TipoRequisito;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\TipoUnidadModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\UnidadModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Database\Factories\RegistroComportamientosFactory;
 use Database\Factories\RegistroPreguntasFactory;
@@ -328,4 +331,89 @@ function actuarComoColaborador(): UserModel
     Sanctum::actingAs($usuario, ['user']);
 
     return $usuario;
+}
+
+/**
+ * Tipo del catalogo de tipos de unidad (lo crea si no existe en la base de pruebas).
+ */
+function tipoDeUnidad(string $nombre = 'Departamento'): TipoUnidadModel
+{
+    return TipoUnidadModel::query()->firstOrCreate(['nombre' => $nombre]);
+}
+
+/**
+ * Crea una unidad valida. Por defecto cuelga de la raiz activa (la crea si no existe).
+ *
+ * @param  array<string, mixed>  $atributos  Atributos de la unidad (nombre, estado, unidad_padre_id...).
+ */
+function unidadDe(array $atributos = []): UnidadModel
+{
+    return UnidadModel::factory()->create($atributos);
+}
+
+/**
+ * Crea posiciones asignadas a una unidad con el estado indicado (necesitan un puesto).
+ */
+function posicionesDeUnidad(UnidadModel|int $unidad, string $estado, int $cantidad = 1): void
+{
+    $id = $unidad instanceof UnidadModel ? $unidad->id : $unidad;
+    $puesto = PuestoModel::query()->first() ?? puestoDe();
+
+    for ($i = 0; $i < $cantidad; $i++) {
+        PosicionModel::query()->create(['puesto_id' => $puesto->id, 'unidad_organizacional_id' => $id, 'estado' => $estado]);
+    }
+}
+
+/**
+ * Cuerpo valido para crear o actualizar una unidad (por defecto, bajo la unidad padre indicada).
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function datosUnidad(?int $unidadPadreId, array $cambios = []): array
+{
+    return array_replace([
+        'nombre' => 'Reclutamiento',
+        'tipo_unidad_id' => tipoDeUnidad('Seccion')->id,
+        'unidad_padre_id' => $unidadPadreId,
+    ], $cambios);
+}
+
+/**
+ * Cuerpo de un PUT con el contenido actual de la unidad (más los cambios indicados).
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function cuerpoDeUnidad(UnidadModel $unidad, array $cambios = []): array
+{
+    $unidad = $unidad->fresh();
+
+    return array_replace([
+        'nombre' => $unidad->nombre,
+        'tipo_unidad_id' => $unidad->tipo_unidad_id,
+        'unidad_padre_id' => $unidad->unidad_padre_id,
+        'version' => $unidad->version,
+    ], $cambios);
+}
+
+function repositorioDeUnidades(): UnidadRepositoryInterface
+{
+    return app(UnidadRepositoryInterface::class);
+}
+
+/**
+ * Arma el árbol de ejemplo: raíz → (Talento humano → Reclutamiento) y (Tecnología → Desarrollo).
+ *
+ * @return array<string, UnidadModel>
+ */
+function arbolDeEjemplo(): array
+{
+    $raiz = UnidadModel::factory()->raiz()->create(['nombre' => 'Gerencia general']);
+    $talento = UnidadModel::factory()->conPadre($raiz)->create(['nombre' => 'Talento humano']);
+    $tecnologia = UnidadModel::factory()->conPadre($raiz)->create(['nombre' => 'Tecnología']);
+    $reclutamiento = UnidadModel::factory()->conPadre($talento)->create(['nombre' => 'Reclutamiento']);
+    $desarrollo = UnidadModel::factory()->conPadre($tecnologia)->create(['nombre' => 'Desarrollo']);
+
+    return compact('raiz', 'talento', 'tecnologia', 'reclutamiento', 'desarrollo');
 }

@@ -205,3 +205,91 @@ export function IconHelp(props: IconProps) {
     </Icon>
   )
 }
+
+export function IconSitemap(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 15m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+      <path d="M15 15m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+      <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+      <path d="M6 15v-1a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v1" />
+      <path d="M12 9l0 3" />
+    </Icon>
+  )
+}
+
+export function IconCornerDownRight(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M6 6v6a3 3 0 0 0 3 3h10l-4 -4m0 8l4 -4" />
+    </Icon>
+  )
+}
+
+export function IconChevronRight(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M9 6l6 6l-6 6" />
+    </Icon>
+  )
+}
+
+export function IconLock(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2l0 -6" />
+      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+      <path d="M8 11v-4a4 4 0 1 1 8 0v4" />
+    </Icon>
+  )
+}
+
+export function IconGripVertical(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M9 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+      <path d="M9 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+      <path d="M9 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+      <path d="M15 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+      <path d="M15 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+      <path d="M15 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+    </Icon>
+  )
+}
+
+export function IconArrowUp(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5l0 14" />
+      <path d="M18 11l-6 -6" />
+      <path d="M6 11l6 -6" />
+    </Icon>
+  )
+}
+
+export function IconArrowDown(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5l0 14" />
+      <path d="M18 13l-6 6" />
+      <path d="M6 13l6 6" />
+    </Icon>
+  )
+}
+
+export function IconPower(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M7 6a7.75 7.75 0 1 0 10 0" />
+      <path d="M12 4l0 8" />
+    </Icon>
+  )
+}
+
+export function IconRotate(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M19.95 11a8 8 0 1 0 -.5 4m.5 5v-5h-5" />
+    </Icon>
+  )
+}

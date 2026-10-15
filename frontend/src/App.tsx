@@ -22,13 +22,15 @@ import { RequireAdmin as RequireAdminPuestos } from './modules/estructura/puesto
 import { puestosNav } from './modules/estructura/puestos/nav'
 import { PuestoFormPage } from './modules/estructura/puestos/pages/PuestoFormPage'
 import { PuestosPage } from './modules/estructura/puestos/pages/PuestosPage'
+import { unidadesNav } from './modules/estructura/unidades/nav'
+import { UnidadesPage } from './modules/estructura/unidades/pages/UnidadesPage'
 import { inicioNav } from './modules/inicio/nav'
 import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, unidadesNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -78,6 +80,7 @@ function App() {
               <Route path="puestos/nuevo" element={<PuestoFormPage />} />
               <Route path="puestos/:puestoId/editar" element={<PuestoFormPage />} />
             </Route>
+            <Route path="unidades" element={<UnidadesPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
