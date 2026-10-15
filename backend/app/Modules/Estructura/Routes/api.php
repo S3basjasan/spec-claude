@@ -4,6 +4,8 @@ use App\Modules\Estructura\Presentation\Controllers\CompetenciaController;
 use App\Modules\Estructura\Presentation\Controllers\ComportamientoController;
 use App\Modules\Estructura\Presentation\Controllers\PreguntaController;
 use App\Modules\Estructura\Presentation\Controllers\PuestoController;
+use App\Modules\Estructura\Presentation\Controllers\TipoUnidadController;
+use App\Modules\Estructura\Presentation\Controllers\UnidadController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas del módulo Estructura.
@@ -89,5 +91,42 @@ Route::prefix('api/puestos')->middleware('api')->group(function () {
         Route::post('/', [PuestoController::class, 'store'])->name('puestos.store');
         Route::put('/{puestoId}', [PuestoController::class, 'update'])->whereNumber('puestoId')->name('puestos.update');
         Route::patch('/{puestoId}/estado', [PuestoController::class, 'estado'])->whereNumber('puestoId')->name('puestos.estado');
+    });
+});
+
+// Unidades organizacionales (feature 005). Prefijo /api/unidades por contrato. No existe DELETE: las unidades nunca se
+// eliminan, se desactivan y se reactivan; el estado es propio de la unidad.
+Route::prefix('api/unidades')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [UnidadController::class, 'index'])->name('unidades.index');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        // Antes de `/{unidadId}` para que el texto no se interprete como identificador.
+        Route::get('/opciones', [UnidadController::class, 'opciones'])->name('unidades.opciones');
+        Route::get('/{unidadId}/impacto-desactivacion', [UnidadController::class, 'impacto'])->whereNumber('unidadId')->name('unidades.impacto');
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/{unidadId}', [UnidadController::class, 'show'])->whereNumber('unidadId')->name('unidades.show');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::post('/', [UnidadController::class, 'store'])->name('unidades.store');
+        Route::put('/{unidadId}', [UnidadController::class, 'update'])->whereNumber('unidadId')->name('unidades.update');
+        Route::patch('/{unidadId}/estado', [UnidadController::class, 'estado'])->whereNumber('unidadId')->name('unidades.estado');
+    });
+});
+
+// Cadena de tipos de unidad (feature 005). Prefijo /api/tipos-unidad por contrato. No existe DELETE: los tipos nunca se
+// eliminan. Ver la cadena es de cualquier autenticado; crear, renombrar y reordenar, del Administrador.
+Route::prefix('api/tipos-unidad')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [TipoUnidadController::class, 'index'])->name('tipos-unidad.index');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::post('/', [TipoUnidadController::class, 'store'])->name('tipos-unidad.store');
+        Route::put('/', [TipoUnidadController::class, 'update'])->name('tipos-unidad.update');
     });
 });

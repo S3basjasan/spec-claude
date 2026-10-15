@@ -25,6 +25,14 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool existePuesto(int $id) Indica si el puesto existe (activo o inactivo).
  * @method static bool puestoEstaActivo(int $id) Indica si existe y está activo (único válido para crear nuevas posiciones).
  * @method static array getPuestosActivos() Puestos activos {id, codigo, nombre, descripcion} ordenados por nombre.
+ * @method static array|null getUnidad(int $id) Unidad (activa o inactiva) con su tipo, unidad padre y nivel, o null.
+ * @method static array getUnidadesPorIds(array $ids) Unidades existentes entre los ids dados, incluidas las inactivas.
+ * @method static bool existeUnidad(int $id) Indica si la unidad existe (activa o inactiva).
+ * @method static bool unidadEstaActiva(int $id) Indica si existe y está activa (única válida para nuevas posiciones y unidades dependientes).
+ * @method static array getUnidadesActivas() Unidades activas {id, codigo, nombre, tipo, nivel} en orden jerárquico.
+ * @method static array getArbolDeUnidades() Todas las unidades (activas e inactivas) en orden jerárquico, con su nivel.
+ * @method static array getCadenaDeTipos() Cadena de tipos de unidad {id, nombre, nivel, es_raiz} por nivel (el 1 es el tipo raíz).
+ * @method static array|null getTipoDeUnidad(int $id) Tipo de unidad {id, nombre, nivel, es_raiz}, o null.
  *
  * @see EstructuraService
  */

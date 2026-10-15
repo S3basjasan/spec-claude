@@ -15,6 +15,7 @@
   --danger: #b42318;
   --dangersoft: #fdecea;
   --ondanger: #ffffff;
+  --warning: #b54708;
   color-scheme: light;
 }
 
@@ -32,6 +33,7 @@
   --danger: #ff8a80;
   --dangersoft: #3a1b1a;
   --ondanger: #2a0b09;
+  --warning: #f5b454;
   color-scheme: dark;
 }
 
@@ -49,6 +51,7 @@
   --color-danger: var(--danger);
   --color-dangersoft: var(--dangersoft);
   --color-ondanger: var(--ondanger);
+  --color-warning: var(--warning);
   --font-sans: 'Public Sans', system-ui, sans-serif;
 }
 

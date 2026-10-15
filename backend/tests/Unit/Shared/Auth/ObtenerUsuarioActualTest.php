@@ -20,6 +20,11 @@ function repoDeUnUsuario(?Usuario $usuario): UsuarioRepositoryInterface
         {
             return $this->usuario;
         }
+
+        public function nombresPorIds(array $ids): array
+        {
+            return [];
+        }
     };
 }
 

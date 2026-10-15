@@ -9,4 +9,12 @@ interface UsuarioRepositoryInterface
     public function buscarPorCorreo(string $correo): ?Usuario;
 
     public function obtenerPorId(int $id): ?Usuario;
+
+    /**
+     * Nombres de los usuarios existentes entre los ids dados (solo lectura; sin correo ni rol).
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, string> id => nombre
+     */
+    public function nombresPorIds(array $ids): array;
 }

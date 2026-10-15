@@ -72,3 +72,8 @@ export function toApiError(error: unknown): ApiError {
     isNetworkError: false,
   }
 }
+
+/** Cuerpo de la respuesta de error (si lo hubo), para leer datos extra como la lista de unidades en conflicto. */
+export function bodyOf(error: unknown): unknown {
+  return isAxiosError(error) ? error.response?.data : undefined
+}

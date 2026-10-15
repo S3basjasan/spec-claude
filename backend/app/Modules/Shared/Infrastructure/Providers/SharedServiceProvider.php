@@ -26,7 +26,7 @@ class SharedServiceProvider extends ServiceProvider
         $this->app->bind(EmisorTokenInterface::class, SanctumEmisorToken::class);
 
         // Binding de la Facade del módulo (Presentation\Facades).
-        $this->app->singleton('shared-facade', fn () => new SharedService);
+        $this->app->singleton('shared-facade', fn ($app) => $app->make(SharedService::class));
     }
 
     public function boot(): void

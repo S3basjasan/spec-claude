@@ -37,6 +37,7 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 | `--danger` | `#B42318` | `#FF8A80` | Eliminar, errores |
 | `--dangersoft` | `#FDECEA` | `#3A1B1A` | Fondo de alertas de error |
 | `--ondanger` | `#FFFFFF` | `#2A0B09` | Texto sobre `--danger` |
+| `--warning` | `#B54708` | `#F5B454` | Advertencias que no son errores (p. ej. el ícono "No sigue la cadena"); contraste ≥ 4.5:1 sobre `--surface` |
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
 
@@ -127,6 +128,9 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Fila de tipo y texto** | Fila repetible dentro de un `fieldset` (funciones y requisitos de un puesto): `SelectField` de tipo (ancho fijo 190px) + Input de texto con **contador** `n/máximo` debajo + IconButton **Quitar** (`aria-label` "Quitar función N" / "Quitar requisito N"). En pantallas estrechas el selector pasa arriba del texto. Debajo del grupo, botón secundario **Agregar …** con icono + (deshabilitado en el máximo de 20). Error por campo (13px `--danger`, enlazado con `aria-describedby`) y error de grupo bajo el `legend`. |
 | **Reordenar (Subir / Bajar)** | Dos IconButton 44×44 por fila ("Subir función N", "Bajar función N"), deshabilitados en los extremos (opacidad 0.45). Tras moverla, la numeración se recalcula desde 1 y un `role="status"` (`aria-live="polite"`) anuncia "Función movida a la posición N de M". No se usa arrastrar y soltar, de modo que la reordenación funciona con teclado y lector de pantalla (WCAG 2.5.7). |
 | **Fila de competencia** | `Combobox` con las competencias activas aún no elegidas + datos de solo lectura (código, tipo y estado en `Badge`) + `SelectField` de **grado requerido** con los grados de la competencia (se reinicia al cambiar de competencia) + IconButton Quitar. Si la competencia asignada está **inactiva**: nombre con `Badge` neutro "Inactiva", grado **bloqueado** (texto con el grado y aviso de 13px `--muted`: "La competencia está inactiva: solo puedes dejarla como está o quitarla") y solo Quitar. |
+| **Botón de estado de fila (Desactivar / Reactivar)** | Botón de texto secundario de 44px en la columna de acciones, junto al IconButton Editar; su texto alterna según el estado ("Desactivar" / "Reactivar") y su nombre accesible incluye el registro ("Desactivar Ventas"). **Desactivar deshabilitado**: cuando el recurso no puede desactivarse (p. ej. una unidad con unidades dependientes activas o posiciones ocupadas o vacantes) el botón lleva `disabled` (opacidad 0.45) y `aria-describedby` hacia un texto de 13px `--muted` **siempre visible** bajo el botón que indica el motivo con las cantidades ("No se puede desactivar: tiene 4 unidades dependientes activas y 3 posiciones ocupadas o vacantes."); el motivo no depende de un tooltip ni del color. Desactivar abre ConfirmDialog; Reactivar actúa sin confirmación y, si el servidor lo rechaza, muestra el motivo en un Alert. |
+| **Modal** | Card de 480 a 640px de ancho máximo según el contenido, radio 14, padding 24px y sombra `0 16px 48px rgba(0,0,0,0.25)`, sobre un velo oscuro, `role="dialog"` con `aria-modal` y título enlazado; foco atrapado, Escape cierra y el foco vuelve al control que lo abrió; cabecera con título e IconButton de cierre, cuerpo con scroll y pie con acciones a la derecha. Los modales de confirmación destructiva usan `alertdialog` (ConfirmDialog). |
+| **Chip de nivel** | Píldora 13px con el número de nivel (`1`, `2`…) y el nombre del tipo, fondo `--soft`, texto `--text`; en la cadena, separadas por un chevron decorativo. |
 | **Skeleton** | Bloques `--border` con animación de pulso (1.4s); imita la forma del contenido real. |
 | **EmptyState / ErrorState** | Ver patrón Estados. |
 | **Breadcrumb** | 14px `--muted`, separador "/", último ítem en `--text`. |
@@ -155,6 +159,20 @@ Referencia: `Competencias.dc.html`. Para cualquier catálogo o lista de registro
 
 10. Cuando el detalle de cada fila es la **definición completa de un recurso** (p. ej. un puesto), **toda la fila es el botón** que la despliega (`h2` con botón `aria-expanded` y `aria-controls`, y panel `role="region"` con `aria-label`), con chevron a la derecha; solo una fila permanece abierta. Referencia: `Puestos.dc.html`. El panel muestra bloques en tarjetas `--surface`: Misión (texto), Funciones (`<ol>` con el tipo de cada una en `Badge`), Requisitos (`<ul>` agrupado por tipo, con un `h4` por tipo) y Competencias (tabla con competencia, tipo y grado requerido en insignia `--accent`; las inactivas con `Badge` neutro). Los botones **Editar** y **Activar/Desactivar** van al final del panel, solo para quien gestiona el recurso; Desactivar pasa por ConfirmDialog y, si el backend lo rechaza, el diálogo muestra el motivo con la cantidad. El filtro de estado y la paginación siguen el punto 7. El mensaje de lista sin coincidencias es "Ningún puesto coincide con la búsqueda.".
 
+### Listado en árbol
+Referencia: `Unidades.dc.html`. Para recursos jerárquicos (p. ej. unidades organizacionales). Reutiliza el patrón Listado con estas particularidades:
+
+1. **Cadena de tipos** sobre el listado: una fila de **Chips de nivel** (§4) ordenados desde el nivel 1, visible para todos; el botón "Editar tipos" solo para quien gestiona el recurso.
+2. Columnas: **Nombre**, **Código**, **Tipo** (Badge), **Estado** (Badge: Activa normal, Inactiva neutra) y **Acciones** (solo quien gestiona). No hay columna de unidad padre: la jerarquía la da el árbol.
+3. **Sangría de 24px por nivel** en la celda del Nombre. Las unidades con dependientes llevan delante un botón de **expandir / contraer** (`IconChevronRight`, `aria-expanded`, `aria-label` con el nombre); las demás, un espacio del mismo ancho. Cada nombre lleva un prefijo visualmente oculto "Nivel N: " para que la jerarquía no dependa de la sangría ni del color.
+4. **Orden jerárquico**: cada unidad seguida de su rama; hermanas por código ascendente (numérico). Al entrar solo se ve la raíz, contraída; acciones **Expandir todo** y **Contraer todo**.
+5. **Búsqueda** ("Buscar por código, nombre o tipo", sin mayúsculas ni tildes): muestra las coincidencias con las unidades de las que dependen, todo expandido y con los botones de expandir deshabilitados mientras haya búsqueda. Lo mismo con un filtro de estado distinto de Activa. Al limpiar vuelve la expansión previa.
+6. **Resumen** `role="status"`: "N unidades · M activas" o "N coincidencias". Sin paginación. Sin coincidencias: "Ninguna unidad coincide con la búsqueda."
+7. **Filtro de estado** (Activa por defecto, Inactiva, Todas) solo para el Administrador.
+8. **Advertencia "No sigue la cadena"**: `IconAlertTriangle` junto al Tipo con la descripción accesible "No sigue la cadena: bajo «tipo de la unidad padre» corresponde «tipo esperado»".
+9. Acciones por fila (solo Administrador): IconButton **Editar**, **Agregar subunidad** (deshabilitado en inactivas y en el último nivel, con "Este tipo no admite subunidades") y **Botón de estado de fila** (§4). Nunca hay Eliminar. Todo botón deshabilitado lleva su motivo como descripción accesible.
+10. Tras cada acción, un mensaje de confirmación `role="status"` sobre el listado. Estados cargando, vacío y error según el patrón Estados.
+
 ### Formulario
 Referencia: `Formulario.dc.html`. Para crear y editar.
 
@@ -166,6 +184,24 @@ Referencia: `Formulario.dc.html`. Para crear y editar.
 6. Acciones al final, alineadas a la derecha: Cancelar (secundario, vuelve al listado) y Guardar (primario).
 7. Cuando la cantidad de textos es fija (p. ej. cuatro preguntas), el formulario usa **campos de texto numerados fijos** (Input con etiqueta "Pregunta 1"…"Pregunta 4", contador `n/máximo` debajo y error por campo), sin Agregar ni Quitar; no se usa la Lista de campos.
 8. El **formulario de un puesto** usa cuatro `fieldset` en una sola Card de 760px: Datos generales (código en solo lectura o "Se asigna al guardar", nombre, descripción y misión con contador), Funciones (Fila de tipo y texto con Subir/Bajar), Requisitos (Fila de tipo y texto) y Competencias (Fila de competencia). Cada lista admite de 1 a 20 filas. Los errores de lista (p. ej. "Incluye al menos una función esencial.") se muestran bajo el `legend` del grupo y los de fila junto al campo. Referencia: `PuestosFormulario.dc.html`.
+
+### Formulario en modal
+Referencia: `Unidades.dc.html`. Para formularios cortos que se abren sobre el listado sin cambiar de ruta, dentro del componente **Modal** (§4).
+
+1. Título (h2) y cierre con "Cancelar" o Escape; al abrir, el foco va al primer campo y al cerrar vuelve al botón que lo abrió.
+2. **Crear unidad**: Nombre (contador `n/150`), Unidad padre (selector en orden de árbol; inactivas y del último nivel deshabilitadas, estas con "Este tipo no admite subunidades") y un campo de solo lectura "Se creará como: «tipo»" o "Selecciona una unidad padre para determinar el tipo". Desde "Agregar subunidad", la padre viene preseleccionada.
+3. **Editar unidad**: Nombre y Unidad padre limitada a las activas del tipo inmediatamente superior (en la raíz, deshabilitada con "Ninguna (unidad raíz)"); en solo lectura, un bloque `<dl>` con Tipo, Código, fechas, cantidades y auditoría (solo Administrador).
+4. Errores 422 junto al campo y alerta general; conflicto de edición con "Recargar"; botón "Guardar unidad" bloqueado mientras guarda. Nombre de unidad duplicado: permitido.
+
+### Editar tipos (cadena)
+Referencia: `Unidades.dc.html`. Modal con la lista de tipos por nivel.
+
+1. Cada fila: número de nivel, nombre editable (contador `n/50`), **asa de arrastre** y flechas **subir / bajar** (IconButtons con `aria-label` "Subir «tipo»", "Bajar «tipo»"; deshabilitadas en los extremos). La fila raíz lleva `IconLock` y la descripción "El tipo raíz solo puede renombrarse", sin asa ni flechas.
+2. **Vista previa** de la cadena actual y la resultante, con los tipos que cambian de nivel o de nombre resaltados (fondo `--soft` y texto, no solo color).
+3. "Guardar cambios" deshabilitado sin cambios. Errores de nombre por fila.
+4. **Bloqueo de reordenamiento**: modal encima con la cantidad y la lista de unidades afectadas (tipo y nivel nuevos; padre con su tipo y nivel nuevos), "Ver en el árbol" por unidad y "Volver a editar" que conserva el borrador.
+5. **Nuevo tipo**: modal con "Nombre del tipo" y la indicación de que se agrega al final como hijo del último nivel.
+6. **Desactivar en cascada**: diálogo (patrón Estados) que nombra la unidad; con dependientes, las lista y el botón dice "Desactivar N unidades"; con posiciones vigentes en la rama explica el bloqueo con las unidades y cantidades y no permite confirmar.
 
 ### Estados
 Referencia: `Estados.dc.html`. Toda vista que carga datos debe cubrir los cuatro.
@@ -204,6 +240,12 @@ Se usa **Tabler Icons** (`@tabler/icons-react`), trazo 1.75, 20px en el menú y 
 | Advertencia o error | `IconAlertTriangle` |
 | Tema | `IconMoon` / `IconSun` |
 | Desplegar | `IconChevronDown` |
+| Unidades (menú) | `IconSitemap` |
+| Indicador de dependencia (árbol) | `IconCornerDownRight` |
+| Expandir / contraer rama | `IconChevronRight` |
+| Tipo raíz bloqueado | `IconLock` |
+| Asa de arrastre | `IconGripVertical` |
+| Subir / bajar tipo | `IconArrowUp` / `IconArrowDown` |
 
 Un icono que solo acompaña texto lleva `aria-hidden="true"`. Un botón que solo tiene icono lleva `aria-label`.
 
@@ -256,3 +298,8 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `Puestos.dc.html` no incluye filtro de estado, paginación, Editar, Activar/Desactivar, diálogo de confirmación ni indicador de competencia inactiva | La spec los pide (los de gestión, solo para el Administrador): ver §5 Listado, punto 10 |
 | `Puestos.dc.html` no tiene formulario y su menú trae Organigrama y Perfilamiento | El formulario es `PuestosFormulario.dc.html` (§5 Formulario, punto 8); Organigrama y Perfilamiento son otras features y no se implementan en 004 |
 | Los demás tableros no definen filas repetibles de tipo y texto, reordenación ni fila de competencia | Se añaden en §4: Fila de tipo y texto, Reordenar (Subir/Bajar) y Fila de competencia |
+| `Unidades.dc.html` (antes de 005) traía un selector **Estado** en el formulario y el botón **Eliminar** con la nota "Una unidad solo se puede eliminar…" | La spec 005 no permite elegir el estado en el formulario ni eliminar: el tablero se corrigió con **Desactivar / Reactivar** (Desactivar con diálogo de confirmación como en `Estados.dc.html`), sin campo Estado y con la nota "Una unidad solo se puede desactivar si no tiene unidades dependientes activas ni posiciones asignadas." |
+| `Unidades.dc.html` mostraba Nueva unidad y las acciones a todos y no tenía filtro de estado ni datos de solo lectura | Nueva unidad, Editar, Desactivar / Reactivar y el filtro de estado (Activa, Inactiva, Todas) son solo del Administrador (el tablero lo alterna con la propiedad `admin`); al editar se muestran en solo lectura código, fechas, cantidades y auditoría, y "Ninguna (unidad raíz)" se deshabilita si ya existe otra raíz activa (§5 Listado en árbol y Formulario en línea) |
+| `Unidades.dc.html` dejaba a **Operaciones (UO-008)** inactiva con una posición asignada | Una unidad solo se desactiva sin posiciones Ocupadas ni Vacantes: Operaciones está inactiva y solo conserva posiciones **Suprimidas**, que no lo impiden |
+| `Unidades.dc.html` trae en el menú Organigrama, Perfilamiento, Empleados, Vacantes y Ajustes, y una columna sin **Nivel N** para lectores de pantalla | Esos ítems pertenecen a otras features y no se implementan en 005 (el menú real solo añade "Unidades"); la implementación añade el prefijo oculto "Nivel N" y usa `--input-border` en los controles |
+| `Unidades.dc.html` (revisión 2026-10-15) | La spec revisada añade la cadena de tipos, el árbol expandible con Expandir / Contraer todo, la búsqueda con ancestras, "No sigue la cadena", modales (Crear, Editar, Nuevo tipo, Editar tipos, Bloqueo), tipo calculado y no elegido, sin columna de unidad padre, desactivación en cascada con confirmación siempre y raíz no desactivable; el tablero se actualiza en esa línea |
