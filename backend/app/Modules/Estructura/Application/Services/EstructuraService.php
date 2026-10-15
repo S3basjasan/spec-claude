@@ -6,10 +6,14 @@ use App\Modules\Estructura\Domain\Entities\Competencia;
 use App\Modules\Estructura\Domain\Entities\Puesto;
 use App\Modules\Estructura\Domain\Entities\RegistroComportamientos;
 use App\Modules\Estructura\Domain\Entities\RegistroPreguntas;
+use App\Modules\Estructura\Domain\Entities\TipoUnidad;
+use App\Modules\Estructura\Domain\Entities\Unidad;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
+use App\Modules\Estructura\Domain\Repositories\TipoUnidadRepositoryInterface;
+use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\ValueObjects\CompetenciaDePuesto;
 use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
 use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
@@ -28,6 +32,8 @@ class EstructuraService
         private readonly ComportamientoRepositoryInterface $comportamientos,
         private readonly PreguntaRepositoryInterface $preguntas,
         private readonly PuestoRepositoryInterface $puestos,
+        private readonly UnidadRepositoryInterface $unidades,
+        private readonly TipoUnidadRepositoryInterface $tipos,
     ) {}
 
     /**
@@ -225,6 +231,126 @@ class EstructuraService
             'nombre' => $puesto->nombre,
             'descripcion' => $puesto->descripcion,
         ], $this->puestos->obtenerActivos());
+    }
+
+    /**
+     * Unidad (activa o inactiva, para registros históricos), o null si no existe. Sin datos de auditoría.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getUnidad(int $id): ?array
+    {
+        $unidad = $this->unidades->obtener($id);
+
+        return $unidad === null ? null : $this->unidadAArreglo($unidad);
+    }
+
+    /**
+     * Unidades existentes entre los ids dados, incluidas las inactivas.
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, array<string, mixed>>
+     */
+    public function getUnidadesPorIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return array_map($this->unidadAArreglo(...), $this->unidades->obtenerPorIds(array_values(array_unique($ids))));
+    }
+
+    public function existeUnidad(int $id): bool
+    {
+        return $this->unidades->obtener($id) !== null;
+    }
+
+    /** Solo las unidades activas pueden recibir nuevas posiciones y nuevas unidades dependientes. */
+    public function unidadEstaActiva(int $id): bool
+    {
+        return $this->unidades->obtener($id)?->estaActiva() ?? false;
+    }
+
+    /**
+     * Unidades activas en orden jerárquico, para el selector de unidad al crear posiciones.
+     *
+     * @return array<int, array{id: int, codigo: string, nombre: string, tipo: array{id: int, nombre: string}, nivel_arbol: int}>
+     */
+    public function getUnidadesActivas(): array
+    {
+        return array_values(array_map(fn (Unidad $unidad) => [
+            'id' => $unidad->id,
+            'codigo' => $unidad->codigo,
+            'nombre' => $unidad->nombre,
+            'tipo' => ['id' => $unidad->tipo->id, 'nombre' => $unidad->tipo->nombre],
+            'nivel_arbol' => $unidad->nivel,
+        ], array_filter($this->unidades->todas(), fn (Unidad $unidad) => $unidad->estaActiva())));
+    }
+
+    /**
+     * Árbol completo (activas e inactivas) en orden jerárquico, para el organigrama.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getArbolDeUnidades(): array
+    {
+        return array_map($this->unidadAArreglo(...), $this->unidades->todas());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function unidadAArreglo(Unidad $unidad): array
+    {
+        return [
+            'id' => $unidad->id,
+            'codigo' => $unidad->codigo,
+            'nombre' => $unidad->nombre,
+            'tipo' => ['id' => $unidad->tipo->id, 'nombre' => $unidad->tipo->nombre, 'nivel' => $unidad->tipo->nivel],
+            'unidad_padre' => $unidad->padre === null ? null : [
+                'id' => $unidad->padre->id,
+                'codigo' => $unidad->padre->codigo,
+                'nombre' => $unidad->padre->nombre,
+            ],
+            'nivel_arbol' => $unidad->nivel,
+            'estado' => $unidad->estado->value,
+            'fecha_creacion' => $unidad->fechaCreacion,
+            'fecha_supresion' => $unidad->fechaSupresion,
+            'dependientes_activas' => $unidad->dependientesActivas,
+            'posiciones_vigentes' => $unidad->posicionesVigentes,
+            'admite_hijas' => $unidad->admiteHijas,
+            'sigue_cadena' => $unidad->sigueCadena,
+        ];
+    }
+
+    /**
+     * La cadena de tipos de unidad ordenada por nivel (el nivel 1 es el tipo raíz).
+     *
+     * @return array<int, array{id: int, nombre: string, nivel: int, es_raiz: bool}>
+     */
+    public function getCadenaDeTipos(): array
+    {
+        return array_map(fn (TipoUnidad $tipo) => [
+            'id' => $tipo->id,
+            'nombre' => $tipo->nombre,
+            'nivel' => $tipo->nivel,
+            'es_raiz' => $tipo->esRaiz(),
+        ], $this->tipos->todos());
+    }
+
+    /**
+     * @return array{id: int, nombre: string, nivel: int, es_raiz: bool}|null
+     */
+    public function getTipoDeUnidad(int $id): ?array
+    {
+        $tipo = $this->tipos->obtener($id);
+
+        return $tipo === null ? null : [
+            'id' => $tipo->id,
+            'nombre' => $tipo->nombre,
+            'nivel' => $tipo->nivel,
+            'es_raiz' => $tipo->esRaiz(),
+        ];
     }
 
     /**

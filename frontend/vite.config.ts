@@ -11,5 +11,7 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'],
     exclude: ['node_modules', 'dist', 'e2e'],
     setupFiles: ['src/test/setup.ts'],
+    // Los formularios largos escriben muchos campos con userEvent: con todos los archivos en paralelo, 5 s no alcanzan.
+    testTimeout: 15000,
   },
 })

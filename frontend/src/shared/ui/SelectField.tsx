@@ -3,6 +3,8 @@ import type { Ref, SelectHTMLAttributes } from 'react'
 export interface SelectOption {
   value: string
   label: string
+  /** La opción se muestra pero no puede elegirse (p. ej. "Ninguna (unidad raíz)" cuando ya existe una raíz). */
+  disabled?: boolean
 }
 
 interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -32,7 +34,7 @@ export function SelectField({ id, label, options, error, hideLabel = false, ref,
         } ${className}`}
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} disabled={option.disabled}>
             {option.label}
           </option>
         ))}
