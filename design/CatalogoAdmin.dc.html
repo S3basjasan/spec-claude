@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Catálogo formativo — Administrador</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.sec h3{margin:0 0 10px;font-size:15px}
+</style>
+</helmet>
+<div style="min-height: 1700px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div>
+            <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Catálogo formativo de competencias</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Asocia a cada competencia los cursos y micro-contenidos que permiten desarrollarla.</p>
+          </div>
+          <a class="btn" href="CatalogoColaborador.dc.html">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador
+          </a>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); font-size: 14px; line-height: 1.5">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 20px; margin-top: 1px"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg>
+          <span><b>El diccionario de competencias es de solo lectura.</b> Lo administra Estructura Empresarial; aquí solo se gestiona qué recursos formativos desarrollan cada competencia.</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px">
+          <section aria-labelledby="cob-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+              <h2 id="cob-t" style="margin: 0; font-size: 15px">Cobertura formativa</h2>
+              <span style="font-size: 13px; color: var(--muted)">Competencias con ≥ 1 curso o contenido</span>
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 16px">
+              <span style="font-size: 44px; line-height: 1; font-weight: 700; letter-spacing: -0.03em; color: var(--accent); font-variant-numeric: tabular-nums">{{cobertura.pct}}%</span>
+              <span style="padding-bottom: 6px; font-size: 14px; color: var(--muted)">{{cobertura.texto}}</span>
+            </div>
+            <div role="progressbar" aria-label="Cobertura formativa" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{cobertura.pct}}" style="height: 12px; border-radius: 999px; background: var(--border); overflow: hidden">
+              <div style="{{cobertura.barStyle}}"></div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+              <span style="font-size: 14px; color: var(--muted)">{{cobertura.sinTexto}}</span>
+              <button class="btn" onClick="{{verSinCobertura}}" style="height: 44px">Ver sin cursos</button>
+            </div>
+          </section>
+
+          <section aria-labelledby="area-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+            <h2 id="area-t" style="margin: 0; font-size: 15px">Cobertura por área formativa</h2>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px">
+              <sc-for list="{{areasCob}}" as="a" hint-placeholder-count="4">
+                <li>
+                  <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; margin-bottom: 6px">
+                    <span style="font-weight: 600">{{a.nombre}}</span>
+                    <span style="color: var(--muted); font-variant-numeric: tabular-nums">{{a.texto}} · {{a.pct}}%</span>
+                  </div>
+                  <div role="progressbar" aria-label="Cobertura de {{a.nombre}}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{a.pct}}" style="height: 8px; border-radius: 999px; background: var(--border); overflow: hidden">
+                    <div style="{{a.barStyle}}"></div>
+                  </div>
+                </li>
+              </sc-for>
+            </ul>
+          </section>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+          <div style="flex: 1 1 260px; position: relative">
+            <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar competencia</label>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+            <input id="q" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar por código o nombre" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+          </div>
+          <div>
+            <label for="ft" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Tipo de competencia</label>
+            <select id="ft" value="{{tipo}}" onChange="{{setTipo}}" style="height: 44px; padding: 0 36px 0 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+              <option value="todos">Todos los tipos</option><option value="Cardinal">Cardinal</option><option value="Específica">Específica</option><option value="Gerencial">Gerencial</option>
+            </select>
+          </div>
+          <div>
+            <label for="fa" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Área formativa</label>
+            <select id="fa" value="{{area}}" onChange="{{setArea}}" style="height: 44px; padding: 0 36px 0 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+              <option value="todas">Todas las áreas</option><option value="Liderazgo y gestión">Liderazgo y gestión</option><option value="Habilidades interpersonales">Habilidades interpersonales</option><option value="Técnica y datos">Técnica y datos</option><option value="Desempeño y resultados">Desempeño y resultados</option>
+            </select>
+          </div>
+          <div>
+            <label for="fc" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cursos asociados</label>
+            <select id="fc" value="{{cob}}" onChange="{{setCob}}" style="height: 44px; padding: 0 36px 0 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+              <option value="todas">Con y sin cursos</option><option value="con">Con cursos asociados</option><option value="sin">Sin cursos asociados</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: -8px">
+          <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+          <sc-if value="{{hayFiltros}}" hint-placeholder-val="{{false}}">
+            <button class="btn" onClick="{{limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button>
+          </sc-if>
+        </div>
+
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+          <table style="width: 100%; min-width: 1040px; border-collapse: collapse; font-size: 15px">
+            <thead>
+              <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Competencia</th>
+                <th scope="col" style="padding: 14px 12px; font-weight: 600">Tipo</th>
+                <th scope="col" style="padding: 14px 12px; font-weight: 600">Área formativa</th>
+                <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: center">Nivel requerido</th>
+                <th scope="col" style="padding: 14px 12px; font-weight: 600">Cursos asociados</th>
+                <th scope="col" style="padding: 14px 12px; font-weight: 600">Micro-contenidos asociados</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600; text-align: right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{filas}}" as="r" hint-placeholder-count="8">
+                <tr class="row" style="border-top: 1px solid var(--border)">
+                  <td style="padding: 12px 20px">
+                    <div style="font-weight: 600">{{r.nombre}}</div>
+                    <div style="font-size: 13px; color: var(--muted)">{{r.codigo}}</div>
+                  </td>
+                  <td style="padding: 12px"><span style="display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 13px; font-weight: 600">{{r.tipo}}</span></td>
+                  <td style="padding: 12px; color: var(--muted); font-size: 14px">{{r.area}}</td>
+                  <td style="padding: 12px; text-align: center"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 28px; padding: 0 8px; box-sizing: border-box; border-radius: 6px; background: var(--accent); color: var(--onaccent); font-size: 14px; font-weight: 700">{{r.nivel}}</span></td>
+                  <td style="padding: 12px">
+                    <sc-if value="{{r.sinCursos}}" hint-placeholder-val="{{false}}">
+                      <span style="display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--warnsoft); color: var(--warn); font-size: 13px; font-weight: 600">Sin cursos</span>
+                    </sc-if>
+                    <sc-if value="{{r.conCursos}}" hint-placeholder-val="{{true}}">
+                      <div style="font-weight: 600">{{r.cursosTxt}}</div>
+                      <div style="font-size: 13px; color: var(--muted); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.cursosPreview}}</div>
+                    </sc-if>
+                  </td>
+                  <td style="padding: 12px">
+                    <sc-if value="{{r.sinMicros}}" hint-placeholder-val="{{false}}">
+                      <span style="color: var(--muted); font-size: 14px">Sin micro-contenidos</span>
+                    </sc-if>
+                    <sc-if value="{{r.conMicros}}" hint-placeholder-val="{{true}}">
+                      <span style="font-weight: 600">{{r.microsTxt}}</span>
+                    </sc-if>
+                  </td>
+                  <td style="padding: 6px 12px 6px 20px; text-align: right; white-space: nowrap">
+                    <button class="btn" onClick="{{r.ver}}" aria-label="Ver detalle de {{r.nombre}}" style="height: 40px; padding: 0 12px; font-size: 14px">Ver detalle</button>
+                    <button class="ibtn" onClick="{{r.asociar}}" aria-label="Asociar curso a {{r.nombre}}" title="Asociar curso" style="margin-left: 4px">
+                      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                    </button>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <sc-if value="{{sinFilas}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted); border-top: 1px solid var(--border)">Ninguna competencia coincide con los filtros.</p>
+          </sc-if>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+
+  <sc-if value="{{panelAbierto}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end">
+      <button onClick="{{panel.cerrar}}" aria-label="Cerrar panel de detalle" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; background: rgba(8, 12, 16, 0.5); cursor: pointer"></button>
+      <aside role="dialog" aria-modal="true" aria-labelledby="so-titulo" style="position: relative; width: min(580px, 100%); height: 100%; box-sizing: border-box; background: var(--surface); color: var(--text); border-left: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: -12px 0 32px rgba(0, 0, 0, 0.18)">
+
+        <sc-if value="{{panel.verDetalle}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; min-height: 0; flex: 1">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border)">
+              <div style="min-width: 0">
+                <p style="margin: 0 0 4px; font-size: 13px; color: var(--muted)">{{panel.codigo}} · {{panel.area}}</p>
+                <h2 id="so-titulo" style="margin: 0; font-size: 22px; line-height: 1.25; letter-spacing: -0.01em">{{panel.nombre}}</h2>
+                <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+                  <span style="display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 13px; font-weight: 600">{{panel.tipo}}</span>
+                  <span style="font-size: 13px; color: var(--muted)">Nivel requerido</span>
+                  <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; padding: 0 6px; box-sizing: border-box; border-radius: 6px; background: var(--accent); color: var(--onaccent); font-size: 13px; font-weight: 700">{{panel.nivel}}</span>
+                </div>
+              </div>
+              <button class="ibtn" onClick="{{panel.cerrar}}" aria-label="Cerrar">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </button>
+            </div>
+
+            <div style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px">
+
+              <sc-if value="{{panel.hayAviso}}" hint-placeholder-val="{{false}}">
+                <p role="status" aria-live="polite" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--soft); color: var(--accent); font-size: 14px; font-weight: 600">{{panel.aviso}}</p>
+              </sc-if>
+
+              <section class="sec" style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px">
+                  <h3 style="margin: 0">Descripción</h3>
+                  <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted)">
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg>Estructura Empresarial · solo lectura
+                  </span>
+                </div>
+                <p style="margin: 0; font-size: 15px; line-height: 1.6">{{panel.descripcion}}</p>
+                <ol style="list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                  <sc-for list="{{panel.grados}}" as="g" hint-placeholder-count="4">
+                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 1.5">
+                      <span style="{{g.letraStyle}}">{{g.l}}</span>
+                      <span style="padding-top: 3px; color: var(--text)">{{g.texto}}</span>
+                    </li>
+                  </sc-for>
+                </ol>
+              </section>
+
+              <section class="sec" aria-labelledby="so-cursos">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px">
+                  <h3 id="so-cursos" style="margin: 0">Cursos asociados ({{panel.nCursos}})</h3>
+                  <button class="btn" onClick="{{panel.abrirCurso}}" style="height: 40px; padding: 0 12px; font-size: 14px">
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Asociar curso
+                  </button>
+                </div>
+                <sc-if value="{{panel.sinCursos}}" hint-placeholder-val="{{false}}">
+                  <p style="margin: 0; padding: 14px 16px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--muted)">Esta competencia aún no tiene cursos asociados.</p>
+                </sc-if>
+                <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                  <sc-for list="{{panel.cursos}}" as="c" hint-placeholder-count="3">
+                    <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg)">
+                      <div style="flex: 1; min-width: 0">
+                        <div style="font-size: 15px; font-weight: 600">{{c.nombre}}</div>
+                        <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: 13px; color: var(--muted)">
+                          <span style="{{c.badge}}">{{c.tipo}}</span>
+                          <span>{{c.duracion}}</span>
+                          <span>{{c.formador}}</span>
+                        </div>
+                      </div>
+                      <button class="ibtn" onClick="{{c.quitar}}" aria-label="Quitar {{c.nombre}}" title="Quitar" style="color: var(--danger)">
+                        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"></path></svg>
+                      </button>
+                    </li>
+                  </sc-for>
+                </ul>
+              </section>
+
+              <section class="sec" aria-labelledby="so-micros">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px">
+                  <h3 id="so-micros" style="margin: 0">Micro-contenidos asociados ({{panel.nMicros}})</h3>
+                  <button class="btn" onClick="{{panel.abrirMicro}}" style="height: 40px; padding: 0 12px; font-size: 14px">
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Asociar contenido
+                  </button>
+                </div>
+                <sc-if value="{{panel.sinMicros}}" hint-placeholder-val="{{false}}">
+                  <p style="margin: 0; padding: 14px 16px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--muted)">Esta competencia aún no tiene micro-contenidos asociados.</p>
+                </sc-if>
+                <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                  <sc-for list="{{panel.micros}}" as="c" hint-placeholder-count="2">
+                    <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg)">
+                      <div style="flex: 1; min-width: 0">
+                        <div style="font-size: 15px; font-weight: 600">{{c.nombre}}</div>
+                        <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: 13px; color: var(--muted)">
+                          <span style="{{c.badge}}">{{c.tipo}}</span>
+                          <span>{{c.duracion}}</span>
+                          <span>{{c.formador}}</span>
+                        </div>
+                      </div>
+                      <button class="ibtn" onClick="{{c.quitar}}" aria-label="Quitar {{c.nombre}}" title="Quitar" style="color: var(--danger)">
+                        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"></path></svg>
+                      </button>
+                    </li>
+                  </sc-for>
+                </ul>
+              </section>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border)">
+              <span style="font-size: 13px; color: var(--muted)">Los cambios se guardan al instante.</span>
+              <button class="btn btn-primary" onClick="{{panel.cerrar}}">Listo</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{panel.verSelector}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; min-height: 0; flex: 1">
+            <div style="display: flex; align-items: flex-start; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border)">
+              <button class="ibtn" onClick="{{panel.volver}}" aria-label="Volver al detalle">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>
+              </button>
+              <div style="min-width: 0">
+                <p style="margin: 0 0 4px; font-size: 13px; color: var(--muted)">{{panel.nombre}}</p>
+                <h2 id="so-titulo" style="margin: 0; font-size: 22px; line-height: 1.25; letter-spacing: -0.01em">{{panel.selTitulo}}</h2>
+              </div>
+            </div>
+            <div style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+              <p style="margin: 0; font-size: 14px; color: var(--muted)">{{panel.selAyuda}}</p>
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                <sc-for list="{{panel.disponibles}}" as="d" hint-placeholder-count="5">
+                  <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg)">
+                    <div style="flex: 1; min-width: 0">
+                      <div style="font-size: 15px; font-weight: 600">{{d.nombre}}</div>
+                      <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: 13px; color: var(--muted)">
+                        <span style="{{d.badge}}">{{d.tipo}}</span>
+                        <span>{{d.duracion}}</span>
+                        <span>{{d.formador}}</span>
+                        <span>{{d.otras}}</span>
+                      </div>
+                    </div>
+                    <button class="btn btn-primary" onClick="{{d.asociar}}" aria-label="Asociar {{d.nombre}}" style="height: 40px; padding: 0 14px; font-size: 14px">Asociar</button>
+                  </li>
+                </sc-for>
+              </ul>
+              <sc-if value="{{panel.sinDisponibles}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 0; padding: 16px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--muted)">Todos los recursos disponibles del módulo ya están asociados a esta competencia.</p>
+              </sc-if>
+            </div>
+            <div style="display: flex; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--border)">
+              <button class="btn" onClick="{{panel.volver}}">Volver al detalle</button>
+            </div>
+          </div>
+        </sc-if>
+      </aside>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = { dark: null, q: '', tipo: 'todos', area: 'todas', cob: 'todas', sel: null, selector: null, aviso: '', assoc: d.assoc };
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12' };
+    const tipoLight = {
+      'Curso': { bg: '#E3F2F0', fg: '#0B5A55' },
+      'E-learning': { bg: '#E4EDFB', fg: '#1F4E9C' },
+      'Taller': { bg: '#FDEFD9', fg: '#8A4B0B' },
+      'Codesarrollo': { bg: '#F0E7FA', fg: '#5B2E91' },
+      'Mentoring': { bg: '#FBE6EC', fg: '#9C2250' },
+      'Micro-contenido': { bg: '#ECEEF1', fg: '#3B4654' }
+    };
+    const tipoDark = {
+      'Curso': { bg: '#12302D', fg: '#7FE0D6' },
+      'E-learning': { bg: '#172A4A', fg: '#9DBEF5' },
+      'Taller': { bg: '#3A2A12', fg: '#F2C27A' },
+      'Codesarrollo': { bg: '#2C1D44', fg: '#CDA9F2' },
+      'Mentoring': { bg: '#40182A', fg: '#F2A6C0' },
+      'Micro-contenido': { bg: '#232B34', fg: '#B8C2CD' }
+    };
+    const areas = ['Liderazgo y gestión', 'Habilidades interpersonales', 'Técnica y datos', 'Desempeño y resultados'];
+    const recursos = {
+      R01: { id: 'R01', clase: 'curso', tipo: 'E-learning', nombre: 'Fundamentos de análisis con SQL', duracion: '12 h', formador: 'Ing. Lucía Vera' },
+      R02: { id: 'R02', clase: 'curso', tipo: 'Curso', nombre: 'Visualización de datos con tableros', duracion: '16 h', formador: 'Mg. Andrés Molina' },
+      R03: { id: 'R03', clase: 'curso', tipo: 'Curso', nombre: 'Estadística aplicada a la decisión', duracion: '20 h', formador: 'Dra. Paula Ortiz' },
+      R04: { id: 'R04', clase: 'curso', tipo: 'Taller', nombre: 'Comunicación asertiva en el trabajo', duracion: '8 h', formador: 'Ps. Marco Salazar' },
+      R05: { id: 'R05', clase: 'curso', tipo: 'Curso', nombre: 'Presentaciones que convencen: data storytelling', duracion: '10 h', formador: 'Mg. Daniela Cruz' },
+      R06: { id: 'R06', clase: 'curso', tipo: 'Curso', nombre: 'Liderazgo situacional', duracion: '24 h', formador: 'Dr. Esteban Rivas' },
+      R07: { id: 'R07', clase: 'curso', tipo: 'Mentoring', nombre: 'Mentoring con líderes senior', duracion: '12 h (6 sesiones)', formador: 'Ing. Carolina Lara' },
+      R08: { id: 'R08', clase: 'curso', tipo: 'Codesarrollo', nombre: 'Codesarrollo: casos reales de equipo', duracion: '8 h', formador: 'Ps. Marco Salazar' },
+      R09: { id: 'R09', clase: 'curso', tipo: 'E-learning', nombre: 'Trabajo en equipo ágil', duracion: '6 h', formador: 'Ing. Julián Torres' },
+      R10: { id: 'R10', clase: 'curso', tipo: 'E-learning', nombre: 'Planificación y gestión del tiempo', duracion: '5 h', formador: 'Mg. Daniela Cruz' },
+      R11: { id: 'R11', clase: 'curso', tipo: 'Curso', nombre: 'Metas OKR y orientación a resultados', duracion: '8 h', formador: 'Ing. Julián Torres' },
+      R12: { id: 'R12', clase: 'curso', tipo: 'Curso', nombre: 'Pensamiento crítico y análisis de problemas', duracion: '12 h', formador: 'Dra. Paula Ortiz' },
+      R13: { id: 'R13', clase: 'curso', tipo: 'E-learning', nombre: 'Aprendizaje autónomo y mejora continua', duracion: '4 h', formador: 'Equipo de Formación' },
+      R14: { id: 'R14', clase: 'curso', tipo: 'Taller', nombre: 'Negociación efectiva', duracion: '12 h', formador: 'Dr. Esteban Rivas' },
+      M01: { id: 'M01', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Guía rápida: JOINs y agregaciones', duracion: '10 min', formador: 'Ing. Lucía Vera' },
+      M02: { id: 'M02', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Buenas prácticas para un gráfico claro', duracion: '8 min', formador: 'Mg. Andrés Molina' },
+      M03: { id: 'M03', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Escucha activa en 5 pasos', duracion: '6 min', formador: 'Ps. Marco Salazar' },
+      M04: { id: 'M04', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Feedback SBI en una página', duracion: '7 min', formador: 'Ps. Marco Salazar' },
+      M05: { id: 'M05', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Matriz de Eisenhower para priorizar', duracion: '5 min', formador: 'Mg. Daniela Cruz' },
+      M06: { id: 'M06', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Preguntas para delegar mejor', duracion: '6 min', formador: 'Dr. Esteban Rivas' },
+      M07: { id: 'M07', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Sesgos cognitivos al decidir', duracion: '9 min', formador: 'Dra. Paula Ortiz' },
+      M08: { id: 'M08', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Retrospectivas efectivas', duracion: '8 min', formador: 'Ing. Julián Torres' }
+    };
+    const competencias = [
+      { id: 'COM-001', nombre: 'Trabajo en equipo', tipo: 'Cardinal', area: 'Habilidades interpersonales', nivel: 'C', desc: 'Colabora con otros para lograr objetivos comunes, compartiendo información y apoyando a sus compañeros.', grados: ['Construye equipos cohesionados y resuelve conflictos entre áreas.', 'Coordina esfuerzos con otros equipos y comparte conocimiento de forma proactiva.', 'Colabora con su equipo y cumple los acuerdos asumidos.', 'Participa cuando se lo solicitan y requiere seguimiento para coordinarse.'] },
+      { id: 'COM-002', nombre: 'Orientación a resultados', tipo: 'Cardinal', area: 'Desempeño y resultados', nivel: 'B', desc: 'Cumple metas con calidad y en los plazos acordados.', grados: ['Supera metas exigentes y rediseña procesos para elevar los resultados de la unidad.', 'Cumple metas de forma consistente y anticipa desvíos.', 'Cumple las metas asignadas con seguimiento periódico.', 'Necesita supervisión cercana para alcanzar los resultados.'] },
+      { id: 'COM-003', nombre: 'Liderazgo', tipo: 'Gerencial', area: 'Liderazgo y gestión', nivel: 'A', desc: 'Inspira y guía a otros hacia una visión compartida.', grados: ['Moviliza a la organización tras una visión y forma a otros líderes.', 'Dirige equipos, delega con criterio y desarrolla a su gente.', 'Guía al equipo en tareas concretas y da retroalimentación.', 'Orienta a sus compañeros de forma ocasional.'] },
+      { id: 'COM-004', nombre: 'Análisis de datos', tipo: 'Específica', area: 'Técnica y datos', nivel: 'A', desc: 'Interpreta información cuantitativa para sustentar decisiones.', grados: ['Diseña modelos y marcos analíticos que orientan decisiones estratégicas.', 'Integra múltiples fuentes y extrae conclusiones accionables.', 'Aplica técnicas estándar y construye reportes con supervisión ocasional.', 'Lee reportes existentes y realiza cálculos básicos.'] },
+      { id: 'COM-005', nombre: 'Comunicación efectiva', tipo: 'Cardinal', area: 'Habilidades interpersonales', nivel: 'B', desc: 'Transmite ideas con claridad y escucha con atención.', grados: ['Adapta el mensaje a audiencias complejas y negocia con influencia.', 'Comunica con claridad ante distintas audiencias y maneja objeciones.', 'Expresa ideas con claridad en su entorno directo.', 'Comunica lo esencial; requiere apoyo para estructurar mensajes.'] },
+      { id: 'COM-006', nombre: 'Gestión del tiempo', tipo: 'Específica', area: 'Desempeño y resultados', nivel: 'C', desc: 'Prioriza y organiza su trabajo para cumplir plazos.', grados: ['Planifica portafolios de trabajo y optimiza el tiempo de otros.', 'Planifica a mediano plazo y renegocia prioridades cuando es necesario.', 'Organiza sus tareas semanales y cumple sus plazos.', 'Cumple plazos con recordatorios y apoyo.'] },
+      { id: 'COM-007', nombre: 'Gestión del cambio', tipo: 'Gerencial', area: 'Liderazgo y gestión', nivel: 'A', desc: 'Conduce a las personas a través de transformaciones organizacionales.', grados: ['Lidera transformaciones de alto impacto y gestiona la resistencia.', 'Planifica e implementa cambios en su área.', 'Se adapta a los cambios y apoya su implementación.', 'Acepta los cambios con acompañamiento.'] },
+      { id: 'COM-008', nombre: 'Pensamiento analítico', tipo: 'Específica', area: 'Técnica y datos', nivel: 'A', desc: 'Descompone problemas complejos para identificar causas y alternativas.', grados: ['Aborda problemas ambiguos y anticipa efectos sistémicos.', 'Identifica causas raíz y compara alternativas con criterios claros.', 'Analiza problemas conocidos siguiendo métodos establecidos.', 'Reconoce problemas simples y escala los complejos.'] },
+      { id: 'COM-009', nombre: 'Aprendizaje continuo', tipo: 'Específica', area: 'Técnica y datos', nivel: 'B', desc: 'Busca activamente nuevos conocimientos y los aplica en su trabajo.', grados: ['Crea cultura de aprendizaje y transfiere conocimiento al equipo.', 'Planifica su desarrollo y aplica lo aprendido de forma sistemática.', 'Se capacita cuando se le propone y aplica lo aprendido.', 'Aprende lo indispensable para su función.'] },
+      { id: 'COM-010', nombre: 'Negociación', tipo: 'Específica', area: 'Habilidades interpersonales', nivel: 'A', desc: 'Alcanza acuerdos favorables y sostenibles con otras partes.', grados: ['Cierra acuerdos complejos de alto valor preservando la relación.', 'Prepara estrategias y logra acuerdos beneficiosos para ambas partes.', 'Negocia en situaciones conocidas con guías definidas.', 'Requiere apoyo para sostener posiciones en una negociación.'] },
+      { id: 'COM-011', nombre: 'Orientación al cliente', tipo: 'Cardinal', area: 'Desempeño y resultados', nivel: 'A', desc: 'Entiende y anticipa las necesidades de clientes internos y externos.', grados: ['Anticipa necesidades y rediseña la experiencia del cliente.', 'Resuelve necesidades de forma proactiva y da seguimiento.', 'Atiende los requerimientos con cortesía y oportunidad.', 'Atiende solicitudes básicas.'] },
+      { id: 'COM-012', nombre: 'Integridad', tipo: 'Cardinal', area: 'Habilidades interpersonales', nivel: 'B', desc: 'Actúa con ética, honestidad y coherencia.', grados: ['Es referente ético y promueve la cultura de integridad.', 'Actúa con coherencia incluso bajo presión y señala desvíos.', 'Cumple las normas y compromisos asumidos.', 'Cumple las normas con recordatorios.'] }
+    ];
+    const assoc = {
+      'COM-001': ['R09', 'R08', 'M08'],
+      'COM-002': ['R11', 'R10', 'M05'],
+      'COM-003': ['R06', 'R07', 'R08', 'M06'],
+      'COM-004': ['R01', 'R02', 'R03', 'M01', 'M02'],
+      'COM-005': ['R04', 'R05', 'R08', 'M03', 'M04'],
+      'COM-006': ['R10', 'M05'],
+      'COM-007': [],
+      'COM-008': ['R12', 'R03', 'M07'],
+      'COM-009': ['R13'],
+      'COM-010': ['R14'],
+      'COM-011': [],
+      'COM-012': []
+    };
+    return { light, dark, tipoLight, tipoDark, areas, recursos, competencias, assoc };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const norm = (x) => String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    const badge = (tipo) => 'display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:' + tp[tipo].bg + ';color:' + tp[tipo].fg + ';';
+    const assoc = s.assoc;
+    const rec = d.recursos;
+    const comps = d.competencias;
+    const de = (cid, clase) => assoc[cid].map((id) => rec[id]).filter((r) => r.clase === clase);
+    const plural = (n, a, b) => n + ' ' + (n === 1 ? a : b);
+
+    // cobertura
+    const total = comps.length;
+    const cubiertas = comps.filter((c) => assoc[c.id].length > 0).length;
+    const pct = Math.round((cubiertas * 100) / total);
+    const barra = (p, h) => 'height:100%;width:' + p + '%;background:var(--accent);border-radius:999px;';
+    const cobertura = {
+      pct,
+      texto: cubiertas + ' de ' + total + ' competencias',
+      barStyle: barra(pct),
+      sinTexto: total - cubiertas === 0 ? 'Todas las competencias tienen recursos.' : plural(total - cubiertas, 'competencia sin recursos asociados', 'competencias sin recursos asociados')
+    };
+    const areasCob = d.areas.map((a) => {
+      const cs = comps.filter((c) => c.area === a);
+      const n = cs.filter((c) => assoc[c.id].length > 0).length;
+      const p = cs.length ? Math.round((n * 100) / cs.length) : 0;
+      return { nombre: a, texto: n + ' de ' + cs.length, pct: p, barStyle: barra(p) };
+    });
+
+    // filtros
+    const nq = norm(s.q);
+    const filtradas = comps.filter((c) => {
+      if (nq && !(norm(c.nombre).includes(nq) || norm(c.id).includes(nq))) return false;
+      if (s.tipo !== 'todos' && c.tipo !== s.tipo) return false;
+      if (s.area !== 'todas' && c.area !== s.area) return false;
+      const nCur = de(c.id, 'curso').length;
+      if (s.cob === 'con' && nCur === 0) return false;
+      if (s.cob === 'sin' && nCur > 0) return false;
+      return true;
+    });
+    const filas = filtradas.map((c) => {
+      const cur = de(c.id, 'curso');
+      const mic = de(c.id, 'micro');
+      const prev = cur.length > 1 ? cur[0].nombre + ' y ' + (cur.length - 1) + (cur.length === 2 ? ' más' : ' más') : (cur[0] ? cur[0].nombre : '');
+      return {
+        codigo: c.id, nombre: c.nombre, tipo: c.tipo, area: c.area, nivel: c.nivel,
+        sinCursos: cur.length === 0, conCursos: cur.length > 0,
+        cursosTxt: plural(cur.length, 'curso', 'cursos'), cursosPreview: prev,
+        sinMicros: mic.length === 0, conMicros: mic.length > 0,
+        microsTxt: plural(mic.length, 'micro-contenido', 'micro-contenidos'),
+        ver: () => this.setState({ sel: c.id, selector: null, aviso: '' }),
+        asociar: () => this.setState({ sel: c.id, selector: 'curso', aviso: '' })
+      };
+    });
+
+    // panel
+    const selId = s.sel || comps[0].id;
+    const c = comps.find((x) => x.id === selId);
+    const cur = de(c.id, 'curso');
+    const mic = de(c.id, 'micro');
+    const quitar = (r) => () => {
+      const next = Object.assign({}, this.state.assoc);
+      next[c.id] = next[c.id].filter((id) => id !== r.id);
+      this.setState({ assoc: next, aviso: 'Se quitó «' + r.nombre + '».' });
+    };
+    const agregar = (r) => () => {
+      const next = Object.assign({}, this.state.assoc);
+      next[c.id] = next[c.id].concat([r.id]);
+      this.setState({ assoc: next, selector: null, aviso: 'Se asoció «' + r.nombre + '».' });
+    };
+    const item = (r) => ({ nombre: r.nombre, tipo: r.tipo, badge: badge(r.tipo), duracion: r.duracion, formador: r.formador, quitar: quitar(r) });
+    const clasSel = s.selector === 'micro' ? 'micro' : 'curso';
+    const disponibles = Object.keys(rec).map((k) => rec[k]).filter((r) => r.clase === clasSel && assoc[c.id].indexOf(r.id) === -1).map((r) => {
+      const usos = comps.filter((x) => x.id !== c.id && assoc[x.id].indexOf(r.id) !== -1).length;
+      return { nombre: r.nombre, tipo: r.tipo, badge: badge(r.tipo), duracion: r.duracion, formador: r.formador, otras: usos > 0 ? 'En ' + plural(usos, 'competencia más', 'competencias más') : 'Sin otras competencias', asociar: agregar(r) };
+    });
+    const letras = ['A', 'B', 'C', 'D'];
+    const grados = letras.map((l, i) => {
+      const esReq = l === c.nivel;
+      const base = 'flex:0 0 28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;box-sizing:border-box;';
+      return { l, texto: c.grados[i] + (esReq ? ' (nivel requerido)' : ''), letraStyle: base + (esReq ? 'background:var(--accent);color:var(--onaccent);' : 'background:var(--soft);color:var(--accent);') };
+    });
+    const panel = {
+      codigo: c.id, nombre: c.nombre, tipo: c.tipo, area: c.area, nivel: c.nivel, descripcion: c.desc, grados,
+      nCursos: cur.length, nMicros: mic.length,
+      sinCursos: cur.length === 0, sinMicros: mic.length === 0,
+      cursos: cur.map(item), micros: mic.map(item),
+      verDetalle: s.selector === null, verSelector: s.selector !== null,
+      selTitulo: clasSel === 'micro' ? 'Asociar micro-contenido' : 'Asociar curso',
+      selAyuda: clasSel === 'micro' ? 'Micro-contenidos disponibles en el módulo de Desarrollo y Formación.' : 'Cursos y actividades formativas disponibles en el módulo. Un mismo curso puede desarrollar varias competencias.',
+      disponibles, sinDisponibles: disponibles.length === 0,
+      aviso: s.aviso, hayAviso: s.aviso !== '',
+      cerrar: () => this.setState({ sel: null, selector: null, aviso: '' }),
+      volver: () => this.setState({ selector: null }),
+      abrirCurso: () => this.setState({ selector: 'curso', aviso: '' }),
+      abrirMicro: () => this.setState({ selector: 'micro', aviso: '' })
+    };
+
+    const hayFiltros = s.q !== '' || s.tipo !== 'todos' || s.area !== 'todas' || s.cob !== 'todas';
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      cobertura, areasCob, filas, sinFilas: filas.length === 0,
+      resumen: 'Mostrando ' + filas.length + ' de ' + total + ' competencias',
+      q: s.q, tipo: s.tipo, area: s.area, cob: s.cob, hayFiltros,
+      setQ: (e) => this.setState({ q: e.target.value }),
+      setTipo: (e) => this.setState({ tipo: e.target.value }),
+      setArea: (e) => this.setState({ area: e.target.value }),
+      setCob: (e) => this.setState({ cob: e.target.value }),
+      limpiar: () => this.setState({ q: '', tipo: 'todos', area: 'todas', cob: 'todas' }),
+      verSinCobertura: () => this.setState({ q: '', tipo: 'todos', area: 'todas', cob: 'sin' }),
+      panelAbierto: s.sel !== null,
+      panel
+    };
+  }
+}
+</script>
+</body>
+</html>

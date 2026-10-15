@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Catálogo formativo — Colaborador</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.card:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.card{display:flex;flex-direction:column;gap:12px;width:100%;box-sizing:border-box;padding:16px 20px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.card:hover{border-color:var(--accent);background:var(--soft)}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.sec h3{margin:0 0 10px;font-size:15px}
+</style>
+</helmet>
+<div style="min-height: 1500px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">DP</span>
+      <span style="font-size: 14px; font-weight: 600">Diego Paredes</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>Mi perfil</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <!-- ===== LISTA ===== -->
+        <sc-if value="{{vistaLista}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 24px">
+
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+              <div>
+                <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+                <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Catálogo formativo</h1>
+                <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Cursos y contenidos para desarrollar tus competencias · Analista de datos (PU-014)</p>
+              </div>
+              <a class="btn" href="CatalogoAdmin.dc.html">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como administrador
+              </a>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; font-size: 13px; color: var(--muted)">
+              <span style="font-weight: 600; color: var(--text)">Niveles A–D</span>
+              <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 16px; height: 16px; border-radius: 50%; background: var(--accent)"></span>Tu nivel actual</span>
+              <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent)"></span>Nivel requerido (si tienes brecha)</span>
+              <span>A es el nivel más alto</span>
+            </div>
+
+            <section aria-labelledby="rec-t" style="background: var(--soft); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; align-items: flex-start; gap: 12px">
+                <span style="flex: 0 0 40px; height: 40px; border-radius: 10px; background: var(--accent); color: var(--onaccent); display: inline-flex; align-items: center; justify-content: center">
+                  <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.5"></circle></svg>
+                </span>
+                <div>
+                  <h2 id="rec-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">Recomendados para cerrar mis brechas</h2>
+                  <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">{{recResumen}}</p>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+                <sc-for list="{{recomendados}}" as="r" hint-placeholder-count="3">
+                  <button class="card" onClick="{{r.abrir}}" aria-label="{{r.aria}}">
+                    <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
+                      <span style="font-size: 17px; font-weight: 700; letter-spacing: -0.01em">{{r.nombre}}</span>
+                      <span style="flex: 0 0 auto; padding: 3px 10px; border-radius: 999px; background: var(--warnsoft); color: var(--warn); font-size: 12px; font-weight: 700">{{r.brecha}}</span>
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 6px">
+                      <sc-for list="{{r.dots}}" as="dt" hint-placeholder-count="4"><span style="{{dt.style}}">{{dt.l}}</span></sc-for>
+                    </span>
+                    <span style="display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border)">
+                      <span style="font-size: 12px; color: var(--muted)">Para empezar</span>
+                      <span style="font-size: 14px; font-weight: 600">{{r.sugerido}}</span>
+                      <span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 13px; color: var(--muted)">
+                        <span style="{{r.sugeridoBadge}}">{{r.sugeridoTipo}}</span><span>{{r.sugeridoDur}}</span>
+                      </span>
+                    </span>
+                    <span style="font-size: 14px; font-weight: 600; color: var(--accent)">{{r.cursosTxt}} →</span>
+                  </button>
+                </sc-for>
+              </div>
+              <sc-if value="{{haySinCursos}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 0; font-size: 13px; color: var(--muted)">{{sinCursosTxt}}</p>
+              </sc-if>
+            </section>
+
+            <sc-for list="{{areas}}" as="a" hint-placeholder-count="4">
+              <section aria-labelledby="{{a.hid}}" style="display: flex; flex-direction: column; gap: 12px">
+                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px">
+                  <h2 id="{{a.hid}}" style="margin: 0; font-size: 18px; letter-spacing: -0.01em">{{a.nombre}}</h2>
+                  <span style="font-size: 13px; color: var(--muted)">{{a.texto}}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px">
+                  <sc-for list="{{a.cards}}" as="c" hint-placeholder-count="3">
+                    <button class="card" onClick="{{c.abrir}}" aria-label="{{c.aria}}">
+                      <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
+                        <span style="font-size: 16px; font-weight: 700">{{c.nombre}}</span>
+                        <span style="flex: 0 0 auto; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 12px; font-weight: 600">{{c.tipo}}</span>
+                      </span>
+                      <span style="display: flex; align-items: center; gap: 6px">
+                        <sc-for list="{{c.dots}}" as="dt" hint-placeholder-count="4"><span style="{{dt.style}}">{{dt.l}}</span></sc-for>
+                      </span>
+                      <span style="{{c.cursosStyle}}">{{c.cursosTxt}}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </section>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- ===== DETALLE ===== -->
+        <sc-if value="{{vistaDetalle}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 24px">
+            <div>
+              <button class="btn" onClick="{{det.volver}}" style="border-color: transparent; padding: 0 12px 0 8px; color: var(--accent)">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Volver al catálogo
+              </button>
+            </div>
+
+            <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+              <div>
+                <p style="margin: 0 0 4px; font-size: 13px; color: var(--muted)">{{det.area}}</p>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+                  <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">{{det.nombre}}</h1>
+                  <span style="padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 13px; font-weight: 600">{{det.tipo}}</span>
+                </div>
+                <p style="margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: var(--muted); max-width: 720px">{{det.desc}}</p>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px">
+                <span style="display: flex; align-items: center; gap: 8px" role="img" aria-label="{{det.aria}}">
+                  <sc-for list="{{det.dots}}" as="dt" hint-placeholder-count="4"><span style="{{dt.style}}">{{dt.l}}</span></sc-for>
+                </span>
+                <span style="font-size: 14px; color: var(--muted)">{{det.nivelTxt}}</span>
+              </div>
+              <sc-if value="{{det.hayBrecha}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 0; padding: 12px 16px; border-radius: 10px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600; line-height: 1.5">{{det.brechaTxt}}</p>
+              </sc-if>
+              <ol style="list-style: none; margin: 0; padding: 16px 0 0; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+                <sc-for list="{{det.grados}}" as="g" hint-placeholder-count="4">
+                  <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: var(--muted)">
+                    <span style="{{g.letraStyle}}">{{g.l}}</span>
+                    <span style="padding-top: 2px">{{g.texto}}<b style="color: var(--text)">{{g.marca}}</b></span>
+                  </li>
+                </sc-for>
+              </ol>
+            </section>
+
+            <section class="sec" aria-labelledby="d-cursos">
+              <h3 id="d-cursos" style="font-size: 18px">Cursos ({{det.nCursos}})</h3>
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{det.cursos}}" as="r" hint-placeholder-count="3">
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 16px 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface)">
+                    <div style="flex: 1 1 320px; min-width: 0">
+                      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                        <span style="font-size: 16px; font-weight: 600">{{r.nombre}}</span>
+                        <sc-if value="{{r.hayEstado}}" hint-placeholder-val="{{false}}"><span style="{{r.estadoStyle}}">{{r.estado}}</span></sc-if>
+                      </div>
+                      <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 13px; color: var(--muted)">
+                        <span style="{{r.badge}}">{{r.tipo}}</span>
+                        <span style="display: inline-flex; align-items: center; gap: 4px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{r.duracion}}</span>
+                        <span style="display: inline-flex; align-items: center; gap: 4px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>{{r.formador}}</span>
+                      </div>
+                    </div>
+                    <button class="{{r.btnClass}}" onClick="{{r.accion}}" aria-label="{{r.btn}} {{r.nombre}}" style="min-width: 104px">{{r.btn}}</button>
+                  </li>
+                </sc-for>
+              </ul>
+            </section>
+
+            <section class="sec" aria-labelledby="d-micros">
+              <h3 id="d-micros" style="font-size: 18px">Micro-contenidos ({{det.nMicros}})</h3>
+              <sc-if value="{{det.sinMicros}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 0; padding: 16px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--muted)">Esta competencia aún no tiene micro-contenidos.</p>
+              </sc-if>
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{det.micros}}" as="r" hint-placeholder-count="2">
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 14px 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface)">
+                    <div style="flex: 1 1 320px; min-width: 0">
+                      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                        <span style="font-size: 16px; font-weight: 600">{{r.nombre}}</span>
+                        <sc-if value="{{r.hayEstado}}" hint-placeholder-val="{{false}}"><span style="{{r.estadoStyle}}">{{r.estado}}</span></sc-if>
+                      </div>
+                      <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 13px; color: var(--muted)">
+                        <span style="{{r.badge}}">{{r.tipo}}</span>
+                        <span style="display: inline-flex; align-items: center; gap: 4px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{r.duracion}}</span>
+                        <span style="display: inline-flex; align-items: center; gap: 4px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>{{r.formador}}</span>
+                      </div>
+                    </div>
+                    <button class="{{r.btnClass}}" onClick="{{r.accion}}" aria-label="{{r.btn}} {{r.nombre}}" style="min-width: 104px">{{r.btn}}</button>
+                  </li>
+                </sc-for>
+              </ul>
+            </section>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { dark: null, detalle: null, prog: { R01: 'completado', M01: 'completado', R05: 'en-curso', R09: 'completado' } };
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12' };
+    const tipoLight = {
+      'Curso': { bg: '#E3F2F0', fg: '#0B5A55' }, 'E-learning': { bg: '#E4EDFB', fg: '#1F4E9C' }, 'Taller': { bg: '#FDEFD9', fg: '#8A4B0B' },
+      'Codesarrollo': { bg: '#F0E7FA', fg: '#5B2E91' }, 'Mentoring': { bg: '#FBE6EC', fg: '#9C2250' }, 'Micro-contenido': { bg: '#ECEEF1', fg: '#3B4654' }
+    };
+    const tipoDark = {
+      'Curso': { bg: '#12302D', fg: '#7FE0D6' }, 'E-learning': { bg: '#172A4A', fg: '#9DBEF5' }, 'Taller': { bg: '#3A2A12', fg: '#F2C27A' },
+      'Codesarrollo': { bg: '#2C1D44', fg: '#CDA9F2' }, 'Mentoring': { bg: '#40182A', fg: '#F2A6C0' }, 'Micro-contenido': { bg: '#232B34', fg: '#B8C2CD' }
+    };
+    const areas = ['Liderazgo y gestión', 'Habilidades interpersonales', 'Técnica y datos', 'Desempeño y resultados'];
+    const recursos = {
+      R01: { id: 'R01', clase: 'curso', tipo: 'E-learning', nombre: 'Fundamentos de análisis con SQL', duracion: '12 h', formador: 'Ing. Lucía Vera' },
+      R02: { id: 'R02', clase: 'curso', tipo: 'Curso', nombre: 'Visualización de datos con tableros', duracion: '16 h', formador: 'Mg. Andrés Molina' },
+      R03: { id: 'R03', clase: 'curso', tipo: 'Curso', nombre: 'Estadística aplicada a la decisión', duracion: '20 h', formador: 'Dra. Paula Ortiz' },
+      R04: { id: 'R04', clase: 'curso', tipo: 'Taller', nombre: 'Comunicación asertiva en el trabajo', duracion: '8 h', formador: 'Ps. Marco Salazar' },
+      R05: { id: 'R05', clase: 'curso', tipo: 'Curso', nombre: 'Presentaciones que convencen: data storytelling', duracion: '10 h', formador: 'Mg. Daniela Cruz' },
+      R06: { id: 'R06', clase: 'curso', tipo: 'Curso', nombre: 'Liderazgo situacional', duracion: '24 h', formador: 'Dr. Esteban Rivas' },
+      R07: { id: 'R07', clase: 'curso', tipo: 'Mentoring', nombre: 'Mentoring con líderes senior', duracion: '12 h (6 sesiones)', formador: 'Ing. Carolina Lara' },
+      R08: { id: 'R08', clase: 'curso', tipo: 'Codesarrollo', nombre: 'Codesarrollo: casos reales de equipo', duracion: '8 h', formador: 'Ps. Marco Salazar' },
+      R09: { id: 'R09', clase: 'curso', tipo: 'E-learning', nombre: 'Trabajo en equipo ágil', duracion: '6 h', formador: 'Ing. Julián Torres' },
+      R10: { id: 'R10', clase: 'curso', tipo: 'E-learning', nombre: 'Planificación y gestión del tiempo', duracion: '5 h', formador: 'Mg. Daniela Cruz' },
+      R11: { id: 'R11', clase: 'curso', tipo: 'Curso', nombre: 'Metas OKR y orientación a resultados', duracion: '8 h', formador: 'Ing. Julián Torres' },
+      R12: { id: 'R12', clase: 'curso', tipo: 'Curso', nombre: 'Pensamiento crítico y análisis de problemas', duracion: '12 h', formador: 'Dra. Paula Ortiz' },
+      R13: { id: 'R13', clase: 'curso', tipo: 'E-learning', nombre: 'Aprendizaje autónomo y mejora continua', duracion: '4 h', formador: 'Equipo de Formación' },
+      R14: { id: 'R14', clase: 'curso', tipo: 'Taller', nombre: 'Negociación efectiva', duracion: '12 h', formador: 'Dr. Esteban Rivas' },
+      M01: { id: 'M01', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Guía rápida: JOINs y agregaciones', duracion: '10 min', formador: 'Ing. Lucía Vera' },
+      M02: { id: 'M02', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Buenas prácticas para un gráfico claro', duracion: '8 min', formador: 'Mg. Andrés Molina' },
+      M03: { id: 'M03', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Escucha activa en 5 pasos', duracion: '6 min', formador: 'Ps. Marco Salazar' },
+      M04: { id: 'M04', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Feedback SBI en una página', duracion: '7 min', formador: 'Ps. Marco Salazar' },
+      M05: { id: 'M05', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Matriz de Eisenhower para priorizar', duracion: '5 min', formador: 'Mg. Daniela Cruz' },
+      M06: { id: 'M06', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Preguntas para delegar mejor', duracion: '6 min', formador: 'Dr. Esteban Rivas' },
+      M07: { id: 'M07', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Sesgos cognitivos al decidir', duracion: '9 min', formador: 'Dra. Paula Ortiz' },
+      M08: { id: 'M08', clase: 'micro', tipo: 'Micro-contenido', nombre: 'Retrospectivas efectivas', duracion: '8 min', formador: 'Ing. Julián Torres' }
+    };
+    // act = nivel actual del colaborador; req = nivel requerido por su puesto (null si el puesto no lo exige)
+    const competencias = [
+      { id: 'COM-001', nombre: 'Trabajo en equipo', tipo: 'Cardinal', area: 'Habilidades interpersonales', act: 'C', req: 'C', desc: 'Colabora con otros para lograr objetivos comunes, compartiendo información y apoyando a sus compañeros.', grados: ['Construye equipos cohesionados y resuelve conflictos entre áreas.', 'Coordina esfuerzos con otros equipos y comparte conocimiento de forma proactiva.', 'Colabora con su equipo y cumple los acuerdos asumidos.', 'Participa cuando se lo solicitan y requiere seguimiento para coordinarse.'], rec: ['R09', 'R08', 'M08'] },
+      { id: 'COM-002', nombre: 'Orientación a resultados', tipo: 'Cardinal', area: 'Desempeño y resultados', act: 'B', req: 'B', desc: 'Cumple metas con calidad y en los plazos acordados.', grados: ['Supera metas exigentes y rediseña procesos para elevar los resultados de la unidad.', 'Cumple metas de forma consistente y anticipa desvíos.', 'Cumple las metas asignadas con seguimiento periódico.', 'Necesita supervisión cercana para alcanzar los resultados.'], rec: ['R11', 'R10', 'M05'] },
+      { id: 'COM-003', nombre: 'Liderazgo', tipo: 'Gerencial', area: 'Liderazgo y gestión', act: 'D', req: null, desc: 'Inspira y guía a otros hacia una visión compartida.', grados: ['Moviliza a la organización tras una visión y forma a otros líderes.', 'Dirige equipos, delega con criterio y desarrolla a su gente.', 'Guía al equipo en tareas concretas y da retroalimentación.', 'Orienta a sus compañeros de forma ocasional.'], rec: ['R06', 'R07', 'R08', 'M06'] },
+      { id: 'COM-004', nombre: 'Análisis de datos', tipo: 'Específica', area: 'Técnica y datos', act: 'C', req: 'A', desc: 'Interpreta información cuantitativa para sustentar decisiones.', grados: ['Diseña modelos y marcos analíticos que orientan decisiones estratégicas.', 'Integra múltiples fuentes y extrae conclusiones accionables.', 'Aplica técnicas estándar y construye reportes con supervisión ocasional.', 'Lee reportes existentes y realiza cálculos básicos.'], rec: ['R01', 'R02', 'R03', 'M01', 'M02'] },
+      { id: 'COM-005', nombre: 'Comunicación efectiva', tipo: 'Cardinal', area: 'Habilidades interpersonales', act: 'C', req: 'B', desc: 'Transmite ideas con claridad y escucha con atención.', grados: ['Adapta el mensaje a audiencias complejas y negocia con influencia.', 'Comunica con claridad ante distintas audiencias y maneja objeciones.', 'Expresa ideas con claridad en su entorno directo.', 'Comunica lo esencial; requiere apoyo para estructurar mensajes.'], rec: ['R04', 'R05', 'R08', 'M03', 'M04'] },
+      { id: 'COM-006', nombre: 'Gestión del tiempo', tipo: 'Específica', area: 'Desempeño y resultados', act: 'C', req: null, desc: 'Prioriza y organiza su trabajo para cumplir plazos.', grados: ['Planifica portafolios de trabajo y optimiza el tiempo de otros.', 'Planifica a mediano plazo y renegocia prioridades cuando es necesario.', 'Organiza sus tareas semanales y cumple sus plazos.', 'Cumple plazos con recordatorios y apoyo.'], rec: ['R10', 'M05'] },
+      { id: 'COM-007', nombre: 'Gestión del cambio', tipo: 'Gerencial', area: 'Liderazgo y gestión', act: 'D', req: null, desc: 'Conduce a las personas a través de transformaciones organizacionales.', grados: ['Lidera transformaciones de alto impacto y gestiona la resistencia.', 'Planifica e implementa cambios en su área.', 'Se adapta a los cambios y apoya su implementación.', 'Acepta los cambios con acompañamiento.'], rec: [] },
+      { id: 'COM-008', nombre: 'Pensamiento analítico', tipo: 'Específica', area: 'Técnica y datos', act: 'B', req: 'A', desc: 'Descompone problemas complejos para identificar causas y alternativas.', grados: ['Aborda problemas ambiguos y anticipa efectos sistémicos.', 'Identifica causas raíz y compara alternativas con criterios claros.', 'Analiza problemas conocidos siguiendo métodos establecidos.', 'Reconoce problemas simples y escala los complejos.'], rec: ['R12', 'R03', 'M07'] },
+      { id: 'COM-009', nombre: 'Aprendizaje continuo', tipo: 'Específica', area: 'Técnica y datos', act: 'C', req: null, desc: 'Busca activamente nuevos conocimientos y los aplica en su trabajo.', grados: ['Crea cultura de aprendizaje y transfiere conocimiento al equipo.', 'Planifica su desarrollo y aplica lo aprendido de forma sistemática.', 'Se capacita cuando se le propone y aplica lo aprendido.', 'Aprende lo indispensable para su función.'], rec: ['R13'] },
+      { id: 'COM-010', nombre: 'Negociación', tipo: 'Específica', area: 'Habilidades interpersonales', act: 'D', req: null, desc: 'Alcanza acuerdos favorables y sostenibles con otras partes.', grados: ['Cierra acuerdos complejos de alto valor preservando la relación.', 'Prepara estrategias y logra acuerdos beneficiosos para ambas partes.', 'Negocia en situaciones conocidas con guías definidas.', 'Requiere apoyo para sostener posiciones en una negociación.'], rec: ['R14'] },
+      { id: 'COM-011', nombre: 'Orientación al cliente', tipo: 'Cardinal', area: 'Desempeño y resultados', act: 'C', req: null, desc: 'Entiende y anticipa las necesidades de clientes internos y externos.', grados: ['Anticipa necesidades y rediseña la experiencia del cliente.', 'Resuelve necesidades de forma proactiva y da seguimiento.', 'Atiende los requerimientos con cortesía y oportunidad.', 'Atiende solicitudes básicas.'], rec: [] },
+      { id: 'COM-012', nombre: 'Integridad', tipo: 'Cardinal', area: 'Habilidades interpersonales', act: 'C', req: 'B', desc: 'Actúa con ética, honestidad y coherencia.', grados: ['Es referente ético y promueve la cultura de integridad.', 'Actúa con coherencia incluso bajo presión y señala desvíos.', 'Cumple las normas y compromisos asumidos.', 'Cumple las normas con recordatorios.'], rec: [] }
+    ];
+    return { light, dark, tipoLight, tipoDark, areas, recursos, competencias };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const rec = d.recursos;
+    const letras = ['A', 'B', 'C', 'D'];
+    const idx = (l) => letras.indexOf(l);
+    const plural = (n, a, b) => n + ' ' + (n === 1 ? a : b);
+    const badge = (tipo) => 'display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:' + tp[tipo].bg + ';color:' + tp[tipo].fg + ';';
+    const cursosDe = (c) => c.rec.map((id) => rec[id]).filter((r) => r.clase === 'curso');
+    const microsDe = (c) => c.rec.map((id) => rec[id]).filter((r) => r.clase === 'micro');
+    const brechaDe = (c) => (c.req && idx(c.act) > idx(c.req)) ? idx(c.act) - idx(c.req) : 0;
+    const dots = (c, size) => letras.map((l) => {
+      const base = 'width:' + size + 'px;height:' + size + 'px;border-radius:50%;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:' + (size > 26 ? 13 : 11) + 'px;font-weight:700;';
+      if (l === c.act) return { l, style: base + 'background:var(--accent);color:var(--onaccent);' };
+      if (c.req === l && brechaDe(c) > 0) return { l, style: base + 'border:2px solid var(--accent);color:var(--accent);background:transparent;' };
+      return { l, style: base + 'background:var(--soft);color:var(--muted);' };
+    });
+    const ariaNivel = (c) => 'Nivel actual ' + c.act + (c.req ? ', requerido ' + c.req : '');
+    const abrir = (c) => () => this.setState({ detalle: c.id });
+    const comps = d.competencias;
+
+    // recomendados
+    const conBrecha = comps.filter((c) => brechaDe(c) > 0);
+    const recomendados = conBrecha.filter((c) => cursosDe(c).length > 0).sort((a, b) => brechaDe(b) - brechaDe(a)).map((c) => {
+      const cur = cursosDe(c);
+      return {
+        nombre: c.nombre, brecha: c.act + ' → ' + c.req, dots: dots(c, 28),
+        aria: c.nombre + '. ' + ariaNivel(c) + '. ' + plural(cur.length, 'curso disponible', 'cursos disponibles'),
+        sugerido: cur[0].nombre, sugeridoTipo: cur[0].tipo, sugeridoBadge: badge(cur[0].tipo), sugeridoDur: cur[0].duracion,
+        cursosTxt: 'Ver ' + plural(cur.length, 'curso', 'cursos'), abrir: abrir(c)
+      };
+    });
+    const sinCur = conBrecha.filter((c) => cursosDe(c).length === 0);
+
+    // áreas
+    const areas = d.areas.map((a, i) => {
+      const cs = comps.filter((c) => c.area === a);
+      return {
+        nombre: a, hid: 'area-' + i, texto: plural(cs.length, 'competencia', 'competencias'),
+        cards: cs.map((c) => {
+          const n = cursosDe(c).length;
+          return {
+            nombre: c.nombre, tipo: c.tipo, dots: dots(c, 26),
+            cursosTxt: n > 0 ? plural(n, 'curso disponible', 'cursos disponibles') : 'Sin cursos disponibles',
+            cursosStyle: 'font-size:14px;font-weight:600;' + (n > 0 ? 'color:var(--accent);' : 'color:var(--muted);font-weight:500;'),
+            aria: c.nombre + '. ' + ariaNivel(c) + '. ' + (n > 0 ? plural(n, 'curso disponible', 'cursos disponibles') : 'Sin cursos disponibles'),
+            abrir: abrir(c)
+          };
+        })
+      };
+    });
+
+    // detalle
+    const c = comps.find((x) => x.id === s.detalle) || comps[0];
+    const estadoDe = (r) => s.prog[r.id] || 'nuevo';
+    const fila = (r) => {
+      const e = estadoDe(r);
+      return {
+        nombre: r.nombre, tipo: r.tipo, badge: badge(r.tipo), duracion: r.duracion, formador: r.formador,
+        hayEstado: e !== 'nuevo',
+        estado: e === 'completado' ? 'Completado' : 'En curso',
+        estadoStyle: 'padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;' + (e === 'completado' ? 'background:var(--soft);color:var(--accent);' : 'background:var(--warnsoft);color:var(--warn);'),
+        btn: e === 'nuevo' ? 'Iniciar' : 'Ver',
+        btnClass: e === 'nuevo' ? 'btn btn-primary' : 'btn',
+        accion: () => { if (e === 'nuevo') { const p = Object.assign({}, this.state.prog); p[r.id] = 'en-curso'; this.setState({ prog: p }); } }
+      };
+    };
+    const br = brechaDe(c);
+    const grados = letras.map((l, i) => {
+      const esAct = l === c.act;
+      const esReq = l === c.req && br > 0;
+      const base = 'flex:0 0 24px;height:24px;border-radius:50%;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;';
+      return {
+        l, texto: c.grados[i] + ' ', marca: esAct ? '(tu nivel)' : (esReq ? '(requerido)' : ''),
+        letraStyle: base + (esAct ? 'background:var(--accent);color:var(--onaccent);' : (esReq ? 'border:2px solid var(--accent);color:var(--accent);' : 'background:var(--soft);color:var(--muted);'))
+      };
+    });
+    const det = {
+      nombre: c.nombre, tipo: c.tipo, area: c.area, desc: c.desc, dots: dots(c, 32), aria: ariaNivel(c), grados,
+      nivelTxt: 'Tu nivel actual: ' + c.act + (c.req ? ' · Requerido para tu puesto: ' + c.req : ' · Tu puesto no exige un nivel para esta competencia'),
+      hayBrecha: br > 0,
+      brechaTxt: 'Tienes una brecha de ' + plural(br, 'nivel', 'niveles') + ' (de ' + c.act + ' a ' + c.req + '). Los cursos de abajo te ayudan a cerrarla.',
+      cursos: cursosDe(c).map(fila), nCursos: cursosDe(c).length,
+      micros: microsDe(c).map(fila), nMicros: microsDe(c).length, sinMicros: microsDe(c).length === 0,
+      volver: () => this.setState({ detalle: null })
+    };
+
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      vistaLista: s.detalle === null, vistaDetalle: s.detalle !== null,
+      recomendados,
+      recResumen: recomendados.length > 0
+        ? plural(recomendados.length, 'competencia con brecha activa y cursos disponibles', 'competencias con brecha activa y cursos disponibles') + ', ordenadas por tamaño de brecha.'
+        : 'No tienes brechas activas con cursos disponibles.',
+      haySinCursos: sinCur.length > 0,
+      sinCursosTxt: sinCur.length > 0 ? 'Brecha sin cursos asociados todavía: ' + sinCur.map((x) => x.nombre + ' (' + x.act + ' → ' + x.req + ')').join(', ') + '.' : '',
+      areas, det
+    };
+  }
+}
+</script>
+</body>
+</html>

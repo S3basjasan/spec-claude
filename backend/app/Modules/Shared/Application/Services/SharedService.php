@@ -2,6 +2,8 @@
 
 namespace App\Modules\Shared\Application\Services;
 
+use App\Modules\Shared\Application\UseCases\ObtenerNombresDeUsuarios;
+
 /**
  * Servicio inter-módulos del Módulo Shared.
  *
@@ -10,6 +12,8 @@ namespace App\Modules\Shared\Application\Services;
  */
 class SharedService
 {
+    public function __construct(private readonly ObtenerNombresDeUsuarios $nombresDeUsuarios) {}
+
     /**
      * Resumen mínimo para verificar el cableado Facade -> Servicio.
      *
@@ -18,5 +22,16 @@ class SharedService
     public function getResumen(): array
     {
         return ['modulo' => 'Shared'];
+    }
+
+    /**
+     * Nombres de los usuarios existentes entre los ids dados (para auditoría de otros módulos).
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, string> id => nombre
+     */
+    public function getNombresDeUsuarios(array $ids): array
+    {
+        return $this->nombresDeUsuarios->ejecutar($ids);
     }
 }

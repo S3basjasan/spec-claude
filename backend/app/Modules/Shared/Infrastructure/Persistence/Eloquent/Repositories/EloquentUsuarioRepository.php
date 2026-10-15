@@ -19,6 +19,18 @@ final class EloquentUsuarioRepository implements UsuarioRepositoryInterface
         return $this->aEntidad(UserModel::query()->find($id));
     }
 
+    public function nombresPorIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        /** @var array<int, string> $nombres */
+        $nombres = UserModel::query()->whereIn('id', array_values(array_unique($ids)))->pluck('name', 'id')->all();
+
+        return $nombres;
+    }
+
     private function aEntidad(?UserModel $modelo): ?Usuario
     {
         if ($modelo === null) {

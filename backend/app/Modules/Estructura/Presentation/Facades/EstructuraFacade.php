@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool existeCompetencia(int $id) Indica si la competencia existe.
  * @method static bool estaActiva(int $id) Indica si existe y está activa (única válida para nuevas asignaciones).
  * @method static array getCompetenciasActivas() Competencias activas ordenadas por nombre.
+ * @method static array getTodasLasCompetencias() Todas las competencias (activas e inactivas) {id, codigo, nombre, descripcion, tipo, estado}, sin grados, por nombre.
  * @method static array|null getComportamientos(int $competenciaId) Comportamientos por grado de una competencia (activa o inactiva), o null.
  * @method static array getComportamientosPorCompetencias(array $competenciaIds) Registros de las competencias indicadas, incluidas las inactivas.
  * @method static bool tieneComportamientosActivos(int $competenciaId) Indica si la competencia está activa y tiene registro (válido para nuevas asignaciones).

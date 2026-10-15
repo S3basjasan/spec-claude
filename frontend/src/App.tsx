@@ -4,6 +4,8 @@ import { AuthenticatedLayout } from './modules/auth/login/components/Authenticat
 import { RedirectIfAuthenticated } from './modules/auth/login/components/RedirectIfAuthenticated'
 import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
+import { catalogoFormativoNav } from './modules/desarrollo/catalogo-formativo/nav'
+import { CatalogoPage } from './modules/desarrollo/catalogo-formativo/pages/CatalogoPage'
 import { RequireAdmin } from './modules/estructura/competencias/components/RequireAdmin'
 import { competenciasNav } from './modules/estructura/competencias/nav'
 import { CompetenciaFormPage } from './modules/estructura/competencias/pages/CompetenciaFormPage'
@@ -26,7 +28,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -70,6 +72,7 @@ function App() {
               <Route path="preguntas/nuevo" element={<PreguntasFormPage />} />
               <Route path="preguntas/:competenciaId/editar" element={<PreguntasFormPage />} />
             </Route>
+            <Route path="formacion" element={<CatalogoPage />} />
             <Route path="puestos" element={<PuestosPage />} />
             <Route element={<RequireAdminPuestos />}>
               <Route path="puestos/nuevo" element={<PuestoFormPage />} />

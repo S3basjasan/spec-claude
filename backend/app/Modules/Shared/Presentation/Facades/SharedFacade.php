@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static array getResumen() Resumen mínimo del módulo.
+ * @method static array getNombresDeUsuarios(array $ids) Nombres [id => nombre] de los usuarios existentes entre los ids dados.
  *
  * @see SharedService
  */

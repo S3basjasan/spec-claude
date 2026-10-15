@@ -169,6 +169,33 @@ export function IconX(props: IconProps) {
   )
 }
 
+export function IconSchool(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
+      <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
+    </Icon>
+  )
+}
+
+export function IconClock(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+      <path d="M12 7v5l3 3" />
+    </Icon>
+  )
+}
+
+export function IconUser(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+      <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+    </Icon>
+  )
+}
+
 export function IconHelp(props: IconProps) {
   return (
     <Icon {...props}>

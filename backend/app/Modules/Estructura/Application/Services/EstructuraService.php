@@ -89,6 +89,23 @@ class EstructuraService
     }
 
     /**
+     * Todas las competencias, activas e inactivas, sin grados y ordenadas por nombre (para vistas de gestión).
+     *
+     * @return array<int, array{id: int, codigo: string, nombre: string, descripcion: string, tipo: string, estado: string}>
+     */
+    public function getTodasLasCompetencias(): array
+    {
+        return array_map(fn (Competencia $c) => [
+            'id' => $c->id,
+            'codigo' => $c->codigo,
+            'nombre' => $c->nombre,
+            'descripcion' => $c->descripcion,
+            'tipo' => $c->tipo->value,
+            'estado' => $c->estado->value,
+        ], $this->competencias->obtenerTodas());
+    }
+
+    /**
      * Registro de comportamientos de una competencia (activa o inactiva, para registros históricos), o null si no tiene.
      *
      * @return array<string, mixed>|null

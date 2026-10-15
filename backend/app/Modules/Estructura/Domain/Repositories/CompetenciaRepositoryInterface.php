@@ -33,6 +33,13 @@ interface CompetenciaRepositoryInterface
     public function obtenerActivas(): array;
 
     /**
+     * Todas las competencias, activas e inactivas, sin grados, ordenadas por nombre.
+     *
+     * @return array<int, Competencia>
+     */
+    public function obtenerTodas(): array;
+
+    /**
      * Crea la competencia `Activo`, con su código y sus cuatro grados.
      *
      * @param  array<string, string>  $grados  Descripción por letra A–D.
