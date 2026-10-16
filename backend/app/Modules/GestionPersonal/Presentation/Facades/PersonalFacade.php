@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Facade;
  * @method static array posicionesConAsignacionVigenteOFutura(array $posicionIds, string $fecha) Posiciones con asignación vigente o futura en la fecha.
  * @method static array registrarFicha(int $tenantId, int $actorId, string $claveDeOperacion, array $datos) Alta idempotente (GP-07) con las mismas reglas del alta manual.
  * @method static array getDesarrollo(int $tenantId, array $colaboradorIds) Formación, experiencia y movilidad por colaborador (GP-06); lanza InformacionNoDisponible si la lectura falla.
+ * @method static array getCategoriasActivas(int $tenantId) Categorías documentales Activas {id, nombre} para cargas nuevas (GP-05); lanza InformacionNoDisponible si la lectura falla.
+ * @method static array getCategoriasPorIds(int $tenantId, array $ids) Nombre vigente {id, nombre, estado} de categorías de cualquier estado.
+ * @method static void confirmarCategoriaActiva(int $tenantId, int $categoriaId) Bloquea la categoría activa dentro de la transacción de publicación; lanza CategoriaInactiva.
  *
  * @see PersonalService
  */

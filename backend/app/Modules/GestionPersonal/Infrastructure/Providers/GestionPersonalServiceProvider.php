@@ -3,24 +3,41 @@
 namespace App\Modules\GestionPersonal\Infrastructure\Providers;
 
 use App\Modules\GestionPersonal\Application\Ports\AccesosDeCuentaPort;
+use App\Modules\GestionPersonal\Application\Ports\AlmacenDeDocumentosPort;
+use App\Modules\GestionPersonal\Application\Ports\CatalogoDeCategoriasPort;
+use App\Modules\GestionPersonal\Application\Ports\ContextoDeLecturaPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeTenantPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorDeCapacidadesPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorDeDesarrolloPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Application\Ports\PosicionesAsignablesPort;
+use App\Modules\GestionPersonal\Application\Ports\RenderizadorDePdfPort;
+use App\Modules\GestionPersonal\Application\Ports\TransaccionPort;
+use App\Modules\GestionPersonal\Application\Ports\ValidadorDePdfPort;
 use App\Modules\GestionPersonal\Application\Services\PersonalService;
+use App\Modules\GestionPersonal\Domain\Repositories\CategoriaRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\DesarrolloRepositoryInterface;
+use App\Modules\GestionPersonal\Domain\Repositories\DocumentoRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\AlmacenDeDocumentosDisco;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\CatalogoDeCategoriasEloquent;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\ContextoDeLecturaSnapshot;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\EstructuraFacadeLector;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\LectorDeCapacidadesDesarrollo;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\LectorDeDesarrolloEloquent;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\PosicionesAsignablesEstructura;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\RenderizadorDePdfDompdf;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\SharedContextoDeTenant;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\TransaccionLaravel;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\ValidadorDePdfEstructural;
+use App\Modules\GestionPersonal\Infrastructure\Console\LimpiarObjetosHuerfanosCommand;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentAccesosDeCuenta;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentCategoriaRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentColaboradorRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentDesarrolloRepository;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentDocumentoRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentLectorLaboral;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentVinculoLaboralRepository;
 use Illuminate\Support\ServiceProvider;
@@ -36,6 +53,14 @@ class GestionPersonalServiceProvider extends ServiceProvider
         $this->app->bind(ColaboradorRepositoryInterface::class, EloquentColaboradorRepository::class);
         $this->app->bind(DesarrolloRepositoryInterface::class, EloquentDesarrolloRepository::class);
         $this->app->bind(LectorDeDesarrolloPort::class, LectorDeDesarrolloEloquent::class);
+        $this->app->bind(CategoriaRepositoryInterface::class, EloquentCategoriaRepository::class);
+        $this->app->bind(CatalogoDeCategoriasPort::class, CatalogoDeCategoriasEloquent::class);
+        $this->app->bind(DocumentoRepositoryInterface::class, EloquentDocumentoRepository::class);
+        $this->app->bind(AlmacenDeDocumentosPort::class, AlmacenDeDocumentosDisco::class);
+        $this->app->bind(ValidadorDePdfPort::class, ValidadorDePdfEstructural::class);
+        $this->app->bind(TransaccionPort::class, TransaccionLaravel::class);
+        $this->app->bind(ContextoDeLecturaPort::class, ContextoDeLecturaSnapshot::class);
+        $this->app->bind(RenderizadorDePdfPort::class, RenderizadorDePdfDompdf::class);
         $this->app->bind(AccesosDeCuentaPort::class, EloquentAccesosDeCuenta::class);
         $this->app->bind(ContextoDeTenantPort::class, SharedContextoDeTenant::class);
 
@@ -51,6 +76,12 @@ class GestionPersonalServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([LimpiarObjetosHuerfanosCommand::class]);
+        }
+
+        $this->loadViewsFrom(dirname(__DIR__).'/Pdf/plantillas', 'gp-exportacion');
+
         $routes = dirname(__DIR__, 2).'/Routes/api.php';
         if (file_exists($routes)) {
             $this->loadRoutesFrom($routes);

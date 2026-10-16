@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GP-06 · Exportar ficha (PDF)</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.pdf h2{margin:0 0 8px;font-size:13px;font-weight:700;color:#0B5A55;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #D5DAE0;padding-bottom:4px}
+.pdf dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:4px 12px;font-size:12px}
+.pdf dt{color:#5A6573}.pdf dd{margin:0}
+.pdf table{width:100%;border-collapse:collapse;font-size:12px}
+.pdf th{text-align:left;color:#5A6573;font-weight:600;padding:4px 8px 4px 0;border-bottom:1px solid #E2E5EA}
+.pdf td{padding:5px 8px 5px 0;border-bottom:1px solid #EEF0F3;vertical-align:top}
+</style>
+
+<style>html,body{margin:0}body{background:#E8EAED;padding:32px 0}.pdf{margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.2)}@page{size:A4;margin:0}@media print{body{background:#fff;padding:0}.pdf{box-shadow:none}}</style>
+</head>
+<body>
+
+<div class="pdf" style="width: 794px; height: 1123px; background: #fff; color: #12171D; font-family: 'Public Sans', system-ui, sans-serif; padding: 48px 56px; display: flex; flex-direction: column; gap: 18px; box-sizing: border-box">
+  <header style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0F6F69; padding-bottom: 12px">
+    <div>
+      <p style="margin: 0; font-size: 11px; color: #5A6573; font-weight: 600">Altavista S.A. · Ficha integral del colaborador</p>
+      <h1 style="margin: 4px 0 0; font-size: 24px; letter-spacing: -0.01em">María González</h1>
+      <p style="margin: 2px 0 0; font-size: 12px; color: #5A6573">EMP-001 · Estado: Activo</p>
+    </div>
+    <p style="margin: 0; font-size: 11px; color: #5A6573; text-align: right">Generado el<br><b style="color: #12171D">15 oct 2026, 11:44</b></p>
+  </header>
+
+  <section><h2>Identificación y datos personales</h2>
+    <dl>
+      <dt>Identificación</dt><dd>Cédula 1712345678</dd>
+      <dt>Fecha de nacimiento</dt><dd>12 abr 1989</dd>
+      <dt>Nacionalidad · Estado civil</dt><dd>Ecuatoriana · Casada · 2 hijos</dd>
+      <dt>Contacto</dt><dd>+593 99 123 4567 · maria.gonzalez@altavista.example</dd>
+      <dt>Contacto de emergencia</dt><dd>Pedro Vega (Esposo) · +593 98 765 4321</dd>
+    </dl>
+  </section>
+
+  <section><h2>Situación laboral, puesto y unidad</h2>
+    <dl>
+      <dt>Ingreso · Contrato</dt><dd>1 mar 2023 · Indefinido</dd>
+      <dt>Posición</dt><dd>POS-101</dd>
+      <dt>Puesto</dt><dd>Ejecutivo comercial</dd>
+      <dt>Unidad organizacional</dt><dd>Comercial</dd>
+      <dt>Jefatura</dt><dd>Sofía Andrade</dd>
+    </dl>
+  </section>
+
+  <section><h2>Formación académica</h2>
+    <table><thead><tr><th>Título o programa</th><th>Institución</th><th>Estado</th><th>Periodo</th></tr></thead>
+    <tbody>
+      <tr><td>Licenciatura en Marketing</td><td>Instituto Superior Andino</td><td>Completada</td><td>sep 2007 – jul 2012</td></tr>
+      <tr><td>Maestría en Gestión Comercial</td><td>Universidad del Pacífico</td><td>En curso</td><td>mar 2025 – Fin no registrado</td></tr>
+    </tbody></table>
+  </section>
+
+  <section><h2>Experiencia anterior</h2>
+    <table><thead><tr><th>Cargo</th><th>Organización</th><th>Periodo</th></tr></thead>
+    <tbody>
+      <tr><td>Asesora comercial</td><td>Distribuidora Pichincha</td><td>feb 2014 – dic 2019</td></tr>
+      <tr><td>Vendedora</td><td>Comercial Los Andes</td><td>sep 2012 – Fin no registrado</td></tr>
+    </tbody></table>
+  </section>
+
+  <section><h2>Disponibilidad para movilidad</h2>
+    <dl><dt>Disponibilidad</dt><dd>No disponible · actualizada el 20 may 2026</dd><dt>Observaciones</dt><dd>Prefiere permanecer en Quito por motivos familiares.</dd></dl>
+  </section>
+
+  <section><h2>Trayectoria interna</h2>
+    <table><thead><tr><th>Fecha</th><th>Hecho</th><th>Detalle</th></tr></thead>
+    <tbody><tr><td>1 mar 2023</td><td>Ingreso (efectivo)</td><td>Ejecutivo comercial · Comercial · POS-101 · Contrato indefinido</td></tr></tbody></table>
+  </section>
+
+  <footer style="margin-top: auto; border-top: 1px solid #E2E5EA; padding-top: 8px; font-size: 10px; color: #5A6573; display: flex; justify-content: space-between">
+    <span>Documento generado con los datos guardados de la ficha. No incluye cambios pendientes ni documentos adjuntos.</span><span>Página 1 de 1</span>
+  </footer>
+</div>
+
+</body>
+</html>

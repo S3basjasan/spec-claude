@@ -3,10 +3,12 @@
 namespace App\Modules\GestionPersonal\Application\Services;
 
 use App\Modules\GestionPersonal\Application\Ports\AccesosDeCuentaPort;
+use App\Modules\GestionPersonal\Application\Ports\CatalogoDeCategoriasPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeTenantPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorDeDesarrolloPort;
 use App\Modules\GestionPersonal\Application\UseCases\RegistrarFicha;
 use App\Modules\GestionPersonal\Domain\Entities\Colaborador;
+use App\Modules\GestionPersonal\Domain\Exceptions\CategoriaInactiva;
 use App\Modules\GestionPersonal\Domain\Exceptions\ColaboradorNoEncontrado;
 use App\Modules\GestionPersonal\Domain\Exceptions\InformacionNoDisponible;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
@@ -26,6 +28,7 @@ class PersonalService
         private readonly AccesosDeCuentaPort $accesos,
         private readonly VinculoLaboralRepositoryInterface $vinculos,
         private readonly LectorDeDesarrolloPort $desarrollo,
+        private readonly CatalogoDeCategoriasPort $categorias,
     ) {}
 
     /**
@@ -127,6 +130,54 @@ class PersonalService
         }
 
         return $lectura->datos;
+    }
+
+    /**
+     * Categorías documentales Activas del tenant, ordenadas por nombre: opciones para cargas nuevas (GP-05).
+     *
+     * @return list<array{id: int, nombre: string}>
+     *
+     * @throws InformacionNoDisponible Si la lectura falla; el llamador decide su degradación.
+     */
+    public function getCategoriasActivas(int $tenantId): array
+    {
+        $lectura = $this->categorias->activas($tenantId);
+
+        if (! $lectura->estaDisponible()) {
+            throw new InformacionNoDisponible;
+        }
+
+        return $lectura->datos;
+    }
+
+    /**
+     * Nombre vigente de categorías documentales de cualquier estado; los ids ajenos o inexistentes se omiten.
+     *
+     * @param  list<int>  $ids
+     * @return array<int, array{id: int, nombre: string, estado: string}>
+     *
+     * @throws InformacionNoDisponible Si la lectura falla.
+     */
+    public function getCategoriasPorIds(int $tenantId, array $ids): array
+    {
+        $lectura = $this->categorias->porIds($tenantId, $ids);
+
+        if (! $lectura->estaDisponible()) {
+            throw new InformacionNoDisponible;
+        }
+
+        return $lectura->datos;
+    }
+
+    /**
+     * Confirma que la categoría sigue Activa y bloquea su fila hasta el commit; llamar dentro de la transacción de
+     * publicación del documento.
+     *
+     * @throws CategoriaInactiva
+     */
+    public function confirmarCategoriaActiva(int $tenantId, int $categoriaId): void
+    {
+        $this->categorias->confirmarActiva($tenantId, $categoriaId);
     }
 
     /** @return array<string, mixed> */

@@ -4,13 +4,20 @@ use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionMo
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\CategoriaDocumentalModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\DocumentoColaboradorModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\Sanctum;
+
+const URL_CATEGORIAS = '/api/categorias-documentales';
 
 /**
  * Helpers de la feature 005 (fichas de colaboradores). Datos sintéticos.
@@ -250,4 +257,123 @@ function vinculoDe(int $fichaId, string $ingreso, ?string $salida, int $posicion
 function hoyDelTenant(int $dias = 0): string
 {
     return now('America/Guayaquil')->addDays($dias)->toDateString();
+}
+
+/**
+ * PDF mínimo y estructuralmente válido (xref real), generado en memoria y sin datos personales.
+ * Con `$bytesObjetivo` el archivo mide exactamente esa cantidad de bytes (relleno dentro de un flujo).
+ */
+function pdfSintetico(int $paginas = 1, string $texto = 'Documento de prueba', ?int $bytesObjetivo = null): string
+{
+    $construir = function (int $relleno) use ($paginas, $texto): string {
+        $objetos = [1 => '<< /Type /Catalog /Pages 2 0 R >>'];
+        $hijos = [];
+        for ($i = 0; $i < $paginas; $i++) {
+            $hijos[] = (3 + $i * 2).' 0 R';
+        }
+        $objetos[2] = '<< /Type /Pages /Count '.$paginas.' /Kids ['.implode(' ', $hijos).'] >>';
+        $fuente = 3 + $paginas * 2;
+        for ($i = 0; $i < $paginas; $i++) {
+            $pagina = 3 + $i * 2;
+            $flujo = 'BT /F1 12 Tf 72 720 Td ('.$texto.' '.($i + 1).') Tj ET'.str_repeat(' ', $relleno);
+            $objetos[$pagina] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents '.($pagina + 1)." 0 R /Resources << /Font << /F1 {$fuente} 0 R >> >> >>";
+            $objetos[$pagina + 1] = '<< /Length '.strlen($flujo)." >>\nstream\n{$flujo}\nendstream";
+        }
+        $objetos[$fuente] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+
+        $pdf = "%PDF-1.4\n";
+        $desplazamientos = [];
+        foreach ($objetos as $numero => $cuerpo) {
+            $desplazamientos[$numero] = strlen($pdf);
+            $pdf .= "{$numero} 0 obj\n{$cuerpo}\nendobj\n";
+        }
+        $xref = strlen($pdf);
+        $total = count($objetos) + 1;
+        $pdf .= "xref\n0 {$total}\n0000000000 65535 f \n";
+        foreach ($desplazamientos as $desplazamiento) {
+            $pdf .= sprintf("%010d 00000 n \n", $desplazamiento);
+        }
+
+        return $pdf."trailer\n<< /Size {$total} /Root 1 0 R >>\nstartxref\n{$xref}\n%%EOF\n";
+    };
+
+    $pdf = $construir(0);
+    if ($bytesObjetivo === null) {
+        return $pdf;
+    }
+
+    $relleno = $bytesObjetivo - strlen($pdf);
+    for ($intento = 0; $intento < 4; $intento++) {
+        $pdf = $construir(max(0, $relleno));
+        $relleno += $bytesObjetivo - strlen($pdf);
+    }
+
+    return $pdf;
+}
+
+/** Archivo que no es un PDF aunque se suba con extensión `.pdf` (imagen PNG mínima). */
+function archivoNoPdf(): string
+{
+    return base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
+}
+
+/** Disco privado de documentos falso y vacío, con un nombre único por prueba para no heredar restos de otras ejecuciones. */
+function almacenDeDocumentos(): Filesystem
+{
+    $disco = 'documentos_'.Str::lower(Str::random(10));
+    config(['hrms.gestion_personal.documentos.disco' => $disco]);
+
+    return Storage::fake($disco);
+}
+
+/** Nombre del disco de documentos vigente en la prueba. */
+function discoDeDocumentos(): string
+{
+    return (string) config('hrms.gestion_personal.documentos.disco', 'local');
+}
+
+function categoriaActiva(array $atributos = [], int $tenantId = 1): CategoriaDocumentalModel
+{
+    return CategoriaDocumentalModel::factory()->create(array_merge(['tenant_id' => $tenantId], $atributos));
+}
+
+/**
+ * Sube un documento por la API como Administrador autenticado (multipart).
+ *
+ * @param  array<string, mixed>  $campos
+ */
+function subirDocumento(mixed $prueba, int $fichaId, array $campos = [], ?string $contenido = null, ?string $clave = null, ?int $categoriaId = null): TestResponse
+{
+    $archivo = UploadedFile::fake()->createWithContent('contrato.pdf', $contenido ?? pdfSintetico());
+
+    return $prueba->post("/api/colaboradores/{$fichaId}/documentos", array_merge([
+        'titulo' => 'Contrato',
+        'categoria_id' => $categoriaId ?? categoriaActiva()->id,
+        'archivo' => $archivo,
+    ], $campos), ['Accept' => 'application/json', 'Idempotency-Key' => $clave ?? (string) Str::uuid()]);
+}
+
+/**
+ * Documento ya publicado con su objeto escrito en el disco falso.
+ *
+ * @param  array<string, mixed>  $atributos
+ */
+function documentoConArchivo(array $atributos = [], ?string $contenido = null): DocumentoColaboradorModel
+{
+    $documento = DocumentoColaboradorModel::factory()->create($atributos);
+    $contenido ??= pdfSintetico();
+    Storage::disk((string) config('hrms.gestion_personal.documentos.disco', 'local'))->put($documento->object_key, $contenido);
+    $documento->forceFill(['size_bytes' => strlen($contenido), 'sha256' => hash('sha256', $contenido)])->save();
+
+    return $documento->fresh();
+}
+
+function urlDocumentos(int $ficha, string $sufijo = ''): string
+{
+    return "/api/colaboradores/{$ficha}/documentos{$sufijo}";
+}
+
+function urlCategoria(int $id, string $sufijo = ''): string
+{
+    return "/api/categorias-documentales/{$id}{$sufijo}";
 }

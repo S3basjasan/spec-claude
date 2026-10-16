@@ -1,11 +1,17 @@
 <?php
 
+use App\Modules\GestionPersonal\Presentation\Controllers\CategoriaDocumentalController;
 use App\Modules\GestionPersonal\Presentation\Controllers\ColaboradorController;
 use App\Modules\GestionPersonal\Presentation\Controllers\DesarrolloController;
+use App\Modules\GestionPersonal\Presentation\Controllers\DocumentoColaboradorController;
+use App\Modules\GestionPersonal\Presentation\Controllers\ExportacionFichaController;
 use App\Modules\GestionPersonal\Presentation\Controllers\IngresoController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiDesarrolloController;
+use App\Modules\GestionPersonal\Presentation\Controllers\MiDocumentoController;
+use App\Modules\GestionPersonal\Presentation\Controllers\MiExportacionController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiFichaController;
 use App\Modules\GestionPersonal\Presentation\Controllers\SituacionLaboralController;
+use App\Modules\GestionPersonal\Presentation\Middleware\LimitarTamanoDeCarga;
 use Illuminate\Support\Facades\Route;
 
 // Fichas de colaboradores (feature 005, GP-01). Prefijo /api/colaboradores por contrato.
@@ -31,6 +37,16 @@ Route::prefix('api/colaboradores')->middleware('api')->group(function () {
         Route::post('/{colaboradorId}/experiencias', [DesarrolloController::class, 'storeExperiencia'])->whereNumber('colaboradorId')->name('desarrollo.experiencias.store');
         Route::patch('/{colaboradorId}/experiencias/{experienciaId}', [DesarrolloController::class, 'updateExperiencia'])->whereNumber(['colaboradorId', 'experienciaId'])->name('desarrollo.experiencias.update');
         Route::patch('/{colaboradorId}/movilidad', [DesarrolloController::class, 'updateMovilidad'])->whereNumber('colaboradorId')->name('desarrollo.movilidad.update');
+
+        // Documentos del colaborador (feature 014). Sin DELETE, restauración ni edición de contenido o metadatos.
+        Route::get('/{colaborador}/documentos', [DocumentoColaboradorController::class, 'index'])->whereNumber('colaborador')->name('documentos.index');
+        Route::post('/{colaborador}/documentos', [DocumentoColaboradorController::class, 'store'])->middleware(LimitarTamanoDeCarga::class)->whereNumber('colaborador')->name('documentos.store');
+        Route::get('/{colaborador}/documentos/{documento}/contenido', [DocumentoColaboradorController::class, 'contenido'])->whereNumber(['colaborador', 'documento'])->name('documentos.contenido');
+        Route::patch('/{colaborador}/documentos/{documento}/visibilidad', [DocumentoColaboradorController::class, 'updateVisibilidad'])->whereNumber(['colaborador', 'documento'])->name('documentos.visibilidad');
+        Route::patch('/{colaborador}/documentos/{documento}/archivo', [DocumentoColaboradorController::class, 'archivar'])->whereNumber(['colaborador', 'documento'])->name('documentos.archivo');
+
+        // Exportación individual de la ficha (feature 015): solo lectura, sin Idempotency-Key.
+        Route::get('/{colaborador}/exportacion.pdf', [ExportacionFichaController::class, 'show'])->whereNumber('colaborador')->name('exportacion.show');
     });
 });
 
@@ -41,5 +57,24 @@ Route::prefix('api/mi-ficha')->middleware('api')->group(function () {
         Route::get('/situacion-laboral', [SituacionLaboralController::class, 'miSituacion'])->name('mi-ficha.situacion');
         Route::get('/trayectoria', [SituacionLaboralController::class, 'miTrayectoria'])->name('mi-ficha.trayectoria');
         Route::get('/desarrollo', [MiDesarrolloController::class, 'show'])->name('mi-ficha.desarrollo');
+
+        // Documentos propios: asociación válida y permiso documental, independiente del de ficha.
+        Route::get('/documentos', [MiDocumentoController::class, 'index'])->name('mi-ficha.documentos');
+        Route::get('/documentos/{documento}/contenido', [MiDocumentoController::class, 'contenido'])->whereNumber('documento')->name('mi-ficha.documentos.contenido');
+
+        // Exportación de la ficha propia: asociación válida y permiso de exportación, independiente de los demás.
+        Route::get('/exportacion.pdf', [MiExportacionController::class, 'show'])->name('mi-ficha.exportacion');
+    });
+});
+
+// Catálogo de categorías documentales (feature 013). Prefijo /api/categorias-documentales por contrato.
+// No existe DELETE: las categorías se desactivan, nunca se eliminan.
+Route::prefix('api/categorias-documentales')->middleware('api')->group(function () {
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/', [CategoriaDocumentalController::class, 'index'])->name('categorias.index');
+        Route::post('/', [CategoriaDocumentalController::class, 'store'])->name('categorias.store');
+        Route::get('/{categoria}', [CategoriaDocumentalController::class, 'show'])->whereNumber('categoria')->name('categorias.show');
+        Route::patch('/{categoria}', [CategoriaDocumentalController::class, 'update'])->whereNumber('categoria')->name('categorias.update');
+        Route::patch('/{categoria}/estado', [CategoriaDocumentalController::class, 'updateEstado'])->whereNumber('categoria')->name('categorias.estado');
     });
 });

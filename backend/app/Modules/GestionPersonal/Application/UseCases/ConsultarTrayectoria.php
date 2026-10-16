@@ -30,6 +30,19 @@ final class ConsultarTrayectoria
      */
     public function ejecutar(ContextoDeTenant $contexto, int $colaboradorId): array
     {
+        return $this->conDisponibilidad($contexto, $colaboradorId)['hechos'];
+    }
+
+    /**
+     * Los mismos hechos, señalando si Estructura respondió: cuando falla, los nombres de puesto y unidad quedan sin
+     * valor y `disponibilidad` es `no_disponible` (la exportación no lo toma por una sección vacía).
+     *
+     * @return array{hechos: list<array<string, mixed>>, disponibilidad: 'disponible'|'no_disponible'}
+     *
+     * @throws ColaboradorNoEncontrado
+     */
+    public function conDisponibilidad(ContextoDeTenant $contexto, int $colaboradorId): array
+    {
         $this->colaboradores->porId($contexto->tenantId, $colaboradorId) ?? throw new ColaboradorNoEncontrado;
 
         $vinculos = $this->vinculos->vinculosDeFicha($contexto->tenantId, $colaboradorId);
@@ -43,6 +56,7 @@ final class ConsultarTrayectoria
 
         $lectura = $posicionIds === [] ? null : $this->estructura->posiciones(array_values(array_unique($posicionIds)));
         $datos = $lectura !== null && $lectura->estaDisponible() ? $lectura->datos : [];
+        $disponibilidad = $lectura !== null && $lectura->fallo() ? 'no_disponible' : 'disponible';
         $hoy = $contexto->hoy();
 
         $hechos = [];
@@ -68,6 +82,6 @@ final class ConsultarTrayectoria
 
         usort($hechos, fn (array $a, array $b) => strcmp($b['fecha_efectiva'], $a['fecha_efectiva']));
 
-        return $hechos;
+        return ['hechos' => $hechos, 'disponibilidad' => $disponibilidad];
     }
 }

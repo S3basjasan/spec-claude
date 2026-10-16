@@ -30,6 +30,12 @@ import { PuestosPage } from './modules/estructura/puestos/pages/PuestosPage'
 import { unidadesNav } from './modules/estructura/unidades/nav'
 import { UnidadesPage } from './modules/estructura/unidades/pages/UnidadesPage'
 import { RequireAdmin as RequireAdminFichas } from './modules/gestionPersonal/fichas/components/RequireAdmin'
+import { categoriasNav } from './modules/gestionPersonal/categorias/nav'
+import { CategoriasPage } from './modules/gestionPersonal/categorias/pages/CategoriasPage'
+import { exportarMiFichaNav } from './modules/gestionPersonal/exportacion/nav'
+import { MiExportacionPage } from './modules/gestionPersonal/exportacion/pages/MiExportacionPage'
+import { misDocumentosNav } from './modules/gestionPersonal/documentos/nav'
+import { MisDocumentosPage } from './modules/gestionPersonal/documentos/pages/MisDocumentosPage'
 import { colaboradoresNav, miFichaNav } from './modules/gestionPersonal/fichas/nav'
 import { ColaboradoresPage } from './modules/gestionPersonal/fichas/pages/ColaboradoresPage'
 import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDetallePage'
@@ -42,7 +48,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, dnfNav, unidadesNav, colaboradoresNav, miFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, dnfNav, unidadesNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -99,12 +105,15 @@ function App() {
             </Route>
             <Route path="unidades" element={<UnidadesPage />} />
             <Route path="mi-ficha" element={<MiFichaPage />} />
+            <Route path="mis-documentos" element={<MisDocumentosPage />} />
+            <Route path="exportar-mi-ficha" element={<MiExportacionPage />} />
             <Route element={<RequireAdminFichas />}>
               <Route path="colaboradores" element={<ColaboradoresPage />} />
               <Route path="colaboradores/nuevo" element={<FichaFormPage />} />
               <Route path="colaboradores/:colaboradorId" element={<FichaDetallePage />} />
               <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
               <Route path="colaboradores/:colaboradorId/ingreso" element={<RegistrarIngresoPage />} />
+              <Route path="categorias-documentales" element={<CategoriasPage />} />
             </Route>
           </Route>
         </Route>

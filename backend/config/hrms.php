@@ -30,6 +30,20 @@ return [
         // GP-02: en false se detiene el registro de ingresos (503) conservando vínculos y consultas.
         'ingresos_habilitados' => (bool) env('GESTION_PERSONAL_INGRESOS_HABILITADOS', true),
 
+        // Exportación individual de ficha (feature 015): en false las rutas responden 503 sin generar.
+        'exportacion_habilitada' => (bool) env('GESTION_PERSONAL_EXPORTACION_HABILITADA', true),
+
+        // Documentos del colaborador (feature 014): archivos PDF privados.
+        'documentos' => [
+            // En false se detienen cargas y cambios (503) conservando documentos y consultas.
+            'habilitado' => (bool) env('GESTION_PERSONAL_DOCUMENTOS_HABILITADOS', true),
+            // Disco privado de Laravel (nunca `public`); `local` = storage/app/private.
+            'disco' => env('DOCUMENTOS_DISCO', 'local'),
+            'max_bytes' => 10000000,
+            // Antigüedad mínima de un objeto sin referencia para que el barrido lo elimine.
+            'huerfanos_horas' => 24,
+        ],
+
         // GP-02: opciones fijas del producto; el vínculo guarda la clave, la etiqueta es de presentación.
         'tipos_contrato' => [
             'indefinido' => 'Indefinido',

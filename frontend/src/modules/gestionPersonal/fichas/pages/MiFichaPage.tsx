@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { toApiError } from '../../../../shared/api/httpClient'
 import { Badge } from '../../../../shared/ui/Badge'
 import { EmptyState } from '../../../../shared/ui/EmptyState'
 import { ErrorState } from '../../../../shared/ui/ErrorState'
 import { IconFileText } from '../../../../shared/ui/icons'
 import { Skeleton } from '../../../../shared/ui/Skeleton'
+import { BotonExportarFicha } from '../../exportacion/components/BotonExportarFicha'
 import { FichaContenido } from '../components/FichaContenido'
 import { useMiFicha } from '../hooks/useColaboradores'
 import { fichasText } from '../text'
@@ -13,6 +15,7 @@ const text = fichasText.myRecord
 /** Consulta de la ficha propia, solo lectura. El servidor decide si hay asociación y permiso. */
 export function MiFichaPage() {
   const consulta = useMiFicha()
+  const [exportable, setExportable] = useState(true)
 
   let contenido
   if (consulta.isPending) {
@@ -59,6 +62,9 @@ export function MiFichaPage() {
           <span className="font-semibold">{ficha.codigo}</span>
           {estado !== null && <Badge variant="neutral">{estado}</Badge>}
         </p>
+        {ficha.capacidades.exportar && exportable && (
+          <BotonExportarFicha colaboradorId={null} codigo={ficha.codigo} onSinPermiso={() => setExportable(false)} />
+        )}
         <FichaContenido ficha={ficha} esMiFicha onReintentar={() => void consulta.refetch()} />
       </>
     )

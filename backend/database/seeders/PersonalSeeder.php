@@ -4,13 +4,17 @@ namespace Database\Seeders;
 
 use App\Modules\GestionPersonal\Domain\Services\NormalizadorDeTexto;
 use App\Modules\GestionPersonal\Domain\ValueObjects\CodigoColaborador;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\CategoriaDocumentalModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorCuentaModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\DocumentoColaboradorModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ExperienciaAnteriorModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\FormacionAcademicaModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Database\Seeders\Support\PdfDeEjemplo;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -48,8 +52,10 @@ class PersonalSeeder extends Seeder
         $this->ficha(2, 'Pasaporte', 'ZX900', 'Pablo', 'Rivas Ortiz', (int) $admin);
 
         $this->desarrollo((int) $admin, $ana, $luis, $maria);
+        $this->categoriasDocumentales((int) $admin);
+        $this->documentosDeEjemplo((int) $admin, $ana);
 
-        $this->acceso($usuario, $ana, true);
+        $this->acceso($usuario, $ana, true, true, true);
         $this->acceso($colaborador2, $luis, true);
         $this->acceso($sinPermiso, $maria, false);
     }
@@ -102,7 +108,7 @@ class PersonalSeeder extends Seeder
         return (int) $modelo->id;
     }
 
-    private function acceso(int $userId, int $colaboradorId, bool $puedeConsultar): void
+    private function acceso(int $userId, int $colaboradorId, bool $puedeConsultar, bool $puedeDocumentos = false, bool $puedeExportar = false): void
     {
         $tenantId = (int) ColaboradorModel::query()->whereKey($colaboradorId)->value('tenant_id');
 
@@ -112,10 +118,74 @@ class PersonalSeeder extends Seeder
                 'tenant_id' => $tenantId,
                 'colaborador_id' => $colaboradorId,
                 'puede_consultar_ficha' => $puedeConsultar,
-                'puede_consultar_documentos' => false,
-                'puede_exportar' => false,
+                'puede_consultar_documentos' => $puedeDocumentos,
+                'puede_exportar' => $puedeExportar,
             ],
         );
+    }
+
+    /** Documentos sintéticos de Ana (feature 014): uno visible y uno archivado; idempotente por operación. */
+    private function documentosDeEjemplo(int $actor, int $colaboradorId): void
+    {
+        $normalizador = new NormalizadorDeTexto;
+        $categoria = CategoriaDocumentalModel::query()
+            ->where('tenant_id', 1)->where('nombre_clave', $normalizador->claveDeNombre('Contratos'))->first();
+
+        if ($categoria === null) {
+            return;
+        }
+
+        foreach ([['Contrato de ejemplo', true, false], ['Certificado archivado de ejemplo', false, true]] as $indice => [$titulo, $visible, $archivado]) {
+            $operacion = sprintf('00000000-0000-4000-8000-%012d', $indice + 1);
+            if (DocumentoColaboradorModel::query()->where('tenant_id', 1)->where('operacion_id', $operacion)->exists()) {
+                continue;
+            }
+
+            $contenido = PdfDeEjemplo::contenido($titulo);
+            $clave = "personal/1/colaboradores/{$colaboradorId}/".Str::uuid().'.pdf';
+            Storage::disk((string) config('hrms.gestion_personal.documentos.disco', 'local'))->put($clave, $contenido);
+
+            DocumentoColaboradorModel::query()->create([
+                'tenant_id' => 1,
+                'colaborador_id' => $colaboradorId,
+                'categoria_id' => $categoria->id,
+                'titulo' => $titulo,
+                'titulo_busqueda' => $normalizador->busquedaDeTexto($titulo),
+                'object_key' => $clave,
+                'mime_type' => 'application/pdf',
+                'size_bytes' => strlen($contenido),
+                'sha256' => hash('sha256', $contenido),
+                'visible_colaborador' => $visible,
+                'estado' => $archivado ? 'Archivado' : 'Disponible',
+                'version' => 1,
+                'created_by' => $actor,
+                'updated_by' => $actor,
+                'archived_by' => $archivado ? $actor : null,
+                'archived_at' => $archivado ? now() : null,
+                'operacion_id' => $operacion,
+                'operacion_hash' => hash('sha256', $operacion),
+            ]);
+        }
+    }
+
+    /** Categorías documentales de ejemplo (feature 013): dos activas y una inactiva; idempotente por nombre. */
+    private function categoriasDocumentales(int $actor): void
+    {
+        $normalizador = new NormalizadorDeTexto;
+
+        foreach ([['Contratos', 'Activa'], ['Certificados', 'Activa'], ['Evaluaciones antiguas', 'Inactiva']] as [$nombre, $estado]) {
+            CategoriaDocumentalModel::query()->firstOrCreate(
+                ['tenant_id' => 1, 'nombre_clave' => $normalizador->claveDeNombre($nombre)],
+                [
+                    'nombre' => $nombre,
+                    'nombre_busqueda' => $normalizador->busquedaDeTexto($nombre),
+                    'estado' => $estado,
+                    'version' => 1,
+                    'created_by' => $actor,
+                    'updated_by' => $actor,
+                ],
+            );
+        }
     }
 
     /** Formación, experiencia y movilidad de ejemplo (GP-03), idempotente por ficha. */

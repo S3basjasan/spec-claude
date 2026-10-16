@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ColaboradorDetalle } from '../api'
 import { SeccionDesarrollo } from '../../desarrollo/components/SeccionDesarrollo'
+import { SeccionDocumentos } from '../../documentos/components/SeccionDocumentos'
 import { fichasText } from '../text'
 import { FichaDatos } from './FichaDatos'
 
@@ -32,7 +33,7 @@ export function FichaContenido({ ficha, onReintentar, esMiFicha = false }: Ficha
 
   return (
     <div className="flex flex-col gap-4">
-      <div role="tablist" aria-label={fichasText.detail.sectionsLabel} className="flex gap-1 border-b border-border">
+      <div role="tablist" aria-label={fichasText.detail.sectionsLabel} className="flex gap-1 overflow-x-auto border-b border-border">
         {disponibles.map((seccion) => (
           <button
             key={seccion.id}
@@ -53,6 +54,7 @@ export function FichaContenido({ ficha, onReintentar, esMiFicha = false }: Ficha
       <div id={`panel-${activa}`} role="tabpanel" aria-labelledby={`tab-${activa}`}>
         {activa === 'personal' ? <FichaDatos ficha={ficha} onReintentar={onReintentar} /> : null}
         {activa === 'desarrollo' ? <SeccionDesarrollo colaboradorId={esMiFicha ? null : ficha.id} /> : null}
+        {activa === 'documentos' ? <SeccionDocumentos colaboradorId={esMiFicha ? null : ficha.id} /> : null}
       </div>
     </div>
   )

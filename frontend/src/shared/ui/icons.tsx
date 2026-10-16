@@ -304,3 +304,21 @@ export function IconChartBar(props: IconProps) {
     </Icon>
   )
 }
+
+export function IconFolder(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" />
+    </Icon>
+  )
+}
+
+export function IconDownload(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+      <path d="M7 11l5 5l5 -5" />
+      <path d="M12 4l0 12" />
+    </Icon>
+  )
+}

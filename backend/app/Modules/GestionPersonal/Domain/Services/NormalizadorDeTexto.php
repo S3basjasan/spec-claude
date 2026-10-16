@@ -16,6 +16,12 @@ final class NormalizadorDeTexto
         return mb_strtolower($nfc === false ? $texto : $nfc);
     }
 
+    /** Clave de unicidad de un nombre: NFC, recorte exterior y minúsculas; conserva las tildes. */
+    public function claveDeNombre(string $nombre): string
+    {
+        return $this->claveDeIdentificacion($nombre);
+    }
+
     /** Texto de búsqueda: minúsculas, sin tildes y recortado. */
     public function busquedaDeTexto(string $texto): string
     {

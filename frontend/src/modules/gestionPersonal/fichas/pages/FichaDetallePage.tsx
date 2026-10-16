@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { toApiError } from '../../../../shared/api/httpClient'
 import { Badge } from '../../../../shared/ui/Badge'
@@ -5,6 +6,7 @@ import { Breadcrumb } from '../../../../shared/ui/Breadcrumb'
 import { ErrorState } from '../../../../shared/ui/ErrorState'
 import { IconPencil, IconPlus } from '../../../../shared/ui/icons'
 import { Skeleton } from '../../../../shared/ui/Skeleton'
+import { BotonExportarFicha } from '../../exportacion/components/BotonExportarFicha'
 import { FichaContenido } from '../components/FichaContenido'
 import { useColaborador } from '../hooks/useColaboradores'
 import { fichasText } from '../text'
@@ -15,6 +17,7 @@ export function FichaDetallePage() {
   const { colaboradorId } = useParams()
   const location = useLocation()
   const consulta = useColaborador(Number(colaboradorId))
+  const [exportable, setExportable] = useState(true)
   const aviso = (location.state as { aviso?: string } | null)?.aviso
 
   if (consulta.isPending) {
@@ -65,7 +68,10 @@ export function FichaDetallePage() {
             {estado !== null && <Badge variant="neutral">{estado}</Badge>}
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-start gap-3">
+          {ficha.capacidades.exportar && exportable && (
+            <BotonExportarFicha colaboradorId={ficha.id} codigo={ficha.codigo} onSinPermiso={() => setExportable(false)} />
+          )}
           {ficha.capacidades.registrar_ingreso && (
             <Link
               to={`/colaboradores/${ficha.id}/ingreso`}
