@@ -71,3 +71,11 @@ siempre `noInstalado()`.
 - Un puerto `noDisponible` equivale a «Información no disponible»; con un filtro activo que depende de él, el
   listado responde 503 y no un resultado parcial.
 - Las lecturas se piden **por lote** sobre la página, nunca fila por fila.
+
+## Actualización GP-02 (006)
+
+- `LectorLaboralPort` añade `estadosPresentes(int $tenantId, string $fecha)` y `proximoIngreso(int $tenantId, int $colaboradorId, string $fecha)`.
+- Los adaptadores reales son `EloquentLectorLaboral`, `EstructuraFacadeLector` y `LectorDeCapacidadesGp02`
+  (`registrar_ingreso` → true); los «no instalado» solo se usan en pruebas.
+- `idsPorEstado` acepta `Activo`, `Desvinculado` y `SinVinculoVigente`; este último excluye a los desvinculados.
+- `PersonalFacade::posicionesConAsignacionVigenteOFutura(array $posicionIds, string $fecha)` lo consume Estructura.

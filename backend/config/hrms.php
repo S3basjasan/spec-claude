@@ -26,6 +26,17 @@ return [
 
     'gestion_personal' => [
         'escritura_habilitada' => (bool) env('GESTION_PERSONAL_ESCRITURA_HABILITADA', true),
+
+        // GP-02: en false se detiene el registro de ingresos (503) conservando vínculos y consultas.
+        'ingresos_habilitados' => (bool) env('GESTION_PERSONAL_INGRESOS_HABILITADOS', true),
+
+        // GP-02: opciones fijas del producto; el vínculo guarda la clave, la etiqueta es de presentación.
+        'tipos_contrato' => [
+            'indefinido' => 'Indefinido',
+            'plazo_fijo' => 'Plazo fijo',
+            'temporal' => 'Temporal',
+            'servicios_profesionales' => 'Servicios profesionales',
+        ],
     ],
 
 ];

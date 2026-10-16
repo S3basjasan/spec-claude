@@ -61,10 +61,11 @@ final class ArmadorDeFichaDetalle
         $situacion = $this->laboral->situacionVigente($colaborador->tenantId, [$colaborador->id], $hoy);
 
         if ($situacion->fallo()) {
-            return ['disponibilidad' => 'no_disponible', 'estado' => null, 'puesto' => null, 'unidad' => null];
+            return ['disponibilidad' => 'no_disponible', 'estado' => null, 'puesto' => null, 'unidad' => null, 'proximo_ingreso' => null];
         }
 
         $vigente = $situacion->estaDisponible() ? ($situacion->datos[$colaborador->id] ?? null) : null;
+        $proximo = $this->proximoIngreso($colaborador, $hoy);
 
         if ($vigente === null) {
             return [
@@ -72,6 +73,7 @@ final class ArmadorDeFichaDetalle
                 'estado' => EstadoLaboral::SinVinculoVigente->value,
                 'puesto' => null,
                 'unidad' => null,
+                'proximo_ingreso' => $proximo,
             ];
         }
 
@@ -80,6 +82,7 @@ final class ArmadorDeFichaDetalle
             'estado' => (string) $vigente['estado'],
             'puesto' => null,
             'unidad' => null,
+            'proximo_ingreso' => $proximo,
         ];
 
         if (($vigente['posicion_id'] ?? null) !== null) {
@@ -94,6 +97,39 @@ final class ArmadorDeFichaDetalle
         }
 
         return $bloque;
+    }
+
+    /**
+     * Próximo ingreso programado (GP-02) con su posición, o null si no hay.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function proximoIngreso(Colaborador $colaborador, string $hoy): ?array
+    {
+        $lectura = $this->laboral->proximoIngreso($colaborador->tenantId, $colaborador->id, $hoy);
+        if (! $lectura->estaDisponible() || $lectura->datos === null) {
+            return null;
+        }
+
+        $proximo = $lectura->datos;
+        $posicion = ['id' => $proximo['posicion_id'] ?? null, 'puesto' => null, 'unidad' => null, 'jefatura' => null];
+
+        if ($posicion['id'] !== null) {
+            $datos = $this->estructura->posiciones([(int) $posicion['id']]);
+            if ($datos->estaDisponible()) {
+                $fila = $datos->datos[(int) $posicion['id']] ?? [];
+                $posicion['puesto'] = $fila['puesto'] ?? null;
+                $posicion['unidad'] = $fila['unidad'] ?? null;
+                $posicion['jefatura'] = $fila['jefatura'] ?? null;
+            }
+        }
+
+        return [
+            'fecha_ingreso' => $proximo['fecha_ingreso'],
+            'tipo_contrato' => $proximo['tipo_contrato'],
+            'posicion' => $posicion,
+            'programado' => true,
+        ];
     }
 
     /**

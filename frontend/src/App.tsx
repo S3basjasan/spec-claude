@@ -30,6 +30,7 @@ import { ColaboradoresPage } from './modules/gestionPersonal/fichas/pages/Colabo
 import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDetallePage'
 import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
 import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
+import { RegistrarIngresoPage } from './modules/gestionPersonal/fichas/pages/RegistrarIngresoPage'
 import { inicioNav } from './modules/inicio/nav'
 import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
@@ -93,6 +94,7 @@ function App() {
               <Route path="colaboradores/nuevo" element={<FichaFormPage />} />
               <Route path="colaboradores/:colaboradorId" element={<FichaDetallePage />} />
               <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
+              <Route path="colaboradores/:colaboradorId/ingreso" element={<RegistrarIngresoPage />} />
             </Route>
           </Route>
         </Route>

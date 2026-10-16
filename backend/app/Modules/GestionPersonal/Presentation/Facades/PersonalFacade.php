@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null getColaborador(int $tenantId, int $id) Ficha {id, codigo, identificación, nombres, apellidos, version} del tenant, o null.
  * @method static array getColaboradoresPorIds(int $tenantId, array $ids) Fichas existentes del tenant entre los ids dados.
  * @method static array|null buscarPorIdentificacion(int $tenantId, string $tipo, string $numero) Ficha con esa identificación normalizada, o null.
+ * @method static array posicionesConAsignacionVigenteOFutura(array $posicionIds, string $fecha) Posiciones con asignación vigente o futura en la fecha.
  * @method static array registrarFicha(int $tenantId, int $actorId, string $claveDeOperacion, array $datos) Alta idempotente (GP-07) con las mismas reglas del alta manual.
  *
  * @see PersonalService

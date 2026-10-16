@@ -2,6 +2,7 @@ import { Button } from '../../../../shared/ui/Button'
 import type { BloqueLaboral } from '../api'
 import { fichasText } from '../text'
 import { DatoOpcional } from './DatoOpcional'
+import { ProximoIngreso } from './ProximoIngreso'
 
 const labels = fichasText.detail.labels
 
@@ -31,7 +32,8 @@ export function SeccionLaboral({ laboral, onReintentar }: SeccionLaboralProps) {
   const estado = laboral.estado === null ? null : (fichasText.statuses[laboral.estado] ?? laboral.estado)
 
   return (
-    <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <>
+      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="flex flex-col gap-0.5">
         <dt className="text-[13px] font-semibold text-muted">{labels.position}</dt>
         <dd className="text-[15px]">
@@ -50,6 +52,8 @@ export function SeccionLaboral({ laboral, onReintentar }: SeccionLaboralProps) {
           <DatoOpcional valor={estado} />
         </dd>
       </div>
-    </dl>
+      </dl>
+      {laboral.proximo_ingreso && <ProximoIngreso ingreso={laboral.proximo_ingreso} />}
+    </>
   )
 }

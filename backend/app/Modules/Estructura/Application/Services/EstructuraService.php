@@ -10,6 +10,7 @@ use App\Modules\Estructura\Domain\Entities\TipoUnidad;
 use App\Modules\Estructura\Domain\Entities\Unidad;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
+use App\Modules\Estructura\Domain\Repositories\PosicionRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\TipoUnidadRepositoryInterface;
@@ -34,6 +35,7 @@ class EstructuraService
         private readonly PuestoRepositoryInterface $puestos,
         private readonly UnidadRepositoryInterface $unidades,
         private readonly TipoUnidadRepositoryInterface $tipos,
+        private readonly PosicionRepositoryInterface $posiciones,
     ) {}
 
     /**
@@ -373,6 +375,65 @@ class EstructuraService
     /**
      * @return array<string, mixed>
      */
+    // ------------------------------------------------------------------ Posiciones (GP-02)
+
+    /**
+     * Posición con su puesto y unidad vigentes, o null. La jefatura es null hasta que Estructura la publique.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getPosicion(int $id): ?array
+    {
+        return $this->posiciones->obtener($id);
+    }
+
+    /**
+     * Posiciones existentes entre los ids dados, incluidas las suprimidas (histórico).
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, array<string, mixed>> Indexado por id.
+     */
+    public function getPosicionesPorIds(array $ids): array
+    {
+        return $this->posiciones->porIds($ids);
+    }
+
+    /**
+     * Posiciones del tenant que admiten nuevas asignaciones (no suprimidas, puesto activo y unidad activa);
+     * no considera la ocupación.
+     *
+     * @return array{items: array<int, array<string, mixed>>, total: int}
+     */
+    public function posicionesAsignables(int $tenantId, ?string $texto, int $pagina, int $porPagina): array
+    {
+        return $this->posiciones->asignables($tenantId, $texto, $pagina, $porPagina);
+    }
+
+    /**
+     * Si una posición admite nuevas asignaciones para el tenant. Se evalúa en la conexión y la transacción de quien
+     * llama (no abre otra).
+     *
+     * @return array{asignable: bool, motivo: string|null}
+     */
+    public function posicionEsAsignable(int $id, int $tenantId): array
+    {
+        $motivo = $this->posiciones->motivoNoAsignable($id, $tenantId);
+
+        return ['asignable' => $motivo === null, 'motivo' => $motivo];
+    }
+
+    /** @return array<int, int> */
+    public function getPosicionesPorPuesto(string $texto): array
+    {
+        return $this->posiciones->idsPorPuesto($texto);
+    }
+
+    /** @return array<int, int> */
+    public function getPosicionesPorUnidad(int $unidadId): array
+    {
+        return $this->posiciones->idsPorUnidad($unidadId);
+    }
+
     private function puestoAArreglo(Puesto $puesto): array
     {
         return [
