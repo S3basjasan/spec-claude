@@ -16,6 +16,7 @@
   --dangersoft: #fdecea;
   --ondanger: #ffffff;
   --warning: #b54708;
+  --warningsoft: #fff3e0;
   --warn: #8a4b0b;
   --warnsoft: #fdefd9;
   --info: #1f4e9c;
@@ -44,6 +45,7 @@
   --dangersoft: #3a1b1a;
   --ondanger: #2a0b09;
   --warning: #f5b454;
+  --warningsoft: #3a2a10;
   --warn: #f2c27a;
   --warnsoft: #3a2a12;
   --info: #9dbef5;
@@ -72,6 +74,7 @@
   --color-dangersoft: var(--dangersoft);
   --color-ondanger: var(--ondanger);
   --color-warning: var(--warning);
+  --color-warningsoft: var(--warningsoft);
   --color-warn: var(--warn);
   --color-warnsoft: var(--warnsoft);
   --color-info: var(--info);

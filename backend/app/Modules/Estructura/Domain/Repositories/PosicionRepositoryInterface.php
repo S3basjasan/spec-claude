@@ -2,58 +2,69 @@
 
 namespace App\Modules\Estructura\Domain\Repositories;
 
+use App\Modules\Estructura\Domain\Entities\Posicion;
+use App\Modules\Estructura\Domain\Exceptions\PosicionInvalida;
+use App\Modules\Estructura\Domain\Exceptions\PosicionModificada;
+use App\Modules\Estructura\Domain\Exceptions\PosicionNoEncontrada;
+use App\Modules\Estructura\Domain\Exceptions\PosicionNoSuprimible;
+use App\Modules\Estructura\Domain\ValueObjects\DatosPosicion;
+use App\Modules\Estructura\Domain\ValueObjects\FiltroDePosiciones;
+use App\Modules\Estructura\Domain\ValueObjects\NodoDePosicion;
+use App\Modules\Estructura\Domain\ValueObjects\OpcionesDePosicion;
+use App\Modules\Estructura\Domain\ValueObjects\PaginaDePosiciones;
+
 /**
- * Lectura de posiciones para otros módulos (GP-02). Las posiciones se gestionan en otra funcionalidad;
- * aquí solo se consultan, con su puesto y unidad vigentes.
+ * Puerto de persistencia de las posiciones. El puesto, la unidad y el supervisor se leen siempre en vivo.
  */
 interface PosicionRepositoryInterface
 {
-    /**
-     * @return array{id: int, tenant_id: int, estado: string, puesto_id: int, puesto: string, puesto_activo: bool, unidad_id: int|null, unidad: string|null, unidad_activa: bool, jefatura: null}|null
-     */
-    public function obtener(int $id): ?array;
+    /** Página de posiciones ordenadas por código (numéricamente), con `subordinadasVigentes` de cada una. */
+    public function listar(FiltroDePosiciones $filtro): PaginaDePosiciones;
+
+    /** Detalle de una posición (con subordinadas y datos de auditoría), en cualquier estado, o null si no existe. */
+    public function obtener(int $id): ?Posicion;
 
     /**
      * @param  array<int, int>  $ids
-     * @return array<int, array<string, mixed>> Indexado por id de posición.
+     * @return array<int, Posicion>
      */
-    public function porIds(array $ids): array;
+    public function obtenerPorIds(array $ids): array;
 
     /**
-     * Posiciones del tenant, no suprimidas, con puesto activo y unidad activa (sin considerar ocupación).
-     *
-     * @return array{items: array<int, array{id: int, puesto: string, unidad: string, jefatura: null}>, total: int}
+     * Selectores del formulario. Con `excluir` (la posición que se edita) las candidatas a supervisor no incluyen esa
+     * posición ni ninguna de sus subordinadas.
      */
-    public function asignables(int $tenantId, ?string $texto, int $pagina, int $porPagina): array;
+    public function opciones(?int $excluir): OpcionesDePosicion;
 
     /**
-     * Motivo por el que una posición no admite nuevas asignaciones, o null si las admite.
+     * Posiciones no Suprimidas con su supervisor, para el organigrama y las reglas de la estructura.
      *
-     * @return string|null `inexistente`, `otro_tenant`, `suprimida`, `puesto_inactivo` o `unidad_inactiva`
+     * @return array<int, NodoDePosicion>
      */
-    public function motivoNoAsignable(int $id, int $tenantId): ?string;
-
-    /** @return array<int, int> */
-    public function idsPorPuesto(string $texto): array;
-
-    /** @return array<int, int> */
-    public function idsPorUnidad(int $unidadId): array;
-
-    /** Cantidad de posiciones Ocupadas o Vacantes del puesto (las que lo mantienen en uso). */
-    public function contarEnUsoDelPuesto(int $puestoId): int;
+    public function arbolDeSupervision(): array;
 
     /**
-     * Posiciones Suprimidas de un puesto (las únicas que no bloquean por su estado guardado).
+     * Crea la posición `Vacante`, sin ocupante, con código `POS-####` y versión 1.
      *
-     * @return array<int, int>
+     * @throws PosicionInvalida
      */
-    public function suprimidasDelPuesto(int $puestoId): array;
+    public function crear(DatosPosicion $datos, ?int $actorId): Posicion;
 
     /**
-     * Posiciones Suprimidas de las unidades dadas, por unidad.
+     * Cambia unidad, supervisor y modalidad. Sin cambios reales no escribe nada (ni versión ni historial).
      *
-     * @param  array<int, int>  $unidadIds
-     * @return array<int, array<int, int>> unidad_id => posicion_ids
+     * @throws PosicionNoEncontrada
+     * @throws PosicionModificada
+     * @throws PosicionInvalida
      */
-    public function suprimidasDeUnidades(array $unidadIds): array;
+    public function actualizar(int $id, int $versionEsperada, DatosPosicion $datos, ?int $actorId): Posicion;
+
+    /**
+     * Pasa la posición Vacante sin subordinadas vigentes a `Suprimida`, en una sola operación atómica. Si ya está
+     * Suprimida no cambia nada. No toca la versión ni la última modificación.
+     *
+     * @throws PosicionNoEncontrada
+     * @throws PosicionNoSuprimible
+     */
+    public function suprimir(int $id, ?int $actorId): Posicion;
 }

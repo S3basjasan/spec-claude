@@ -34,12 +34,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getArbolDeUnidades() Todas las unidades (activas e inactivas) en orden jerárquico, con su nivel.
  * @method static array getCadenaDeTipos() Cadena de tipos de unidad {id, nombre, nivel, es_raiz} por nivel (el 1 es el tipo raíz).
  * @method static array|null getTipoDeUnidad(int $id) Tipo de unidad {id, nombre, nivel, es_raiz}, o null.
- * @method static array|null getPosicion(int $id) Posición con puesto y unidad vigentes (jefatura null), o null.
- * @method static array getPosicionesPorIds(array $ids) Posiciones existentes entre los ids dados, incluidas las suprimidas.
- * @method static array posicionesAsignables(int $tenantId, ?string $texto, int $pagina, int $porPagina) Posiciones del tenant que admiten nuevas asignaciones {items, total}.
- * @method static array posicionEsAsignable(int $id, int $tenantId) {asignable, motivo} en la conexión de quien llama.
- * @method static array getPosicionesPorPuesto(string $texto) Ids de posición cuyo puesto contiene el texto.
- * @method static array getPosicionesPorUnidad(int $unidadId) Ids de posición de la unidad.
+ * @method static array|null getPosicion(int $id) Posición (también Suprimida) con su puesto, unidad, supervisor y ocupante_id, o null.
+ * @method static array getPosicionesPorIds(array $ids) Posiciones existentes entre los ids dados, incluidas las Suprimidas.
+ * @method static bool existePosicion(int $id) Indica si la posición existe (también Suprimida).
+ * @method static bool posicionEstaVigente(int $id) Indica si existe y está Ocupada o Vacante.
+ * @method static array getArbolDeSupervision() Posiciones no Suprimidas {id, codigo, estado, supervisor_id} para el organigrama.
  *
  * @see EstructuraService
  */

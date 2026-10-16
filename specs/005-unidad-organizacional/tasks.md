@@ -223,3 +223,7 @@ description: "Tareas de la feature 005-unidad-organizacional (revisión 2026-10-
 - **Hechas**: todo el código (backend, frontend, semillas y diseño) y la verificación de la base con `php artisan migrate:fresh --seed` (T070: 5 tipos, 12 unidades, UO-008 inactiva, posiciones repartidas; lectura del árbol por el repositorio sin errores).
 - **Omitidas por indicación expresa** ("no hagas nada de pruebas"): todas las tareas de pruebas (T018, T019, T024–T027, T031, T032–T035, T039–T042, T045–T049, T053–T057, T062–T064), las partes de pruebas de T016, T021 y T022, y las puertas de calidad T001, T066–T068, T071–T073. Quedan pendientes, igual que T069 y T074.
 - **Pruebas anteriores rotas**: las pruebas de la versión anterior (backend: dobles en memoria y tests de unidades que usan `tipo_unidad_id` o `UnidadConDependenciasEnUso`; frontend: `UnidadFila`, `UnidadForm*`, `UnidadesPage` y `validation`) ya no compilan contra el código nuevo. Se resuelven con T074, que exige aprobación expresa antes de borrar archivos de prueba.
+
+### Ampliación desde 006-posiciones (2026-10-16)
+
+- [ ] T075 Rechazar la reubicación de una unidad que dejaría una posición vigente reportando a otra de una unidad inferior o de otra rama (FR-019, ampliación). **Se implementa y se prueba desde 006-posiciones** (tareas T078 y T087 de `specs/006-posiciones/tasks.md`); queda aquí como referencia cruzada y se marca cuando 006 la cierre.

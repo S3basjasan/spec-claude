@@ -70,4 +70,18 @@ class SharedService
             'zona_horaria' => (string) $fila->zona_horaria,
         ];
     }
+
+    /** Máximo de usuarios que devuelve una búsqueda por nombre. */
+    public const LIMITE_BUSQUEDA_POR_NOMBRE = 200;
+
+    /**
+     * Ids de los usuarios cuyo nombre contiene el texto (sin distinguir mayúsculas ni tildes), ordenados por nombre y
+     * limitados a 200, para que otros módulos busquen por persona sin leer la tabla de usuarios.
+     *
+     * @return array<int, int>
+     */
+    public function buscarIdsDeUsuariosPorNombre(string $texto): array
+    {
+        return $this->usuarios->idsPorNombre($texto, self::LIMITE_BUSQUEDA_POR_NOMBRE);
+    }
 }

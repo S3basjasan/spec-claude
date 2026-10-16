@@ -373,6 +373,90 @@ class EstructuraService
     }
 
     /**
+     * Posición (también Suprimida, para registros históricos), o null si no existe. Sin datos de auditoría.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getPosicion(int $id): ?array
+    {
+        $posicion = $this->posiciones->obtener($id);
+
+        return $posicion === null ? null : $this->posicionAArreglo($posicion);
+    }
+
+    /**
+     * Posiciones existentes entre los ids dados, incluidas las Suprimidas.
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, array<string, mixed>>
+     */
+    public function getPosicionesPorIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return array_map($this->posicionAArreglo(...), $this->posiciones->obtenerPorIds(array_values(array_unique($ids))));
+    }
+
+    public function existePosicion(int $id): bool
+    {
+        return $this->posiciones->obtener($id) !== null;
+    }
+
+    /** Vigente = Ocupada o Vacante: la única que puede ocuparse, supervisar o recibir subordinadas. */
+    public function posicionEstaVigente(int $id): bool
+    {
+        return $this->posiciones->obtener($id)?->esVigente() ?? false;
+    }
+
+    /**
+     * Posiciones no Suprimidas con su supervisor, en orden de código, para el organigrama y el perfilamiento.
+     *
+     * @return array<int, array{id: int, codigo: string, estado: string, supervisor_id: int|null}>
+     */
+    public function getArbolDeSupervision(): array
+    {
+        return array_map(fn (NodoDePosicion $nodo) => [
+            'id' => $nodo->id,
+            'codigo' => $nodo->codigo,
+            'estado' => $nodo->estado->value,
+            'supervisor_id' => $nodo->supervisorId,
+        ], $this->posiciones->arbolDeSupervision());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function posicionAArreglo(Posicion $posicion): array
+    {
+        return [
+            'id' => $posicion->id,
+            'codigo' => $posicion->codigo,
+            'estado' => $posicion->estado->value,
+            'modalidad' => $posicion->modalidad->value,
+            'puesto' => [
+                'id' => $posicion->puesto['id'],
+                'codigo' => $posicion->puesto['codigo'],
+                'nombre' => $posicion->puesto['nombre'],
+            ],
+            'unidad' => [
+                'id' => $posicion->unidad['id'],
+                'codigo' => $posicion->unidad['codigo'],
+                'nombre' => $posicion->unidad['nombre'],
+                'estado' => $posicion->unidad['estado'],
+            ],
+            'supervisor' => $posicion->supervisor === null ? null : [
+                'id' => $posicion->supervisor['id'],
+                'codigo' => $posicion->supervisor['codigo'],
+                'nombre' => $posicion->supervisor['puesto'],
+            ],
+            'ocupante_id' => $posicion->ocupanteId,
+            'subordinadas_vigentes' => $posicion->subordinadasVigentes,
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     // ------------------------------------------------------------------ Posiciones (GP-02)

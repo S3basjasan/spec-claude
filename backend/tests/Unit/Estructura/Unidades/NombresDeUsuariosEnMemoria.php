@@ -16,4 +16,11 @@ class NombresDeUsuariosEnMemoria implements NombresDeUsuariosInterface
     {
         return array_intersect_key($this->nombres, array_flip($ids));
     }
+
+    public function idsPorNombre(string $texto): array
+    {
+        $buscado = mb_strtolower(trim($texto));
+
+        return array_keys(array_filter($this->nombres, fn (string $nombre) => $buscado !== '' && str_contains(mb_strtolower($nombre), $buscado)));
+    }
 }

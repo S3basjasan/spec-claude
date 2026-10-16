@@ -71,7 +71,12 @@ class PuestosSeeder extends Seeder
 
                 foreach ($datos['posiciones'] as $estado => $cantidad) {
                     for ($i = 0; $i < $cantidad; $i++) {
-                        PosicionModel::query()->create(['puesto_id' => $puesto->id, 'estado' => $estado]);
+                        // Como máximo una posición vigente sin supervisor (la máxima autoridad): las demás vigentes
+                        // reportan a ella. PosicionesSeeder completa después la estructura real.
+                        $raiz = $estado === 'Suprimida' ? null : PosicionModel::query()
+                            ->where('estado', '<>', 'Suprimida')->whereNull('posicion_jefe_id')->value('id');
+
+                        PosicionModel::query()->create(['puesto_id' => $puesto->id, 'estado' => $estado, 'posicion_jefe_id' => $raiz]);
                     }
                 }
             });
