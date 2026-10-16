@@ -3,7 +3,7 @@ import { toApiError } from '../../../../shared/api/httpClient'
 import { Badge } from '../../../../shared/ui/Badge'
 import { Breadcrumb } from '../../../../shared/ui/Breadcrumb'
 import { ErrorState } from '../../../../shared/ui/ErrorState'
-import { IconPencil } from '../../../../shared/ui/icons'
+import { IconPencil, IconPlus } from '../../../../shared/ui/icons'
 import { Skeleton } from '../../../../shared/ui/Skeleton'
 import { FichaContenido } from '../components/FichaContenido'
 import { useColaborador } from '../hooks/useColaboradores'
@@ -65,15 +65,26 @@ export function FichaDetallePage() {
             {estado !== null && <Badge variant="neutral">{estado}</Badge>}
           </p>
         </div>
-        {ficha.acciones.editar && (
-          <Link
-            to={`/colaboradores/${ficha.id}/editar`}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 text-[15px] font-semibold hover:bg-soft"
-          >
-            <IconPencil size={18} />
-            {text.edit}
-          </Link>
-        )}
+        <div className="flex flex-wrap gap-3">
+          {ficha.capacidades.registrar_ingreso && (
+            <Link
+              to={`/colaboradores/${ficha.id}/ingreso`}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent px-5 text-[15px] font-semibold text-onaccent hover:bg-accent-hover"
+            >
+              <IconPlus size={18} />
+              {ficha.laboral.estado === 'Desvinculado' ? fichasText.entry.reentryButton : fichasText.entry.registerButton}
+            </Link>
+          )}
+          {ficha.acciones.editar && (
+            <Link
+              to={`/colaboradores/${ficha.id}/editar`}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-5 text-[15px] font-semibold hover:bg-soft"
+            >
+              <IconPencil size={18} />
+              {text.edit}
+            </Link>
+          )}
+        </div>
       </div>
 
       {aviso && (

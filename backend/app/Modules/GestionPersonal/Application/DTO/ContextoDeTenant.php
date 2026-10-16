@@ -2,8 +2,7 @@
 
 namespace App\Modules\GestionPersonal\Application\DTO;
 
-use DateTimeImmutable;
-use DateTimeZone;
+use Illuminate\Support\Carbon;
 
 final class ContextoDeTenant
 {
@@ -13,9 +12,9 @@ final class ContextoDeTenant
         public readonly string $zonaHoraria,
     ) {}
 
-    /** Fecha de hoy (Y-m-d) en la zona horaria del tenant. */
+    /** Fecha de hoy (Y-m-d) en la zona horaria del tenant (respeta el reloj fijado en las pruebas). */
     public function hoy(): string
     {
-        return (new DateTimeImmutable('now', new DateTimeZone($this->zonaHoraria)))->format('Y-m-d');
+        return Carbon::now($this->zonaHoraria)->toDateString();
     }
 }

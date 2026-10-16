@@ -53,7 +53,8 @@ it('filtra por estado y valida filtros no disponibles', function () {
 
     $this->getJson('/api/colaboradores?estado=SinVinculoVigente')->assertOk()->assertJsonPath('meta.total', 3);
     $this->getJson('/api/colaboradores?estado=Todos')->assertOk()->assertJsonPath('meta.total', 3);
-    $this->getJson('/api/colaboradores?estado=Activo')->assertUnprocessable()->assertJsonValidationErrors(['estado']);
+    $this->getJson('/api/colaboradores?estado=Activo')->assertOk()->assertJsonPath('meta.total', 0);
+    $this->getJson('/api/colaboradores?estado=Inventado')->assertUnprocessable()->assertJsonValidationErrors(['estado']);
     $this->getJson('/api/colaboradores?unidad_id=1')->assertUnprocessable()->assertJsonValidationErrors(['unidad_id']);
     $this->getJson('/api/colaboradores?per_page=51')->assertUnprocessable()->assertJsonValidationErrors(['per_page']);
 });
@@ -80,7 +81,7 @@ it('el detalle muestra los opcionales ausentes como null y conserva 0 hijos (GP0
     expect($detalle->json('data.numero_hijos'))->toBe(0)
         ->and($detalle->json('data.nacionalidad'))->toBeNull()
         ->and($detalle->json('data.fecha_nacimiento'))->toBeNull()
-        ->and($detalle->json('data.laboral'))->toBe(['disponibilidad' => 'disponible', 'estado' => 'SinVinculoVigente', 'puesto' => null, 'unidad' => null])
+        ->and($detalle->json('data.laboral'))->toBe(['disponibilidad' => 'disponible', 'estado' => 'SinVinculoVigente', 'puesto' => null, 'unidad' => null, 'proximo_ingreso' => null])
         ->and($detalle->json('data.trayectoria'))->toBe(['disponibilidad' => 'disponible', 'hechos' => []])
         ->and($detalle->json('data'))->not->toHaveKeys(['salario', 'cuenta_bancaria', 'adecuacion', 'potencial', 'tenant_id', 'identificacion_clave']);
 });

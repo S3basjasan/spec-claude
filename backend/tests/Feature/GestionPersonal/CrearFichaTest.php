@@ -22,7 +22,7 @@ it('crea una ficha mínima con código, versión 1, estado Sin vínculo vigente 
         ->and($respuesta->json('data.laboral.estado'))->toBe('SinVinculoVigente')
         ->and($respuesta->json('data.laboral.puesto'))->toBeNull()
         ->and($respuesta->json('data.trayectoria.hechos'))->toBe([])
-        ->and($respuesta->json('data.capacidades'))->toBe(['desarrollo' => false, 'documentos' => false, 'registrar_ingreso' => false, 'exportar' => false])
+        ->and($respuesta->json('data.capacidades'))->toBe(['desarrollo' => false, 'documentos' => false, 'registrar_ingreso' => true, 'exportar' => false])
         ->and($respuesta->json('data.acciones.editar'))->toBeTrue()
         ->and($ficha->tenant_id)->toBe(1)
         ->and($ficha->created_by)->toBe($admin->id)

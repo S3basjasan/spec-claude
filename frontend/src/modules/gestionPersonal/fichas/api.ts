@@ -40,11 +40,20 @@ export interface OpcionesDeFiltros {
   unidades_disponibles: boolean
 }
 
+export interface ProximoIngreso {
+  fecha_ingreso: string
+  tipo_contrato: { clave: string; etiqueta: string }
+  posicion: { id: number | null; puesto: string | null; unidad: string | null; jefatura: string | null } | null
+  programado: boolean
+}
+
 export interface BloqueLaboral {
   disponibilidad: 'disponible' | 'no_disponible'
   estado: EstadoLaboral | null
   puesto: string | null
   unidad: string | null
+  /** Ingreso programado (GP-02); ausente o null si no hay. */
+  proximo_ingreso?: ProximoIngreso | null
 }
 
 export interface HechoLaboral {
@@ -131,5 +140,80 @@ export async function crearColaborador(datos: DatosFicha, claveDeOperacion: stri
 
 export async function actualizarColaborador(id: number, cambios: Partial<DatosFicha>, version: number): Promise<ColaboradorDetalle> {
   const response = await http.patch<{ data: ColaboradorDetalle }>(`/api/colaboradores/${id}`, { ...cambios, version })
+  return response.data.data
+}
+
+// ---------------------------------------------------------------- Ingresos y reingresos (GP-02)
+
+export interface TipoContrato {
+  clave: string
+  etiqueta: string
+}
+
+/** Posición elegible; la jefatura es null hasta que Estructura la publique. */
+export interface PosicionElegible {
+  id: number
+  puesto: string
+  unidad: string | null
+  jefatura: string | null
+}
+
+export interface ConflictoDeFicha {
+  codigo: string
+  desde: string
+  hasta: string | null
+}
+
+export interface OpcionesDeIngreso {
+  tipos_contrato: TipoContrato[]
+  ingreso_programado: boolean
+  conflicto_ficha: ConflictoDeFicha | null
+  posiciones: PosicionElegible[]
+  total: number
+}
+
+export interface DatosIngreso {
+  fecha_ingreso: string
+  tipo_contrato: string
+  posicion_id: number
+}
+
+export interface ResultadoIngreso {
+  vinculo: {
+    id: number
+    fecha_ingreso: string
+    tipo_contrato: TipoContrato
+    registrado_en: string
+    programado: boolean
+  }
+  asignacion: { id: number; posicion_id: number; fecha_inicio: string } | null
+  situacion: { estado: string }
+}
+
+export const POR_PAGINA_POSICIONES = 50
+
+export async function obtenerOpcionesDeIngreso(
+  colaboradorId: number,
+  fecha: string,
+  q: string,
+  signal?: AbortSignal,
+): Promise<OpcionesDeIngreso> {
+  const params: Record<string, string | number> = { fecha, per_page: POR_PAGINA_POSICIONES }
+  if (q) params.q = q
+  const response = await http.get<{
+    data: Omit<OpcionesDeIngreso, 'total'>
+    meta: { total: number }
+  }>(`/api/colaboradores/${colaboradorId}/opciones-ingreso`, { params, signal })
+  return { ...response.data.data, total: response.data.meta.total }
+}
+
+export async function registrarIngreso(
+  colaboradorId: number,
+  datos: DatosIngreso,
+  claveDeOperacion: string,
+): Promise<ResultadoIngreso> {
+  const response = await http.post<{ data: ResultadoIngreso }>(`/api/colaboradores/${colaboradorId}/ingresos`, datos, {
+    headers: { 'Idempotency-Key': claveDeOperacion },
+  })
   return response.data.data
 }

@@ -19,7 +19,7 @@ it('muestra puesto, unidad, estado y la trayectoria del más reciente al más an
 
     $detalle = $this->getJson('/api/colaboradores/'.$ficha->id)->assertOk();
 
-    expect($detalle->json('data.laboral'))->toBe(['disponibilidad' => 'disponible', 'estado' => 'Activo', 'puesto' => 'Analista', 'unidad' => 'Finanzas'])
+    expect($detalle->json('data.laboral'))->toBe(['disponibilidad' => 'disponible', 'estado' => 'Activo', 'puesto' => 'Analista', 'unidad' => 'Finanzas', 'proximo_ingreso' => null])
         ->and(array_column($detalle->json('data.trayectoria.hechos'), 'fecha_efectiva'))->toBe(['2999-01-01', '2023-05-01', '2020-01-10'])
         ->and(array_column($detalle->json('data.trayectoria.hechos'), 'programado'))->toBe([true, false, false]);
 
@@ -48,7 +48,7 @@ it('distingue la caída de la fuente de la ausencia y no oculta los datos person
 
 it('con un filtro dependiente de una fuente caída responde 503 y no un listado engañoso', function () {
     fichaDe(['numero_identificacion' => '12']);
-    lectorLaboralFalso($this, ['idsConVinculoVigente' => Lectura::noDisponible()]);
+    lectorLaboralFalso($this, ['idsPorEstado' => Lectura::noDisponible()]);
     actuarComoAdminDeTenant();
 
     $this->getJson('/api/colaboradores?estado=SinVinculoVigente')
@@ -58,20 +58,21 @@ it('con un filtro dependiente de una fuente caída responde 503 y no un listado 
 it('filtra por estado y unidad con lectores disponibles y excluye a los vinculados de Sin vínculo vigente', function () {
     $con = fichaDe(['numero_identificacion' => '13', 'apellidos' => 'Con']);
     $sin = fichaDe(['numero_identificacion' => '14', 'apellidos' => 'Sin']);
-    lectorLaboralFalso($this, [
-        'idsConVinculoVigente' => Lectura::disponible([$con->id]),
-        'idsPorEstado' => Lectura::disponible([$con->id]),
-        'colaboradoresEnPosiciones' => Lectura::disponible([$con->id]),
-        'situacionVigente' => Lectura::disponible([$con->id => ['estado' => 'Activo', 'posicion_id' => null]]),
-    ]);
     lectorEstructuraFalso($this, [
         'unidades' => Lectura::disponible([['id' => 3, 'nombre' => 'Finanzas']]),
         'posicionesPorUnidad' => Lectura::disponible([7]),
     ]);
     actuarComoAdminDeTenant();
 
+    lectorLaboralFalso($this, ['idsPorEstado' => Lectura::disponible([$sin->id])]);
     $this->getJson('/api/colaboradores?estado=SinVinculoVigente')->assertOk()
         ->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.id', $sin->id);
+
+    lectorLaboralFalso($this, [
+        'idsPorEstado' => Lectura::disponible([$con->id]),
+        'colaboradoresEnPosiciones' => Lectura::disponible([$con->id]),
+        'situacionVigente' => Lectura::disponible([$con->id => ['estado' => 'Activo', 'posicion_id' => null]]),
+    ]);
     $this->getJson('/api/colaboradores?estado=Activo')->assertOk()
         ->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.id', $con->id);
     $this->getJson('/api/colaboradores?unidad_id=3')->assertOk()

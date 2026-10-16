@@ -1,11 +1,13 @@
 <?php
 
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\Sanctum;
@@ -118,6 +120,16 @@ function lectorLaboralFalso(mixed $prueba, array $respuestas): void
         {
             return $this->dar('trayectoria');
         }
+
+        public function estadosPresentes(int $tenantId, string $fecha): Lectura
+        {
+            return $this->dar('estadosPresentes');
+        }
+
+        public function proximoIngreso(int $tenantId, int $colaboradorId, string $fecha): Lectura
+        {
+            return $this->dar('proximoIngreso');
+        }
     });
 }
 
@@ -156,4 +168,86 @@ function lectorEstructuraFalso(mixed $prueba, array $respuestas): void
             return $this->dar('unidades');
         }
     });
+}
+
+/**
+ * Posición asignable del tenant: puesto Activo, unidad Activa y estado Vacante.
+ *
+ * @param  array<string, mixed>  $atributos  Atributos de la posición (estado, tenant_id, puesto_id, unidad_organizacional_id).
+ */
+function posicionAsignable(array $atributos = [], int $tenantId = 1): PosicionModel
+{
+    $puestoId = $atributos['puesto_id'] ?? puestoDe()->id;
+    $unidadId = $atributos['unidad_organizacional_id'] ?? unidadDe()->id;
+
+    return PosicionModel::query()->create(array_merge([
+        'puesto_id' => $puestoId,
+        'unidad_organizacional_id' => $unidadId,
+        'estado' => 'Vacante',
+        'tenant_id' => $tenantId,
+    ], $atributos));
+}
+
+/**
+ * Cuerpo válido del alta de un ingreso.
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function datosIngreso(int $posicionId, array $cambios = []): array
+{
+    return array_replace([
+        'fecha_ingreso' => hoyDelTenant(),
+        'tipo_contrato' => 'indefinido',
+        'posicion_id' => $posicionId,
+    ], $cambios);
+}
+
+function registrarIngresoApi(mixed $prueba, int $fichaId, array $cuerpo, ?string $clave = null): TestResponse
+{
+    return $prueba->postJson("/api/colaboradores/$fichaId/ingresos", $cuerpo, [
+        'Idempotency-Key' => $clave ?? (string) Str::uuid(),
+    ]);
+}
+
+/**
+ * Inserta un vínculo (y su asignación) directamente, como lo haría una salida o un dato inicial.
+ */
+function vinculoDe(int $fichaId, string $ingreso, ?string $salida, int $posicionId, ?string $fin = null, int $tenantId = 1, string $contrato = 'indefinido'): int
+{
+    $vinculoId = DB::table('vinculos_laborales')->insertGetId([
+        'tenant_id' => $tenantId,
+        'colaborador_id' => $fichaId,
+        'fecha_ingreso' => $ingreso,
+        'fecha_salida' => $salida,
+        'tipo_contrato_clave' => $contrato,
+        'version' => 1,
+        'operacion_id' => (string) Str::uuid(),
+        'operacion_hash' => hash('sha256', (string) Str::uuid()),
+        'created_by' => 1,
+        'updated_by' => 1,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    DB::table('asignaciones_laborales')->insert([
+        'tenant_id' => $tenantId,
+        'vinculo_id' => $vinculoId,
+        'posicion_id' => $posicionId,
+        'fecha_inicio' => $ingreso,
+        'fecha_fin' => $fin ?? $salida,
+        'version' => 1,
+        'created_by' => 1,
+        'updated_by' => 1,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return $vinculoId;
+}
+
+/** Fecha de hoy en la zona horaria del tenant de prueba (la misma que usa el servidor). */
+function hoyDelTenant(int $dias = 0): string
+{
+    return now('America/Guayaquil')->addDays($dias)->toDateString();
 }

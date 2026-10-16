@@ -36,16 +36,19 @@ final class ListarColaboradores
 
         // Filtro de estado.
         if ($filtro->estado !== null && $filtro->estado !== 'Todos') {
-            if ($filtro->estado === EstadoLaboral::SinVinculoVigente->value) {
-                $vinculados = $this->laboral->idsConVinculoVigente($contexto->tenantId, $hoy);
-                $this->exigirSinFallo($vinculados->fallo());
-                $excluir = $vinculados->estaDisponible() ? array_map('intval', $vinculados->datos) : null;
-            } else {
-                $porEstado = $this->laboral->idsPorEstado($contexto->tenantId, $filtro->estado, $hoy);
-                if ($porEstado->noEstaInstalado()) {
+            if (! in_array($filtro->estado, ['Activo', 'Desvinculado', EstadoLaboral::SinVinculoVigente->value], true)) {
+                throw new DatosInvalidos(['estado' => ['El estado seleccionado no está disponible.']]);
+            }
+
+            $porEstado = $this->laboral->idsPorEstado($contexto->tenantId, $filtro->estado, $hoy);
+            $this->exigirSinFallo($porEstado->fallo());
+
+            if ($porEstado->noEstaInstalado()) {
+                // Sin lector laboral nadie tiene vínculo: todas las fichas están «Sin vínculo vigente».
+                if ($filtro->estado !== EstadoLaboral::SinVinculoVigente->value) {
                     throw new DatosInvalidos(['estado' => ['El estado seleccionado no está disponible.']]);
                 }
-                $this->exigirSinFallo($porEstado->fallo());
+            } else {
                 $incluir = array_map('intval', $porEstado->datos);
             }
         }
