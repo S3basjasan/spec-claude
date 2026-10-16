@@ -11,6 +11,12 @@ import { dnfNav } from './modules/desarrollo/dnf/nav'
 import { DnfDetallePage } from './modules/desarrollo/dnf/pages/DnfDetallePage'
 import { DnfHistorialPage } from './modules/desarrollo/dnf/pages/DnfHistorialPage'
 import { DnfPage } from './modules/desarrollo/dnf/pages/DnfPage'
+import { RequireAdmin as RequireAdminPlan } from './modules/desarrollo/plan-formacion/components/RequireAdmin'
+import { planFormacionNav } from './modules/desarrollo/plan-formacion/nav'
+import { AccionesPage } from './modules/desarrollo/plan-formacion/pages/AccionesPage'
+import { AsistentePlanPage } from './modules/desarrollo/plan-formacion/pages/AsistentePlanPage'
+import { PlanDetallePage } from './modules/desarrollo/plan-formacion/pages/PlanDetallePage'
+import { PlanFormacionPage } from './modules/desarrollo/plan-formacion/pages/PlanFormacionPage'
 import { RequireAdmin } from './modules/estructura/competencias/components/RequireAdmin'
 import { competenciasNav } from './modules/estructura/competencias/nav'
 import { CompetenciaFormPage } from './modules/estructura/competencias/pages/CompetenciaFormPage'
@@ -42,7 +48,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, dnfNav, unidadesNav, colaboradoresNav, miFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, miFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -91,6 +97,13 @@ function App() {
             <Route element={<RequireAdminDnf />}>
               <Route path="dnf/historial" element={<DnfHistorialPage />} />
               <Route path="dnf/:id" element={<DnfDetallePage />} />
+            </Route>
+            <Route path="plan-formacion" element={<PlanFormacionPage />} />
+            <Route element={<RequireAdminPlan />}>
+              <Route path="plan-formacion/acciones" element={<AccionesPage />} />
+              <Route path="plan-formacion/nuevo" element={<AsistentePlanPage />} />
+              <Route path="plan-formacion/:id/editar" element={<AsistentePlanPage />} />
+              <Route path="plan-formacion/:id" element={<PlanDetallePage />} />
             </Route>
             <Route path="puestos" element={<PuestosPage />} />
             <Route element={<RequireAdminPuestos />}>

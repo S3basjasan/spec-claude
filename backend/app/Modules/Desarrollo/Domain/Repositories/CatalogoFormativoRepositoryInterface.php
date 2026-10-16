@@ -46,6 +46,14 @@ interface CatalogoFormativoRepositoryInterface
     public function idsDisponibles(TipoRecurso $tipo): array;
 
     /**
+     * Competencias a las que está vinculado cada curso (lo usa el Plan de formación para proponer competencias).
+     *
+     * @param  list<int>  $cursoIds
+     * @return array<int, list<int>> curso_id => competencia_ids
+     */
+    public function competenciasDeCursos(array $cursoIds): array;
+
+    /**
      * Reemplaza en una transacción el área, los cursos y los micro-contenidos de la competencia, y escribe el
      * historial. Sin diferencias reales no modifica nada.
      *

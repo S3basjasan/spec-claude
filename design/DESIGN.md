@@ -50,6 +50,19 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 | `--neutral` | `#3B4654` | `#B8C2CD` | Texto neutro sobre `--neutralsoft` (prioridad Baja, Sin evaluación) |
 | `--neutralsoft` | `#ECEEF1` | `#232B34` | Fondo neutro |
 
+**Colores por tipo de acción formativa** *(añadidos por la feature 013, Plan de formación anual; valores de `PlanAnualAdmin.dc.html`)*. Los tipos Presencial, Virtual, E-learning y OJT reutilizan tokens existentes; Codesarrollo y Mentoring añaden dos pares. Siempre llevan el nombre del tipo como texto:
+
+| Tipo | Texto / fondo (claro) | Texto / fondo (oscuro) | Tokens |
+|---|---|---|---|
+| Presencial | `#0B5A55` / `#E3F2F0` | `#7FE0D6` / `#12302D` | `--accent` / `--soft` |
+| Virtual | `#1F4E9C` / `#E4EDFB` | `#9DBEF5` / `#172A4A` | `--info` / `--infosoft` |
+| E-learning | `#8A4B0B` / `#FDEFD9` | `#F2C27A` / `#3A2A12` | `--warn` / `--warnsoft` |
+| OJT | `#3B4654` / `#ECEEF1` | `#B8C2CD` / `#232B34` | `--neutral` / `--neutralsoft` |
+| Codesarrollo | `#5B2E91` / `#F0E7FA` | `#CDA9F2` / `#2C1D44` | `--violet` / `--violetsoft` *(nuevos)* |
+| Mentoring | `#9C2250` / `#FBE6EC` | `#F2A6C0` / `#40182A` | `--rose` / `--rosesoft` *(nuevos)* |
+
+**Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
+
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
 
 **`--input-border` es nuevo.** Los mockups usan `--border` (1.26:1) o `#C9CED6` (1.58:1) en los inputs, y ninguno llega al 3:1 que exige WCAG 1.4.11 para el borde de un control. Los valores propuestos dan 3.07:1 (claro) y 3.05:1 (oscuro).
@@ -178,6 +191,20 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Mis brechas prioritarias** | Sección con `h2` y subtítulo; hasta tres tarjetas de brecha numeradas (1–3) de mayor a menor prioridad; debajo «Otras brechas detectadas» y un bloque plegable «Competencias que ya cumples (N)». |
 | **Botón «Generar Plan de Formación»** | Botón primario solo para el Administrador. Deshabilitado con motivo visible (13px `--muted`, enlazado con `aria-describedby`) si no hay brechas o si ya generó plan; en este caso se sustituye por el enlace «Ver plan». |
 
+**Componentes del Plan de formación anual** *(feature 013; referencias `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Tabs (pestañas)** | `role="tablist"` con botones `role="tab"` de alto 44px, `aria-selected`, texto `--muted` y, en el activo, `--accent` con borde inferior de 3px `--accent`; navegación con flechas izquierda/derecha. El panel asociado lleva `role="tabpanel"`. |
+| **Chip de tipo** | Píldora 12–13px 700 con el nombre del tipo y los colores de la tabla «Colores por tipo de acción». |
+| **Badge de estado del plan / de la acción** | Píldora con texto y los colores de «Estados del plan y de la acción». Las acciones canceladas llevan además el badge «Cancelada». |
+| **Calendario mensual** | Rejilla de 7 columnas (Lun–Dom) con título del mes, botones «Mes anterior», «Mes siguiente» y «Hoy» (44px); celdas con el número del día y, debajo, un chip por acción coloreado por tipo, con el nombre truncado y `title`; el día actual con borde `--accent`; más de 3 acciones en un día muestran «+N más». Cada chip es un botón que abre el detalle de la acción. Bajo 640px la rejilla pasa a una lista por día. Los días de otros meses van atenuados. Cada chip mide al menos 24×24px (WCAG 2.5.8) y las canceladas van tachadas además de llevar el nombre del tipo; el día actual se marca con borde `--accent` y `aria-current="date"`. |
+| **Panel de detalle de acción** | Panel lateral (como el del Catálogo) con nombre, badge de tipo y de estado, competencias, fechas, formador, inscritos/capacidad y costo. |
+| **Tarjeta de acción (colaborador)** | Card con nombre (h3), `Chip` de tipo, competencia, fechas, formador, badge de estado y botón «Ver detalle». La cancelada muestra el motivo en `--muted`. |
+| **Barra de progreso del plan** | Misma barra que el indicador de cobertura (`role="progressbar"` con `aria-valuenow/min/max` y `aria-label`; relleno `--accent` sobre `--border`) con el texto «% del plan completado». |
+| **Selector de participantes** | `Combobox` de búsqueda por colaborador con el contador «n/capacidad» (`--muted`; en `--warn` al llegar al máximo, con el botón de agregar deshabilitado) y lista de inscritos con botón «Quitar» por fila; el aviso de cruce de fechas (`--warn`, icono y texto) se muestra junto al participante. |
+| **Historial del plan** | Lista cronológica (más reciente primero): badge de tipo (Estado, Participante, Cancelación, Aprobador), usuario y fecha (13px `--muted`), detalle «anterior → nuevo» y el motivo si existe. |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -290,6 +317,16 @@ Referencia: `Main.dc.html`. Saludo (h1) + subtítulo; grilla de StatCards (`minm
 ### Páginas públicas
 Referencias: `Login.dc.html`, `Landing.dc.html`. Sin app shell. Login: tarjeta centrada de 420px como máximo, con marca encima, sobre `--bg`. Por ahora solo tema claro.
 
+### Plan de formación anual *(feature 013)*
+Referencias: `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html`. Se omiten los controles de prototipo («Ver como…», menú con Empleados/Ajustes).
+
+1. **Planes de formación (Listado)**: patrón Listado (`Competencias.dc.html`) con columnas código, nombre, año, estado (badge), acciones, costo total, aprobador y botones por estado; filtros año, estado y búsqueda por nombre; botón primario «Nuevo plan».
+2. **Acciones formativas (Calendario y Lista)**: `Tabs` «Calendario» y «Lista» con filtros comunes (estado del plan, tipo, competencia, desde, hasta, «Limpiar filtros») sobre las pestañas; Lista como tabla con paginación; Calendario como se define en §4. Por defecto el año actual.
+3. **Asistente de 3 pasos**: `Stepper` (Datos generales, Acciones formativas, Participantes y aprobador); cada paso es un formulario con el patrón Formulario; «Guardar borrador» siempre visible; el paso 2 lista las acciones con Editar y Quitar y un formulario de acción (modal o panel) con selección múltiple de competencias y selector «Partir de un curso del catálogo»; el paso 3 usa el selector de participantes por acción y el `SelectField` del aprobador.
+4. **Detalle del plan**: patrón Detalle de un registro; bloques datos generales, acciones (con costo y horas totales) e historial; botones de estado según el estado del plan.
+5. **Mi plan (colaborador)**: encabezado con la barra de progreso, «Próximas actividades» (hasta 3) y lista cronológica de tarjetas de acción; mensaje vacío «Aún no tienes acciones formativas asignadas».
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; los diálogos de motivo y de confirmación usan `Modal`/`ConfirmDialog`.
+
 ---
 
 ## 6. Iconos
@@ -394,4 +431,12 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `GP-02_Registrar-ingreso.html` incluye formación académica, experiencia anterior, movilidad, documentos y la barra de «Controles del prototipo» | Pertenecen a GP-03, GP-05 y a la propia demostración; GP-02 solo registra el vínculo y la asignación inicial |
 | `GP-02_Registrar-ingreso.html` no muestra la jefatura de la posición | La spec la pide en solo lectura; mientras Estructura no la publique se muestra «No registrado» |
 | `ColaboradorIngreso.dc.html` | Tablero del formulario de ingreso, creado en 006 (Constitución III) |
+| `PlanAnualAdmin.dc.html` pide en el paso 1 «Inicio del período», «Fin del período», «Presupuesto estimado (USD)» y «Objetivo del plan» | Manda la spec 013 (FR-002): solo nombre, año y descripción; el período es el año |
+| `PlanAnualAdmin.dc.html` ofrece «Precargar acciones desde el último DNF» | Se omite: el borrador desde la DNF lo crea la DNF mediante la Facade del módulo (FR-029) |
+| `PlanAnualAdmin.dc.html` asigna «Participantes por departamento» | La spec pide participantes por acción, con búsqueda por colaborador, capacidad usada y avisos de cruce junto al participante |
+| `PlanAnualAdmin.dc.html` elige una sola «Competencia objetivo» y no tiene curso del catálogo ni duración | La spec pide una o más competencias, curso opcional que propone tipo/formador/competencias y duración en horas |
+| `PlanAnualAdmin.dc.html` muestra KPI de avance de ejemplo | Solo se muestran cantidad de acciones, costo total y horas totales (FR-021) |
+| `PlanAnualColaborador.dc.html` usa los estados «Completada», «Inscrito» y «Por confirmar», «Tu avance %» y «Lugar o plataforma» | La spec usa el estado de la acción (Programada, En curso, Finalizada, Cancelada), solo el «% del plan completado» general y no registra lugar o plataforma |
+| `PlanAnualColaborador.dc.html` no muestra acciones canceladas | La spec aclarada (FR-022) las muestra con estado «Cancelada» y su motivo, fuera del progreso y de las próximas actividades |
+| `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html` traen «Ver como colaborador/administrador», «Empleados», «Ajustes» y «Mi perfil» | Controles de prototipo o de otras features: no se implementan (un solo rol por persona) |
 | `GP-03_Desarrollo-profesional.html` muestra el estado de la formación con insignias de color propias (`b-info`, `b-ok`, `b-off`), fechas como «Inicio no registrado · Fin no registrado», «Sin observaciones» y el bloque «Trayectoria interna» dentro de la pestaña Desarrollo, y edita en un diálogo con `form` propio | La pestaña usa el `Badge` del sistema (normal para En curso y Completada, neutro para Incompleta y movilidad no disponible o no informada), fechas como «Inicio: … · Fin: No registrado», «No registrado» en observaciones ausentes y los diálogos dentro de `Modal`. La trayectoria interna sigue en GP-01/GP-02 y no se duplica en esta pestaña; el estado vacío dice «Formación académica no registrada» y «Experiencia anterior no registrada» |

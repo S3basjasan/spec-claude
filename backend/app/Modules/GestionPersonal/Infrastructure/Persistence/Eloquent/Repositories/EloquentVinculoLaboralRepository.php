@@ -92,6 +92,23 @@ final class EloquentVinculoLaboralRepository implements VinculoLaboralRepository
             ->all();
     }
 
+    public function fichasConVinculoVigente(int $tenantId, ?array $colaboradorIds, string $fecha): array
+    {
+        if ($colaboradorIds !== null && $colaboradorIds === []) {
+            return [];
+        }
+
+        return DB::table('vinculos_laborales')
+            ->where('tenant_id', $tenantId)
+            ->when($colaboradorIds !== null, fn ($q) => $q->whereIn('colaborador_id', array_values(array_unique($colaboradorIds))))
+            ->where('fecha_ingreso', '<=', $fecha)
+            ->where(fn ($q) => $q->whereNull('fecha_salida')->orWhere('fecha_salida', '>', $fecha))
+            ->distinct()
+            ->pluck('colaborador_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
     public function porOperacion(int $tenantId, string $operacionId): ?array
     {
         $fila = DB::table('vinculos_laborales')->where('tenant_id', $tenantId)->where('operacion_id', $operacionId)->first();

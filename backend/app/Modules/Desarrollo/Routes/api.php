@@ -3,6 +3,8 @@
 use App\Modules\Desarrollo\Presentation\Controllers\AreaFormativaController;
 use App\Modules\Desarrollo\Presentation\Controllers\CatalogoFormativoController;
 use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
+use App\Modules\Desarrollo\Presentation\Controllers\PlanAccionController;
+use App\Modules\Desarrollo\Presentation\Controllers\PlanController;
 use Illuminate\Support\Facades\Route;
 
 // Catálogo formativo de competencias (feature 005). Prefijo /api/catalogo-formativo por contrato.
@@ -46,4 +48,31 @@ Route::prefix('api/dnf')->middleware('api')->group(function () {
         Route::get('/{id}', [DnfController::class, 'show'])->whereNumber('id')->name('dnf.show');
         Route::post('/{id}/plan', [DnfController::class, 'plan'])->whereNumber('id')->name('dnf.plan');
     });
+});
+
+// Plan de formación anual (feature 013). Prefijos /api/planes y /api/plan-acciones por contrato.
+// No existe DELETE: los planes no se eliminan y las acciones solo se quitan de un Borrador mediante PUT.
+// Las rutas fijas (`mi-plan`, `opciones`, `colaboradores`, `cursos`) se declaran antes de cualquier `/{id}`.
+Route::prefix('api/planes')->middleware('api')->group(function () {
+    // Plan propio del colaborador: solo autenticación; los datos son siempre los del usuario del token.
+    Route::get('/mi-plan', [PlanController::class, 'miPlan'])->middleware('auth:sanctum')->name('planes.mi-plan');
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/opciones', [PlanController::class, 'opciones'])->name('planes.opciones');
+        Route::get('/colaboradores', [PlanController::class, 'colaboradores'])->name('planes.colaboradores');
+        Route::get('/cursos', [PlanController::class, 'cursos'])->name('planes.cursos');
+        Route::get('/', [PlanController::class, 'index'])->name('planes.index');
+        Route::post('/', [PlanController::class, 'store'])->name('planes.store');
+        Route::get('/{id}', [PlanController::class, 'show'])->whereNumber('id')->name('planes.show');
+        Route::put('/{id}', [PlanController::class, 'update'])->whereNumber('id')->name('planes.update');
+        Route::get('/{id}/historial', [PlanController::class, 'historial'])->whereNumber('id')->name('planes.historial');
+        Route::patch('/{id}/estado', [PlanController::class, 'estado'])->whereNumber('id')->name('planes.estado');
+        Route::patch('/{id}/aprobador', [PlanController::class, 'aprobador'])->whereNumber('id')->name('planes.aprobador');
+    });
+});
+
+Route::prefix('api/plan-acciones')->middleware(['api', 'auth:sanctum', 'admin'])->group(function () {
+    Route::get('/', [PlanAccionController::class, 'index'])->name('plan-acciones.index');
+    Route::put('/{id}/participantes', [PlanAccionController::class, 'participantes'])->whereNumber('id')->name('plan-acciones.participantes');
+    Route::patch('/{id}/cancelar', [PlanAccionController::class, 'cancelar'])->whereNumber('id')->name('plan-acciones.cancelar');
 });

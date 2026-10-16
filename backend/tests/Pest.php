@@ -29,6 +29,7 @@ use Tests\TestCase;
 
 require_once __DIR__.'/GestionPersonalHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/DnfHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/PlanHelpers.php';
 
 /*
 |--------------------------------------------------------------------------

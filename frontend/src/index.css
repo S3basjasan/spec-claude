@@ -22,6 +22,10 @@
   --infosoft: #e4edfb;
   --neutral: #3b4654;
   --neutralsoft: #eceef1;
+  --violet: #5b2e91;
+  --violetsoft: #f0e7fa;
+  --rose: #9c2250;
+  --rosesoft: #fbe6ec;
   color-scheme: light;
 }
 
@@ -46,6 +50,10 @@
   --infosoft: #172a4a;
   --neutral: #b8c2cd;
   --neutralsoft: #232b34;
+  --violet: #cda9f2;
+  --violetsoft: #2c1d44;
+  --rose: #f2a6c0;
+  --rosesoft: #40182a;
   color-scheme: dark;
 }
 
@@ -70,6 +78,10 @@
   --color-infosoft: var(--infosoft);
   --color-neutral: var(--neutral);
   --color-neutralsoft: var(--neutralsoft);
+  --color-violet: var(--violet);
+  --color-violetsoft: var(--violetsoft);
+  --color-rose: var(--rose);
+  --color-rosesoft: var(--rosesoft);
   --font-sans: 'Public Sans', system-ui, sans-serif;
 }
 

@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Plan de Formación Anual — Administrador</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.tabbtn:focus-visible,.pill:focus-visible,.cchip:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.tabbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.tabbtn:hover{color:var(--text)}
+.tabbtn[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;font-weight:600}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.cchip{display:block;width:100%;box-sizing:border-box;text-align:left;border:0;padding:3px 6px;border-radius:4px;font:inherit;font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400;box-sizing:border-box;width:100%}
+textarea.fi{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+</style>
+</helmet>
+<div style="min-height: 2200px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="CatalogoAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="DNFAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Plan anual</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div>
+            <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Plan de Formación anual</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Organiza las acciones formativas del período, sus fechas, cupos, costos y aprobación.</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <a class="btn" href="PlanAnualColaborador.dc.html">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador
+            </a>
+            <button class="btn btn-primary" onClick="{{abrirWizard}}">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nuevo plan
+            </button>
+          </div>
+        </div>
+
+        <sc-if value="{{hayAviso}}" hint-placeholder-val="{{false}}">
+          <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600">
+            <span>{{aviso}}</span>
+            <button class="btn" onClick="{{cerrarAviso}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button>
+          </div>
+        </sc-if>
+
+        <section aria-labelledby="pl-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="min-width: 0">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+                <h2 id="pl-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">{{plan.nombre}}</h2>
+                <span style="{{plan.estadoStyle}}">{{plan.estado}}</span>
+              </div>
+              <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">{{plan.meta}}</p>
+            </div>
+            <div role="group" aria-label="Planes" style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{planes}}" as="p" hint-placeholder-count="2">
+                <button class="pill" aria-pressed="{{p.activo}}" onClick="{{p.elegir}}">{{p.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <ol aria-label="Ciclo de vida del plan" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px">
+            <sc-for list="{{ciclo}}" as="e" hint-placeholder-count="5">
+              <li aria-current="{{e.cur}}" style="display: inline-flex; align-items: center; gap: 6px">
+                <span style="{{e.boxStyle}}">
+                  <span style="{{e.nStyle}}">{{e.n}}</span>{{e.label}}
+                </span>
+                <sc-if value="{{e.hayFlecha}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></sc-if>
+              </li>
+            </sc-for>
+          </ol>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border)">
+            <p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--muted); max-width: 640px">{{avance.hint}}</p>
+            <sc-if value="{{avance.hayBoton}}" hint-placeholder-val="{{true}}">
+              <button class="btn btn-primary" onClick="{{avance.go}}" disabled="{{avance.bloqueado}}">{{avance.label}}</button>
+            </sc-if>
+          </div>
+        </section>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px">
+              <div style="font-size: 13px; color: var(--muted)">{{k.label}}</div>
+              <div style="margin-top: 4px; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{k.valor}}</div>
+              <div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{k.nota}}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <section aria-label="Acciones formativas" style="display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border)">
+            <div role="tablist" aria-label="Vista" style="display: flex">
+              <button class="tabbtn" role="tab" id="tab-cal" aria-selected="{{tabs.cal}}" aria-controls="panel-vista" onClick="{{verCal}}">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Calendario
+              </button>
+              <button class="tabbtn" role="tab" id="tab-lis" aria-selected="{{tabs.lis}}" aria-controls="panel-vista" onClick="{{verLista}}">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"></path></svg>Lista
+              </button>
+            </div>
+            <span role="status" aria-live="polite" style="padding-bottom: 12px; font-size: 14px; color: var(--muted)">{{resumen}}</span>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+            <div class="fl" style="flex: 0 1 160px">
+              <label for="f-est">Estado</label>
+              <select id="f-est" class="fi" value="{{f.estado}}" onChange="{{f.setEstado}}">
+                <option value="todos">Todos</option><option value="Borrador">Borrador</option><option value="Revisión">Revisión</option><option value="Aprobado">Aprobado</option><option value="Ejecutando">Ejecutando</option><option value="Cerrado">Cerrado</option>
+              </select>
+            </div>
+            <div class="fl" style="flex: 0 1 170px">
+              <label for="f-tip">Tipo</label>
+              <select id="f-tip" class="fi" value="{{f.tipo}}" onChange="{{f.setTipo}}">
+                <option value="todos">Todos</option><option value="Presencial">Presencial</option><option value="Virtual">Virtual</option><option value="E-learning">E-learning</option><option value="OJT">OJT</option><option value="Codesarrollo">Codesarrollo</option><option value="Mentoring">Mentoring</option>
+              </select>
+            </div>
+            <div class="fl" style="flex: 1 1 220px">
+              <label for="f-com">Competencia</label>
+              <select id="f-com" class="fi" value="{{f.comp}}" onChange="{{f.setComp}}">
+                <option value="todas">Todas</option>
+                <option value="COM-001">Trabajo en equipo</option><option value="COM-002">Orientación a resultados</option><option value="COM-003">Liderazgo</option><option value="COM-004">Análisis de datos</option><option value="COM-005">Comunicación efectiva</option><option value="COM-006">Gestión del tiempo</option><option value="COM-007">Gestión del cambio</option><option value="COM-008">Pensamiento analítico</option><option value="COM-009">Aprendizaje continuo</option><option value="COM-010">Negociación</option><option value="COM-011">Orientación al cliente</option><option value="COM-012">Integridad</option>
+              </select>
+            </div>
+            <div class="fl" style="flex: 0 1 160px"><label for="f-des">Desde</label><input id="f-des" class="fi" type="date" value="{{f.desde}}" onChange="{{f.setDesde}}"></div>
+            <div class="fl" style="flex: 0 1 160px"><label for="f-has">Hasta</label><input id="f-has" class="fi" type="date" value="{{f.hasta}}" onChange="{{f.setHasta}}"></div>
+            <sc-if value="{{f.hay}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{f.limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button></sc-if>
+          </div>
+
+          <div id="panel-vista" role="tabpanel">
+            <!-- ========== LISTA ========== -->
+            <sc-if value="{{tabs.lis}}" hint-placeholder-val="{{true}}">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                <table style="width: 100%; min-width: 1060px; border-collapse: collapse; font-size: 15px">
+                  <thead>
+                    <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                      <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Nombre</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600">Competencia objetivo</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600">Tipo</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600">Fechas</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600">Formador</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600; min-width: 120px">Inscritos / Capacidad</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Costo</th>
+                      <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{filas}}" as="r" hint-placeholder-count="8">
+                      <tr class="row" style="border-top: 1px solid var(--border)">
+                        <td style="padding: 12px 12px 12px 20px; font-weight: 600; max-width: 260px">{{r.nombre}}</td>
+                        <td style="padding: 12px; font-size: 14px">{{r.comp}}<sc-if value="{{r.hayMas}}" hint-placeholder-val="{{false}}"> <span title="{{r.todas}}" style="display: inline-block; margin-left: 4px; padding: 1px 8px; border-radius: 999px; background: var(--neutralsoft); color: var(--neutral); font-size: 12px; font-weight: 700">{{r.mas}}</span></sc-if></td>
+                        <td style="padding: 12px"><span style="{{r.tipoStyle}}">{{r.tipo}}</span></td>
+                        <td style="padding: 12px; font-size: 14px; white-space: nowrap">{{r.fechas}}</td>
+                        <td style="padding: 12px; font-size: 14px">{{r.formador}}</td>
+                        <td style="padding: 12px">
+                          <div style="font-weight: 600; font-variant-numeric: tabular-nums; font-size: 14px">{{r.cupoTxt}}</div>
+                          <div aria-hidden="true" style="margin-top: 4px; height: 6px; border-radius: 999px; background: var(--border); overflow: hidden"><div style="{{r.cupoBar}}"></div></div>
+                        </td>
+                        <td style="padding: 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600">{{r.costo}}</td>
+                        <td style="padding: 12px 20px 12px 12px"><span style="{{r.estadoStyle}}">{{r.estado}}</span></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+                <sc-if value="{{sinFilas}}" hint-placeholder-val="{{false}}">
+                  <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted); border-top: 1px solid var(--border)">Ninguna acción coincide con los filtros.</p>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- ========== CALENDARIO ========== -->
+            <sc-if value="{{tabs.cal}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                  <div style="display: flex; align-items: center; gap: 8px">
+                    <button class="ibtn" onClick="{{cal.prev}}" aria-label="Mes anterior"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+                    <h3 aria-live="polite" style="margin: 0; min-width: 170px; text-align: center; font-size: 18px; text-transform: capitalize">{{cal.titulo}}</h3>
+                    <button class="ibtn" onClick="{{cal.next}}" aria-label="Mes siguiente"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+                    <button class="btn" onClick="{{cal.hoy}}">Hoy</button>
+                  </div>
+                  <ul aria-label="Tipos de acción" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted)">
+                    <sc-for list="{{leyenda}}" as="l" hint-placeholder-count="6">
+                      <li style="display: inline-flex; align-items: center; gap: 6px"><span style="{{l.style}}"></span>{{l.label}}</li>
+                    </sc-for>
+                  </ul>
+                </div>
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                  <div style="min-width: 760px">
+                    <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; color: var(--muted)">
+                      <div style="padding: 10px 8px">Lun</div><div style="padding: 10px 8px">Mar</div><div style="padding: 10px 8px">Mié</div><div style="padding: 10px 8px">Jue</div><div style="padding: 10px 8px">Vie</div><div style="padding: 10px 8px">Sáb</div><div style="padding: 10px 8px">Dom</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr))">
+                      <sc-for list="{{cal.celdas}}" as="c" hint-placeholder-count="35">
+                        <div style="{{c.style}}">
+                          <sc-if value="{{c.real}}" hint-placeholder-val="{{true}}">
+                            <div style="{{c.diaStyle}}">{{c.dia}}</div>
+                            <sc-for list="{{c.chips}}" as="x" hint-placeholder-count="0">
+                              <button class="cchip" style="{{x.style}}" onClick="{{x.pick}}" aria-label="{{x.aria}}">{{x.nombre}}</button>
+                            </sc-for>
+                            <sc-if value="{{c.hayMas}}" hint-placeholder-val="{{false}}"><span style="font-size: 11px; font-weight: 600; color: var(--muted)">{{c.masTxt}}</span></sc-if>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+                <sc-if value="{{hayDetalle}}" hint-placeholder-val="{{false}}">
+                  <section aria-label="Detalle de la acción" style="background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+                      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+                        <h3 style="margin: 0; font-size: 17px">{{det.nombre}}</h3>
+                        <span style="{{det.tipoStyle}}">{{det.tipo}}</span>
+                        <span style="{{det.estadoStyle}}">{{det.estado}}</span>
+                      </div>
+                      <button class="ibtn" onClick="{{det.cerrar}}" aria-label="Cerrar detalle"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+                    </div>
+                    <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+                      <div><dt style="font-size: 12px; color: var(--muted)">Competencia objetivo</dt><dd style="margin: 2px 0 0; font-weight: 600">{{det.comps}}</dd></div>
+                      <div><dt style="font-size: 12px; color: var(--muted)">Fechas</dt><dd style="margin: 2px 0 0; font-weight: 600">{{det.fechas}}</dd></div>
+                      <div><dt style="font-size: 12px; color: var(--muted)">Formador</dt><dd style="margin: 2px 0 0; font-weight: 600">{{det.formador}}</dd></div>
+                      <div><dt style="font-size: 12px; color: var(--muted)">Inscritos / Capacidad</dt><dd style="margin: 2px 0 0; font-weight: 600">{{det.cupo}}</dd></div>
+                      <div><dt style="font-size: 12px; color: var(--muted)">Costo</dt><dd style="margin: 2px 0 0; font-weight: 600">{{det.costo}}</dd></div>
+                    </dl>
+                  </section>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+
+  <!-- ================= WIZARD ================= -->
+  <sc-if value="{{wz.abierto}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; background: rgba(8, 12, 16, 0.55)">
+      <div role="dialog" aria-modal="true" aria-labelledby="wz-t" style="width: min(840px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3); overflow: hidden">
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 24px 16px; border-bottom: 1px solid var(--border)">
+          <div>
+            <h2 id="wz-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">Nuevo plan de formación</h2>
+            <ol aria-label="Pasos" style="list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{wz.pasos}}" as="p" hint-placeholder-count="3">
+                <li><span class="step" aria-current="{{p.cur}}"><span style="{{p.nStyle}}">{{p.n}}</span>{{p.label}}</span></li>
+              </sc-for>
+            </ol>
+          </div>
+          <button class="ibtn" onClick="{{wz.cerrar}}" aria-label="Cancelar y cerrar"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+
+          <sc-if value="{{wz.err}}" hint-placeholder-val="{{false}}">
+            <p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">{{wz.errTxt}}</p>
+          </sc-if>
+
+          <!-- Paso 1 -->
+          <sc-if value="{{wz.p1}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; flex-direction: column; gap: 16px">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+                <div class="fl" style="grid-column: 1 / -1"><label for="w-nom">Nombre del plan</label><input id="w-nom" class="fi" type="text" value="{{wz.nombre}}" onChange="{{wz.hNombre}}" placeholder="Ej.: Plan de Formación 2027"></div>
+                <div class="fl"><label for="w-ini">Inicio del período</label><input id="w-ini" class="fi" type="date" value="{{wz.inicio}}" onChange="{{wz.hInicio}}"></div>
+                <div class="fl"><label for="w-fin">Fin del período</label><input id="w-fin" class="fi" type="date" value="{{wz.fin}}" onChange="{{wz.hFin}}"></div>
+                <div class="fl"><label for="w-pre">Presupuesto estimado (USD)</label><input id="w-pre" class="fi" type="number" min="0" value="{{wz.presupuesto}}" onChange="{{wz.hPresupuesto}}"></div>
+                <div class="fl" style="grid-column: 1 / -1"><label for="w-obj">Objetivo del plan</label><textarea id="w-obj" class="fi" rows="3" onChange="{{wz.hObjetivo}}" placeholder="Qué se espera lograr con este plan">{{wz.objetivo}}</textarea></div>
+              </div>
+              <label style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); cursor: pointer">
+                <input type="checkbox" checked="{{wz.precarga}}" onChange="{{wz.hPrecarga}}" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent)">
+                <span><span style="display: block; font-size: 15px; font-weight: 600">Precargar acciones desde el último DNF</span><span style="display: block; margin-top: 2px; font-size: 13px; color: var(--muted)">Agrega 4 acciones sugeridas a partir de las brechas detectadas (DNF del 30/09/2026). Podrás editarlas en el paso 2.</span></span>
+              </label>
+            </div>
+          </sc-if>
+
+          <!-- Paso 2 -->
+          <sc-if value="{{wz.p2}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 18px">
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <h3 style="margin: 0; font-size: 15px">Acciones del plan ({{wz.nAcc}})</h3>
+                <sc-if value="{{wz.sinAcc}}" hint-placeholder-val="{{true}}"><p style="margin: 0; padding: 14px 16px; border: 1px dashed var(--border); border-radius: 10px; font-size: 14px; color: var(--muted)">Aún no hay acciones. Agrega al menos una con el formulario de abajo.</p></sc-if>
+                <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                  <sc-for list="{{wz.acciones}}" as="a" hint-placeholder-count="3">
+                    <li style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg)">
+                      <div style="flex: 1; min-width: 0">
+                        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 600">{{a.nombre}}</span><sc-if value="{{a.dnf}}" hint-placeholder-val="{{false}}"><span style="padding: 2px 8px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 11px; font-weight: 700">Desde DNF</span></sc-if></div>
+                        <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: 13px; color: var(--muted)"><span style="{{a.tipoStyle}}">{{a.tipo}}</span><span>{{a.comp}}</span><span>{{a.fechas}}</span><span>{{a.cap}} cupos</span><span>{{a.costo}}</span></div>
+                      </div>
+                      <button class="ibtn" onClick="{{a.quitar}}" aria-label="Quitar {{a.nombre}}" style="color: var(--danger)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"></path></svg></button>
+                    </li>
+                  </sc-for>
+                </ul>
+              </div>
+              <div style="padding: 16px; border: 1px solid var(--border); border-radius: 10px; display: flex; flex-direction: column; gap: 14px">
+                <h3 style="margin: 0; font-size: 15px">Agregar acción formativa</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+                  <div class="fl" style="grid-column: 1 / -1"><label for="a-nom">Nombre</label><input id="a-nom" class="fi" type="text" value="{{wz.aNombre}}" onChange="{{wz.hANombre}}"></div>
+                  <div class="fl"><label for="a-tip">Tipo</label>
+                    <select id="a-tip" class="fi" value="{{wz.aTipo}}" onChange="{{wz.hATipo}}"><option value="Presencial">Presencial</option><option value="Virtual">Virtual</option><option value="E-learning">E-learning</option><option value="OJT">OJT</option><option value="Codesarrollo">Codesarrollo</option><option value="Mentoring">Mentoring</option></select></div>
+                  <div class="fl"><label for="a-com">Competencia objetivo</label>
+                    <select id="a-com" class="fi" value="{{wz.aComp}}" onChange="{{wz.hAComp}}"><option value="COM-001">Trabajo en equipo</option><option value="COM-002">Orientación a resultados</option><option value="COM-003">Liderazgo</option><option value="COM-004">Análisis de datos</option><option value="COM-005">Comunicación efectiva</option><option value="COM-006">Gestión del tiempo</option><option value="COM-007">Gestión del cambio</option><option value="COM-008">Pensamiento analítico</option><option value="COM-009">Aprendizaje continuo</option><option value="COM-010">Negociación</option><option value="COM-011">Orientación al cliente</option><option value="COM-012">Integridad</option></select></div>
+                  <div class="fl"><label for="a-ini">Fecha de inicio</label><input id="a-ini" class="fi" type="date" value="{{wz.aIni}}" onChange="{{wz.hAIni}}"></div>
+                  <div class="fl"><label for="a-fin">Fecha de fin</label><input id="a-fin" class="fi" type="date" value="{{wz.aFin}}" onChange="{{wz.hAFin}}"></div>
+                  <div class="fl"><label for="a-for">Formador</label><input id="a-for" class="fi" type="text" value="{{wz.aForm}}" onChange="{{wz.hAForm}}"></div>
+                  <div class="fl"><label for="a-cap">Capacidad máxima</label><input id="a-cap" class="fi" type="number" min="1" value="{{wz.aCap}}" onChange="{{wz.hACap}}"></div>
+                  <div class="fl"><label for="a-cos">Costo (USD)</label><input id="a-cos" class="fi" type="number" min="0" value="{{wz.aCosto}}" onChange="{{wz.hACosto}}"></div>
+                </div>
+                <div><button class="btn" onClick="{{wz.agregar}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Agregar acción</button></div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Paso 3 -->
+          <sc-if value="{{wz.p3}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 18px">
+              <div class="fl" style="max-width: 440px">
+                <label for="w-apr">Aprobador del plan</label>
+                <select id="w-apr" class="fi" value="{{wz.aprobador}}" onChange="{{wz.hAprobador}}">
+                  <option value="">Selecciona un aprobador</option>
+                  <option value="Marta Ríos">Marta Ríos — Jefa de Talento Humano</option>
+                  <option value="Esteban Rivas">Esteban Rivas — Director de Desarrollo Organizacional</option>
+                  <option value="Carolina Lara">Carolina Lara — Gerente Administrativa</option>
+                </select>
+              </div>
+              <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+                <legend style="padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--muted)">Participantes por departamento</legend>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px">
+                  <sc-for list="{{wz.deptos}}" as="d" hint-placeholder-count="5">
+                    <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 14px; box-sizing: border-box; border-radius: 10px; cursor: pointer; {{d.style}}">
+                      <input type="checkbox" checked="{{d.checked}}" onChange="{{d.toggle}}" style="width: 20px; height: 20px; accent-color: var(--accent)">
+                      <span style="flex: 1; font-size: 15px; font-weight: 600">{{d.nombre}}</span>
+                      <span style="font-size: 13px; color: var(--muted)">{{d.n}}</span>
+                    </label>
+                  </sc-for>
+                </div>
+              </fieldset>
+              <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding: 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border)">
+                <div><dt style="font-size: 12px; color: var(--muted)">Plan</dt><dd style="margin: 2px 0 0; font-weight: 600">{{wz.resumen.nombre}}</dd></div>
+                <div><dt style="font-size: 12px; color: var(--muted)">Acciones</dt><dd style="margin: 2px 0 0; font-weight: 600">{{wz.resumen.acciones}}</dd></div>
+                <div><dt style="font-size: 12px; color: var(--muted)">Costo estimado</dt><dd style="margin: 2px 0 0; font-weight: 600">{{wz.resumen.costo}}</dd></div>
+                <div><dt style="font-size: 12px; color: var(--muted)">Participantes</dt><dd style="margin: 2px 0 0; font-weight: 600">{{wz.resumen.participantes}}</dd></div>
+              </dl>
+              <p style="margin: 0; font-size: 13px; color: var(--muted)">El plan se crea en estado <b>Borrador</b>. Cuando esté listo, envíalo a revisión para que el aprobador lo valide.</p>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border)">
+          <button class="btn" onClick="{{wz.cerrar}}" style="border-color: transparent">Cancelar</button>
+          <div style="display: flex; gap: 8px">
+            <sc-if value="{{wz.hayAtras}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{wz.atras}}">Atrás</button></sc-if>
+            <sc-if value="{{wz.haySiguiente}}" hint-placeholder-val="{{true}}"><button class="btn btn-primary" onClick="{{wz.siguiente}}">Siguiente</button></sc-if>
+            <sc-if value="{{wz.p3}}" hint-placeholder-val="{{false}}"><button class="btn btn-primary" onClick="{{wz.crear}}">Crear plan en Borrador</button></sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":2200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = {
+      dark: null, planId: 'p2026', vista: 'cal', mes: { y: 2026, m: 9 }, sel: null, aviso: '',
+      fEstado: 'todos', fTipo: 'todos', fComp: 'todas', fDesde: '', fHasta: '',
+      planes: d.planes, acciones: d.acciones,
+      wOpen: false, wPaso: 1, wErr: '', wNombre: '', wInicio: '', wFin: '', wPresupuesto: '', wObjetivo: '', wPrecarga: false, wAcc: [],
+      aNombre: '', aTipo: 'Presencial', aComp: 'COM-004', aIni: '', aFin: '', aForm: '', aCap: '20', aCosto: '0',
+      wAprob: '', wDeptos: {}
+    };
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    const tipoLight = { 'Presencial': ['#E3F2F0', '#0B5A55'], 'Virtual': ['#E4EDFB', '#1F4E9C'], 'E-learning': ['#FDEFD9', '#8A4B0B'], 'OJT': ['#ECEEF1', '#3B4654'], 'Codesarrollo': ['#F0E7FA', '#5B2E91'], 'Mentoring': ['#FBE6EC', '#9C2250'] };
+    const tipoDark = { 'Presencial': ['#12302D', '#7FE0D6'], 'Virtual': ['#172A4A', '#9DBEF5'], 'E-learning': ['#3A2A12', '#F2C27A'], 'OJT': ['#232B34', '#B8C2CD'], 'Codesarrollo': ['#2C1D44', '#CDA9F2'], 'Mentoring': ['#40182A', '#F2A6C0'] };
+    const comps = {
+      'COM-001': 'Trabajo en equipo', 'COM-002': 'Orientación a resultados', 'COM-003': 'Liderazgo', 'COM-004': 'Análisis de datos',
+      'COM-005': 'Comunicación efectiva', 'COM-006': 'Gestión del tiempo', 'COM-007': 'Gestión del cambio', 'COM-008': 'Pensamiento analítico',
+      'COM-009': 'Aprendizaje continuo', 'COM-010': 'Negociación', 'COM-011': 'Orientación al cliente', 'COM-012': 'Integridad'
+    };
+    const planes = [{ id: 'p2026', nombre: 'Plan de Formación 2026', periodo: 'Enero – diciembre 2026', estado: 'Ejecutando', aprobador: 'Marta Ríos', participantes: 7 }];
+    const A = (id, nombre, cs, tipo, ini, fin, formador, insc, cap, costo, estado) => ({ id, planId: 'p2026', nombre, comps: cs, tipo, ini, fin, formador, insc, cap, costo, estado });
+    const acciones = [
+      A('A01', 'Fundamentos de análisis con SQL', ['COM-004'], 'E-learning', '2026-02-02', '2026-02-27', 'Ing. Lucía Vera', 18, 25, 450, 'Cerrado'),
+      A('A02', 'Liderazgo situacional', ['COM-003'], 'Presencial', '2026-03-10', '2026-03-12', 'Dr. Esteban Rivas', 20, 20, 3200, 'Cerrado'),
+      A('A03', 'Comunicación asertiva en el trabajo', ['COM-005'], 'Presencial', '2026-04-14', '2026-04-15', 'Ps. Marco Salazar', 22, 25, 1100, 'Cerrado'),
+      A('A04', 'Trabajo en equipo ágil', ['COM-001'], 'E-learning', '2026-05-04', '2026-05-29', 'Ing. Julián Torres', 30, 40, 600, 'Cerrado'),
+      A('A05', 'Estadística aplicada a la decisión', ['COM-004', 'COM-008'], 'Virtual', '2026-06-08', '2026-06-26', 'Dra. Paula Ortiz', 14, 20, 1800, 'Cerrado'),
+      A('A06', 'Mentoring con líderes senior', ['COM-003'], 'Mentoring', '2026-07-06', '2026-10-30', 'Ing. Carolina Lara', 6, 8, 900, 'Ejecutando'),
+      A('A07', 'Visualización de datos con tableros', ['COM-004'], 'Virtual', '2026-10-05', '2026-10-23', 'Mg. Andrés Molina', 16, 20, 1200, 'Ejecutando'),
+      A('A08', 'Presentaciones que convencen: data storytelling', ['COM-005'], 'Presencial', '2026-10-20', '2026-10-21', 'Mg. Daniela Cruz', 12, 25, 1000, 'Aprobado'),
+      A('A09', 'Codesarrollo: casos reales de equipo', ['COM-001', 'COM-005', 'COM-003'], 'Codesarrollo', '2026-10-27', '2026-11-10', 'Ps. Marco Salazar', 10, 12, 700, 'Aprobado'),
+      A('A10', 'Pensamiento crítico y análisis de problemas', ['COM-008'], 'Presencial', '2026-11-03', '2026-11-04', 'Dra. Paula Ortiz', 9, 20, 1500, 'Aprobado'),
+      A('A11', 'Negociación efectiva', ['COM-010'], 'Presencial', '2026-11-17', '2026-11-19', 'Dr. Esteban Rivas', 8, 15, 1900, 'Revisión'),
+      A('A12', 'Gestión del tiempo en la práctica', ['COM-006'], 'OJT', '2026-11-02', '2026-11-27', 'Tutor interno: Ing. Julián Torres', 5, 10, 0, 'Revisión'),
+      A('A13', 'Aprendizaje autónomo y mejora continua', ['COM-009'], 'E-learning', '2026-11-23', '2026-12-11', 'Equipo de Formación', 0, 50, 300, 'Borrador'),
+      A('A14', 'Conducción de procesos de cambio', ['COM-007'], 'Virtual', '2026-12-01', '2026-12-03', 'Por definir', 0, 20, 2400, 'Borrador')
+    ];
+    const dnf = [
+      { nombre: 'Fundamentos de análisis con SQL', comp: 'COM-004', tipo: 'E-learning', ini: '2027-02-01', fin: '2027-02-26', formador: 'Ing. Lucía Vera', cap: 25, costo: 450 },
+      { nombre: 'Comunicación asertiva en el trabajo', comp: 'COM-005', tipo: 'Presencial', ini: '2027-03-16', fin: '2027-03-17', formador: 'Ps. Marco Salazar', cap: 25, costo: 1100 },
+      { nombre: 'Pensamiento crítico y análisis de problemas', comp: 'COM-008', tipo: 'Presencial', ini: '2027-04-13', fin: '2027-04-14', formador: 'Dra. Paula Ortiz', cap: 20, costo: 1500 },
+      { nombre: 'Estadística aplicada a la decisión', comp: 'COM-004', tipo: 'Virtual', ini: '2027-05-10', fin: '2027-05-28', formador: 'Dra. Paula Ortiz', cap: 20, costo: 1800 }
+    ];
+    const deptos = [['Tecnología', 2], ['Talento Humano', 1], ['Comercial', 2], ['Finanzas', 1], ['Operaciones', 1]];
+    const estados = ['Borrador', 'Revisión', 'Aprobado', 'Ejecutando', 'Cerrado'];
+    const mesesL = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const mesesC = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    return { light, dark, tipoLight, tipoDark, comps, planes, acciones, dnf, deptos, estados, mesesL, mesesC, hoy: '2026-10-16' };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const money = (n) => '$' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const pad = (n) => (n < 10 ? '0' : '') + n;
+    const rango = (a, b) => {
+      const A = a.split('-').map(Number), B = b.split('-').map(Number);
+      const M = d.mesesC;
+      if (a === b) return A[2] + ' ' + M[A[1] - 1] + ' ' + A[0];
+      if (A[0] === B[0] && A[1] === B[1]) return A[2] + ' – ' + B[2] + ' ' + M[B[1] - 1] + ' ' + B[0];
+      if (A[0] === B[0]) return A[2] + ' ' + M[A[1] - 1] + ' – ' + B[2] + ' ' + M[B[1] - 1] + ' ' + B[0];
+      return A[2] + ' ' + M[A[1] - 1] + ' ' + A[0] + ' – ' + B[2] + ' ' + M[B[1] - 1] + ' ' + B[0];
+    };
+    const chip = (bg, fg, extra) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;box-sizing:border-box;background:' + bg + ';color:' + fg + ';' + (extra || '');
+    const EST = {
+      'Borrador': chip('var(--neutralsoft)', 'var(--neutral)'), 'Revisión': chip('var(--infosoft)', 'var(--info)'), 'Aprobado': chip('var(--soft)', 'var(--accent)'),
+      'Ejecutando': chip('var(--accent)', 'var(--onaccent)'), 'Cerrado': chip('transparent', 'var(--muted)', 'border:1px solid var(--border);')
+    };
+    const tipoChip = (t) => chip(tp[t][0], tp[t][1], 'font-weight:600;');
+    const nombresComp = (ids) => ids.map((c) => d.comps[c]);
+
+    // ----- plan seleccionado
+    const plan = s.planes.find((p) => p.id === s.planId) || s.planes[0];
+    const delPlan = s.acciones.filter((a) => a.planId === plan.id);
+    const idx = d.estados.indexOf(plan.estado);
+    const pendientes = delPlan.filter((a) => a.estado !== 'Cerrado').length;
+
+    const ciclo = d.estados.map((e, i) => {
+      const cur = i === idx, done = i < idx;
+      return {
+        n: done ? '✓' : String(i + 1), label: e, cur: cur ? 'step' : 'false', hayFlecha: i < d.estados.length - 1,
+        boxStyle: 'display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px 0 6px;border-radius:999px;font-size:14px;font-weight:600;border:1px solid ' + (cur ? 'var(--accent)' : 'var(--border)') + ';background:' + (cur ? 'var(--soft)' : 'var(--surface)') + ';color:' + (cur ? 'var(--text)' : (done ? 'var(--accent)' : 'var(--muted)')) + ';',
+        nStyle: 'width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;' + (cur ? 'background:var(--accent);color:var(--onaccent);' : (done ? 'background:var(--soft);color:var(--accent);' : 'background:var(--border);color:var(--muted);'))
+      };
+    });
+    const LABEL = ['Enviar a revisión', 'Aprobar plan', 'Iniciar ejecución', 'Cerrar plan'];
+    const bloqueado = plan.estado === 'Ejecutando' && pendientes > 0;
+    const avance = {
+      hayBoton: idx < d.estados.length - 1,
+      label: LABEL[idx] || '',
+      bloqueado,
+      hint: idx >= d.estados.length - 1 ? 'Este plan está cerrado.' : (bloqueado ? 'Para cerrar el plan, todas sus acciones deben estar cerradas (faltan ' + pendientes + ').' : 'Las acciones que están en «' + plan.estado + '» pasarán también a «' + d.estados[idx + 1] + '». Estados definidos por el sistema, inspirados en las fases de planificación, implementación, seguimiento y cierre de Navarro.'),
+      go: () => {
+        if (idx >= d.estados.length - 1 || bloqueado) return;
+        const nuevo = d.estados[idx + 1];
+        this.setState({
+          planes: s.planes.map((p) => (p.id === plan.id ? Object.assign({}, p, { estado: nuevo }) : p)),
+          acciones: s.acciones.map((a) => (a.planId === plan.id && a.estado === plan.estado ? Object.assign({}, a, { estado: nuevo }) : a)),
+          aviso: '«' + plan.nombre + '» pasó a «' + nuevo + '».'
+        });
+      }
+    };
+
+    // ----- KPIs
+    const insc = delPlan.reduce((a, x) => a + x.insc, 0), cap = delPlan.reduce((a, x) => a + x.cap, 0);
+    const cost = delPlan.reduce((a, x) => a + x.costo, 0);
+    const cerr = delPlan.filter((x) => x.estado === 'Cerrado').length;
+    const kpis = [
+      { label: 'Acciones formativas', valor: String(delPlan.length), nota: cerr + (cerr === 1 ? ' cerrada' : ' cerradas') },
+      { label: 'Inscritos / Capacidad', valor: insc + ' / ' + cap, nota: cap ? Math.round((insc * 100) / cap) + ' % de ocupación' : '—' },
+      { label: 'Costo del plan', valor: money(cost), nota: 'Suma de todas las acciones' },
+      { label: 'Plan ejecutado', valor: (delPlan.length ? Math.round((cerr * 100) / delPlan.length) : 0) + ' %', nota: 'Acciones cerradas / total' }
+    ];
+
+    // ----- filtros
+    const vis = delPlan.filter((a) =>
+      (s.fEstado === 'todos' || a.estado === s.fEstado) && (s.fTipo === 'todos' || a.tipo === s.fTipo) &&
+      (s.fComp === 'todas' || a.comps.indexOf(s.fComp) !== -1) && (!s.fDesde || a.fin >= s.fDesde) && (!s.fHasta || a.ini <= s.fHasta)
+    ).sort((x, y) => x.ini.localeCompare(y.ini) || x.nombre.localeCompare(y.nombre));
+    const f = {
+      estado: s.fEstado, tipo: s.fTipo, comp: s.fComp, desde: s.fDesde, hasta: s.fHasta,
+      hay: s.fEstado !== 'todos' || s.fTipo !== 'todos' || s.fComp !== 'todas' || s.fDesde !== '' || s.fHasta !== '',
+      setEstado: (e) => this.setState({ fEstado: e.target.value }), setTipo: (e) => this.setState({ fTipo: e.target.value }),
+      setComp: (e) => this.setState({ fComp: e.target.value }), setDesde: (e) => this.setState({ fDesde: e.target.value }),
+      setHasta: (e) => this.setState({ fHasta: e.target.value }),
+      limpiar: () => this.setState({ fEstado: 'todos', fTipo: 'todos', fComp: 'todas', fDesde: '', fHasta: '' })
+    };
+    const filas = vis.map((a) => {
+      const full = a.insc >= a.cap;
+      return {
+        nombre: a.nombre, comp: d.comps[a.comps[0]], hayMas: a.comps.length > 1, mas: '+' + (a.comps.length - 1), todas: nombresComp(a.comps).join(', '),
+        tipo: a.tipo, tipoStyle: tipoChip(a.tipo), fechas: rango(a.ini, a.fin), formador: a.formador,
+        cupoTxt: a.insc + ' / ' + a.cap + (full ? ' · completo' : ''),
+        cupoBar: 'height:100%;width:' + Math.min(100, Math.round((a.insc * 100) / a.cap)) + '%;background:' + (full ? 'var(--warn)' : 'var(--accent)') + ';',
+        costo: money(a.costo), estado: a.estado, estadoStyle: EST[a.estado]
+      };
+    });
+
+    // ----- calendario
+    const { y, m } = s.mes;
+    const offset = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
+    const dim = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    const total = Math.ceil((offset + dim) / 7) * 7;
+    const celdas = [];
+    for (let i = 0; i < total; i++) {
+      const day = i - offset + 1;
+      const real = day >= 1 && day <= dim;
+      const base = 'min-height:116px;box-sizing:border-box;padding:6px;display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--border);' + (i % 7 !== 0 ? 'border-left:1px solid var(--border);' : '') + (real ? '' : 'background:var(--bg);');
+      if (!real) { celdas.push({ real: false, style: base, dia: '', chips: [], hayMas: false, masTxt: '', diaStyle: '' }); continue; }
+      const iso = y + '-' + pad(m + 1) + '-' + pad(day);
+      const del = vis.filter((a) => a.ini <= iso && a.fin >= iso);
+      const hoy = iso === d.hoy;
+      celdas.push({
+        real: true, style: base, dia: String(day),
+        diaStyle: hoy ? 'align-self:flex-start;min-width:24px;height:24px;border-radius:12px;padding:0 6px;box-sizing:border-box;background:var(--accent);color:var(--onaccent);font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;' : 'font-size:12px;font-weight:600;color:var(--muted);height:24px;display:flex;align-items:center;padding-left:2px;',
+        chips: del.slice(0, 3).map((a) => ({ nombre: a.nombre, style: 'background:' + tp[a.tipo][0] + ';color:' + tp[a.tipo][1] + ';' + (s.sel === a.id ? 'outline:2px solid var(--accent);' : ''), aria: a.nombre + ', ' + a.tipo + ', ' + a.estado, pick: () => this.setState({ sel: a.id }) })),
+        hayMas: del.length > 3, masTxt: '+' + (del.length - 3) + ' más'
+      });
+    }
+    const cal = {
+      titulo: d.mesesL[m] + ' ' + y, celdas,
+      prev: () => this.setState({ mes: m === 0 ? { y: y - 1, m: 11 } : { y, m: m - 1 } }),
+      next: () => this.setState({ mes: m === 11 ? { y: y + 1, m: 0 } : { y, m: m + 1 } }),
+      hoy: () => this.setState({ mes: { y: 2026, m: 9 } })
+    };
+    const leyenda = Object.keys(tp).map((t) => ({ label: t, style: 'width:12px;height:12px;border-radius:3px;background:' + tp[t][0] + ';border:1px solid ' + tp[t][1] + ';' }));
+    const selA = delPlan.find((a) => a.id === s.sel);
+    const det = selA ? {
+      nombre: selA.nombre, tipo: selA.tipo, tipoStyle: tipoChip(selA.tipo), estado: selA.estado, estadoStyle: EST[selA.estado],
+      comps: nombresComp(selA.comps).join(', '), fechas: rango(selA.ini, selA.fin), formador: selA.formador, cupo: selA.insc + ' / ' + selA.cap, costo: money(selA.costo),
+      cerrar: () => this.setState({ sel: null })
+    } : { nombre: '', tipo: 'Presencial', tipoStyle: '', estado: 'Borrador', estadoStyle: '', comps: '', fechas: '', formador: '', cupo: '', costo: '', cerrar: () => {} };
+
+    // ----- wizard
+    const deptos = d.deptos.map((x) => {
+      const on = !!s.wDeptos[x[0]];
+      return { nombre: x[0], n: x[1] + (x[1] === 1 ? ' colaborador' : ' colaboradores'), checked: on, style: 'border:1px solid ' + (on ? 'var(--accent)' : 'var(--border)') + ';background:' + (on ? 'var(--soft)' : 'var(--surface)') + ';', toggle: () => { const n = Object.assign({}, this.state.wDeptos); n[x[0]] = !n[x[0]]; this.setState({ wDeptos: n, wErr: '' }); } };
+    });
+    const nPart = d.deptos.reduce((a, x) => a + (s.wDeptos[x[0]] ? x[1] : 0), 0);
+    const wCosto = s.wAcc.reduce((a, x) => a + x.costo, 0);
+    const on = (k) => (e) => this.setState({ [k]: e.target.value, wErr: '' });
+    const accWiz = s.wAcc.map((a, i) => ({
+      nombre: a.nombre, tipo: a.tipo, tipoStyle: tipoChip(a.tipo), comp: d.comps[a.comp], fechas: rango(a.ini, a.fin), cap: a.cap, costo: money(a.costo), dnf: !!a.dnf,
+      quitar: () => this.setState({ wAcc: this.state.wAcc.filter((_, j) => j !== i) })
+    }));
+    const pasosW = ['Datos generales', 'Acciones formativas', 'Participantes y aprobador'].map((l, i) => {
+      const cur = s.wPaso === i + 1, done = s.wPaso > i + 1;
+      return { n: done ? '✓' : String(i + 1), label: l, cur: cur ? 'step' : 'false', nStyle: 'width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;' + (cur ? 'background:var(--accent);color:var(--onaccent);' : (done ? 'background:var(--soft);color:var(--accent);' : 'background:var(--border);color:var(--muted);')) };
+    });
+    const falla = (t) => { this.setState({ wErr: t }); };
+    const wz = {
+      abierto: s.wOpen, pasos: pasosW, p1: s.wPaso === 1, p2: s.wPaso === 2, p3: s.wPaso === 3,
+      err: s.wErr !== '', errTxt: s.wErr,
+      nombre: s.wNombre, inicio: s.wInicio, fin: s.wFin, presupuesto: s.wPresupuesto, objetivo: s.wObjetivo, precarga: s.wPrecarga,
+      hNombre: on('wNombre'), hInicio: on('wInicio'), hFin: on('wFin'), hPresupuesto: on('wPresupuesto'), hObjetivo: on('wObjetivo'),
+      hPrecarga: () => {
+        const nuevo = !this.state.wPrecarga;
+        const base = this.state.wAcc.filter((a) => !a.dnf);
+        this.setState({ wPrecarga: nuevo, wAcc: nuevo ? d.dnf.map((x) => Object.assign({ dnf: true }, x)).concat(base) : base });
+      },
+      acciones: accWiz, nAcc: s.wAcc.length, sinAcc: s.wAcc.length === 0,
+      aNombre: s.aNombre, aTipo: s.aTipo, aComp: s.aComp, aIni: s.aIni, aFin: s.aFin, aForm: s.aForm, aCap: s.aCap, aCosto: s.aCosto,
+      hANombre: on('aNombre'), hATipo: on('aTipo'), hAComp: on('aComp'), hAIni: on('aIni'), hAFin: on('aFin'), hAForm: on('aForm'), hACap: on('aCap'), hACosto: on('aCosto'),
+      agregar: () => {
+        if (!s.aNombre.trim() || !s.aIni || !s.aFin) return falla('Indica el nombre y las fechas de inicio y fin de la acción.');
+        if (s.aFin < s.aIni) return falla('La fecha de fin no puede ser anterior a la de inicio.');
+        const nueva = { nombre: s.aNombre.trim(), comp: s.aComp, tipo: s.aTipo, ini: s.aIni, fin: s.aFin, formador: s.aForm.trim() || 'Por definir', cap: Math.max(1, parseInt(s.aCap, 10) || 1), costo: Math.max(0, parseInt(s.aCosto, 10) || 0) };
+        this.setState({ wAcc: this.state.wAcc.concat([nueva]), aNombre: '', aIni: '', aFin: '', aForm: '', aCap: '20', aCosto: '0', wErr: '' });
+      },
+      aprobador: s.wAprob, hAprobador: on('wAprob'), deptos,
+      resumen: { nombre: s.wNombre || 'Sin nombre', acciones: String(s.wAcc.length), costo: money(wCosto), participantes: String(nPart) },
+      hayAtras: s.wPaso > 1, haySiguiente: s.wPaso < 3,
+      atras: () => this.setState({ wPaso: s.wPaso - 1, wErr: '' }),
+      siguiente: () => {
+        if (s.wPaso === 1) {
+          if (!s.wNombre.trim() || !s.wInicio || !s.wFin) return falla('Completa el nombre del plan y las fechas del período.');
+          if (s.wFin < s.wInicio) return falla('El fin del período no puede ser anterior al inicio.');
+        }
+        if (s.wPaso === 2 && s.wAcc.length === 0) return falla('Agrega al menos una acción formativa.');
+        this.setState({ wPaso: s.wPaso + 1, wErr: '' });
+      },
+      crear: () => {
+        if (!s.wAprob) return falla('Selecciona un aprobador.');
+        if (nPart === 0) return falla('Selecciona al menos un departamento de participantes.');
+        const pid = 'pn' + s.planes.length;
+        const nuevoPlan = { id: pid, nombre: s.wNombre.trim(), periodo: rango(s.wInicio, s.wFin), estado: 'Borrador', aprobador: s.wAprob, participantes: nPart };
+        const acc = s.wAcc.map((a, i) => ({ id: pid + '-' + i, planId: pid, nombre: a.nombre, comps: [a.comp], tipo: a.tipo, ini: a.ini, fin: a.fin, formador: a.formador, insc: 0, cap: a.cap, costo: a.costo, estado: 'Borrador' }));
+        const primera = s.wAcc.map((a) => a.ini).sort()[0];
+        const p = primera.split('-').map(Number);
+        this.setState({
+          planes: s.planes.concat([nuevoPlan]), acciones: s.acciones.concat(acc), planId: pid, sel: null, vista: 'lista', mes: { y: p[0], m: p[1] - 1 },
+          fEstado: 'todos', fTipo: 'todos', fComp: 'todas', fDesde: '', fHasta: '',
+          wOpen: false, wPaso: 1, wErr: '', wNombre: '', wInicio: '', wFin: '', wPresupuesto: '', wObjetivo: '', wPrecarga: false, wAcc: [], wAprob: '', wDeptos: {},
+          aviso: 'Plan creado en estado Borrador con ' + acc.length + (acc.length === 1 ? ' acción' : ' acciones') + '. Envíalo a revisión cuando esté listo.'
+        });
+      },
+      cerrar: () => this.setState({ wOpen: false, wPaso: 1, wErr: '' })
+    };
+
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      hayAviso: s.aviso !== '', aviso: s.aviso, cerrarAviso: () => this.setState({ aviso: '' }),
+      abrirWizard: () => this.setState({ wOpen: true, wPaso: 1, wErr: '' }),
+      planes: s.planes.map((p) => ({ label: p.nombre.replace('Plan de Formación ', 'Plan ') + ' · ' + p.estado, activo: p.id === plan.id, elegir: () => this.setState({ planId: p.id, sel: null }) })),
+      plan: {
+        nombre: plan.nombre, estado: plan.estado, estadoStyle: EST[plan.estado],
+        meta: plan.periodo + ' · Aprobador: ' + plan.aprobador + ' · ' + plan.participantes + (plan.participantes === 1 ? ' participante' : ' participantes')
+      },
+      ciclo, avance, kpis,
+      tabs: { cal: s.vista === 'cal', lis: s.vista === 'lista' },
+      verCal: () => this.setState({ vista: 'cal' }), verLista: () => this.setState({ vista: 'lista' }),
+      resumen: 'Mostrando ' + vis.length + ' de ' + delPlan.length + ' acciones',
+      f, filas, sinFilas: vis.length === 0, cal, leyenda, hayDetalle: !!selA, det, wz
+    };
+  }
+}
+</script>
+</body>
+</html>

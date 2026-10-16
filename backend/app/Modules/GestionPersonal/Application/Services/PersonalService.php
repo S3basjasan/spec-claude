@@ -77,6 +77,44 @@ class PersonalService
         return $acceso === null ? null : ['tenant_id' => $acceso->tenantId, 'colaborador_id' => $acceso->colaboradorId];
     }
 
+    /**
+     * Colaboradores con vínculo laboral vigente en la fecha, buscados por nombres, apellidos o código (solo lectura).
+     * Lo consume el Plan de formación para elegir participantes.
+     *
+     * @return array{items: list<array{id: int, codigo: string, nombre: string}>, total: int}
+     */
+    public function buscarColaboradoresVigentes(int $tenantId, ?string $texto, int $pagina, int $porPagina, string $fecha): array
+    {
+        $vigentes = $this->vinculos->fichasConVinculoVigente($tenantId, null, $fecha);
+        if ($vigentes === []) {
+            return ['items' => [], 'total' => 0];
+        }
+
+        $busqueda = $this->normalizador->busquedaDeTexto((string) $texto);
+        $tokens = $busqueda === '' ? [] : array_values(array_filter(preg_split('/\s+/', $busqueda) ?: []));
+        $pagina = $this->colaboradores->listar($tenantId, $tokens, null, null, $vigentes, null, max(1, $pagina), max(1, $porPagina));
+
+        return [
+            'items' => array_map(fn (Colaborador $c) => [
+                'id' => $c->id,
+                'codigo' => $c->codigo,
+                'nombre' => trim($c->datos['nombres'].' '.$c->datos['apellidos']),
+            ], $pagina['items']),
+            'total' => $pagina['total'],
+        ];
+    }
+
+    /**
+     * Ids, entre los dados, de colaboradores con vínculo laboral vigente en la fecha (solo lectura).
+     *
+     * @param  list<int>  $ids
+     * @return list<int>
+     */
+    public function vigentesPorIds(int $tenantId, array $ids, string $fecha): array
+    {
+        return $this->vinculos->fichasConVinculoVigente($tenantId, array_values(array_map('intval', $ids)), $fecha);
+    }
+
     /** @return array<string, mixed>|null */
     public function buscarPorIdentificacion(int $tenantId, string $tipo, string $numero): ?array
     {

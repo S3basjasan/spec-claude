@@ -37,6 +37,22 @@ class SharedService
     }
 
     /**
+     * Usuarios con rol Administrador del tenant, por nombre (solo lectura; p. ej. aprobadores de planes).
+     *
+     * @return list<array{id: int, nombre: string}>
+     */
+    public function getAdministradores(int $tenantId): array
+    {
+        return DB::table('users')
+            ->where('tenant_id', $tenantId)
+            ->where('role', 'admin')
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn ($u) => ['id' => (int) $u->id, 'nombre' => (string) $u->name])
+            ->all();
+    }
+
+    /**
      * Contexto de tenant de una cuenta, o null si la cuenta no existe.
      *
      * @return array{tenant_id: int, nombre: string, zona_horaria: string}|null

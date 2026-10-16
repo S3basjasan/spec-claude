@@ -103,6 +103,20 @@ final class EloquentCatalogoFormativoRepository implements CatalogoFormativoRepo
             ->values()->all();
     }
 
+    public function competenciasDeCursos(array $cursoIds): array
+    {
+        if ($cursoIds === []) {
+            return [];
+        }
+
+        $mapa = [];
+        foreach (CompetenciaCursoModel::query()->whereIn('curso_id', $cursoIds)->orderBy('id')->get(['curso_id', 'competencia_id']) as $vinculo) {
+            $mapa[(int) $vinculo->curso_id][] = (int) $vinculo->competencia_id;
+        }
+
+        return $mapa;
+    }
+
     public function idsDisponibles(TipoRecurso $tipo): array
     {
         $clase = $tipo === TipoRecurso::Curso ? CursoModel::class : MicrocontenidoModel::class;

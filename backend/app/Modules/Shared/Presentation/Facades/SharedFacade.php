@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array getResumen() Resumen mínimo del módulo.
  * @method static array getNombresDeUsuarios(array $ids) Nombres [id => nombre] de los usuarios existentes entre los ids dados.
+ * @method static array getAdministradores(int $tenantId) Usuarios con rol Administrador del tenant [{id, nombre}], por nombre.
  * @method static array|null getContextoDeTenant(int $userId) {tenant_id, nombre, zona_horaria} de la cuenta, o null.
  *
  * @see SharedService
