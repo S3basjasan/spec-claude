@@ -24,13 +24,19 @@ import { PuestoFormPage } from './modules/estructura/puestos/pages/PuestoFormPag
 import { PuestosPage } from './modules/estructura/puestos/pages/PuestosPage'
 import { unidadesNav } from './modules/estructura/unidades/nav'
 import { UnidadesPage } from './modules/estructura/unidades/pages/UnidadesPage'
+import { RequireAdmin as RequireAdminFichas } from './modules/gestionPersonal/fichas/components/RequireAdmin'
+import { colaboradoresNav, miFichaNav } from './modules/gestionPersonal/fichas/nav'
+import { ColaboradoresPage } from './modules/gestionPersonal/fichas/pages/ColaboradoresPage'
+import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDetallePage'
+import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
+import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
 import { inicioNav } from './modules/inicio/nav'
 import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, unidadesNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, unidadesNav, colaboradoresNav, miFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -81,6 +87,13 @@ function App() {
               <Route path="puestos/:puestoId/editar" element={<PuestoFormPage />} />
             </Route>
             <Route path="unidades" element={<UnidadesPage />} />
+            <Route path="mi-ficha" element={<MiFichaPage />} />
+            <Route element={<RequireAdminFichas />}>
+              <Route path="colaboradores" element={<ColaboradoresPage />} />
+              <Route path="colaboradores/nuevo" element={<FichaFormPage />} />
+              <Route path="colaboradores/:colaboradorId" element={<FichaDetallePage />} />
+              <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
+            </Route>
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

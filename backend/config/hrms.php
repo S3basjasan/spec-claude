@@ -14,4 +14,18 @@ return [
 
     'seed_password' => env('SEED_PASSWORD', 'password-de-prueba'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Gestión de Personal (feature 005)
+    |--------------------------------------------------------------------------
+    |
+    | `escritura_habilitada` en false detiene el alta y la edición de fichas (503)
+    | conservando las existentes y las consultas: es el mecanismo de rollback.
+    |
+    */
+
+    'gestion_personal' => [
+        'escritura_habilitada' => (bool) env('GESTION_PERSONAL_ESCRITURA_HABILITADA', true),
+    ],
+
 ];

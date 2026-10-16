@@ -5,6 +5,7 @@ namespace App\Modules\Shared\Infrastructure\Persistence\Eloquent\Repositories;
 use App\Modules\Shared\Domain\Entities\Usuario;
 use App\Modules\Shared\Domain\Repositories\UsuarioRepositoryInterface;
 use App\Modules\Shared\Domain\ValueObjects\Rol;
+use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 
 final class EloquentUsuarioRepository implements UsuarioRepositoryInterface
@@ -43,6 +44,8 @@ final class EloquentUsuarioRepository implements UsuarioRepositoryInterface
             correo: $modelo->email,
             rol: Rol::tryFrom((string) $modelo->role) ?? Rol::User,
             passwordHash: $modelo->password,
+            tenantId: (int) $modelo->tenant_id,
+            tenantNombre: (string) TenantModel::query()->whereKey($modelo->tenant_id)->value('nombre'),
         );
     }
 }

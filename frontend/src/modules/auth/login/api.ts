@@ -7,6 +7,8 @@ export interface CurrentUser {
   name: string
   email: string
   role: Role
+  /** Organización a la que pertenece la cuenta (la ficha y sus datos se aíslan por tenant). */
+  tenant?: { id: number; nombre: string }
 }
 
 export interface LoginResult {

@@ -3,6 +3,7 @@
 namespace App\Modules\Shared\Application\Services;
 
 use App\Modules\Shared\Application\UseCases\ObtenerNombresDeUsuarios;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Servicio inter-módulos del Módulo Shared.
@@ -33,5 +34,24 @@ class SharedService
     public function getNombresDeUsuarios(array $ids): array
     {
         return $this->nombresDeUsuarios->ejecutar($ids);
+    }
+
+    /**
+     * Contexto de tenant de una cuenta, o null si la cuenta no existe.
+     *
+     * @return array{tenant_id: int, nombre: string, zona_horaria: string}|null
+     */
+    public function getContextoDeTenant(int $userId): ?array
+    {
+        $fila = DB::table('users')
+            ->join('tenants', 'tenants.id', '=', 'users.tenant_id')
+            ->where('users.id', $userId)
+            ->first(['tenants.id', 'tenants.nombre', 'tenants.zona_horaria']);
+
+        return $fila === null ? null : [
+            'tenant_id' => (int) $fila->id,
+            'nombre' => (string) $fila->nombre,
+            'zona_horaria' => (string) $fila->zona_horaria,
+        ];
     }
 }

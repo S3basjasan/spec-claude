@@ -21,6 +21,7 @@ class UsuarioResource extends JsonResource
             'name' => $this->resource->nombre,
             'email' => $this->resource->correo,
             'role' => $this->resource->rol,
+            'tenant' => ['id' => $this->resource->tenantId, 'nombre' => $this->resource->tenantNombre],
         ];
     }
 }
