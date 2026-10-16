@@ -205,3 +205,7 @@ No hay rutas de formulario: `RequireAdmin` protege la renderización de botones 
 ### Cambios al diseño
 
 `design/Unidades.dc.html` y `design/DESIGN.md` deben actualizarse **antes** del frontend con: filtro de estado y ocultar acciones al Usuario; cadena de tipos; árbol expandible y "Expandir todo / Contraer todo"; modales Crear / Editar (tipo de solo lectura, padre limitada, información de solo lectura); confirmación también sin dependientes y bloqueo por posiciones; vista previa y bloqueo de reordenamiento; textos "Reactivar", "La unidad raíz no se puede desactivar" y "Reactiva primero la unidad padre"; sin validación de nombre duplicado; patrón Modal. El tablero no tiene posiciones: el bloqueo por posiciones se ve con los datos sembrados.
+
+## Ampliación desde 006-posiciones (2026-10-16)
+
+`EloquentUnidadRepository::actualizar` valida además la reubicación contra las posiciones vigentes (ver D-25 de `specs/006-posiciones/research.md` y FR-038 de su spec).

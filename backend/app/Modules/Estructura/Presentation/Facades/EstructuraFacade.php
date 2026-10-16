@@ -33,6 +33,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getArbolDeUnidades() Todas las unidades (activas e inactivas) en orden jerárquico, con su nivel.
  * @method static array getCadenaDeTipos() Cadena de tipos de unidad {id, nombre, nivel, es_raiz} por nivel (el 1 es el tipo raíz).
  * @method static array|null getTipoDeUnidad(int $id) Tipo de unidad {id, nombre, nivel, es_raiz}, o null.
+ * @method static array|null getPosicion(int $id) Posición (también Suprimida) con su puesto, unidad, supervisor y ocupante_id, o null.
+ * @method static array getPosicionesPorIds(array $ids) Posiciones existentes entre los ids dados, incluidas las Suprimidas.
+ * @method static bool existePosicion(int $id) Indica si la posición existe (también Suprimida).
+ * @method static bool posicionEstaVigente(int $id) Indica si existe y está Ocupada o Vacante.
+ * @method static array getArbolDeSupervision() Posiciones no Suprimidas {id, codigo, estado, supervisor_id} para el organigrama.
  *
  * @see EstructuraService
  */

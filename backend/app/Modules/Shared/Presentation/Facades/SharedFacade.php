@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array getResumen() Resumen mínimo del módulo.
  * @method static array getNombresDeUsuarios(array $ids) Nombres de usuario por id (id => nombre); omite los ids que no existen.
+ * @method static array buscarIdsDeUsuariosPorNombre(string $texto) Ids de los usuarios cuyo nombre contiene el texto (sin tildes ni mayúsculas, máximo 200, por nombre).
  *
  * @see SharedService
  */

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Posiciones</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:13px;font-weight:600;color:var(--muted)}
+.sel{height:44px;min-width:170px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px}
+.sel:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.clr{height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.clr:hover{background:var(--soft)}
+.row:hover{background:var(--soft)}
+.prow{width:100%;display:flex;align-items:center;gap:16px;min-height:64px;box-sizing:border-box;padding:12px 20px;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.prow:hover{background:var(--soft)}
+.prow[aria-expanded="true"]{background:var(--soft)}
+.chev{transition:transform .2s ease}
+.prow[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sec h3{margin:0 0 10px;font-size:15px}
+</style>
+</helmet>
+<div style="min-height: 1100px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="11" r="2.5"></circle><path d="M5.5 17c.5-2 2-3 3.5-3s3 1 3.5 3M15 9h3M15 13h3"></path></svg>Posiciones</a>
+      <a class="nav" href="Organigrama.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="5" rx="1"></rect><rect x="2" y="16" width="8" height="5" rx="1"></rect><rect x="14" y="16" width="8" height="5" rx="1"></rect><path d="M12 8v4M6 16v-4h12v4"></path></svg>Organigrama</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"></path></svg>Vacantes</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Posiciones</h1>
+          <a href="#" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 8px; background: var(--accent); color: var(--onaccent); text-decoration: none; font-weight: 600; font-size: 15px">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nueva posición
+          </a>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+          <div class="fld" style="flex: 1 1 260px; max-width: 340px">
+            <label for="qp">Buscar</label>
+            <div style="position: relative">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+              <input id="qp" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Código, puesto, unidad u ocupante" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+            </div>
+          </div>
+        </div>
+        <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+          <table style="width: 100%; min-width: 1080px; border-collapse: collapse; font-size: 15px">
+            <thead>
+              <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Código</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Puesto</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Unidad organizacional</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Reporta a</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Ocupante</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Estado</th>
+                <th scope="col" style="padding: 14px 20px; font-weight: 600">Modalidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{posiciones}}" as="p" hint-placeholder-count="8">
+                <tr class="row" style="border-top: 1px solid var(--border)">
+                  <td style="padding: 14px 20px; color: var(--muted); font-variant-numeric: tabular-nums">{{p.codigo}}</td>
+                  <td style="padding: 14px 20px; font-weight: 600">{{p.puesto}}</td>
+                  <td style="padding: 14px 20px; color: var(--muted)">{{p.unidad}}</td>
+                  <td style="padding: 14px 20px"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums">{{p.jefeCodigo}}</span><span>{{p.jefePuesto}}</span></div></td>
+                  <td style="padding: 14px 20px; {{p.ocupanteStyle}}">{{p.ocupante}}</td>
+                  <td style="padding: 14px 20px"><span style="{{p.badgeStyle}}">{{p.estado}}</span></td>
+                  <td style="padding: 14px 20px; color: var(--muted)">{{p.modalidad}}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <sc-if value="{{sinResultados}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted)">Ninguna posición coincide con los filtros.</p>
+          </sc-if>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { q: '' };
+  }
+  renderVals() {
+    const t = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+
+    // Datos de ejemplo según la tabla posiciones (puesto_id, unidad_organizacional_id, posicion_jefe_id, user_id)
+    const puestos = {
+      1: 'Gerente general', 2: 'Gerente de talento humano', 3: 'Jefe de reclutamiento', 4: 'Analista de selección',
+      5: 'Coordinador de capacitación', 6: 'Gerente de tecnología', 7: 'Jefe de aplicaciones', 8: 'Desarrollador de software',
+      9: 'Técnico de soporte', 10: 'Analista de infraestructura'
+    };
+    const unidades = {
+      1: 'Gerencia General', 2: 'Gerencia de Talento Humano', 3: 'Departamento de Reclutamiento', 4: 'Sección de Selección Técnica',
+      5: 'Departamento de Capacitación', 6: 'Gerencia de Tecnología', 7: 'Departamento de Aplicaciones', 8: 'Sección de Desarrollo Web',
+      9: 'Departamento de Soporte', 10: 'Área de Infraestructura'
+    };
+    const users = { 1: 'Roberto Andrade', 2: 'Marta Ríos', 3: 'Paola Vintimilla', 4: 'Jorge Cevallos', 5: 'Andrés Salazar', 6: 'Camila Torres', 7: 'Diego Paredes', 8: 'Lucía Mendoza' };
+
+    const lista = [
+      { id: 1,  codigo: 'POS-0101', puesto_id: 1,  unidad_organizacional_id: 1,  posicion_jefe_id: null, user_id: 1,    estado: 'Ocupada',   modalidad: 'Nombramiento' },
+      { id: 2,  codigo: 'POS-0201', puesto_id: 2,  unidad_organizacional_id: 2,  posicion_jefe_id: 1,    user_id: 2,    estado: 'Ocupada',   modalidad: 'Nombramiento' },
+      { id: 3,  codigo: 'POS-0202', puesto_id: 3,  unidad_organizacional_id: 3,  posicion_jefe_id: 2,    user_id: 3,    estado: 'Ocupada',   modalidad: 'Contrato' },
+      { id: 4,  codigo: 'POS-0203', puesto_id: 4,  unidad_organizacional_id: 4,  posicion_jefe_id: 3,    user_id: null, estado: 'Vacante',   modalidad: 'Contrato' },
+      { id: 5,  codigo: 'POS-0204', puesto_id: 5,  unidad_organizacional_id: 5,  posicion_jefe_id: 2,    user_id: 4,    estado: 'Ocupada',   modalidad: 'Encargo' },
+      { id: 6,  codigo: 'POS-0301', puesto_id: 6,  unidad_organizacional_id: 6,  posicion_jefe_id: 1,    user_id: 5,    estado: 'Ocupada',   modalidad: 'Nombramiento' },
+      { id: 7,  codigo: 'POS-0302', puesto_id: 7,  unidad_organizacional_id: 7,  posicion_jefe_id: 6,    user_id: 6,    estado: 'Ocupada',   modalidad: 'Subrogación' },
+      { id: 8,  codigo: 'POS-0303', puesto_id: 8,  unidad_organizacional_id: 8,  posicion_jefe_id: 7,    user_id: 7,    estado: 'Ocupada',   modalidad: 'Contrato' },
+      { id: 9,  codigo: 'POS-0304', puesto_id: 8,  unidad_organizacional_id: 8,  posicion_jefe_id: 7,    user_id: null, estado: 'Vacante',   modalidad: 'Contrato' },
+      { id: 10, codigo: 'POS-0305', puesto_id: 9,  unidad_organizacional_id: 9,  posicion_jefe_id: 6,    user_id: null, estado: 'Suprimida', modalidad: 'Contrato' },
+      { id: 11, codigo: 'POS-0306', puesto_id: 10, unidad_organizacional_id: 10, posicion_jefe_id: 6,    user_id: 8,    estado: 'Ocupada',   modalidad: 'Contrato' }
+    ];
+    const porId = Object.fromEntries(lista.map((p) => [p.id, p]));
+
+    const { q } = this.state;
+    const nq = norm(q);
+    const pill = 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;';
+    const badge = { 'Ocupada': 'background:#E3F2F0;color:#0F6F69;', 'Vacante': 'background:#FDF1E1;color:#8A4B00;', 'Suprimida': 'background:#FDECEA;color:#B42318;' };
+
+    const visibles = lista
+      .map((p) => {
+        const jefe = p.posicion_jefe_id ? porId[p.posicion_jefe_id] : null;
+        return {
+          codigo: p.codigo,
+          puesto: puestos[p.puesto_id],
+          unidad: unidades[p.unidad_organizacional_id],
+          jefeCodigo: jefe ? jefe.codigo : '—',
+          jefePuesto: jefe ? puestos[jefe.puesto_id] : 'Máxima autoridad',
+          ocupante: p.user_id ? users[p.user_id] : 'Sin ocupante',
+          ocupanteStyle: p.user_id ? 'font-weight: 500' : 'color: var(--muted); font-style: italic',
+          estado: p.estado,
+          modalidad: p.modalidad,
+          badgeStyle: pill + badge[p.estado]
+        };
+      })
+      .filter((r) => nq === '' || [r.codigo, r.puesto, r.unidad, r.jefeCodigo, r.jefePuesto, r.ocupante].some((v) => norm(v).includes(nq)));
+
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
+      q,
+      setQ: (e) => this.setState({ q: e.target.value }),
+      posiciones: visibles,
+      sinResultados: visibles.length === 0,
+      resumen: visibles.length + (visibles.length === 1 ? ' posición' : ' posiciones')
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -197,6 +197,13 @@ final class EloquentUnidadRepository implements UnidadRepositoryInterface
                 if ((int) $nuevaPadre->tipo->nivel !== (int) $fresca->tipo->nivel - 1) {
                     throw UnidadInvalida::padreDeOtroTipo();
                 }
+
+                // La jerarquía de las posiciones (feature 006): mover la unidad no puede dejar a una posición vigente
+                // reportando a otra de una unidad inferior o de otra rama.
+                $rotas = $this->posicionesQueRompenLaJerarquia($id, $datos->unidadPadreId);
+                if ($rotas > 0) {
+                    throw UnidadInvalida::reubicacionRompeJerarquia($rotas);
+                }
             }
 
             $anterior = $this->instantanea($fresca);
@@ -360,6 +367,43 @@ final class EloquentUnidadRepository implements UnidadRepositoryInterface
         }
 
         return ['entidades' => $entidades, 'arbol' => $arbol];
+    }
+
+    /**
+     * Cantidad de posiciones vigentes que, con la unidad bajo su nueva unidad padre, dejarían de tener a su supervisora en
+     * la misma unidad o en una unidad superior. Se evalúa sobre el árbol resultante de la reubicación.
+     */
+    private function posicionesQueRompenLaJerarquia(int $unidadId, int $nuevoPadreId): int
+    {
+        /** @var array<int, int|null> $padres */
+        $padres = DB::table(self::TABLA)->pluck('unidad_padre_id', 'id')
+            ->map(fn ($padre) => $padre === null ? null : (int) $padre)
+            ->all();
+        $padres[$unidadId] = $nuevoPadreId;
+
+        $superiores = function (int $unidad) use ($padres): array {
+            $resultado = [];
+            $visitadas = [$unidad => true];
+            for ($actual = $padres[$unidad] ?? null; $actual !== null && ! isset($visitadas[$actual]); $actual = $padres[$actual] ?? null) {
+                $visitadas[$actual] = true;
+                $resultado[] = $actual;
+            }
+
+            return $resultado;
+        };
+
+        return DB::table('posiciones as p')
+            ->join('posiciones as s', 's.id', '=', 'p.posicion_jefe_id')
+            ->where('p.estado', '<>', EstadoPosicion::Suprimida->value)
+            ->where('s.estado', '<>', EstadoPosicion::Suprimida->value)
+            ->get(['p.unidad_organizacional_id as unidad', 's.unidad_organizacional_id as unidad_supervisora'])
+            ->filter(function (object $fila) use ($superiores) {
+                $unidad = (int) $fila->unidad;
+                $supervisora = (int) $fila->unidad_supervisora;
+
+                return $supervisora !== $unidad && ! in_array($supervisora, $superiores($unidad), true);
+            })
+            ->count();
     }
 
     /** @return array<int, TipoDeUnidad> */

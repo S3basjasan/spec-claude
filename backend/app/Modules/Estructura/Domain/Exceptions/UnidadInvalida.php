@@ -52,6 +52,13 @@ final class UnidadInvalida extends RuntimeException
         return new self(['unidad_padre_id' => 'La unidad padre debe ser del tipo inmediatamente superior al de la unidad.']);
     }
 
+    public static function reubicacionRompeJerarquia(int $cantidad): self
+    {
+        return new self(['unidad_padre_id' => $cantidad === 1
+            ? 'No se puede reubicar la unidad: dejaría 1 posición reportando a otra de una unidad inferior o de otra rama.'
+            : "No se puede reubicar la unidad: dejaría $cantidad posiciones reportando a otra de una unidad inferior o de otra rama."]);
+    }
+
     public static function raizNoReubicable(): self
     {
         return new self(['unidad_padre_id' => 'La unidad raíz no puede tener unidad padre.']);

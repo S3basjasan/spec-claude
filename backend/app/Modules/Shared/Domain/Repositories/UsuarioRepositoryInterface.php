@@ -17,4 +17,12 @@ interface UsuarioRepositoryInterface
      * @return array<int, string> id => nombre
      */
     public function nombresPorIds(array $ids): array;
+
+    /**
+     * Ids de los usuarios cuyo nombre contiene el texto, sin distinguir mayúsculas ni tildes, ordenados por nombre y
+     * limitados a `$limite` (solo lectura).
+     *
+     * @return array<int, int>
+     */
+    public function idsPorNombre(string $texto, int $limite): array;
 }

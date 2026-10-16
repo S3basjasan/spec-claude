@@ -16,4 +16,9 @@ final class SharedNombresDeUsuarios implements NombresDeUsuariosInterface
 
         return $ids === [] ? [] : SharedFacade::getNombresDeUsuarios($ids);
     }
+
+    public function idsPorNombre(string $texto): array
+    {
+        return trim($texto) === '' ? [] : SharedFacade::buscarIdsDeUsuariosPorNombre($texto);
+    }
 }
