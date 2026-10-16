@@ -5,7 +5,7 @@ namespace App\Modules\GestionPersonal\Infrastructure\Adapters;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
 
-/** GP-02 aún no existe: toda lectura laboral es «no instalado». */
+/** Lectura laboral «no instalado»: útil en pruebas y entornos sin vínculos. */
 final class LectorLaboralNoInstalado implements LectorLaboralPort
 {
     public function situacionVigente(int $tenantId, array $colaboradorIds, string $fecha): Lectura
@@ -29,6 +29,16 @@ final class LectorLaboralNoInstalado implements LectorLaboralPort
     }
 
     public function trayectoria(int $tenantId, int $colaboradorId): Lectura
+    {
+        return Lectura::noInstalado();
+    }
+
+    public function estadosPresentes(int $tenantId, string $fecha): Lectura
+    {
+        return Lectura::noInstalado();
+    }
+
+    public function proximoIngreso(int $tenantId, int $colaboradorId, string $fecha): Lectura
     {
         return Lectura::noInstalado();
     }

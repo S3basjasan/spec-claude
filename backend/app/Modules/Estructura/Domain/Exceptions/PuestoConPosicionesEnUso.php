@@ -5,16 +5,23 @@ namespace App\Modules\Estructura\Domain\Exceptions;
 use RuntimeException;
 
 /**
- * Un puesto con posiciones Ocupadas o Vacantes no puede desactivarse; `cantidad` es la suma de ambas.
+ * Un puesto con posiciones Ocupadas o Vacantes no puede desactivarse; `cantidad` es la suma de ambas. Con
+ * `conAsignaciones` también cuentan las posiciones con una asignación laboral vigente o futura.
  */
 final class PuestoConPosicionesEnUso extends RuntimeException
 {
-    public function __construct(public readonly int $cantidad)
+    public function __construct(public readonly int $cantidad, bool $conAsignaciones = false)
     {
-        parent::__construct(
-            $cantidad === 1
-                ? 'No se puede desactivar el puesto: tiene 1 posición ocupada o vacante.'
-                : "No se puede desactivar el puesto: tiene $cantidad posiciones ocupadas o vacantes."
-        );
+        if ($cantidad === 1) {
+            $mensaje = $conAsignaciones
+                ? 'No se puede desactivar el puesto: tiene 1 posición ocupada, vacante o con asignación vigente.'
+                : 'No se puede desactivar el puesto: tiene 1 posición ocupada o vacante.';
+        } else {
+            $mensaje = $conAsignaciones
+                ? "No se puede desactivar el puesto: tiene $cantidad posiciones ocupadas, vacantes o con asignaciones vigentes."
+                : "No se puede desactivar el puesto: tiene $cantidad posiciones ocupadas o vacantes.";
+        }
+
+        parent::__construct($mensaje);
     }
 }

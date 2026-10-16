@@ -147,6 +147,8 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Información no disponible** | Texto «Información no disponible» (14px `--muted`, `role="status"`) con botón secundario **Reintentar**, en el lugar de una sección cuya fuente falló. Es distinto de «No registrado» (ausencia confirmada) y no oculta el resto de la ficha. |
 | **Línea de tiempo** | Lista ordenada `<ol>` de hechos, del más reciente al más antiguo; cada ítem con borde izquierdo 2px `--border`, fecha en `<time>` (14px 600), tipo (15px) y detalle opcional (14px `--muted`). Un hecho con fecha efectiva futura lleva la insignia neutra **Programado**. |
 | **Pestañas de sección** | `role="tablist"` con botones `role="tab"` (alto 44px, `aria-selected`, `aria-controls`) y panel `role="tabpanel"`; la activa lleva borde inferior 2px `--accent` y texto `--accent`. Una sección que su funcionalidad aún no ofrece o que la persona no puede ver **no se dibuja**; con una sola sección no hay pestañas. |
+| **Alert de rechazo con motivo** | Alert (de error) con una frase que **explica el conflicto** (p. ej. «La posición está ocupada desde el 2026-01-01 durante el periodo solicitado.») y, cuando existe, la acción que lo resuelve en texto (cambiar la fecha o elegir otra posición). Va sobre los campos, junto al error del campo implicado, y **el formulario conserva todos los valores**. `role="alert"`. |
+| **Selector de posición** | Un `SearchField` («Buscar posición», con pausa de 300 ms) más un `Combobox` con las posiciones elegibles para la fecha; cada opción lleva puesto y unidad. Al elegir una, un `<dl>` en solo lectura muestra **puesto, unidad y jefatura** («No registrado» si falta). Estados: cargando (Skeleton), vacío («No hay posiciones disponibles para esa fecha»), error de verificación (ErrorState con Reintentar) y, si hay más resultados de los mostrados, el aviso «Se muestran N de M posiciones». |
 | **Skeleton** | Bloques `--border` con animación de pulso (1.4s); imita la forma del contenido real. |
 | **EmptyState / ErrorState** | Ver patrón Estados. |
 | **Breadcrumb** | 14px `--muted`, separador "/", último ítem en `--text`. |
@@ -262,6 +264,15 @@ Referencia: `ColaboradorFicha.dc.html`. Para consultar un registro con varios gr
 4. Secciones (Pestañas de sección) y, dentro de cada una, grupos en Cards con Pares etiqueta-valor; la trayectoria es una Línea de tiempo.
 5. Estados: cargando (Skeleton), «No registrado», «Información no disponible» con Reintentar por sección, registro inexistente (ErrorState sin Reintentar útil, con enlace al listado), sin permisos y éxito.
 6. El **formulario de ficha** usa cuatro `fieldset` en una Card (Identificación con el código en solo lectura o «Se asigna al guardar», Datos personales, Contacto y Contacto de emergencia), contadores `n/máximo` en los textos con límite, Alert general «Revisa los campos marcados antes de guardar.» y, ante duplicado, **Alert con enlace**.
+
+### Formulario de ingreso
+Referencia: `ColaboradorIngreso.dc.html` (patrón Formulario). Para registrar el vínculo y la asignación inicial de una ficha.
+
+1. Breadcrumb («Colaboradores / Nombre / Registrar ingreso») y h1 «Registrar ingreso» (o «Registrar reingreso» si la ficha está Desvinculada).
+2. Un `fieldset` en Card con **Fecha de ingreso** (pasada, actual o futura), **Tipo de contrato** (Select con las 4 opciones del sistema) y **Posición** (Selector de posición).
+3. Con fecha futura aparece el **Alert neutro** «Ingreso programado». Cambiar la fecha vuelve a cargar las opciones y, si la posición elegida deja de ser elegible, la descarta con un Alert neutro.
+4. Rechazos (posición ocupada, vínculo superpuesto, contrato no habilitado, Estructura no verificable) usan el **Alert de rechazo con motivo**; el formulario conserva lo escrito y no hay cambio optimista del estado.
+5. Acciones: «Confirmar ingreso» (primario, bloqueado mientras confirma) y «Cancelar» (vuelve a la ficha sin crear nada).
 
 ### Estados
 Referencia: `Estados.dc.html`. Toda vista que carga datos debe cubrir los cuatro.
@@ -379,3 +390,7 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `DNFAdmin.dc.html` no tiene detalle de DNF, filtro por rango de fechas ni de prioridad en el historial, ni confirmación de la masiva como tal | Se definen en §5 puntos 13 y 14; el detalle reutiliza el paso 2 en solo lectura |
 | `DNFColaborador.dc.html` dice «Avisaremos a Desarrollo y Formación para que lo incorpore» cuando no hay cursos | No hay notificación en la spec: solo se muestra «Aún no hay cursos asociados en el catálogo.» |
 | `DNFColaborador.dc.html` trae «Ver como administrador», «Mi perfil» y «Ajustes» en el menú | No se implementan (un solo rol; fuera de alcance) |
+| `GP-02_Registrar-ingreso.html` presenta el registro como un diálogo modal sobre la ficha | La spec define una pantalla de formulario (`/colaboradores/:id/ingreso`) con el patrón Formulario, para que el foco, el teclado y WCAG 2.2 AA queden cubiertos sin diálogos anidados |
+| `GP-02_Registrar-ingreso.html` incluye formación académica, experiencia anterior, movilidad, documentos y la barra de «Controles del prototipo» | Pertenecen a GP-03, GP-05 y a la propia demostración; GP-02 solo registra el vínculo y la asignación inicial |
+| `GP-02_Registrar-ingreso.html` no muestra la jefatura de la posición | La spec la pide en solo lectura; mientras Estructura no la publique se muestra «No registrado» |
+| `ColaboradorIngreso.dc.html` | Tablero del formulario de ingreso, creado en 006 (Constitución III) |

@@ -8,6 +8,7 @@ use App\Modules\GestionPersonal\Application\UseCases\RegistrarFicha;
 use App\Modules\GestionPersonal\Domain\Entities\Colaborador;
 use App\Modules\GestionPersonal\Domain\Exceptions\ColaboradorNoEncontrado;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
+use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Services\NormalizadorDeTexto;
 
 /**
@@ -21,7 +22,20 @@ class PersonalService
         private readonly ContextoDeTenantPort $contextos,
         private readonly RegistrarFicha $registrar,
         private readonly AccesosDeCuentaPort $accesos,
+        private readonly VinculoLaboralRepositoryInterface $vinculos,
     ) {}
+
+    /**
+     * Posiciones, entre las dadas, con una asignación laboral vigente o futura en la fecha (fin nulo o posterior).
+     * Lo consumen Estructura (desactivar puestos y unidades) y futuras funcionalidades de movimientos.
+     *
+     * @param  array<int, int>  $posicionIds
+     * @return array<int, int>
+     */
+    public function posicionesConAsignacionVigenteOFutura(array $posicionIds, string $fecha): array
+    {
+        return $this->vinculos->posicionesConAsignacionVigenteOFutura(array_values(array_map('intval', $posicionIds)), $fecha);
+    }
 
     /** @return array<string, mixed>|null */
     public function getColaborador(int $tenantId, int $id): ?array

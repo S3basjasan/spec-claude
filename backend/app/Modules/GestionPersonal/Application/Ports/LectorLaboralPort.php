@@ -12,14 +12,14 @@ interface LectorLaboralPort
 {
     /**
      * @param  list<int>  $colaboradorIds
-     * @return Lectura Datos: [colaborador_id => {estado: string, posicion_id: int|null}]
+     * @return Lectura Datos: [colaborador_id => {estado: string, posicion_id: int|null}]; ausente = Sin vínculo vigente
      */
     public function situacionVigente(int $tenantId, array $colaboradorIds, string $fecha): Lectura;
 
     /** @return Lectura Datos: list<int> ids de fichas con vínculo vigente */
     public function idsConVinculoVigente(int $tenantId, string $fecha): Lectura;
 
-    /** @return Lectura Datos: list<int> ids de fichas con ese estado */
+    /** @return Lectura Datos: list<int> ids de fichas con ese estado (incluye SinVinculoVigente) */
     public function idsPorEstado(int $tenantId, string $estado, string $fecha): Lectura;
 
     /**
@@ -28,6 +28,14 @@ interface LectorLaboralPort
      */
     public function colaboradoresEnPosiciones(int $tenantId, array $posicionIds, string $fecha): Lectura;
 
-    /** @return Lectura Datos: list<array{fecha_efectiva: string, tipo: string, detalle?: string|null}> */
+    /** @return Lectura Datos: list<array{fecha_efectiva: string, tipo: string, detalle?: string|null, posicion_id?: int|null}> */
     public function trayectoria(int $tenantId, int $colaboradorId): Lectura;
+
+    /** @return Lectura Datos: list<string> estados que tiene al menos una ficha del tenant */
+    public function estadosPresentes(int $tenantId, string $fecha): Lectura;
+
+    /**
+     * @return Lectura Datos: null o {fecha_ingreso: string, tipo_contrato: array{clave: string, etiqueta: string}, posicion_id: int|null}
+     */
+    public function proximoIngreso(int $tenantId, int $colaboradorId, string $fecha): Lectura;
 }

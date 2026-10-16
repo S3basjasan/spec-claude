@@ -4,6 +4,7 @@ namespace App\Modules\GestionPersonal\Application\UseCases;
 
 use App\Modules\GestionPersonal\Application\DTO\ContextoDeTenant;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
+use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\ValueObjects\EstadoLaboral;
 
@@ -12,6 +13,7 @@ final class ObtenerFiltrosDeColaboradores
     public function __construct(
         private readonly ColaboradorRepositoryInterface $colaboradores,
         private readonly LectorEstructuraPort $estructura,
+        private readonly LectorLaboralPort $laboral,
     ) {}
 
     /**
@@ -22,7 +24,15 @@ final class ObtenerFiltrosDeColaboradores
     public function ejecutar(ContextoDeTenant $contexto): array
     {
         $estados = [['valor' => 'Todos']];
-        if ($this->colaboradores->hayFichas($contexto->tenantId)) {
+        $presentes = $this->laboral->estadosPresentes($contexto->tenantId, $contexto->hoy());
+
+        if ($presentes->estaDisponible()) {
+            foreach (['Activo', 'Desvinculado', EstadoLaboral::SinVinculoVigente->value] as $estado) {
+                if (in_array($estado, $presentes->datos, true)) {
+                    $estados[] = ['valor' => $estado];
+                }
+            }
+        } elseif ($this->colaboradores->hayFichas($contexto->tenantId)) {
             $estados[] = ['valor' => EstadoLaboral::SinVinculoVigente->value];
         }
 

@@ -30,7 +30,7 @@ test('Administrador: lista solo su tenant, busca sin tildes, crea, rechaza un du
   await expect(filas.first()).toBeVisible()
   expect(await filas.count()).toBeGreaterThanOrEqual(5)
   const total = await filas.count()
-  await expect(filas.first()).toContainText('José Ángel Mora')
+  await expect(filas.filter({ hasText: 'José Ángel Mora' })).toHaveCount(1)
   await expect(page.getByText('Rosa Chávez Díaz')).toHaveCount(0)
 
   // Búsqueda sin distinguir tildes ni mayúsculas, conservada en la URL.

@@ -13,7 +13,7 @@ class PosicionModel extends Model
 {
     protected $table = 'posiciones';
 
-    protected $fillable = ['puesto_id', 'unidad_organizacional_id', 'estado'];
+    protected $fillable = ['puesto_id', 'unidad_organizacional_id', 'estado', 'tenant_id'];
 
     public function puesto(): BelongsTo
     {
