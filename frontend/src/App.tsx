@@ -50,8 +50,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, unidadesNav, posicionesNav]
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, miFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, miFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
