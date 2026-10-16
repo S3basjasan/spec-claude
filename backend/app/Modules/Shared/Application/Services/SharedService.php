@@ -4,7 +4,6 @@ namespace App\Modules\Shared\Application\Services;
 
 use App\Modules\Shared\Application\UseCases\ObtenerNombresDeUsuarios;
 
-
 /**
  * Servicio inter-módulos del Módulo Shared.
  *
@@ -14,7 +13,6 @@ use App\Modules\Shared\Application\UseCases\ObtenerNombresDeUsuarios;
 class SharedService
 {
     public function __construct(private readonly ObtenerNombresDeUsuarios $nombresDeUsuarios) {}
-
 
     /**
      * Resumen mínimo para verificar el cableado Facade -> Servicio.
@@ -36,13 +34,4 @@ class SharedService
     {
         return $this->nombresDeUsuarios->ejecutar($ids);
     }
-
-    /**
-     * Nombres de usuario por id, para que otros módulos muestren quién hizo un cambio sin leer la tabla de usuarios.
-     * Solo devuelve id y nombre; los ids que no existen se omiten.
-     *
-     * @param  array<int, int>  $ids
-     * @return array<int, string>
-     */
-
 }

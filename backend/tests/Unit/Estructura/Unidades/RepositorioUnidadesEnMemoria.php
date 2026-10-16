@@ -13,6 +13,7 @@ use App\Modules\Estructura\Domain\Services\ArbolDeUnidades;
 use App\Modules\Estructura\Domain\Services\ComparadorDeCambiosDeUnidad;
 use App\Modules\Estructura\Domain\ValueObjects\DatosUnidad;
 use App\Modules\Estructura\Domain\ValueObjects\EstadoUnidad;
+use App\Modules\Estructura\Domain\ValueObjects\ImpactoDeDesactivacion;
 use App\Modules\Estructura\Domain\ValueObjects\InstantaneaDeUnidad;
 use App\Modules\Estructura\Domain\ValueObjects\NodoDeUnidad;
 use App\Modules\Estructura\Domain\ValueObjects\OpcionesDeUnidad;
@@ -90,6 +91,24 @@ class RepositorioUnidadesEnMemoria implements UnidadRepositoryInterface
             array_values(array_filter($entidades, fn (Unidad $u) => $u->estaActiva() && ! in_array($u->id, $fuera, true))),
             array_filter($entidades, fn (Unidad $u) => $u->padre === null && $u->estaActiva() && $u->id !== $excluir) !== [],
         );
+    }
+
+    public function impactoDeDesactivacion(int $id): ImpactoDeDesactivacion
+    {
+        ['entidades' => $entidades, 'arbol' => $arbol] = $this->construir();
+        $unidad = $entidades[$id] ?? throw new UnidadNoEncontrada;
+
+        $rama = $arbol->rama($id);
+        $dependientes = array_values(array_filter($entidades, fn (Unidad $u) => $u->id !== $id && in_array($u->id, $rama, true)));
+        $conPosiciones = [];
+        foreach ($rama as $unidadId) {
+            $cantidad = $this->posicionesVigentes[$unidadId] ?? 0;
+            if ($cantidad > 0) {
+                $conPosiciones[] = ['id' => $unidadId, 'codigo' => $entidades[$unidadId]->codigo, 'nombre' => $entidades[$unidadId]->nombre, 'cantidad' => $cantidad];
+            }
+        }
+
+        return new ImpactoDeDesactivacion($unidad->estaActiva() && ! $unidad->esRaiz() && $conPosiciones === [], $dependientes, $conPosiciones);
     }
 
     public function crear(DatosUnidad $datos, ?int $actorId): Unidad
