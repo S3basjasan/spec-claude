@@ -39,23 +39,27 @@ test('Colaborador: ve las tarjetas por área, abre el detalle y no tiene control
 
   await expect(page.getByRole('heading', { name: 'Catálogo formativo', level: 1 })).toBeVisible()
 
-  // Grupos por área (alfabético) y "Sin área formativa" al final.
+  // Con la DNF sembrada de este colaborador (feature 006) aparece «Recomendados», y luego los grupos por área
+  // (alfabético) y "Sin área formativa" al final.
+  await expect(page.getByRole('region', { name: 'Recomendados para cerrar mis brechas' })).toBeVisible()
   await expect(page.getByRole('heading', { level: 2 })).toHaveText([
+    'Recomendados para cerrar mis brechas',
     'Desempeño y resultados',
     'Habilidades interpersonales',
     'Liderazgo y gestión',
     'Sin área formativa',
   ])
 
-  // Solo competencias activas, con el contador de cursos disponibles (los archivados no cuentan).
-  await expect(page.getByRole('button', { name: /cursos? disponibles?/ })).toHaveCount(6)
+  // Las tarjetas por área quedan fuera de «Recomendados»: solo competencias activas, con el contador de cursos
+  // disponibles (los archivados no cuentan).
+  const recomendados = page.getByRole('region', { name: 'Recomendados para cerrar mis brechas' })
+  const tarjeta = (nombre: RegExp) => page.getByRole('button', { name: nombre }).filter({ hasText: 'cursos disponibles' }).last()
+  await expect(page.getByRole('button', { name: /cursos? disponibles?/ })).toHaveCount(6 + (await recomendados.getByRole('button').count()))
   await expect(page.getByText('Adaptabilidad')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: /Orientación a resultados/ })).toContainText('0 cursos disponibles')
-  await expect(page.getByRole('button', { name: /Comunicación efectiva/ })).toContainText('2 cursos disponibles')
+  await expect(tarjeta(/Orientación a resultados/)).toContainText('0 cursos disponibles')
+  await expect(tarjeta(/Comunicación efectiva/)).toContainText('2 cursos disponibles')
   // Sin Gestión de Personal no hay nivel registrado: los puntos van sin resaltar.
-  await expect(page.getByRole('button', { name: /Comunicación efectiva/ })).toContainText('Sin nivel registrado')
-  // Sin DNF no hay recomendados.
-  await expect(page.getByText('Recomendados para cerrar mis brechas')).toHaveCount(0)
+  await expect(tarjeta(/Comunicación efectiva/)).toContainText('Sin nivel registrado')
 
   // Sin controles de gestión ni cobertura.
   await expect(page.getByRole('button', { name: /Guardar|Asociar|Ver detalle|Gestionar áreas/ })).toHaveCount(0)

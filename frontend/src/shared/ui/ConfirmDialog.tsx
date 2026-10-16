@@ -12,6 +12,8 @@ interface ConfirmDialogProps {
   onCancel: () => void
   /** Operación en curso: bloquea los botones y el cierre. */
   busy?: boolean
+  /** `danger` (por defecto) para acciones destructivas; `primary` para confirmar una acción que no destruye nada. */
+  tone?: 'danger' | 'primary'
   /** Error de la última confirmación; el diálogo sigue abierto. */
   error?: string
 }
@@ -19,7 +21,7 @@ interface ConfirmDialogProps {
 const FOCUSABLE = 'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
 /** Confirmación destructiva accesible: alertdialog modal con foco atrapado y devuelto al cerrar. */
-export function ConfirmDialog({ open, title, description, confirmLabel, cancelLabel, onConfirm, onCancel, busy = false, error }: ConfirmDialogProps) {
+export function ConfirmDialog({ open, title, description, confirmLabel, cancelLabel, onConfirm, onCancel, busy = false, tone = 'danger', error }: ConfirmDialogProps) {
   const titleId = useId()
   const descriptionId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -75,7 +77,7 @@ export function ConfirmDialog({ open, title, description, confirmLabel, cancelLa
           <Button ref={cancelRef} variant="secondary" onClick={onCancel} disabled={busy}>
             {cancelLabel}
           </Button>
-          <Button variant="danger" onClick={onConfirm} loading={busy}>
+          <Button variant={tone === 'danger' ? 'danger' : 'primary'} onClick={onConfirm} loading={busy}>
             {confirmLabel}
           </Button>
         </div>
