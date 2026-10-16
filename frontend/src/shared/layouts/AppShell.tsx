@@ -14,6 +14,8 @@ export interface ShellNavItem {
   label: string
   icon: ReactNode
   end?: boolean
+  /** Si se indica, el ítem solo se muestra a esos roles (la autoridad sigue siendo el backend). */
+  roles?: ShellUser['role'][]
 }
 
 interface AppShellProps {
@@ -133,7 +135,7 @@ export function AppShell({ user, navItems, onLogout, isLoggingOut }: AppShellPro
           className="border-b border-border bg-surface p-3 md:w-62 md:shrink-0 md:border-b-0 md:border-r"
         >
           <ul className="flex flex-wrap gap-1 md:flex-col">
-            {navItems.map((item) => (
+            {navItems.filter((item) => !item.roles || item.roles.includes(user.role)).map((item) => (
               <li key={item.to}>
                 <NavLink
                   to={item.to}

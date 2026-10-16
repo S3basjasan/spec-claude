@@ -11,7 +11,7 @@ interface UsuarioRepositoryInterface
     public function obtenerPorId(int $id): ?Usuario;
 
     /**
-     * Nombres de los usuarios existentes entre los ids dados (solo lectura; sin correo ni rol).
+     * Nombres de los usuarios existentes entre los ids dados (una sola consulta).
      *
      * @param  array<int, int>  $ids
      * @return array<int, string> id => nombre

@@ -56,6 +56,11 @@ final class RepositorioEnMemoria implements CompetenciaRepositoryInterface
         return array_values(array_filter($this->competencias, fn (Competencia $c) => $c->estaActiva()));
     }
 
+    public function obtenerTodas(): array
+    {
+        return array_values($this->competencias);
+    }
+
     public function crear(string $nombre, string $descripcion, TipoCompetencia $tipo, array $grados, ?int $actorId): Competencia
     {
         foreach ($this->competencias as $existente) {

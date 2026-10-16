@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Modules\GestionPersonal\Application\UseCases;
+
+use App\Modules\GestionPersonal\Application\DTO\ContextoDeTenant;
+use App\Modules\GestionPersonal\Application\DTO\DesarrolloDTO;
+use App\Modules\GestionPersonal\Application\Ports\AccesosDeCuentaPort;
+use App\Modules\GestionPersonal\Application\Services\ArmadorDeDesarrollo;
+use App\Modules\GestionPersonal\Domain\Exceptions\CuentaSinFicha;
+use App\Modules\GestionPersonal\Domain\Exceptions\SinPermisoDeFicha;
+use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
+
+final class ObtenerMiDesarrollo
+{
+    public function __construct(
+        private readonly ColaboradorRepositoryInterface $colaboradores,
+        private readonly AccesosDeCuentaPort $accesos,
+        private readonly ArmadorDeDesarrollo $armador,
+    ) {}
+
+    /**
+     * @throws CuentaSinFicha
+     * @throws SinPermisoDeFicha
+     */
+    public function ejecutar(ContextoDeTenant $contexto, int $userId): DesarrolloDTO
+    {
+        $acceso = $this->accesos->deCuenta($userId);
+
+        if ($acceso === null || $acceso->tenantId !== $contexto->tenantId) {
+            throw new CuentaSinFicha;
+        }
+
+        if (! $acceso->puedeConsultarFicha) {
+            throw new SinPermisoDeFicha;
+        }
+
+        $this->colaboradores->porId($contexto->tenantId, $acceso->colaboradorId) ?? throw new CuentaSinFicha;
+
+        return $this->armador->armar($acceso->colaboradorId, $contexto, false);
+    }
+}

@@ -36,8 +36,10 @@ it('no tiene columna de actualización', function () {
         ->and(registroDeHistorial()->updated_at)->toBeNull();
 });
 
-it('ninguna ruta de la API expone el historial', function () {
-    $rutas = collect(Route::getRoutes()->getRoutes())->map(fn ($ruta) => $ruta->uri())->all();
+it('ninguna ruta de la API de competencias expone el historial', function () {
+    // Acotada a /api/competencias: otros módulos (p. ej. el catálogo formativo) tienen su propio historial.
+    $rutas = collect(Route::getRoutes()->getRoutes())->map(fn ($ruta) => $ruta->uri())
+        ->filter(fn ($uri) => str_starts_with($uri, 'api/competencias'))->all();
 
     expect(array_filter($rutas, fn ($uri) => str_contains($uri, 'historial')))->toBe([]);
 });

@@ -65,6 +65,12 @@ final class EloquentCompetenciaRepository implements CompetenciaRepositoryInterf
             ->map(fn (CompetenciaModel $m) => $this->aEntidad($m, true))->all();
     }
 
+    public function obtenerTodas(): array
+    {
+        return CompetenciaModel::query()->orderBy('nombre')->get()
+            ->map(fn (CompetenciaModel $m) => $this->aEntidad($m, false))->all();
+    }
+
     public function crear(string $nombre, string $descripcion, TipoCompetencia $tipo, array $grados, ?int $actorId): Competencia
     {
         try {

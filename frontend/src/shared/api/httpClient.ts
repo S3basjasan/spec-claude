@@ -42,6 +42,10 @@ export interface ApiError {
   message?: string
   /** Errores por campo de una respuesta 422. */
   fieldErrors: Record<string, string[]>
+  /** Código de negocio de la respuesta (p. ej. IDENTIFICACION_DUPLICADA), si el servidor lo envía. */
+  code?: string
+  /** Cuerpo de la respuesta tal como llegó, para datos adicionales de un error concreto. */
+  data?: Record<string, unknown>
   /** true cuando no hubo respuesta del servidor. */
   isNetworkError: boolean
 }
@@ -49,6 +53,13 @@ export interface ApiError {
 interface ErrorBody {
   message?: unknown
   errors?: unknown
+}
+
+/** El cuerpo de la respuesta, solo si trae datos más allá de message, errors y code (p. ej. ficha_existente). */
+function cuerpoAdicional(data: unknown): Record<string, unknown> | undefined {
+  if (data === null || typeof data !== 'object') return undefined
+  const extra = Object.keys(data).filter((clave) => !['message', 'errors', 'code'].includes(clave))
+  return extra.length > 0 ? (data as Record<string, unknown>) : undefined
 }
 
 /** Normaliza cualquier error de la capa HTTP a una forma estable para los hooks y páginas. */
@@ -68,6 +79,8 @@ export function toApiError(error: unknown): ApiError {
   return {
     status,
     message: typeof data?.message === 'string' ? data.message : undefined,
+    code: typeof (data as { code?: unknown } | undefined)?.code === 'string' ? (data as { code: string }).code : undefined,
+    data: cuerpoAdicional(data),
     fieldErrors,
     isNetworkError: false,
   }

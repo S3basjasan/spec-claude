@@ -1,5 +1,10 @@
 <?php
 
+use App\Modules\Desarrollo\Application\Ports\BrechasActivasInterface;
+use App\Modules\Desarrollo\Application\Ports\NivelesDeColaboradorInterface;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\CompetenciaCursoModel;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\CompetenciaFormativaModel;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\CompetenciaMicrocontenidoModel;
 use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\ValueObjects\AsignacionDeCompetencia;
 use App\Modules\Estructura\Domain\ValueObjects\DatosPuesto;
@@ -18,7 +23,13 @@ use Database\Factories\RegistroPreguntasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Tests\Support\Desarrollo\BrechasActivasFalsas;
+use Tests\Support\Desarrollo\NivelesDeColaboradorFalso;
 use Tests\TestCase;
+
+require_once __DIR__.'/GestionPersonalHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/DnfHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/PlanHelpers.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -251,6 +262,79 @@ function cuerpoDelPuesto(PuestoModel $puesto, array $cambios = []): array
         'competencias' => $puesto->competenciasAsignadas->map(fn ($c) => ['competencia_id' => $c->competencia_id, 'grado_requerido' => $c->grado_requerido])->all(),
         'version' => $puesto->version,
     ], $cambios);
+}
+
+/**
+ * Configura la vista formativa de una competencia directamente en base de datos (área, cursos y micro-contenidos).
+ *
+ * @param  array<int, int>  $cursoIds
+ * @param  array<int, int>  $microIds
+ */
+function configurarFormativa(int $competenciaId, ?int $areaId = null, array $cursoIds = [], array $microIds = [], int $version = 1, ?int $actor = null): void
+{
+    CompetenciaFormativaModel::query()->create([
+        'competencia_id' => $competenciaId,
+        'area_formativa_id' => $areaId,
+        'version' => $version,
+        'updated_by' => $actor,
+    ]);
+
+    foreach ($cursoIds as $id) {
+        CompetenciaCursoModel::query()->create(['competencia_id' => $competenciaId, 'curso_id' => $id, 'created_by' => $actor]);
+    }
+    foreach ($microIds as $id) {
+        CompetenciaMicrocontenidoModel::query()->create(['competencia_id' => $competenciaId, 'microcontenido_id' => $id, 'created_by' => $actor]);
+    }
+}
+
+/**
+ * Cuerpo de un PUT del catálogo formativo (por defecto, sin área ni recursos y versión 0).
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function cuerpoFormativo(array $cambios = []): array
+{
+    return array_replace([
+        'area_formativa_id' => null,
+        'curso_ids' => [],
+        'microcontenido_ids' => [],
+        'version' => 0,
+    ], $cambios);
+}
+
+/**
+ * Sustituye en el contenedor el puerto de niveles por uno con los datos dados.
+ *
+ * @param  array<int, string>  $niveles  competencia_id => nivel
+ */
+function conNiveles(array $niveles, bool $falla = false): NivelesDeColaboradorFalso
+{
+    $falso = new NivelesDeColaboradorFalso($niveles, $falla);
+    app()->instance(NivelesDeColaboradorInterface::class, $falso);
+
+    return $falso;
+}
+
+/**
+ * Sustituye en el contenedor el puerto de brechas por uno con los datos dados (o que falla).
+ *
+ * @param  array<int, array{competencia_id: int, nivel_requerido: string}>  $brechas
+ */
+function conBrechas(array $brechas, bool $falla = false): BrechasActivasFalsas
+{
+    $falso = new BrechasActivasFalsas($brechas, $falla);
+    app()->instance(BrechasActivasInterface::class, $falso);
+
+    return $falso;
+}
+
+function actuarComoColaborador(): UserModel
+{
+    $usuario = UserModel::factory()->create();
+    Sanctum::actingAs($usuario, ['user']);
+
+    return $usuario;
 }
 
 /**

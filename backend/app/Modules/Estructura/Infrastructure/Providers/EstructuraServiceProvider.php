@@ -3,6 +3,7 @@
 namespace App\Modules\Estructura\Infrastructure\Providers;
 
 use App\Modules\Estructura\Application\Ports\NombresDeUsuariosInterface;
+use App\Modules\Estructura\Application\Ports\OcupacionDePosicionesPort;
 use App\Modules\Estructura\Application\Services\EstructuraService;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
@@ -11,6 +12,7 @@ use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\TipoUnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
+use App\Modules\Estructura\Infrastructure\Adapters\OcupacionPorPersonalFacade;
 use App\Modules\Estructura\Infrastructure\Adapters\SharedNombresDeUsuarios;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentCompetenciaRepository;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentComportamientoRepository;
@@ -39,6 +41,8 @@ class EstructuraServiceProvider extends ServiceProvider
         $this->app->bind(UnidadRepositoryInterface::class, EloquentUnidadRepository::class);
         $this->app->bind(TipoUnidadRepositoryInterface::class, EloquentTipoUnidadRepository::class);
         $this->app->bind(NombresDeUsuariosInterface::class, SharedNombresDeUsuarios::class);
+        $this->app->bind(PosicionRepositoryInterface::class, EloquentPosicionRepository::class);
+        $this->app->bind(OcupacionDePosicionesPort::class, OcupacionPorPersonalFacade::class);
 
         // Binding de la Facade del módulo (Presentation\Facades).
         $this->app->singleton('estructura-facade', fn ($app) => $app->make(EstructuraService::class));

@@ -4,6 +4,19 @@ import { AuthenticatedLayout } from './modules/auth/login/components/Authenticat
 import { RedirectIfAuthenticated } from './modules/auth/login/components/RedirectIfAuthenticated'
 import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
+import { catalogoFormativoNav } from './modules/desarrollo/catalogo-formativo/nav'
+import { CatalogoPage } from './modules/desarrollo/catalogo-formativo/pages/CatalogoPage'
+import { RequireAdmin as RequireAdminDnf } from './modules/desarrollo/dnf/components/RequireAdmin'
+import { dnfNav } from './modules/desarrollo/dnf/nav'
+import { DnfDetallePage } from './modules/desarrollo/dnf/pages/DnfDetallePage'
+import { DnfHistorialPage } from './modules/desarrollo/dnf/pages/DnfHistorialPage'
+import { DnfPage } from './modules/desarrollo/dnf/pages/DnfPage'
+import { RequireAdmin as RequireAdminPlan } from './modules/desarrollo/plan-formacion/components/RequireAdmin'
+import { planFormacionNav } from './modules/desarrollo/plan-formacion/nav'
+import { AccionesPage } from './modules/desarrollo/plan-formacion/pages/AccionesPage'
+import { AsistentePlanPage } from './modules/desarrollo/plan-formacion/pages/AsistentePlanPage'
+import { PlanDetallePage } from './modules/desarrollo/plan-formacion/pages/PlanDetallePage'
+import { PlanFormacionPage } from './modules/desarrollo/plan-formacion/pages/PlanFormacionPage'
 import { RequireAdmin } from './modules/estructura/competencias/components/RequireAdmin'
 import { competenciasNav } from './modules/estructura/competencias/nav'
 import { CompetenciaFormPage } from './modules/estructura/competencias/pages/CompetenciaFormPage'
@@ -24,6 +37,13 @@ import { posicionesNav } from './modules/estructura/posiciones/nav'
 import { PosicionesPage } from './modules/estructura/posiciones/pages/PosicionesPage'
 import { unidadesNav } from './modules/estructura/unidades/nav'
 import { UnidadesPage } from './modules/estructura/unidades/pages/UnidadesPage'
+import { RequireAdmin as RequireAdminFichas } from './modules/gestionPersonal/fichas/components/RequireAdmin'
+import { colaboradoresNav, miFichaNav } from './modules/gestionPersonal/fichas/nav'
+import { ColaboradoresPage } from './modules/gestionPersonal/fichas/pages/ColaboradoresPage'
+import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDetallePage'
+import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
+import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
+import { RegistrarIngresoPage } from './modules/gestionPersonal/fichas/pages/RegistrarIngresoPage'
 import { inicioNav } from './modules/inicio/nav'
 import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
@@ -31,6 +51,7 @@ import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
 const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, unidadesNav, posicionesNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, miFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -74,6 +95,19 @@ function App() {
               <Route path="preguntas/nuevo" element={<PreguntasFormPage />} />
               <Route path="preguntas/:competenciaId/editar" element={<PreguntasFormPage />} />
             </Route>
+            <Route path="formacion" element={<CatalogoPage />} />
+            <Route path="dnf" element={<DnfPage />} />
+            <Route element={<RequireAdminDnf />}>
+              <Route path="dnf/historial" element={<DnfHistorialPage />} />
+              <Route path="dnf/:id" element={<DnfDetallePage />} />
+            </Route>
+            <Route path="plan-formacion" element={<PlanFormacionPage />} />
+            <Route element={<RequireAdminPlan />}>
+              <Route path="plan-formacion/acciones" element={<AccionesPage />} />
+              <Route path="plan-formacion/nuevo" element={<AsistentePlanPage />} />
+              <Route path="plan-formacion/:id/editar" element={<AsistentePlanPage />} />
+              <Route path="plan-formacion/:id" element={<PlanDetallePage />} />
+            </Route>
             <Route path="puestos" element={<PuestosPage />} />
             <Route element={<RequireAdminPuestos />}>
               <Route path="puestos/nuevo" element={<PuestoFormPage />} />
@@ -81,6 +115,14 @@ function App() {
             </Route>
             <Route path="unidades" element={<UnidadesPage />} />
             <Route path="posiciones" element={<PosicionesPage />} />
+            <Route path="mi-ficha" element={<MiFichaPage />} />
+            <Route element={<RequireAdminFichas />}>
+              <Route path="colaboradores" element={<ColaboradoresPage />} />
+              <Route path="colaboradores/nuevo" element={<FichaFormPage />} />
+              <Route path="colaboradores/:colaboradorId" element={<FichaDetallePage />} />
+              <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
+              <Route path="colaboradores/:colaboradorId/ingreso" element={<RegistrarIngresoPage />} />
+            </Route>
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

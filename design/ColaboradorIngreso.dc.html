@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Registrar ingreso</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.campo label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.campo input,.campo select{width:100%;box-sizing:border-box;height:44px;border-radius:8px;border:1px solid var(--inputBorder);background:var(--surface);color:var(--text);padding:0 12px;font:inherit;font-size:15px}
+.hint{margin-top:6px;font-size:13px;color:var(--muted)}
+.par dt{font-size:13px;font-weight:600;color:var(--muted)}
+.par dd{margin:2px 0 0;font-size:15px}
+.nr{color:var(--muted)}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 1500px; box-sizing: border-box; padding: 40px; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 560px); gap: 40px; {{themeStyle}}">
+
+  <!-- Formulario principal -->
+  <main aria-label="Registrar ingreso" style="display: flex; flex-direction: column; gap: 20px">
+    <nav aria-label="Ruta de navegación" style="font-size: 14px; color: var(--muted)">
+      Colaboradores / Ana Núñez Paredes / <span style="color: var(--text)">Registrar ingreso</span>
+    </nav>
+    <div>
+      <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Registrar ingreso</h1>
+      <p style="margin: 6px 0 0; color: var(--muted)">Ana Núñez Paredes · Registra el inicio de la relación laboral y su asignación inicial a una posición.</p>
+    </div>
+
+    <fieldset style="margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+      <legend style="padding: 0 4px; font-size: 16px; font-weight: 700">Registrar ingreso</legend>
+
+      <div class="campo">
+        <label for="fecha">Fecha de ingreso</label>
+        <input id="fecha" type="date" value="2026-11-20">
+        <p class="hint">Puede ser pasada, actual o futura.</p>
+      </div>
+
+      <div role="status" style="display: flex; gap: 8px; background: var(--soft); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 14px">
+        <span aria-hidden="true">i</span>
+        <div>
+          <p style="margin: 0; font-weight: 600">Ingreso programado</p>
+          <p style="margin: 2px 0 0">La fecha es futura: hasta entonces la ficha seguirá sin vínculo vigente y el ingreso se mostrará como programado.</p>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="contrato">Tipo de contrato</label>
+        <select id="contrato">
+          <option>Selecciona un tipo de contrato</option>
+          <option>Indefinido</option>
+          <option>Plazo fijo</option>
+          <option>Temporal</option>
+          <option>Servicios profesionales</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="busqueda">Buscar posición</label>
+        <input id="busqueda" type="search" placeholder="Buscar por puesto o unidad">
+      </div>
+
+      <div class="campo">
+        <label for="posicion">Posición</label>
+        <input id="posicion" role="combobox" aria-expanded="false" placeholder="Busca y selecciona una posición" value="Analista de datos · Finanzas (13)">
+        <p class="hint">Solo se ofrecen las posiciones disponibles desde la fecha elegida.</p>
+      </div>
+
+      <dl aria-label="Datos de la posición" class="par" style="margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; background: var(--soft); border: 1px solid var(--border); border-radius: 8px; padding: 14px">
+        <div><dt>Puesto</dt><dd>Analista de datos</dd></div>
+        <div><dt>Unidad organizacional</dt><dd>Finanzas</dd></div>
+        <div><dt>Jefatura</dt><dd class="nr">No registrado</dd></div>
+      </dl>
+    </fieldset>
+
+    <div style="display: flex; gap: 12px">
+      <button style="height: 44px; padding: 0 20px; border-radius: 8px; border: 1px solid transparent; background: var(--accent); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px">Confirmar ingreso</button>
+      <button style="height: 44px; padding: 0 20px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; font-size: 15px">Cancelar</button>
+    </div>
+  </main>
+
+  <!-- Estados y rechazos -->
+  <aside aria-label="Estados del formulario" style="display: flex; flex-direction: column; gap: 20px">
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Rechazo: posición ocupada</div>
+      <div role="alert" style="margin-top: 12px; background: var(--dangersoft); color: var(--danger); border-radius: 8px; padding: 12px 14px; font-size: 14px">
+        <p style="margin: 0">La posición está ocupada desde el 2026-01-01 (sin fecha de fin) durante el periodo solicitado.</p>
+        <p style="margin: 4px 0 0; font-weight: 600">Elige otra posición o cambia la fecha.</p>
+      </div>
+      <p class="hint">El formulario conserva todo lo escrito.</p>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Rechazo: vínculo superpuesto</div>
+      <div role="alert" style="margin-top: 12px; background: var(--dangersoft); color: var(--danger); border-radius: 8px; padding: 12px 14px; font-size: 14px">
+        La ficha ya tiene un vínculo laboral desde el 2026-01-01 (sin fecha de salida) que se superpone con esa fecha.
+      </div>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Selección descartada por cambio de fecha</div>
+      <div role="status" style="margin-top: 12px; background: var(--soft); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 14px">
+        La posición elegida ya no está disponible para la nueva fecha. Elige otra posición.
+      </div>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Sin posiciones para la fecha</div>
+      <div style="padding: 24px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center" aria-hidden="true">i</div>
+        <h2 style="margin: 0; font-size: 18px">No hay posiciones disponibles para esa fecha</h2>
+        <p style="margin: 0; color: var(--muted); font-size: 14px">Prueba con otra fecha o con otra búsqueda.</p>
+      </div>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Estructura no disponible</div>
+      <div role="alert" style="padding: 24px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+        <h2 style="margin: 0; font-size: 18px">No se pudo verificar la disponibilidad de posiciones</h2>
+        <p style="margin: 0; color: var(--muted); font-size: 14px">Estructura no respondió. Tus datos se conservan.</p>
+        <button style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; font-size: 15px">Reintentar</button>
+      </div>
+    </section>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', inputBorder: '#9AA3AE', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', inputBorder: '#5F6B78', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A' };
+    const t = this.props.dark ? dark : light;
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';')
+    };
+  }
+}
+</script>
+</body>
+</html>

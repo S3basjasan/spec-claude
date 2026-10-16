@@ -13,7 +13,7 @@ class UserModel extends Authenticatable
 
     protected $table = 'users';
 
-    protected $fillable = ['name', 'email', 'password', 'role'];
+    protected $fillable = ['name', 'email', 'password', 'role', 'tenant_id'];
 
     protected $hidden = ['password', 'remember_token'];
 
