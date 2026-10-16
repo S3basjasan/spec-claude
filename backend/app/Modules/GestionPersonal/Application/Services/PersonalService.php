@@ -2,6 +2,7 @@
 
 namespace App\Modules\GestionPersonal\Application\Services;
 
+use App\Modules\GestionPersonal\Application\Ports\AccesosDeCuentaPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeTenantPort;
 use App\Modules\GestionPersonal\Application\UseCases\RegistrarFicha;
 use App\Modules\GestionPersonal\Domain\Entities\Colaborador;
@@ -20,6 +21,7 @@ class PersonalService
         private readonly NormalizadorDeTexto $normalizador,
         private readonly ContextoDeTenantPort $contextos,
         private readonly RegistrarFicha $registrar,
+        private readonly AccesosDeCuentaPort $accesos,
         private readonly VinculoLaboralRepositoryInterface $vinculos,
     ) {}
 
@@ -58,6 +60,18 @@ class PersonalService
         }
 
         return $filas;
+    }
+
+    /**
+     * Ficha asociada a la cuenta de un usuario, o null si no tiene (solo lectura).
+     *
+     * @return array{tenant_id: int, colaborador_id: int}|null
+     */
+    public function getCuentaDeUsuario(int $usuarioId): ?array
+    {
+        $acceso = $this->accesos->deCuenta($usuarioId);
+
+        return $acceso === null ? null : ['tenant_id' => $acceso->tenantId, 'colaborador_id' => $acceso->colaboradorId];
     }
 
     /** @return array<string, mixed>|null */

@@ -39,6 +39,17 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 | `--ondanger` | `#FFFFFF` | `#2A0B09` | Texto sobre `--danger` |
 | `--warning` | `#B54708` | `#F5B454` | Advertencias que no son errores (p. ej. el ícono "No sigue la cadena"); contraste ≥ 4.5:1 sobre `--surface` |
 
+**Colores semánticos de estado** *(añadidos por la feature 006, DNF; valores tomados de `DNFAdmin.dc.html`)*. Se usan en los Badges de prioridad y estado, siempre con texto, nunca solo con color:
+
+| Token | Claro | Oscuro | Uso |
+|---|---|---|---|
+| `--warn` | `#8A4B0B` | `#F2C27A` | Texto de advertencia sobre `--warnsoft` (prioridad Alta, borrador, brecha en el gráfico) |
+| `--warnsoft` | `#FDEFD9` | `#3A2A12` | Fondo de advertencia |
+| `--info` | `#1F4E9C` | `#9DBEF5` | Texto informativo sobre `--infosoft` (prioridad Media) |
+| `--infosoft` | `#E4EDFB` | `#172A4A` | Fondo informativo |
+| `--neutral` | `#3B4654` | `#B8C2CD` | Texto neutro sobre `--neutralsoft` (prioridad Baja, Sin evaluación) |
+| `--neutralsoft` | `#ECEEF1` | `#232B34` | Fondo neutro |
+
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
 
 **`--input-border` es nuevo.** Los mockups usan `--border` (1.26:1) o `#C9CED6` (1.58:1) en los inputs, y ninguno llega al 3:1 que exige WCAG 1.4.11 para el borde de un control. Los valores propuestos dan 3.07:1 (claro) y 3.05:1 (oscuro).
@@ -150,6 +161,23 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Ítem de recurso** | Fila con nombre, `Badge` de tipo (color semántico), duración y formador, y a la derecha el botón de acción (**Iniciar**/**Ver**, o **Quitar** en gestión). Sin destino, el botón se muestra deshabilitado con el texto "Próximamente". Un recurso archivado lleva `Badge` neutro "Archivado". |
 | **Historial de cambios** | Lista paginada (más reciente primero): usuario y fecha (13px `--muted`), acción y recurso o valores anterior → nuevo. Estado vacío: "Aún no hay cambios registrados." |
 
+**Componentes de la DNF** *(feature 006; referencias `DNFAdmin.dc.html` y `DNFColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Stepper (pasos)** | Lista de pasos numerados («1 Selección», «2 Diagnóstico») en botones de alto 44px con `aria-current="step"` en el activo (borde `--accent`, fondo `--soft`). Un paso aún no alcanzable va `disabled` (opacidad 0.55) con `aria-disabled`. Puede vivir en `shared/ui` por ser reutilizable. |
+| **Opción de alcance (radio-tarjeta)** | Grupo `role="radiogroup"` con etiqueta; cada opción es una tarjeta (radio 10, padding 14–16px, borde `--border`, la elegida con borde `--accent` y fondo `--soft`) con un `input type="radio"` nativo, título 15px 600 y descripción 13px `--muted`. Navegable con flechas. |
+| **Badge de prioridad** | Píldora 12–13px 700 con texto: **Crítica** `--danger` sobre `--dangersoft`; **Alta** `--warn` sobre `--warnsoft`; **Media** `--info` sobre `--infosoft`; **Baja** `--neutral` sobre `--neutralsoft`. Sin prioridad se muestra «—». |
+| **Badge de estado de brecha** | Mismo formato: **Con brecha** (`--danger`/`--dangersoft`), **Cumple** (`--accent`/`--soft`), **Supera** (`--info`/`--infosoft`), **Sin evaluación** (`--neutral`/`--neutralsoft`). |
+| **Vista previa del colaborador / departamento** | Card con pares etiqueta-valor (puesto, departamento, número de competencias) o, en masiva, «N colaboradores · M comparaciones competencia–colaborador». |
+| **KPI de diagnóstico** | `StatCard` en rejilla `minmax(200px, 1fr)` (competencias evaluadas, con brecha, prioridad crítica o alta, prioridad más alta); el valor puede ir en `--danger` si hay urgencia. |
+| **Gráfico de perfil ideal vs actual** | `role="img"` con `aria-label` que resume el contenido; eje A–D; barras del nivel actual (`--accent`), marcador/línea del nivel requerido (`--text`) y tramo de brecha con borde discontinuo `--warn` sobre `--warnsoft`; leyenda visible. Equivalente accesible: la tabla del diagnóstico. En pantallas estrechas pasa a barras horizontales. |
+| **Tabla de diagnóstico** | `DataTable` con columnas competencia, nivel requerido, nivel actual, brecha (grados), brecha (%) con minibarra (`--danger` si Crítica, `--warn` si otra prioridad, `--accent` si no hay), prioridad y estado; filtros de prioridad y estado y casilla «Mostrar solo competencias con brecha». |
+| **Resumen por colaborador (masiva)** | `DataTable` con colaborador, puesto, cantidad de brechas y prioridad más alta; cada fila es un botón que abre el diagnóstico del colaborador en la misma pantalla y un enlace «Volver al resumen». |
+| **Tarjeta de brecha (colaborador)** | Card con nombre (h3), Badge de prioridad, dos barras horizontales A–D («Requerido» y «Actual», cada una con su letra visible), la línea «Nivel actual: C · Requerido: A · Diferencia: −2 (50 % de brecha)» y el botón **Ver cursos sugeridos** (secundario). Sin oferta: botón deshabilitado y «Aún no hay cursos asociados en el catálogo.» Con `aria-label` que resume la tarjeta. |
+| **Mis brechas prioritarias** | Sección con `h2` y subtítulo; hasta tres tarjetas de brecha numeradas (1–3) de mayor a menor prioridad; debajo «Otras brechas detectadas» y un bloque plegable «Competencias que ya cumples (N)». |
+| **Botón «Generar Plan de Formación»** | Botón primario solo para el Administrador. Deshabilitado con motivo visible (13px `--muted`, enlazado con `aria-describedby`) si no hay brechas o si ya generó plan; en este caso se sustituye por el enlace «Ver plan». |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -176,6 +204,12 @@ Referencia: `Competencias.dc.html`. Para cualquier catálogo o lista de registro
 11. **Matriz formativa** (catálogo formativo, Administrador). Referencia: `CatalogoAdmin.dc.html`. Encabezado (h1 + subtítulo) y aviso neutro "El diccionario de competencias es de solo lectura"; **indicador de cobertura** arriba; barra de filtros con `SearchField` y selects de tipo, área formativa, con/sin cursos asociados y estado (este último solo para el Administrador, Activas por defecto); `DataTable` con columnas competencia (código y nombre), tipo, área formativa, cursos asociados, micro-contenidos asociados y la acción **Ver detalle**, que abre el **panel lateral**. Los contadores cuentan solo recursos disponibles. No hay botón para cambiar de vista: cada usuario tiene un solo rol.
 
 12. **Tarjetas agrupadas por área** (catálogo formativo, Colaborador). Referencia: `CatalogoColaborador.dc.html`. Sección destacada **"Recomendados para cerrar mis brechas"** arriba (solo si hay recomendados), y debajo un grupo por área formativa (el último, "Sin área formativa") con **tarjetas de competencia**; al elegir una se abre el detalle con los grados A–D, los cursos y los micro-contenidos disponibles (con la nota de que son aptos para conocimientos, no para competencias conductuales).
+
+13. **Asistente de generación de DNF** (Administrador). Referencia: `DNFAdmin.dc.html`. Encabezado (h1 «Detección de necesidades formativas» + subtítulo) y **Stepper** de dos pasos. *Paso 1 – Selección*: radiogroup de alcance (Un colaborador / Por departamento), `Combobox` de colaborador con búsqueda o `SelectField` de departamento, vista previa y botón primario «Detectar necesidades»; la masiva abre un **ConfirmDialog no destructivo** (botón primario, no de peligro) que dice «Se evaluarán N colaboradores». *Paso 2 – Diagnóstico*: título con el alcance y la fecha, enlace «Cambiar selección», KPI, avisos (Alert neutro) de competencias omitidas, sin evaluación y colaboradores excluidos, resumen por colaborador (solo masiva), gráfico, tabla de diagnóstico y el botón «Generar Plan de Formación». Estados: cargando (Skeleton), error con Reintentar y sin colaboradores evaluables (EmptyState).
+
+14. **Historial de DNF** (Administrador). Patrón Listado (`Competencias.dc.html`): barra de filtros con fechas desde/hasta, `Combobox` de colaborador, `SelectField` de departamento y de prioridad (parámetros en la URL); `DataTable` con código, fecha, alcance, colaborador o departamento, cantidad de brechas, prioridad más alta (Badge) y «Ver detalle»; paginación. Sin editar ni eliminar. El detalle (`/dnf/:id`) muestra el paso 2 en solo lectura, con autor y fecha de generación y, si existe, el enlace al plan generado.
+
+15. **Mi diagnóstico** (Colaborador). Referencia: `DNFColaborador.dc.html`. Encabezado con el puesto, KPI, leyenda «Cómo leer las barras» («A es el nivel más alto · Diferencia negativa = te falta»), **Mis brechas prioritarias**, «Otras brechas detectadas» y «Competencias que ya cumples». Sin DNF o sin brechas: mensaje informativo (EmptyState) en lugar de tarjetas.
 
 ### Listado en árbol
 Referencia: `Unidades.dc.html`. Para recursos jerárquicos (p. ej. unidades organizacionales). Reutiliza el patrón Listado con estas particularidades:
@@ -350,6 +384,12 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `GP-01_Fichas-de-colaboradores.html` muestra el correo bajo el nombre en la tabla | FR-022 lista código, nombre, puesto, unidad, estado y la acción; el correo no se muestra |
 | `GP-01_Fichas-de-colaboradores.html` incluye formación académica, experiencia anterior, movilidad, documentos, categorías documentales, contratación desde Selección, exportación y una barra de «Controles del prototipo» | Pertenecen a GP-02, GP-03, GP-05, GP-06 y GP-07; 005 solo implementa Personal y puesto, y reserva Desarrollo y Documentos |
 | `ColaboradorFicha.dc.html` | Tablero del detalle de ficha, creado en 005 (Constitución III); no existía un patrón de detalle con secciones |
+| `DNFAdmin.dc.html` y `DNFColaborador.dc.html` calculan la **prioridad por porcentaje** de brecha (Crítica ≥ 66 %, Alta ≥ 50 %, Media ≥ 33 %, Baja < 33 %) y lo explican en una nota al pie | **Manda la spec 006 (FR-010)**: la prioridad se decide por grados de diferencia (3 Crítica, 2 Alta, 1 Media si la competencia es Cardinal o Baja si es Específica); el porcentaje es solo un dato derivado. El texto «Cálculo: …» se muestra con la regla de la spec y el cálculo siempre lo hace el backend. Los tableros son solo referencia visual (sus cifras son de ejemplo) |
+| `DNFAdmin.dc.html` trae los botones «Ver como colaborador», la franja «Datos de solo lectura», el menú con Perfilamiento, Empleados y Ajustes, y «Última evaluación de desempeño» en la vista previa | Controles de prototipo u otras features: no se implementan. Cada usuario tiene un solo rol; el menú real solo añade el ítem **DNF**; la evaluación de desempeño no existe en la spec |
+| `DNFAdmin.dc.html` muestra el estado del plan en el historial como «Plan activo» / «Borrador» y una oferta del catálogo formativo por brecha | La DNF solo conoce si **generó o no** un plan y su enlace; el estado del plan lo gestiona Plan de Formación. La oferta formativa no se muestra en la vista del administrador (la ve el colaborador con «Ver cursos sugeridos») |
+| `DNFAdmin.dc.html` no tiene detalle de DNF, filtro por rango de fechas ni de prioridad en el historial, ni confirmación de la masiva como tal | Se definen en §5 puntos 13 y 14; el detalle reutiliza el paso 2 en solo lectura |
+| `DNFColaborador.dc.html` dice «Avisaremos a Desarrollo y Formación para que lo incorpore» cuando no hay cursos | No hay notificación en la spec: solo se muestra «Aún no hay cursos asociados en el catálogo.» |
+| `DNFColaborador.dc.html` trae «Ver como administrador», «Mi perfil» y «Ajustes» en el menú | No se implementan (un solo rol; fuera de alcance) |
 | `GP-02_Registrar-ingreso.html` presenta el registro como un diálogo modal sobre la ficha | La spec define una pantalla de formulario (`/colaboradores/:id/ingreso`) con el patrón Formulario, para que el foco, el teclado y WCAG 2.2 AA queden cubiertos sin diálogos anidados |
 | `GP-02_Registrar-ingreso.html` incluye formación académica, experiencia anterior, movilidad, documentos y la barra de «Controles del prototipo» | Pertenecen a GP-03, GP-05 y a la propia demostración; GP-02 solo registra el vínculo y la asignación inicial |
 | `GP-02_Registrar-ingreso.html` no muestra la jefatura de la posición | La spec la pide en solo lectura; mientras Estructura no la publique se muestra «No registrado» |

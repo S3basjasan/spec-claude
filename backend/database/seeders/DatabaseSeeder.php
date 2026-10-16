@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UnidadesSeeder::class);
         $this->call(PersonalSeeder::class);
         $this->call(IngresosSeeder::class);
+        $this->call(DnfSeeder::class);
     }
 }

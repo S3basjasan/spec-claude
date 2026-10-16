@@ -28,6 +28,7 @@ use Tests\Support\Desarrollo\NivelesDeColaboradorFalso;
 use Tests\TestCase;
 
 require_once __DIR__.'/GestionPersonalHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/DnfHelpers.php';
 
 /*
 |--------------------------------------------------------------------------

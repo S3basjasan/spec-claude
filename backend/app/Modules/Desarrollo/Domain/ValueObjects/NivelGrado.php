@@ -9,4 +9,15 @@ enum NivelGrado: string
     case B = 'B';
     case C = 'C';
     case D = 'D';
+
+    /** Escala numérica del cálculo de brechas (D=1 … A=4); único lugar donde se define. */
+    public function valorNumerico(): int
+    {
+        return match ($this) {
+            self::D => 1,
+            self::C => 2,
+            self::B => 3,
+            self::A => 4,
+        };
+    }
 }

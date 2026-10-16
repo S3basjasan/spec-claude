@@ -2,6 +2,7 @@
 
 use App\Modules\Desarrollo\Presentation\Controllers\AreaFormativaController;
 use App\Modules\Desarrollo\Presentation\Controllers\CatalogoFormativoController;
+use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
 use Illuminate\Support\Facades\Route;
 
 // Catálogo formativo de competencias (feature 005). Prefijo /api/catalogo-formativo por contrato.
@@ -28,5 +29,21 @@ Route::prefix('api/catalogo-formativo')->middleware('api')->group(function () {
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::put('/{competenciaId}', [CatalogoFormativoController::class, 'update'])->whereNumber('competenciaId')->name('catalogo-formativo.update');
         Route::get('/{competenciaId}/historial', [CatalogoFormativoController::class, 'historial'])->whereNumber('competenciaId')->name('catalogo-formativo.historial');
+    });
+});
+
+// Detección de necesidades formativas (feature 006). Prefijo /api/dnf por contrato.
+// No existen PUT, PATCH ni DELETE: una DNF es un diagnóstico puntual e inmutable.
+// Las rutas fijas (`opciones`) se declaran antes de cualquier `/{id}` para que nunca se interpreten como identificador.
+Route::prefix('api/dnf')->middleware('api')->group(function () {
+    // Diagnóstico propio del colaborador: solo autenticación; los datos son siempre los del usuario del token.
+    Route::get('/mi-diagnostico', [DnfController::class, 'miDiagnostico'])->middleware('auth:sanctum')->name('dnf.mi-diagnostico');
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/opciones', [DnfController::class, 'opciones'])->name('dnf.opciones');
+        Route::get('/', [DnfController::class, 'index'])->name('dnf.index');
+        Route::post('/', [DnfController::class, 'store'])->name('dnf.store');
+        Route::get('/{id}', [DnfController::class, 'show'])->whereNumber('id')->name('dnf.show');
+        Route::post('/{id}/plan', [DnfController::class, 'plan'])->whereNumber('id')->name('dnf.plan');
     });
 });

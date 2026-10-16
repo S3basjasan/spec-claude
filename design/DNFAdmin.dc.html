@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Detección de necesidades formativas — Administrador</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.opt:focus-within,a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.step:disabled{opacity:.55;cursor:not-allowed}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:10px;cursor:pointer;box-sizing:border-box}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400}
+</style>
+</helmet>
+<div style="min-height: 2400px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="CatalogoAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div>
+            <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Detección de necesidades formativas</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Compara el perfil requerido del puesto con las competencias actuales y calcula la brecha de cada una.</p>
+          </div>
+          <a class="btn" href="DNFColaborador.dc.html">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador
+          </a>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); font-size: 14px; line-height: 1.5">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 20px; margin-top: 1px"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg>
+          <span><b>Datos de solo lectura.</b> Los niveles requeridos vienen del perfil del puesto (Estructura Empresarial) y los niveles actuales de Gestión de Personal. Este módulo solo calcula y registra la brecha.</span>
+        </div>
+
+        <ol aria-label="Pasos del asistente" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+          <li>
+            <button class="step" aria-current="{{stepper.c1}}" onClick="{{irPaso1}}">
+              <span style="{{stepper.n1}}">1</span>Selección
+            </button>
+          </li>
+          <li aria-hidden="true" style="color: var(--muted)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+          </li>
+          <li>
+            <button class="step" aria-current="{{stepper.c2}}" disabled="{{stepper.dis2}}" onClick="{{irPaso2}}">
+              <span style="{{stepper.n2}}">2</span>Diagnóstico
+            </button>
+          </li>
+        </ol>
+
+        <!-- ================= PASO 1 ================= -->
+        <sc-if value="{{enPaso1}}" hint-placeholder-val="{{true}}">
+          <section aria-labelledby="p1-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+            <div>
+              <h2 id="p1-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">Paso 1 · ¿A quién quieres evaluar?</h2>
+              <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">Elige un colaborador o un departamento completo (DNF masivo).</p>
+            </div>
+
+            <fieldset style="border: 0; margin: 0; padding: 0; min-width: 0">
+              <legend style="padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--muted)">Alcance</legend>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px">
+                <label class="opt" style="{{optInd.style}}">
+                  <input type="radio" name="alcance" checked="{{optInd.on}}" onChange="{{setInd}}" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent)">
+                  <span><span style="display: block; font-size: 15px; font-weight: 600">Un colaborador</span><span style="display: block; margin-top: 2px; font-size: 13px; color: var(--muted)">Diagnóstico individual contra su puesto actual.</span></span>
+                </label>
+                <label class="opt" style="{{optMas.style}}">
+                  <input type="radio" name="alcance" checked="{{optMas.on}}" onChange="{{setMas}}" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent)">
+                  <span><span style="display: block; font-size: 15px; font-weight: 600">Por departamento (DNF masivo)</span><span style="display: block; margin-top: 2px; font-size: 13px; color: var(--muted)">Evalúa a todos los colaboradores del departamento a la vez.</span></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <sc-if value="{{modoInd}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <div class="fl" style="max-width: 420px">
+                  <label for="sel-col">Colaborador</label>
+                  <select id="sel-col" class="fi" value="{{colab}}" onChange="{{setColab}}">
+                    <option value="u1">Diego Paredes — Analista de datos</option>
+                    <option value="u2">Camila Andrade — Desarrolladora de software</option>
+                    <option value="u3">Marcos Villacís — Jefe de talento humano</option>
+                    <option value="u4">Valeria Mora — Ejecutivo comercial</option>
+                    <option value="u5">Luis Naranjo — Ejecutivo comercial</option>
+                    <option value="u6">Andrés Cevallos — Asistente contable</option>
+                    <option value="u7">Sofía Lema — Coordinador de operaciones</option>
+                  </select>
+                </div>
+                <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border)">
+                  <div><dt style="font-size: 12px; color: var(--muted)">Puesto</dt><dd style="margin: 2px 0 0; font-weight: 600">{{prev.puesto}}</dd></div>
+                  <div><dt style="font-size: 12px; color: var(--muted)">Departamento</dt><dd style="margin: 2px 0 0; font-weight: 600">{{prev.dept}}</dd></div>
+                  <div><dt style="font-size: 12px; color: var(--muted)">Competencias del perfil</dt><dd style="margin: 2px 0 0; font-weight: 600">{{prev.nComp}}</dd></div>
+                  <div><dt style="font-size: 12px; color: var(--muted)">Última evaluación de desempeño</dt><dd style="margin: 2px 0 0; font-weight: 600">{{prev.evalFecha}}</dd></div>
+                </dl>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{modoMas}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <div class="fl" style="max-width: 420px">
+                  <label for="sel-dep">Departamento</label>
+                  <select id="sel-dep" class="fi" value="{{dept}}" onChange="{{setDept}}">
+                    <option value="Tecnología">Tecnología</option>
+                    <option value="Talento Humano">Talento Humano</option>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Finanzas">Finanzas</option>
+                    <option value="Operaciones">Operaciones</option>
+                  </select>
+                </div>
+                <div style="padding: 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border)">
+                  <p style="margin: 0 0 10px; font-size: 14px"><b>{{prev.nColab}}</b> · {{prev.nComp}} comparaciones competencia–colaborador</p>
+                  <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+                    <sc-for list="{{prev.miembros}}" as="m" hint-placeholder-count="2">
+                      <li style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 14px">
+                        <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--soft); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700">{{m.ini}}</span>
+                        <span><b>{{m.nombre}}</b> <span style="color: var(--muted)">· {{m.puesto}}</span></span>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border)">
+              <span style="font-size: 13px; color: var(--muted)">Fecha del diagnóstico: {{hoy}}</span>
+              <button class="btn btn-primary" onClick="{{detectar}}">
+                Detectar necesidades
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ================= PASO 2 ================= -->
+        <sc-if value="{{enPaso2}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 24px">
+
+            <section aria-labelledby="p2-t" style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+              <div>
+                <h2 id="p2-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">Paso 2 · Diagnóstico: {{resumen.titulo}}</h2>
+                <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">{{resumen.sub}} · Diagnóstico del {{hoy}}</p>
+              </div>
+              <button class="btn" onClick="{{irPaso1}}">Cambiar selección</button>
+            </section>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+              <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px">
+                  <div style="font-size: 13px; color: var(--muted)">{{k.label}}</div>
+                  <div style="margin-top: 4px; font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; {{k.valStyle}}">{{k.valor}}</div>
+                  <div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{k.nota}}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <section aria-labelledby="gr-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+                <div>
+                  <h2 id="gr-t" style="margin: 0; font-size: 16px">Perfil ideal vs. perfil actual</h2>
+                  <p style="margin: 4px 0 0; font-size: 13px; color: var(--muted)">{{chart.nota}}</p>
+                </div>
+                <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--muted)">
+                  <li style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 14px; height: 14px; border-radius: 3px; background: var(--accent)"></span>Perfil actual (barras)</li>
+                  <li style="display: inline-flex; align-items: center; gap: 8px"><span style="display: inline-flex; align-items: center"><span style="width: 12px; height: 2px; background: var(--text)"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: var(--text); margin-left: -2px"></span><span style="width: 12px; height: 2px; background: var(--text); margin-left: -2px"></span></span>Perfil ideal (línea)</li>
+                  <li style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 14px; height: 14px; border-radius: 3px; border: 2px dashed var(--warn); background: var(--warnsoft); box-sizing: border-box"></span>Brecha</li>
+                </ul>
+              </div>
+              <div role="img" aria-label="{{chart.aria}}" style="display: flex; gap: 8px">
+                <div aria-hidden="true" style="flex: 0 0 24px; position: relative; height: 260px; margin-top: 14px; font-size: 12px; font-weight: 700; color: var(--muted)">
+                  <span style="position: absolute; right: 0; top: 0%; transform: translateY(-50%)">A</span>
+                  <span style="position: absolute; right: 0; top: 25%; transform: translateY(-50%)">B</span>
+                  <span style="position: absolute; right: 0; top: 50%; transform: translateY(-50%)">C</span>
+                  <span style="position: absolute; right: 0; top: 75%; transform: translateY(-50%)">D</span>
+                </div>
+                <div style="flex: 1; min-width: 0">
+                  <div aria-hidden="true" style="position: relative; height: 260px; margin-top: 14px">
+                    <div style="position: absolute; left: 0; right: 0; top: 0%; border-top: 1px dashed var(--border)"></div>
+                    <div style="position: absolute; left: 0; right: 0; top: 25%; border-top: 1px dashed var(--border)"></div>
+                    <div style="position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--border)"></div>
+                    <div style="position: absolute; left: 0; right: 0; top: 75%; border-top: 1px dashed var(--border)"></div>
+                    <div style="position: absolute; left: 0; right: 0; top: 100%; border-top: 1px solid var(--border)"></div>
+                    <div style="position: absolute; inset: 0; display: flex">
+                      <sc-for list="{{chart.cols}}" as="c" hint-placeholder-count="5">
+                        <div style="flex: 1 1 0; min-width: 0; position: relative">
+                          <div style="{{c.barStyle}}"></div>
+                          <sc-if value="{{c.hayGap}}" hint-placeholder-val="{{false}}"><div style="{{c.gapStyle}}"></div></sc-if>
+                          <div style="{{c.dotStyle}}"></div>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible">
+                      <polyline points="{{chart.points}}" fill="none" style="stroke: var(--text); stroke-width: 2" vector-effect="non-scaling-stroke"></polyline>
+                    </svg>
+                  </div>
+                  <div style="display: flex; margin-top: 8px">
+                    <sc-for list="{{chart.cols}}" as="c" hint-placeholder-count="5">
+                      <div style="flex: 1 1 0; min-width: 0; padding: 0 4px; text-align: center">
+                        <div style="font-size: 12px; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere">{{c.nombre}}</div>
+                        <div style="margin-top: 2px; font-size: 11px; color: var(--muted); line-height: 1.3">{{c.lbl}}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section aria-labelledby="tb-t" style="display: flex; flex-direction: column; gap: 12px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                <h2 id="tb-t" style="margin: 0; font-size: 16px">Brecha por competencia</h2>
+                <label style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; cursor: pointer">
+                  <input type="checkbox" checked="{{soloBrechas}}" onChange="{{toggleSolo}}" style="width: 20px; height: 20px; accent-color: var(--accent)">Mostrar solo competencias con brecha
+                </label>
+              </div>
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                <table style="width: 100%; min-width: 980px; border-collapse: collapse; font-size: 15px">
+                  <thead>
+                    <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                      <th scope="col" style="{{colStyle}}padding: 14px 12px 14px 20px; font-weight: 600">Colaborador</th>
+                      <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Competencia</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: center">Nivel requerido</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: center">Nivel actual</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: center">Brecha (grados)</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600; min-width: 130px">Brecha (%)</th>
+                      <th scope="col" style="padding: 14px 12px; font-weight: 600">Prioridad</th>
+                      <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{filas}}" as="r" hint-placeholder-count="6">
+                      <tr class="row" style="border-top: 1px solid var(--border)">
+                        <td style="{{colStyle}}padding: 12px 12px 12px 20px; font-weight: 600">{{r.colab}}</td>
+                        <td style="padding: 12px 12px 12px 20px; font-weight: 600">{{r.comp}}</td>
+                        <td style="padding: 12px; text-align: center"><span style="{{r.reqStyle}}">{{r.req}}</span></td>
+                        <td style="padding: 12px; text-align: center"><span style="{{r.actStyle}}">{{r.act}}</span></td>
+                        <td style="padding: 12px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; {{r.difStyle}}">{{r.dif}}</td>
+                        <td style="padding: 12px">
+                          <div style="display: flex; align-items: center; gap: 10px">
+                            <span style="min-width: 40px; font-weight: 600; font-variant-numeric: tabular-nums">{{r.pctTxt}}</span>
+                            <span aria-hidden="true" style="flex: 1; height: 6px; border-radius: 999px; background: var(--border); overflow: hidden"><span style="{{r.pctBar}}"></span></span>
+                          </div>
+                        </td>
+                        <td style="padding: 12px"><span style="{{r.prioStyle}}">{{r.prio}}</span></td>
+                        <td style="padding: 12px 20px 12px 12px"><span style="{{r.estadoStyle}}">{{r.estado}}</span></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <p style="margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted)">
+                <b style="color: var(--text)">Cálculo:</b> brecha % = (requerido − actual) / requerido × 100, con A = 4, B = 3, C = 2, D = 1. Prioridad: Crítica ≥ 67 % · Alta ≥ 50 % · Media ≥ 33 % · Baja &lt; 33 %. Es una adaptación operativa del sistema para cuantificar y ordenar las brechas; no aparece literal en la bibliografía.
+              </p>
+            </section>
+
+            <section aria-label="Plan de Formación" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px">
+              <sc-if value="{{sinPlan}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+                  <div>
+                    <h2 style="margin: 0; font-size: 16px">Siguiente paso: Plan de Formación</h2>
+                    <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">{{planCta}}</p>
+                  </div>
+                  <button class="btn btn-primary" onClick="{{generarPlan}}" disabled="{{planDeshabilitado}}" style="{{planBtnStyle}}">
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M12 12v6M9 15h6"></path></svg>Generar Plan de Formación
+                  </button>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{hayPlan}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-direction: column; gap: 16px">
+                  <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+                    <div>
+                      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+                        <h2 style="margin: 0; font-size: 18px">Borrador de Plan de Formación</h2>
+                        <span style="padding: 3px 10px; border-radius: 999px; background: var(--warnsoft); color: var(--warn); font-size: 12px; font-weight: 700">Borrador</span>
+                      </div>
+                      <p role="status" aria-live="polite" style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">{{plan.resumen}}</p>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                      <button class="btn" onClick="{{descartarPlan}}">Descartar borrador</button>
+                      <a class="btn btn-primary" href="#">Abrir en Plan de Formación</a>
+                    </div>
+                  </div>
+                  <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                    <sc-for list="{{plan.items}}" as="i" hint-placeholder-count="4">
+                      <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg)">
+                        <span style="{{i.prioStyle}}">{{i.prio}}</span>
+                        <div style="flex: 1 1 260px; min-width: 0">
+                          <div style="font-size: 15px; font-weight: 600">{{i.comp}} <span style="font-weight: 500; color: var(--muted)">· {{i.tramo}}</span></div>
+                          <div style="font-size: 13px; color: var(--muted)">{{i.colab}}</div>
+                        </div>
+                        <sc-if value="{{i.conCurso}}" hint-placeholder-val="{{true}}">
+                          <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px">
+                            <span style="font-size: 14px; font-weight: 600">{{i.curso}}</span>
+                            <span style="{{i.cursoBadge}}">{{i.cursoTipo}}</span>
+                            <span style="font-size: 13px; color: var(--muted)">{{i.horas}}</span>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{i.sinCurso}}" hint-placeholder-val="{{false}}">
+                          <div style="flex: 1 1 280px; font-size: 14px; color: var(--warn); font-weight: 600">Sin oferta en el catálogo formativo: asignar manualmente.</div>
+                        </sc-if>
+                      </li>
+                    </sc-for>
+                  </ul>
+                  <p style="margin: 0; font-size: 12px; color: var(--muted)">Cursos sugeridos desde el Catálogo Formativo. Podrás ajustar, reemplazar y programar cada acción en el Plan de Formación.</p>
+                </div>
+              </sc-if>
+            </section>
+          </div>
+        </sc-if>
+
+        <!-- ================= HISTORIAL ================= -->
+        <section aria-labelledby="hi-t" style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px">
+          <div>
+            <h2 id="hi-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">Historial de DNF</h2>
+            <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted)">Diagnósticos anteriores. La prioridad mostrada es la más alta detectada.</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+            <div class="fl"><label for="h-desde">Desde</label><input id="h-desde" class="fi" type="date" value="{{hf.desde}}" onChange="{{hf.setDesde}}"></div>
+            <div class="fl"><label for="h-hasta">Hasta</label><input id="h-hasta" class="fi" type="date" value="{{hf.hasta}}" onChange="{{hf.setHasta}}"></div>
+            <div class="fl">
+              <label for="h-col">Colaborador</label>
+              <select id="h-col" class="fi" value="{{hf.colab}}" onChange="{{hf.setColab}}">
+                <option value="todos">Todos</option>
+                <option value="u1">Diego Paredes</option><option value="u2">Camila Andrade</option><option value="u3">Marcos Villacís</option><option value="u4">Valeria Mora</option><option value="u5">Luis Naranjo</option><option value="u6">Andrés Cevallos</option><option value="u7">Sofía Lema</option>
+              </select>
+            </div>
+            <div class="fl">
+              <label for="h-pri">Prioridad</label>
+              <select id="h-pri" class="fi" value="{{hf.prio}}" onChange="{{hf.setPrio}}">
+                <option value="todas">Todas</option><option value="Crítica">Crítica</option><option value="Alta">Alta</option><option value="Media">Media</option><option value="Baja">Baja</option>
+              </select>
+            </div>
+            <sc-if value="{{hf.hay}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{hf.limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button></sc-if>
+            <span role="status" aria-live="polite" style="margin-left: auto; padding-bottom: 12px; font-size: 14px; color: var(--muted)">{{hf.resumen}}</span>
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+            <table style="width: 100%; min-width: 860px; border-collapse: collapse; font-size: 15px">
+              <thead>
+                <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                  <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Fecha</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Alcance</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: center">Competencias</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: center">Con brecha</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Prioridad máx.</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Plan</th>
+                  <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600; text-align: right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{historial}}" as="h" hint-placeholder-count="5">
+                  <tr class="row" style="border-top: 1px solid var(--border)">
+                    <td style="padding: 12px 12px 12px 20px; font-variant-numeric: tabular-nums">{{h.fecha}}</td>
+                    <td style="padding: 12px"><div style="font-weight: 600">{{h.alcance}}</div><div style="font-size: 13px; color: var(--muted)">{{h.detalle}}</div></td>
+                    <td style="padding: 12px; text-align: center; font-variant-numeric: tabular-nums">{{h.nComp}}</td>
+                    <td style="padding: 12px; text-align: center; font-variant-numeric: tabular-nums">{{h.nBrechas}}</td>
+                    <td style="padding: 12px"><span style="{{h.prioStyle}}">{{h.max}}</span></td>
+                    <td style="padding: 12px"><span style="{{h.planStyle}}">{{h.plan}}</span></td>
+                    <td style="padding: 6px 20px 6px 12px; text-align: right"><button class="btn" onClick="{{h.repetir}}" aria-label="Repetir DNF de {{h.alcance}} del {{h.fecha}}" style="height: 40px; padding: 0 12px; font-size: 14px">Repetir DNF</button></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <sc-if value="{{hf.vacio}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted); border-top: 1px solid var(--border)">Ningún diagnóstico coincide con los filtros.</p>
+            </sc-if>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = {
+      dark: null, paso: 1, hayResultado: false, modo: 'ind', colab: 'u1', dept: 'Tecnología',
+      soloBrechas: false, planGenerado: false, historial: d.histInit,
+      fDesde: '', fHasta: '', fColab: 'todos', fPrio: 'todas'
+    };
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    const tipoLight = { 'Curso': ['#E3F2F0', '#0B5A55'], 'E-learning': ['#E4EDFB', '#1F4E9C'], 'Taller': ['#FDEFD9', '#8A4B0B'], 'Codesarrollo': ['#F0E7FA', '#5B2E91'], 'Mentoring': ['#FBE6EC', '#9C2250'] };
+    const tipoDark = { 'Curso': ['#12302D', '#7FE0D6'], 'E-learning': ['#172A4A', '#9DBEF5'], 'Taller': ['#3A2A12', '#F2C27A'], 'Codesarrollo': ['#2C1D44', '#CDA9F2'], 'Mentoring': ['#40182A', '#F2A6C0'] };
+    const comps = {
+      'COM-001': 'Trabajo en equipo', 'COM-002': 'Orientación a resultados', 'COM-003': 'Liderazgo', 'COM-004': 'Análisis de datos',
+      'COM-005': 'Comunicación efectiva', 'COM-006': 'Gestión del tiempo', 'COM-007': 'Gestión del cambio', 'COM-008': 'Pensamiento analítico',
+      'COM-009': 'Aprendizaje continuo', 'COM-010': 'Negociación', 'COM-011': 'Orientación al cliente', 'COM-012': 'Integridad'
+    };
+    // perfil: [competencia, nivel requerido (puesto), nivel actual (Gestión de Personal)]
+    const colabs = [
+      { id: 'u1', nombre: 'Diego Paredes', puesto: 'Analista de datos', dept: 'Tecnología', evalFecha: '15/09/2026', perfil: [['COM-004', 'A', 'C'], ['COM-002', 'B', 'B'], ['COM-005', 'B', 'C'], ['COM-001', 'C', 'C'], ['COM-008', 'A', 'B'], ['COM-012', 'B', 'C']] },
+      { id: 'u2', nombre: 'Camila Andrade', puesto: 'Desarrolladora de software', dept: 'Tecnología', evalFecha: '15/09/2026', perfil: [['COM-008', 'A', 'C'], ['COM-009', 'B', 'A'], ['COM-001', 'B', 'B'], ['COM-002', 'B', 'C']] },
+      { id: 'u3', nombre: 'Marcos Villacís', puesto: 'Jefe de talento humano', dept: 'Talento Humano', evalFecha: '02/09/2026', perfil: [['COM-003', 'A', 'B'], ['COM-007', 'A', 'D'], ['COM-005', 'A', 'B'], ['COM-002', 'B', 'B']] },
+      { id: 'u4', nombre: 'Valeria Mora', puesto: 'Ejecutivo comercial', dept: 'Comercial', evalFecha: '28/08/2026', perfil: [['COM-011', 'A', 'B'], ['COM-010', 'A', 'C'], ['COM-005', 'B', 'B'], ['COM-002', 'A', 'B']] },
+      { id: 'u5', nombre: 'Luis Naranjo', puesto: 'Ejecutivo comercial', dept: 'Comercial', evalFecha: '28/08/2026', perfil: [['COM-011', 'A', 'C'], ['COM-010', 'A', 'D'], ['COM-005', 'B', 'B'], ['COM-002', 'A', 'A']] },
+      { id: 'u6', nombre: 'Andrés Cevallos', puesto: 'Asistente contable', dept: 'Finanzas', evalFecha: '10/09/2026', perfil: [['COM-012', 'A', 'A'], ['COM-006', 'B', 'C'], ['COM-001', 'C', 'C']] },
+      { id: 'u7', nombre: 'Sofía Lema', puesto: 'Coordinador de operaciones', dept: 'Operaciones', evalFecha: '10/09/2026', perfil: [['COM-006', 'A', 'C'], ['COM-003', 'B', 'C'], ['COM-008', 'B', 'C'], ['COM-001', 'B', 'B']] }
+    ];
+    // Oferta del Catálogo Formativo (Feature 1): [nombre, tipo, horas]
+    const cat = {
+      'COM-001': [['Trabajo en equipo ágil', 'E-learning', 6], ['Codesarrollo: casos reales de equipo', 'Codesarrollo', 8]],
+      'COM-002': [['Metas OKR y orientación a resultados', 'Curso', 8], ['Planificación y gestión del tiempo', 'E-learning', 5]],
+      'COM-003': [['Liderazgo situacional', 'Curso', 24], ['Mentoring con líderes senior', 'Mentoring', 12]],
+      'COM-004': [['Fundamentos de análisis con SQL', 'E-learning', 12], ['Visualización de datos con tableros', 'Curso', 16], ['Estadística aplicada a la decisión', 'Curso', 20]],
+      'COM-005': [['Comunicación asertiva en el trabajo', 'Taller', 8], ['Presentaciones que convencen: data storytelling', 'Curso', 10]],
+      'COM-006': [['Planificación y gestión del tiempo', 'E-learning', 5]],
+      'COM-007': [],
+      'COM-008': [['Pensamiento crítico y análisis de problemas', 'Curso', 12], ['Estadística aplicada a la decisión', 'Curso', 20]],
+      'COM-009': [['Aprendizaje autónomo y mejora continua', 'E-learning', 4]],
+      'COM-010': [['Negociación efectiva', 'Taller', 12]],
+      'COM-011': [],
+      'COM-012': []
+    };
+    const histInit = [
+      { id: 'h1', fecha: '2026-09-30', modo: 'ind', colab: 'u1', dept: 'Tecnología', scope: 'ind:u1', colabIds: ['u1'], alcance: 'Diego Paredes', detalle: 'Analista de datos', nComp: 6, nBrechas: 4, max: 'Alta', plan: 'Plan activo' },
+      { id: 'h2', fecha: '2026-09-30', modo: 'mas', colab: 'u1', dept: 'Tecnología', scope: 'mas:Tecnología', colabIds: ['u1', 'u2'], alcance: 'Departamento Tecnología', detalle: '2 colaboradores', nComp: 10, nBrechas: 6, max: 'Alta', plan: 'Borrador' },
+      { id: 'h3', fecha: '2026-08-14', modo: 'ind', colab: 'u3', dept: 'Talento Humano', scope: 'ind:u3', colabIds: ['u3'], alcance: 'Marcos Villacís', detalle: 'Jefe de talento humano', nComp: 4, nBrechas: 3, max: 'Crítica', plan: 'Plan activo' },
+      { id: 'h4', fecha: '2026-08-14', modo: 'ind', colab: 'u4', dept: 'Comercial', scope: 'ind:u4', colabIds: ['u4'], alcance: 'Valeria Mora', detalle: 'Ejecutivo comercial', nComp: 4, nBrechas: 3, max: 'Alta', plan: 'Sin plan' },
+      { id: 'h5', fecha: '2026-07-02', modo: 'ind', colab: 'u7', dept: 'Operaciones', scope: 'ind:u7', colabIds: ['u7'], alcance: 'Sofía Lema', detalle: 'Coordinador de operaciones', nComp: 4, nBrechas: 3, max: 'Alta', plan: 'Plan activo' },
+      { id: 'h6', fecha: '2026-07-02', modo: 'ind', colab: 'u6', dept: 'Finanzas', scope: 'ind:u6', colabIds: ['u6'], alcance: 'Andrés Cevallos', detalle: 'Asistente contable', nComp: 3, nBrechas: 1, max: 'Media', plan: 'Sin plan' },
+      { id: 'h7', fecha: '2026-06-18', modo: 'mas', colab: 'u4', dept: 'Comercial', scope: 'mas:Comercial', colabIds: ['u4', 'u5'], alcance: 'Departamento Comercial', detalle: '2 colaboradores', nComp: 8, nBrechas: 5, max: 'Crítica', plan: 'Borrador' }
+    ];
+    return { light, dark, tipoLight, tipoDark, comps, colabs, cat, histInit, hoy: '2026-10-15' };
+  }
+
+  // Diagnóstico: requerido (puesto) vs actual (colaborador). Escala A=4, B=3, C=2, D=1.
+  calc(s) {
+    const d = this.getData();
+    const NUM = { A: 4, B: 3, C: 2, D: 1 };
+    const RANK = { 'Crítica': 4, 'Alta': 3, 'Media': 2, 'Baja': 1 };
+    const ids = s.modo === 'ind' ? [s.colab] : d.colabs.filter((c) => c.dept === s.dept).map((c) => c.id);
+    const rows = [];
+    ids.forEach((id) => {
+      const c = d.colabs.find((x) => x.id === id);
+      c.perfil.forEach((p) => {
+        const r = NUM[p[1]], a = NUM[p[2]];
+        const dif = a - r;
+        const raw = dif < 0 ? ((r - a) / r) * 100 : 0;
+        const prio = raw === 0 ? null : raw >= 66 ? 'Crítica' : raw >= 50 ? 'Alta' : raw >= 33 ? 'Media' : 'Baja';
+        rows.push({ key: id + p[0], colabId: id, colab: c.nombre, cid: p[0], comp: d.comps[p[0]], req: p[1], act: p[2], r, a, dif, raw, pct: Math.round(raw), prio, rank: prio ? RANK[prio] : 0 });
+      });
+    });
+    rows.sort((x, y) => (y.rank - x.rank) || (y.raw - x.raw) || x.colab.localeCompare(y.colab) || x.comp.localeCompare(y.comp));
+    const max = rows.reduce((m, r) => (r.rank > m ? r.rank : m), 0);
+    const maxTxt = ['—', 'Baja', 'Media', 'Alta', 'Crítica'][max];
+    return { ids, rows, nBrechas: rows.filter((r) => r.dif < 0).length, max: maxTxt };
+  }
+
+  scopeInfo(s, ids) {
+    const d = this.getData();
+    if (s.modo === 'ind') {
+      const c = d.colabs.find((x) => x.id === s.colab);
+      return { scope: 'ind:' + c.id, alcance: c.nombre, detalle: c.puesto };
+    }
+    return { scope: 'mas:' + s.dept, alcance: 'Departamento ' + s.dept, detalle: ids.length + (ids.length === 1 ? ' colaborador' : ' colaboradores') };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const fmtF = (iso) => iso.split('-').reverse().join('/');
+    const dec = (n) => n.toFixed(1).replace('.', ',');
+    const chip = (bg, fg) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;background:' + bg + ';color:' + fg + ';';
+    const PRIO = {
+      'Crítica': chip('var(--dangersoft)', 'var(--danger)'), 'Alta': chip('var(--warnsoft)', 'var(--warn)'),
+      'Media': chip('var(--infosoft)', 'var(--info)'), 'Baja': chip('var(--neutralsoft)', 'var(--neutral)'), '—': chip('var(--neutralsoft)', 'var(--muted)')
+    };
+    const ESTADO = {
+      'Cumple': chip('var(--soft)', 'var(--accent)'), 'Pendiente': chip('var(--neutralsoft)', 'var(--neutral)'),
+      'En plan': chip('var(--accent)', 'var(--onaccent)'), 'Sin oferta': chip('var(--warnsoft)', 'var(--warn)')
+    };
+    const PLAN = {
+      'Plan activo': chip('var(--soft)', 'var(--accent)'), 'Borrador': chip('var(--warnsoft)', 'var(--warn)'), 'Sin plan': chip('var(--neutralsoft)', 'var(--neutral)')
+    };
+    const tipoBadge = (t) => 'display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:' + tp[t][0] + ';color:' + tp[t][1] + ';';
+    const sq = 'display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:6px;font-size:14px;font-weight:700;';
+
+    // ---- diagnóstico actual
+    const res = this.calc(s);
+    const rows = res.rows;
+    const masivo = s.modo === 'mas';
+    const conBrecha = rows.filter((r) => r.dif < 0);
+    const hasCourse = (r) => d.cat[r.cid].length > 0;
+
+    const estadoDe = (r) => (r.dif >= 0 ? 'Cumple' : (s.planGenerado ? (hasCourse(r) ? 'En plan' : 'Sin oferta') : 'Pendiente'));
+    const filas = rows.filter((r) => !s.soloBrechas || r.dif < 0).map((r) => {
+      const estado = estadoDe(r);
+      return {
+        colab: r.colab, comp: r.comp, req: r.req, act: r.act,
+        reqStyle: sq + 'background:var(--accent);color:var(--onaccent);',
+        actStyle: sq + (r.dif < 0 ? 'background:var(--warnsoft);color:var(--warn);' : 'background:var(--soft);color:var(--accent);'),
+        dif: r.dif < 0 ? '−' + Math.abs(r.dif) : (r.dif > 0 ? '+' + r.dif : '0'),
+        difStyle: r.dif < 0 ? 'color:var(--danger);' : (r.dif > 0 ? 'color:var(--accent);' : 'color:var(--muted);'),
+        pctTxt: r.dif < 0 ? r.pct + ' %' : '0 %',
+        pctBar: 'display:block;height:100%;width:' + r.pct + '%;background:' + (r.prio === 'Crítica' ? 'var(--danger)' : r.prio ? 'var(--warn)' : 'var(--accent)') + ';',
+        prio: r.prio || '—', prioStyle: PRIO[r.prio || '—'],
+        estado, estadoStyle: ESTADO[estado]
+      };
+    });
+
+    // ---- KPIs
+    const prom = conBrecha.length ? Math.round(conBrecha.reduce((a, r) => a + r.raw, 0) / conBrecha.length) : 0;
+    const urg = rows.filter((r) => r.rank >= 3).length;
+    const kpis = [
+      { label: 'Comparaciones evaluadas', valor: String(rows.length), nota: masivo ? res.ids.length + ' colaboradores' : '1 colaborador', valStyle: '' },
+      { label: 'Con brecha', valor: String(conBrecha.length), nota: rows.length ? Math.round((conBrecha.length * 100) / rows.length) + ' % del total' : '', valStyle: 'color:var(--warn);' },
+      { label: 'Brecha promedio', valor: prom + ' %', nota: 'Solo en competencias con brecha', valStyle: '' },
+      { label: 'Prioridad crítica o alta', valor: String(urg), nota: urg === 1 ? 'requiere atención primero' : 'requieren atención primero', valStyle: urg > 0 ? 'color:var(--danger);' : '' }
+    ];
+
+    // ---- gráfico: ideal (línea) vs actual (barras)
+    let items;
+    if (!masivo) {
+      items = rows.map((r) => ({ nombre: r.comp, i: r.r, a: r.a, lbl: 'Req. ' + r.req + ' · Act. ' + r.act }));
+    } else {
+      const g = {};
+      rows.forEach((r) => { (g[r.cid] = g[r.cid] || { nombre: r.comp, is: [], as: [] }); g[r.cid].is.push(r.r); g[r.cid].as.push(r.a); });
+      const avg = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+      items = Object.keys(g).map((k) => ({ nombre: g[k].nombre, i: avg(g[k].is), a: avg(g[k].as), lbl: 'Req. ' + dec(avg(g[k].is)) + ' · Act. ' + dec(avg(g[k].as)) }));
+      items.sort((x, y) => (y.i - y.a) - (x.i - x.a));
+    }
+    const n = items.length;
+    const cols = items.map((it) => ({
+      nombre: it.nombre, lbl: it.lbl, hayGap: it.i > it.a,
+      barStyle: 'position:absolute;left:20%;right:20%;bottom:0;height:' + (it.a / 4) * 100 + '%;background:var(--accent);border-radius:4px 4px 0 0;',
+      gapStyle: 'position:absolute;left:20%;right:20%;bottom:' + (it.a / 4) * 100 + '%;height:' + ((it.i - it.a) / 4) * 100 + '%;border:2px dashed var(--warn);border-bottom:0;box-sizing:border-box;background:var(--warnsoft);border-radius:4px 4px 0 0;opacity:.85;',
+      dotStyle: 'position:absolute;left:50%;top:' + (1 - it.i / 4) * 100 + '%;width:14px;height:14px;border-radius:50%;background:var(--text);border:3px solid var(--surface);box-sizing:border-box;transform:translate(-50%,-50%);'
+    }));
+    const letters = ['', 'D', 'C', 'B', 'A'];
+    const chart = {
+      cols,
+      points: items.map((it, k) => (((k + 0.5) / n) * 100).toFixed(2) + ',' + ((1 - it.i / 4) * 100).toFixed(2)).join(' '),
+      nota: masivo ? 'Promedio por competencia entre los colaboradores del departamento (A = 4 … D = 1).' : 'Nivel requerido por el puesto frente al nivel actual del colaborador.',
+      aria: 'Gráfico de perfil ideal contra perfil actual. ' + items.map((it) => it.nombre + ': requerido ' + (masivo ? dec(it.i) : letters[it.i]) + ', actual ' + (masivo ? dec(it.a) : letters[it.a])).join('; ') + '.'
+    };
+
+    // ---- plan
+    const planItems = conBrecha.map((r) => {
+      const c = d.cat[r.cid][0];
+      return {
+        prio: r.prio, prioStyle: PRIO[r.prio], comp: r.comp, tramo: r.act + ' → ' + r.req, colab: masivo ? r.colab : d.colabs.find((x) => x.id === r.colabId).puesto,
+        conCurso: !!c, sinCurso: !c, curso: c ? c[0] : '', cursoTipo: c ? c[1] : '', cursoBadge: c ? tipoBadge(c[1]) : '', horas: c ? c[2] + ' h' : '', h: c ? c[2] : 0
+      };
+    });
+    const totalH = planItems.reduce((a, i) => a + i.h, 0);
+    const sinOferta = planItems.filter((i) => i.sinCurso).length;
+    const plan = {
+      items: planItems,
+      resumen: planItems.length + (planItems.length === 1 ? ' acción creada' : ' acciones creadas') + ' a partir de las brechas detectadas · ' + totalH + ' h de formación sugerida' + (sinOferta ? ' · ' + sinOferta + ' sin oferta en el catálogo' : '') + '.'
+    };
+
+    // ---- historial
+    const nombresColab = (id) => d.colabs.find((c) => c.id === id).nombre;
+    let hist = s.historial.filter((h) => {
+      if (s.fDesde && h.fecha < s.fDesde) return false;
+      if (s.fHasta && h.fecha > s.fHasta) return false;
+      if (s.fColab !== 'todos' && h.colabIds.indexOf(s.fColab) === -1) return false;
+      if (s.fPrio !== 'todas' && h.max !== s.fPrio) return false;
+      return true;
+    });
+    const historial = hist.map((h) => ({
+      fecha: fmtF(h.fecha), alcance: h.alcance, detalle: h.detalle, nComp: h.nComp, nBrechas: h.nBrechas,
+      max: h.max, prioStyle: PRIO[h.max], plan: h.plan, planStyle: PLAN[h.plan],
+      repetir: () => this.setState({ paso: 1, modo: h.modo, colab: h.modo === 'ind' ? h.colab : s.colab, dept: h.dept, planGenerado: false })
+    }));
+    const hayF = s.fDesde !== '' || s.fHasta !== '' || s.fColab !== 'todos' || s.fPrio !== 'todas';
+    const hf = {
+      desde: s.fDesde, hasta: s.fHasta, colab: s.fColab, prio: s.fPrio, hay: hayF, vacio: historial.length === 0,
+      resumen: 'Mostrando ' + historial.length + ' de ' + s.historial.length + ' diagnósticos',
+      setDesde: (e) => this.setState({ fDesde: e.target.value }),
+      setHasta: (e) => this.setState({ fHasta: e.target.value }),
+      setColab: (e) => this.setState({ fColab: e.target.value }),
+      setPrio: (e) => this.setState({ fPrio: e.target.value }),
+      limpiar: () => this.setState({ fDesde: '', fHasta: '', fColab: 'todos', fPrio: 'todas' })
+    };
+
+    // ---- paso 1: vista previa
+    const sel = d.colabs.find((c) => c.id === s.colab);
+    const miembros = d.colabs.filter((c) => c.dept === s.dept);
+    const prev = {
+      puesto: sel.puesto, dept: sel.dept, nComp: masivo ? res.rows.length : sel.perfil.length, evalFecha: sel.evalFecha,
+      nColab: miembros.length + (miembros.length === 1 ? ' colaborador' : ' colaboradores'),
+      miembros: miembros.map((m) => ({ nombre: m.nombre, puesto: m.puesto, ini: m.nombre.split(' ').map((w) => w[0]).slice(0, 2).join('') }))
+    };
+
+    const optStyle = (on) => 'border:1px solid ' + (on ? 'var(--accent)' : 'var(--border)') + ';background:' + (on ? 'var(--soft)' : 'var(--surface)') + ';';
+    const info = this.scopeInfo(s, res.ids);
+    const upsert = (planEstado) => {
+      const fecha = d.hoy;
+      const id = info.scope + '|' + fecha;
+      const rec = { id, fecha, modo: s.modo, colab: s.colab, dept: s.dept, scope: info.scope, colabIds: res.ids, alcance: info.alcance, detalle: info.detalle, nComp: rows.length, nBrechas: conBrecha.length, max: res.max, plan: planEstado };
+      const rest = this.state.historial.filter((h) => h.id !== id);
+      return [rec].concat(rest);
+    };
+
+    const paso1 = s.paso === 1;
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      hoy: fmtF(d.hoy),
+      stepper: {
+        c1: paso1 ? 'step' : 'false', c2: !paso1 ? 'step' : 'false', dis2: !s.hayResultado,
+        n1: 'width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;' + (paso1 ? 'background:var(--accent);color:var(--onaccent);' : 'background:var(--soft);color:var(--accent);'),
+        n2: 'width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;' + (!paso1 ? 'background:var(--accent);color:var(--onaccent);' : 'background:var(--border);color:var(--muted);')
+      },
+      irPaso1: () => this.setState({ paso: 1 }),
+      irPaso2: () => this.setState({ paso: 2 }),
+      enPaso1: paso1, enPaso2: !paso1,
+      modoInd: !masivo, modoMas: masivo,
+      optInd: { on: !masivo, style: optStyle(!masivo) }, optMas: { on: masivo, style: optStyle(masivo) },
+      setInd: () => this.setState({ modo: 'ind' }), setMas: () => this.setState({ modo: 'mas' }),
+      colab: s.colab, dept: s.dept,
+      setColab: (e) => this.setState({ colab: e.target.value }),
+      setDept: (e) => this.setState({ dept: e.target.value }),
+      prev,
+      detectar: () => this.setState({ paso: 2, hayResultado: true, planGenerado: false, soloBrechas: false, historial: upsert('Sin plan') }),
+      resumen: { titulo: info.alcance, sub: masivo ? info.detalle + ' · DNF masivo' : info.detalle },
+      kpis, chart, filas, colStyle: masivo ? '' : 'display:none;',
+      soloBrechas: s.soloBrechas, toggleSolo: () => this.setState({ soloBrechas: !s.soloBrechas }),
+      sinPlan: !s.planGenerado, hayPlan: s.planGenerado,
+      planCta: conBrecha.length ? 'Crea un borrador con ' + conBrecha.length + (conBrecha.length === 1 ? ' acción' : ' acciones') + ' formativas a partir de las brechas detectadas.' : 'No hay brechas: no se necesita un plan de formación.',
+      planDeshabilitado: conBrecha.length === 0,
+      planBtnStyle: conBrecha.length === 0 ? 'opacity:.5;cursor:not-allowed;' : '',
+      generarPlan: () => { if (conBrecha.length > 0) this.setState({ planGenerado: true, historial: upsert('Borrador') }); },
+      descartarPlan: () => this.setState({ planGenerado: false, historial: upsert('Sin plan') }),
+      plan, historial, hf
+    };
+  }
+}
+</script>
+</body>
+</html>
