@@ -14,7 +14,7 @@ it('devuelve identidad y rol del administrador', function () {
     $this->withToken(iniciarSesionComo($admin))
         ->getJson('/api/auth/me')
         ->assertOk()
-        ->assertExactJson(['data' => ['id' => $admin->id, 'name' => $admin->name, 'email' => $admin->email, 'role' => 'admin']]);
+        ->assertExactJson(['data' => ['id' => $admin->id, 'name' => $admin->name, 'email' => $admin->email, 'role' => 'admin', 'tenant' => ['id' => 1, 'nombre' => 'Altavista S.A.']]]);
 });
 
 it('devuelve identidad y rol del usuario', function () {

@@ -131,6 +131,11 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Botón de estado de fila (Desactivar / Reactivar)** | Botón de texto secundario de 44px en la columna de acciones, junto al IconButton Editar; su texto alterna según el estado ("Desactivar" / "Reactivar") y su nombre accesible incluye el registro ("Desactivar Ventas"). **Desactivar deshabilitado**: cuando el recurso no puede desactivarse (p. ej. una unidad con unidades dependientes activas o posiciones ocupadas o vacantes) el botón lleva `disabled` (opacidad 0.45) y `aria-describedby` hacia un texto de 13px `--muted` **siempre visible** bajo el botón que indica el motivo con las cantidades ("No se puede desactivar: tiene 4 unidades dependientes activas y 3 posiciones ocupadas o vacantes."); el motivo no depende de un tooltip ni del color. Desactivar abre ConfirmDialog; Reactivar actúa sin confirmación y, si el servidor lo rechaza, muestra el motivo en un Alert. |
 | **Modal** | Card de 480 a 640px de ancho máximo según el contenido, radio 14, padding 24px y sombra `0 16px 48px rgba(0,0,0,0.25)`, sobre un velo oscuro, `role="dialog"` con `aria-modal` y título enlazado; foco atrapado, Escape cierra y el foco vuelve al control que lo abrió; cabecera con título e IconButton de cierre, cuerpo con scroll y pie con acciones a la derecha. Los modales de confirmación destructiva usan `alertdialog` (ConfirmDialog). |
 | **Chip de nivel** | Píldora 13px con el número de nivel (`1`, `2`…) y el nombre del tipo, fondo `--soft`, texto `--text`; en la cadena, separadas por un chevron decorativo. |
+| **Alert con enlace** | Variante del Alert (de error) con un enlace de texto debajo del mensaje, en 600 y subrayado, que lleva a otro registro (p. ej. «Abrir ficha existente» ante una identificación duplicada). `role="alert"`; el enlace es un `Link`, no un botón. |
+| **Par etiqueta-valor** | Lista de definición `<dl>` en grilla de 2 columnas (1 bajo 640px): etiqueta (`<dt>`, 13px 600 `--muted`) y valor (`<dd>`, 15px). Un dato ausente se muestra como **«No registrado»** en `--muted`; el número 0 se muestra como 0 (nunca como «No registrado»). Cada grupo va en una Card con `h2`. |
+| **Información no disponible** | Texto «Información no disponible» (14px `--muted`, `role="status"`) con botón secundario **Reintentar**, en el lugar de una sección cuya fuente falló. Es distinto de «No registrado» (ausencia confirmada) y no oculta el resto de la ficha. |
+| **Línea de tiempo** | Lista ordenada `<ol>` de hechos, del más reciente al más antiguo; cada ítem con borde izquierdo 2px `--border`, fecha en `<time>` (14px 600), tipo (15px) y detalle opcional (14px `--muted`). Un hecho con fecha efectiva futura lleva la insignia neutra **Programado**. |
+| **Pestañas de sección** | `role="tablist"` con botones `role="tab"` (alto 44px, `aria-selected`, `aria-controls`) y panel `role="tabpanel"`; la activa lleva borde inferior 2px `--accent` y texto `--accent`. Una sección que su funcionalidad aún no ofrece o que la persona no puede ver **no se dibuja**; con una sola sección no hay pestañas. |
 | **Skeleton** | Bloques `--border` con animación de pulso (1.4s); imita la forma del contenido real. |
 | **EmptyState / ErrorState** | Ver patrón Estados. |
 | **Breadcrumb** | 14px `--muted`, separador "/", último ítem en `--text`. |
@@ -183,6 +188,7 @@ Referencia: `Unidades.dc.html`. Para recursos jerárquicos (p. ej. unidades orga
 8. **Advertencia "No sigue la cadena"**: `IconAlertTriangle` junto al Tipo con la descripción accesible "No sigue la cadena: bajo «tipo de la unidad padre» corresponde «tipo esperado»".
 9. Acciones por fila (solo Administrador): IconButton **Editar**, **Agregar subunidad** (deshabilitado en inactivas y en el último nivel, con "Este tipo no admite subunidades") y **Botón de estado de fila** (§4). Nunca hay Eliminar. Todo botón deshabilitado lleva su motivo como descripción accesible.
 10. Tras cada acción, un mensaje de confirmación `role="status"` sobre el listado. Estados cargando, vacío y error según el patrón Estados.
+12. Cuando la acción de la fila **abre la página de detalle** (p. ej. colaboradores), la última columna es **Acciones** con un enlace de texto «Ver ficha» (`aria-label` con el nombre del registro) en lugar del botón de edición; el filtro de estado ofrece «Todos» y solo los estados presentes. La fuente laboral caída se muestra como «Información no disponible» en las columnas Puesto, Unidad y Estado, sin ocultar las filas.
 
 ### Formulario
 Referencia: `Formulario.dc.html`. Para crear y editar.
@@ -213,6 +219,15 @@ Referencia: `Unidades.dc.html`. Modal con la lista de tipos por nivel.
 4. **Bloqueo de reordenamiento**: modal encima con la cantidad y la lista de unidades afectadas (tipo y nivel nuevos; padre con su tipo y nivel nuevos), "Ver en el árbol" por unidad y "Volver a editar" que conserva el borrador.
 5. **Nuevo tipo**: modal con "Nombre del tipo" y la indicación de que se agrega al final como hijo del último nivel.
 6. **Desactivar en cascada**: diálogo (patrón Estados) que nombra la unidad; con dependientes, las lista y el botón dice "Desactivar N unidades"; con posiciones vigentes en la rama explica el bloqueo con las unidades y cantidades y no permite confirmar.
+### Detalle de un registro
+Referencia: `ColaboradorFicha.dc.html`. Para consultar un registro con varios grupos de datos (p. ej. la ficha de un colaborador).
+
+1. Breadcrumb ("Listado / Nombre del registro").
+2. Encabezado: h1 con el nombre, línea con el código y el estado (Badge neutro) y, a la derecha, las acciones permitidas (**Editar** solo para quien gestiona el recurso; no se dibujan acciones de funcionalidades que aún no existen).
+3. Aviso de éxito (`role="status"`) tras crear o guardar.
+4. Secciones (Pestañas de sección) y, dentro de cada una, grupos en Cards con Pares etiqueta-valor; la trayectoria es una Línea de tiempo.
+5. Estados: cargando (Skeleton), «No registrado», «Información no disponible» con Reintentar por sección, registro inexistente (ErrorState sin Reintentar útil, con enlace al listado), sin permisos y éxito.
+6. El **formulario de ficha** usa cuatro `fieldset` en una Card (Identificación con el código en solo lectura o «Se asigna al guardar», Datos personales, Contacto y Contacto de emergencia), contadores `n/máximo` en los textos con límite, Alert general «Revisa los campos marcados antes de guardar.» y, ante duplicado, **Alert con enlace**.
 
 ### Estados
 Referencia: `Estados.dc.html`. Toda vista que carga datos debe cubrir los cuatro.
@@ -320,3 +335,7 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `CatalogoAdmin.dc.html` no define selector de área, gestión de áreas, historial, última configuración, marca de archivado ni aviso de competencia inactiva | Se añaden en el panel lateral reutilizando `SelectField`, `Alert – neutro`, `Badge` neutro y `ConfirmDialog` (§4 y §5 punto 11) |
 | `CatalogoColaborador.dc.html` muestra el puesto del usuario, "Para empezar", estados "En curso/Completado" y "Continuar", y la leyenda "Niveles A–D" con "nivel requerido" en cada tarjeta | Se omiten (requieren módulos no implementados o no están en la spec): solo **Iniciar** o **Ver** (deshabilitado con "Próximamente" sin destino); el nivel requerido solo aparece en Recomendados y en el detalle cuando hay brecha |
 | Los menús de los tableros del catálogo traen Perfilamiento, Empleados y Ajustes | Pertenecen a otras features: el menú real solo añade el ítem **Formación** |
+| `GP-01_Fichas-de-colaboradores.html` titula «Fichas de colaboradores» y usa «Estado laboral», «Editar datos» y el nombre de la organización en el header | La spec usa «Colaboradores», «Estado» y «Editar»; el nombre de la organización no se implementa en 005 |
+| `GP-01_Fichas-de-colaboradores.html` muestra el correo bajo el nombre en la tabla | FR-022 lista código, nombre, puesto, unidad, estado y la acción; el correo no se muestra |
+| `GP-01_Fichas-de-colaboradores.html` incluye formación académica, experiencia anterior, movilidad, documentos, categorías documentales, contratación desde Selección, exportación y una barra de «Controles del prototipo» | Pertenecen a GP-02, GP-03, GP-05, GP-06 y GP-07; 005 solo implementa Personal y puesto, y reserva Desarrollo y Documentos |
+| `ColaboradorFicha.dc.html` | Tablero del detalle de ficha, creado en 005 (Constitución III); no existía un patrón de detalle con secciones |

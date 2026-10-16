@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ficha de colaborador</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.par dt{font-size:13px;font-weight:600;color:var(--muted)}
+.par dd{margin:2px 0 0;font-size:15px}
+.nr{color:var(--muted)}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 1500px; box-sizing: border-box; padding: 40px; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; display: grid; grid-template-columns: minmax(0, 760px) minmax(0, 560px); gap: 40px; {{themeStyle}}">
+
+  <!-- Detalle de ficha (Administrador) -->
+  <main aria-label="Detalle de ficha" style="display: flex; flex-direction: column; gap: 20px">
+    <nav aria-label="Ruta de navegación" style="font-size: 14px; color: var(--muted)">Colaboradores / <span style="color: var(--text)">Ana Núñez Paredes</span></nav>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+      <div>
+        <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Ana Núñez Paredes</h1>
+        <p style="margin: 6px 0 0; display: flex; gap: 12px; align-items: center; color: var(--muted)">
+          <strong>EMP-001</strong>
+          <span style="background: var(--border); color: var(--muted); border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600">Sin vínculo vigente</span>
+        </p>
+      </div>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; padding: 0 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-weight: 600; font-size: 15px; text-decoration: none">Editar</a>
+    </div>
+
+    <!-- Pestañas: solo aparecen cuando Desarrollo o Documentos están disponibles y autorizadas -->
+    <div role="tablist" aria-label="Secciones de la ficha" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border)">
+      <button role="tab" aria-selected="true" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid var(--accent); background: transparent; color: var(--accent); font: inherit; font-weight: 600; font-size: 15px">Personal y puesto</button>
+      <button role="tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font: inherit; font-weight: 600; font-size: 15px">Desarrollo</button>
+      <button role="tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font: inherit; font-weight: 600; font-size: 15px">Documentos</button>
+    </div>
+
+    <section aria-labelledby="g1" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <h2 id="g1" style="margin: 0 0 16px; font-size: 16px">Identificación</h2>
+      <dl class="par" style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+        <div><dt>Tipo de identificación</dt><dd>Cédula</dd></div>
+        <div><dt>Número de identificación</dt><dd>0102030405</dd></div>
+        <div><dt>Nombres</dt><dd>Ana</dd></div>
+        <div><dt>Apellidos</dt><dd>Núñez Paredes</dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="g2" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <h2 id="g2" style="margin: 0 0 16px; font-size: 16px">Datos personales</h2>
+      <dl class="par" style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+        <div><dt>Fecha de nacimiento</dt><dd>1990-04-12</dd></div>
+        <div><dt>Nacionalidad</dt><dd class="nr">No registrado</dd></div>
+        <div><dt>Número de hijos</dt><dd>0</dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="g3" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <h2 id="g3" style="margin: 0 0 16px; font-size: 16px">Puesto y situación laboral</h2>
+      <dl class="par" style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+        <div><dt>Puesto</dt><dd class="nr">No registrado</dd></div>
+        <div><dt>Unidad organizacional</dt><dd class="nr">No registrado</dd></div>
+        <div><dt>Estado</dt><dd>Sin vínculo vigente</dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="g4" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <h2 id="g4" style="margin: 0 0 16px; font-size: 16px">Trayectoria interna</h2>
+      <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+        <li style="border-left: 2px solid var(--border); padding-left: 16px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline">
+          <time datetime="2026-11-01" style="font-size: 14px; font-weight: 600">2026-11-01</time>
+          <span>Contratación</span>
+          <span style="background: var(--border); color: var(--muted); border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600">Programado</span>
+        </li>
+        <li style="border-left: 2px solid var(--border); padding-left: 16px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline">
+          <time datetime="2025-02-03" style="font-size: 14px; font-weight: 600">2025-02-03</time>
+          <span>Ingreso</span>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <!-- Estados y variantes -->
+  <aside aria-label="Estados de la ficha" style="display: flex; flex-direction: column; gap: 20px">
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Fuente laboral no disponible</div>
+      <div role="status" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; color: var(--muted); font-size: 14px">
+        <span>Información no disponible</span>
+        <button style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; font-size: 15px">Reintentar</button>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 13px; color: var(--muted)">Distinta de «No registrado» (ausencia confirmada). Los datos personales siguen visibles.</p>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Identificación duplicada</div>
+      <div role="alert" style="margin-top: 12px; background: var(--dangersoft); color: var(--danger); border-radius: 8px; padding: 12px 14px; font-size: 14px">
+        <p style="margin: 0">Ya existe una ficha con ese tipo y número de identificación.</p>
+        <a href="#" style="display: inline-block; margin-top: 4px; font-weight: 600; color: var(--danger)">Abrir ficha existente</a>
+      </div>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Conflicto de edición</div>
+      <div role="alert" style="margin-top: 12px; background: var(--dangersoft); color: var(--danger); border-radius: 8px; padding: 12px 14px; font-size: 14px">
+        <p style="margin: 0; font-weight: 600">La ficha cambió</p>
+        <p style="margin: 4px 0 0">Otra persona modificó esta ficha después de que la abriste. Actualiza la información para continuar; lo que escribiste se conserva.</p>
+        <button style="margin-top: 8px; height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; font-size: 15px">Actualizar datos</button>
+      </div>
+    </section>
+
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px">
+      <div style="font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em">Mi ficha · cuenta sin ficha</div>
+      <div style="padding: 24px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center" aria-hidden="true">i</div>
+        <h2 style="margin: 0; font-size: 18px">Tu cuenta no tiene una ficha asociada</h2>
+        <p style="margin: 0; color: var(--muted); font-size: 14px">Pide a Talento Humano que asocie tu cuenta con tu ficha.</p>
+      </div>
+    </section>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', onDanger: '#FFFFFF' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', onDanger: '#2A0B09' };
+    const t = this.props.dark ? dark : light;
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';')
+    };
+  }
+}
+</script>
+</body>
+</html>

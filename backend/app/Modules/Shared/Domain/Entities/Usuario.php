@@ -12,6 +12,8 @@ final class Usuario
         public readonly string $correo,
         public readonly Rol $rol,
         public readonly string $passwordHash,
+        public readonly int $tenantId = 1,
+        public readonly string $tenantNombre = '',
     ) {}
 
     public function esAdministrador(): bool

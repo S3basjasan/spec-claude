@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CatalogoFormativoSeeder::class);
         $this->call(TiposUnidadSeeder::class);
         $this->call(UnidadesSeeder::class);
+        $this->call(PersonalSeeder::class);
     }
 }

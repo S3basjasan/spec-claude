@@ -27,6 +27,8 @@ use Tests\Support\Desarrollo\BrechasActivasFalsas;
 use Tests\Support\Desarrollo\NivelesDeColaboradorFalso;
 use Tests\TestCase;
 
+require_once __DIR__.'/GestionPersonalHelpers.php';
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
