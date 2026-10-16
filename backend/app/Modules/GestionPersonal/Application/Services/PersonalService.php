@@ -4,9 +4,11 @@ namespace App\Modules\GestionPersonal\Application\Services;
 
 use App\Modules\GestionPersonal\Application\Ports\AccesosDeCuentaPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeTenantPort;
+use App\Modules\GestionPersonal\Application\Ports\LectorDeDesarrolloPort;
 use App\Modules\GestionPersonal\Application\UseCases\RegistrarFicha;
 use App\Modules\GestionPersonal\Domain\Entities\Colaborador;
 use App\Modules\GestionPersonal\Domain\Exceptions\ColaboradorNoEncontrado;
+use App\Modules\GestionPersonal\Domain\Exceptions\InformacionNoDisponible;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Services\NormalizadorDeTexto;
@@ -23,6 +25,7 @@ class PersonalService
         private readonly RegistrarFicha $registrar,
         private readonly AccesosDeCuentaPort $accesos,
         private readonly VinculoLaboralRepositoryInterface $vinculos,
+        private readonly LectorDeDesarrolloPort $desarrollo,
     ) {}
 
     /**
@@ -105,6 +108,25 @@ class PersonalService
         $resultado = $this->registrar->ejecutar($contexto, $actorId, $claveDeOperacion, $datos);
 
         return ['colaborador_id' => $resultado->datos['id'], 'codigo' => $resultado->datos['codigo'], 'creado' => $resultado->creado];
+    }
+
+    /**
+     * Formación, experiencia y movilidad por colaborador (GP-06). Sin N+1; ids de otro tenant se ignoran.
+     *
+     * @param  list<int>  $colaboradorIds
+     * @return array<int, array{formaciones: list<array<string, mixed>>, experiencias: list<array<string, mixed>>, movilidad: array<string, mixed>}>
+     *
+     * @throws InformacionNoDisponible Si la lectura falla; el llamador decide su degradación.
+     */
+    public function getDesarrollo(int $tenantId, array $colaboradorIds): array
+    {
+        $lectura = $this->desarrollo->deColaboradores($tenantId, $colaboradorIds);
+
+        if (! $lectura->estaDisponible()) {
+            throw new InformacionNoDisponible;
+        }
+
+        return $lectura->datos;
     }
 
     /** @return array<string, mixed> */

@@ -1,7 +1,9 @@
 <?php
 
 use App\Modules\GestionPersonal\Presentation\Controllers\ColaboradorController;
+use App\Modules\GestionPersonal\Presentation\Controllers\DesarrolloController;
 use App\Modules\GestionPersonal\Presentation\Controllers\IngresoController;
+use App\Modules\GestionPersonal\Presentation\Controllers\MiDesarrolloController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiFichaController;
 use App\Modules\GestionPersonal\Presentation\Controllers\SituacionLaboralController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +24,13 @@ Route::prefix('api/colaboradores')->middleware('api')->group(function () {
         Route::get('/{colaboradorId}/opciones-ingreso', [IngresoController::class, 'opciones'])->whereNumber('colaboradorId')->name('ingresos.opciones');
         Route::get('/{colaboradorId}/situacion-laboral', [SituacionLaboralController::class, 'situacion'])->whereNumber('colaboradorId')->name('situacion.show');
         Route::get('/{colaboradorId}/trayectoria', [SituacionLaboralController::class, 'trayectoria'])->whereNumber('colaboradorId')->name('trayectoria.show');
+        // Desarrollo profesional (GP-03): formación, experiencia y movilidad. Sin DELETE.
+        Route::get('/{colaboradorId}/desarrollo', [DesarrolloController::class, 'show'])->whereNumber('colaboradorId')->name('desarrollo.show');
+        Route::post('/{colaboradorId}/formaciones', [DesarrolloController::class, 'storeFormacion'])->whereNumber('colaboradorId')->name('desarrollo.formaciones.store');
+        Route::patch('/{colaboradorId}/formaciones/{formacionId}', [DesarrolloController::class, 'updateFormacion'])->whereNumber(['colaboradorId', 'formacionId'])->name('desarrollo.formaciones.update');
+        Route::post('/{colaboradorId}/experiencias', [DesarrolloController::class, 'storeExperiencia'])->whereNumber('colaboradorId')->name('desarrollo.experiencias.store');
+        Route::patch('/{colaboradorId}/experiencias/{experienciaId}', [DesarrolloController::class, 'updateExperiencia'])->whereNumber(['colaboradorId', 'experienciaId'])->name('desarrollo.experiencias.update');
+        Route::patch('/{colaboradorId}/movilidad', [DesarrolloController::class, 'updateMovilidad'])->whereNumber('colaboradorId')->name('desarrollo.movilidad.update');
     });
 });
 
@@ -31,5 +40,6 @@ Route::prefix('api/mi-ficha')->middleware('api')->group(function () {
         Route::get('/', [MiFichaController::class, 'show'])->name('mi-ficha.show');
         Route::get('/situacion-laboral', [SituacionLaboralController::class, 'miSituacion'])->name('mi-ficha.situacion');
         Route::get('/trayectoria', [SituacionLaboralController::class, 'miTrayectoria'])->name('mi-ficha.trayectoria');
+        Route::get('/desarrollo', [MiDesarrolloController::class, 'show'])->name('mi-ficha.desarrollo');
     });
 });

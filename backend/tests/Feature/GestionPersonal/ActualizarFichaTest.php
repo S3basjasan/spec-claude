@@ -137,3 +137,14 @@ it('con la escritura deshabilitada la edición responde 503', function () {
         ->assertStatus(503)->assertJsonPath('code', 'ESCRITURA_DESHABILITADA');
     $this->getJson('/api/colaboradores/'.$ficha['id'])->assertOk();
 });
+
+it('PATCH de la ficha rechaza las columnas de movilidad y no las expone en los datos (GP-03)', function () {
+    actuarComoAdminDeTenant();
+    $ficha = fichaCreadaPorApi($this);
+
+    $this->patchJson('/api/colaboradores/'.$ficha['id'], ['version' => 1, 'movilidad_estado' => 'Disponible'])->assertUnprocessable();
+
+    $detalle = $this->getJson('/api/colaboradores/'.$ficha['id'])->assertOk()->json('data');
+    expect(array_keys($detalle))->not->toContain('movilidad_estado')->not->toContain('movilidad_version');
+    expect(ColaboradorModel::query()->find($ficha['id'])->movilidad_estado)->toBe('NoInformada');
+});

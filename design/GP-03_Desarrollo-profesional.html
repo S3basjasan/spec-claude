@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GP-03 · Desarrollo profesional</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.gp{--bg:#F5F6F8;--surface:#FFFFFF;--border:#E2E5EA;--text:#12171D;--muted:#5A6573;--accent:#0F6F69;--onaccent:#FFFFFF;--soft:#E3F2F0;--danger:#B42318;--dangersoft:#FDECEA;--warn:#8A4B00;--warnsoft:#FFF4E0;--info:#1D4E89;--infosoft:#E8F0FA;font-family:'Public Sans',system-ui,sans-serif;color:var(--text);background:var(--bg);font-size:15px;line-height:1.45}
+.gp *{box-sizing:border-box}
+.gp button,.gp input,.gp select,.gp textarea{font:inherit}
+.gp h1,.gp h2,.gp h3,.gp p{margin:0}
+.gp :focus-visible{outline:3px solid #1D4E89;outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid #B9C0CA;background:var(--surface);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn-p{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-p:hover{background:#0B5A55}
+.btn-d{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-d:hover{background:#912016}
+.btn-s{min-height:36px;padding:0 12px;font-size:14px}
+.btn-l{border-color:transparent;background:transparent;color:var(--accent)}
+.inp{width:100%;min-height:44px;padding:0 12px;border-radius:8px;border:1px solid #8B95A3;background:#fff;color:var(--text);font-size:15px}
+textarea.inp{padding:10px 12px;min-height:88px;resize:vertical}
+.inp.bad{border-color:var(--danger);box-shadow:0 0 0 1px var(--danger)}
+.lbl{display:block;margin-bottom:6px;font-size:14px;font-weight:600}
+.err{margin-top:6px;font-size:13px;color:var(--danger);font-weight:500}
+.hint{margin-top:6px;font-size:13px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 2px rgba(18,23,29,.05)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.b-ok{background:#E3F2F0;color:#0B5A55}
+.b-off{background:#ECEEF1;color:#3C4654}
+.b-warn{background:#FFF4E0;color:#8A4B00}
+.b-info{background:#E8F0FA;color:#1D4E89}
+.b-err{background:#FDECEA;color:#B42318}
+.nav{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:8px;border:0;background:transparent;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-align:left;width:100%}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current="page"]{background:var(--soft);color:var(--accent);font-weight:600}
+.tab{min-height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font-size:15px;font-weight:600;cursor:pointer}
+.tab:hover{color:var(--text)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:15px}
+.tbl th{text-align:left;padding:12px 16px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 16px;border-top:1px solid var(--border);vertical-align:middle;min-height:64px}
+.tbl tbody tr:first-child td{border-top:0}
+.tbl tbody tr:hover{background:#FAFBFC}
+.seg{display:inline-flex;border:1px solid #B9C0CA;border-radius:8px;overflow:hidden}
+.seg button{min-height:40px;padding:0 14px;border:0;background:#fff;color:var(--text);font-weight:600;font-size:14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.skel{height:16px;border-radius:6px;background:#E6E9EE;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;display:inline-block}
+</style>
+
+<style>html,body{margin:0}</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/x-template" id="tpl">
+<div class="gp" style="min-height: 1000px; display: flex; flex-direction: column">
+  <a href="#contenido" class="sr">Saltar al contenido</a>
+
+  <header style="height: 64px; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <div aria-hidden="true" style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <span style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 8px; background: var(--bg); font-size: 14px; font-weight: 600" aria-label="Organización: Altavista S.A.">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a1 1 0 011-1h8a1 1 0 011 1v16M14 9h5a1 1 0 011 1v11M3 21h18M8 8h2M8 12h2M8 16h2"/></svg>Altavista S.A.
+    </span>
+    <div style="flex: 1"></div>
+    <div style="display: flex; align-items: center; gap: 10px">
+      <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">{{user.ini}}</span>
+      <span style="display: flex; flex-direction: column; line-height: 1.2"><span style="font-size: 14px; font-weight: 600">{{user.nombre}}</span><span style="font-size: 12px; color: var(--muted)">{{user.rol}}</span></span>
+    </div>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 1 1 248px; max-width: 100%; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <!--FOR navItems|n-->
+        <button class="nav" aria-current="{{n.cur}}" onClick="{{n.go}}">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.icon}}"/></svg>{{n.label}}
+        </button>
+      <!--/FOR-->
+    </nav>
+
+    <main id="contenido" style="flex: 999 1 560px; min-width: 0; padding: 32px 24px">
+      <div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <div role="status" aria-live="polite">
+          <!--IF hasToast-->
+            <div style="{{toast.style}}">
+              <span style="font-weight: 600">{{toast.text}}</span>
+              <button class="btn btn-s" onClick="{{closeToast}}">Cerrar aviso</button>
+            </div>
+          <!--/IF-->
+        </div>
+
+        <!-- ===== LISTADO ===== -->
+        <!--IF isLista-->
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px">
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <h1 style="font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Fichas de colaboradores</h1>
+                <p style="color: var(--muted)">Consulta y administra los expedientes del personal</p>
+              </div>
+              <button class="btn btn-p" onClick="{{newFicha}}">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nueva ficha
+              </button>
+            </div>
+
+            <div class="card" style="padding: 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+              <div style="flex: 2 1 280px; min-width: 0">
+                <label class="lbl" for="q">Buscar</label>
+                <input class="inp" id="q" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar por nombre, apellido, puesto o código">
+              </div>
+              <div style="flex: 1 1 180px; min-width: 0">
+                <label class="lbl" for="fe">Estado laboral</label>
+                <select class="inp" id="fe" value="{{fEstado}}" onChange="{{setEstado}}">
+                  <!--FOR estadoOpts|o--><option value="{{o.v}}">{{o.label}}</option><!--/FOR-->
+                </select>
+              </div>
+              <div style="flex: 1 1 200px; min-width: 0">
+                <label class="lbl" for="fu">Unidad organizacional</label>
+                <select class="inp" id="fu" value="{{fUnidad}}" onChange="{{setUnidad}}">
+                  <!--FOR unidadOpts|o--><option value="{{o.v}}">{{o.label}}</option><!--/FOR-->
+                </select>
+              </div>
+              <button class="btn" onClick="{{clearFilters}}" disabled="{{noFiltros}}">Limpiar filtros</button>
+            </div>
+
+            <div class="card" style="overflow: hidden">
+              <!--IF isError-->
+                <div role="alert" style="padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+                  <span class="badge b-err">Error</span>
+                  <h2 style="font-size: 18px">No se pudieron cargar las fichas</h2>
+                  <p style="color: var(--muted); max-width: 440px">Ocurrió un problema al consultar la información. Tus filtros se conservan.</p>
+                  <button class="btn btn-p" onClick="{{retryLista}}">Reintentar</button>
+                </div>
+              <!--/IF-->
+              <!--IF isLoading-->
+                <div aria-busy="true" style="padding: 8px 16px">
+                  <p class="sr">Cargando fichas…</p>
+                  <!--FOR skelRows|k-->
+                    <div style="display: flex; gap: 24px; padding: 20px 0; border-top: 1px solid var(--border)">
+                      <div class="skel" style="width: 72px"></div><div class="skel" style="flex: 2"></div><div class="skel" style="flex: 1"></div><div class="skel" style="flex: 1"></div><div class="skel" style="width: 96px"></div>
+                    </div>
+                  <!--/FOR-->
+                </div>
+              <!--/IF-->
+              <!--IF isEmptyAll-->
+                <div style="padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+                  <h2 style="font-size: 18px">Aún no hay fichas de colaboradores</h2>
+                  <p style="color: var(--muted); max-width: 440px">Crea la primera ficha para comenzar a registrar expedientes. Una ficha puede existir sin cuenta ni vínculo laboral.</p>
+                  <button class="btn btn-p" onClick="{{newFicha}}">Nueva ficha</button>
+                </div>
+              <!--/IF-->
+              <!--IF noMatch-->
+                <div style="padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+                  <h2 style="font-size: 18px">Ningún colaborador coincide con la búsqueda</h2>
+                  <p style="color: var(--muted)">Prueba con otros términos o quita algún filtro.</p>
+                  <button class="btn" onClick="{{clearFilters}}">Limpiar filtros</button>
+                </div>
+              <!--/IF-->
+              <!--IF hasRows-->
+                <div style="overflow-x: auto" tabindex="0" role="region" aria-label="Tabla de fichas, desplazable horizontalmente">
+                  <table class="tbl" style="min-width: 860px">
+                    <caption class="sr">Fichas de colaboradores ordenadas por apellidos, nombres y código</caption>
+                    <thead><tr>
+                      <th scope="col">Código</th><th scope="col">Colaborador</th><th scope="col">Puesto</th><th scope="col">Unidad organizacional</th><th scope="col">Estado</th><th scope="col"><span class="sr">Acciones</span></th>
+                    </tr></thead>
+                    <tbody>
+                      <!--FOR rows|r-->
+                        <tr style="height: 64px">
+                          <td style="color: var(--muted); font-variant-numeric: tabular-nums">{{r.codigo}}</td>
+                          <td><div style="font-weight: 600">{{r.nombre}}</div><div style="font-size: 13px; color: var(--muted)">{{r.correo}}</div></td>
+                          <td style="{{r.puestoStyle}}">{{r.puesto}}</td>
+                          <td style="{{r.unidadStyle}}">{{r.unidad}}</td>
+                          <td><span class="{{r.badgeCls}}">{{r.estado}}</span></td>
+                          <td style="text-align: right"><button class="btn btn-s" onClick="{{r.open}}" aria-label="{{r.aria}}">Ver ficha</button></td>
+                        </tr>
+                      <!--/FOR-->
+                    </tbody>
+                  </table>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--border)">
+                  <span role="status" style="font-size: 14px; color: var(--muted)">{{rango}}</span>
+                  <div style="display: flex; align-items: center; gap: 8px">
+                    <button class="btn btn-s" onClick="{{prev}}" disabled="{{noPrev}}">Anterior</button>
+                    <span style="font-size: 14px; padding: 0 8px">{{pageLabel}}</span>
+                    <button class="btn btn-s" onClick="{{next}}" disabled="{{noNext}}">Siguiente</button>
+                  </div>
+                </div>
+              <!--/IF-->
+            </div>
+          </div>
+        <!--/IF-->
+
+        <!-- ===== DETALLE (admin, Mi ficha, Mis documentos) ===== -->
+        <!--IF isDetalle-->
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; flex-direction: column; gap: 16px">
+              <!--IF det.canBack-->
+                <div><button class="btn btn-l btn-s" onClick="{{det.back}}" style="padding-left: 0">
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>Volver a fichas de colaboradores
+                </button></div>
+              <!--/IF-->
+              <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px">
+                <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                  <p style="font-size: 13px; font-weight: 600; color: var(--muted)">{{det.eyebrow}}</p>
+                  <h1 style="font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">{{det.title}}</h1>
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                    <span style="font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums">{{det.codigo}}</span>
+                    <span class="{{det.badgeCls}}">{{det.estado}}</span>
+                    <!--IF det.hasProg-->
+                      <span class="badge b-info">{{det.progTxt}}</span>
+                    <!--/IF-->
+                  </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <!--IF det.canEdit--><button class="btn" onClick="{{det.edit}}">Editar datos</button><!--/IF-->
+                  <!--IF det.canIngreso--><button class="btn" onClick="{{det.ingreso}}">Registrar ingreso</button><!--/IF-->
+                  <!--IF det.canExport-->
+                    <button class="btn btn-p" onClick="{{det.doExport}}" disabled="{{det.exportBusy}}" aria-busy="{{det.exportBusy}}">
+                      <!--IF det.exportBusy--><span class="spin" aria-hidden="true"></span><!--/IF-->{{det.exportLabel}}
+                    </button>
+                  <!--/IF-->
+                </div>
+              </div>
+              <!--IF exb.show-->
+                <div role="status" style="{{exb.style}}">
+                  <span>{{exb.text}}</span>
+                  <!--IF exb.hasAction--><button class="btn btn-s" onClick="{{exb.act}}">{{exb.actionLabel}}</button><!--/IF-->
+                </div>
+              <!--/IF-->
+            </div>
+
+            <!--IF det.showTabs-->
+              <div role="tablist" aria-label="Secciones de la ficha" style="display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border)">
+                <!--FOR tabs|t-->
+                  <button class="tab" role="tab" aria-selected="{{t.sel}}" onClick="{{t.go}}">{{t.label}}</button>
+                <!--/FOR-->
+              </div>
+            <!--/IF-->
+
+            <!-- Personal y puesto -->
+            <!--IF tabPersonal-->
+              <div role="tabpanel" aria-label="Personal y puesto" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; align-items: start">
+                <!--FOR cards|c-->
+                  <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px">
+                    <div><h2 style="font-size: 16px">{{c.title}}</h2><!--IF c.hasSub--><p style="font-size: 13px; color: var(--muted); margin-top: 2px">{{c.sub}}</p><!--/IF--></div>
+                    <!--IF c.hasProg-->
+                      <p style="padding: 10px 12px; border-radius: 8px; background: var(--infosoft); color: var(--info); font-size: 14px; font-weight: 500">{{c.prog}}</p>
+                    <!--/IF-->
+                    <!--IF c.dep-->
+                      <div role="alert" style="padding: 12px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+                        <span style="font-weight: 600">Información no disponible</span>
+                        <button class="btn btn-s" onClick="{{retryDep}}">Reintentar</button>
+                      </div>
+                    <!--/IF-->
+                    <!--IF c.ok-->
+                      <dl style="margin: 0; display: grid; grid-template-columns: minmax(110px, 38%) minmax(0, 1fr); gap: 12px 16px">
+                        <!--FOR c.rows|r-->
+                          <div style="display: contents">
+                            <dt style="font-size: 14px; color: var(--muted)">{{r.k}}</dt>
+                            <dd style="margin: 0; font-size: 15px; overflow-wrap: anywhere"><span style="{{r.vStyle}}">{{r.v}}</span><!--IF r.hasBadge--> <span class="{{r.badgeCls}}">{{r.badge}}</span><!--/IF--></dd>
+                          </div>
+                        <!--/FOR-->
+                      </dl>
+                    <!--/IF-->
+                  </section>
+                <!--/FOR-->
+              </div>
+            <!--/IF-->
+
+            <!-- Desarrollo -->
+            <!--IF tabDes-->
+              <div role="tabpanel" aria-label="Desarrollo" style="display: flex; flex-direction: column; gap: 20px">
+                <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                    <h2 style="font-size: 16px">Formación académica</h2>
+                    <!--IF des.canEdit--><button class="btn btn-s" onClick="{{des.addFor}}">Agregar formación</button><!--/IF-->
+                  </div>
+                  <!--IF des.noFor--><p style="color: var(--muted)">Aún no hay formación académica registrada.</p><!--/IF-->
+                  <!--FOR des.formaciones|x-->
+                    <article style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px">
+                      <div style="min-width: 0; flex: 1 1 300px">
+                        <h3 style="font-size: 15px; font-weight: 600">{{x.titulo}}</h3>
+                        <p style="font-size: 14px; color: var(--muted)">{{x.nivel}} · {{x.institucion}}</p>
+                        <p style="font-size: 14px; margin-top: 4px">{{x.fechas}}</p>
+                        <p style="font-size: 14px; color: var(--muted); margin-top: 4px">{{x.obs}}</p>
+                      </div>
+                      <div style="display: flex; align-items: flex-start; gap: 8px"><span class="{{x.badgeCls}}">{{x.estado}}</span><!--IF x.canEdit--><button class="btn btn-s" onClick="{{x.edit}}" aria-label="{{x.aria}}">Editar</button><!--/IF--></div>
+                    </article>
+                  <!--/FOR-->
+                </section>
+
+                <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                    <h2 style="font-size: 16px">Experiencia anterior</h2>
+                    <!--IF des.canEdit--><button class="btn btn-s" onClick="{{des.addExp}}">Agregar experiencia</button><!--/IF-->
+                  </div>
+                  <!--IF des.noExp--><p style="color: var(--muted)">Aún no hay experiencia anterior registrada.</p><!--/IF-->
+                  <!--FOR des.experiencias|x-->
+                    <article style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px">
+                      <div style="min-width: 0; flex: 1 1 300px">
+                        <h3 style="font-size: 15px; font-weight: 600">{{x.cargo}}</h3>
+                        <p style="font-size: 14px; color: var(--muted)">{{x.org}}</p>
+                        <p style="font-size: 14px; margin-top: 4px">{{x.fechas}}</p>
+                        <p style="font-size: 14px; margin-top: 4px"><span style="color: var(--muted)">Funciones: </span>{{x.funciones}}</p>
+                        <p style="font-size: 14px; margin-top: 2px"><span style="color: var(--muted)">Observaciones: </span>{{x.obs}}</p>
+                      </div>
+                      <!--IF x.canEdit--><div><button class="btn btn-s" onClick="{{x.edit}}" aria-label="{{x.aria}}">Editar</button></div><!--/IF-->
+                    </article>
+                  <!--/FOR-->
+                </section>
+
+                <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                    <h2 style="font-size: 16px">Disponibilidad para movilidad</h2>
+                    <!--IF des.canEdit--><button class="btn btn-s" onClick="{{des.editMov}}">Actualizar disponibilidad</button><!--/IF-->
+                  </div>
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px"><span class="{{des.movCls}}">{{des.movEstado}}</span><span style="font-size: 14px; color: var(--muted)">{{des.movFecha}}</span></div>
+                  <p style="font-size: 14px">{{des.movObs}}</p>
+                  <p style="font-size: 13px; color: var(--muted)">Estar disponible no significa que exista un traslado aprobado.</p>
+                </section>
+
+                <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px">
+                  <div><h2 style="font-size: 16px">Trayectoria interna</h2><p style="font-size: 13px; color: var(--muted); margin-top: 2px">Hechos laborales registrados en la organización. Es independiente de la experiencia anterior.</p></div>
+                  <!--IF des.trayDep-->
+                    <div role="alert" style="padding: 12px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+                      <span style="font-weight: 600">Información no disponible</span>
+                      <button class="btn btn-s" onClick="{{retryDep}}">Reintentar</button>
+                    </div>
+                  <!--/IF-->
+                  <!--IF des.trayEmpty--><p style="color: var(--muted)">Todavía no hay hechos laborales registrados para esta persona.</p><!--/IF-->
+                  <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0">
+                    <!--FOR des.tray|t-->
+                      <li style="display: flex; gap: 16px; padding-bottom: 20px; position: relative">
+                        <span aria-hidden="true" style="flex: 0 0 12px; height: 12px; margin-top: 6px; border-radius: 50%; border: 3px solid var(--accent); background: #fff"></span>
+                        <div style="min-width: 0">
+                          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-weight: 600">{{t.tipo}}</span><span class="{{t.chipCls}}">{{t.chip}}</span><span style="font-size: 14px; color: var(--muted)">{{t.fecha}}</span></div>
+                          <p style="font-size: 14px; color: var(--muted)">{{t.detalle}}</p>
+                        </div>
+                      </li>
+                    <!--/FOR-->
+                  </ol>
+                </section>
+              </div>
+            <!--/IF-->
+
+            <!-- Documentos -->
+            <!--IF tabDocs-->
+              <div role="tabpanel" aria-label="Documentos" style="display: flex; flex-direction: column; gap: 16px">
+                <div class="card" style="padding: 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+                  <div style="flex: 2 1 220px; min-width: 0"><label class="lbl" for="dq">Buscar por título</label><input class="inp" id="dq" type="search" value="{{dc.q}}" onChange="{{dc.setQ}}" placeholder="Título del documento"></div>
+                  <div style="flex: 1 1 180px; min-width: 0"><label class="lbl" for="dcat">Categoría</label>
+                    <select class="inp" id="dcat" value="{{dc.cat}}" onChange="{{dc.setCat}}"><!--FOR dc.catOpts|o--><option value="{{o.v}}">{{o.label}}</option><!--/FOR--></select>
+                  </div>
+                  <!--IF dc.isAdmin-->
+                    <div role="group" aria-label="Estado de los documentos" class="seg">
+                      <button aria-pressed="{{dc.pDisp}}" onClick="{{dc.setDisp}}">Disponibles</button>
+                      <button aria-pressed="{{dc.pArch}}" onClick="{{dc.setArch}}">Archivados</button>
+                    </div>
+                    <button class="btn btn-p" onClick="{{dc.upload}}">Subir documento</button>
+                  <!--/IF-->
+                </div>
+                <div class="card" style="overflow: hidden">
+                  <!--IF dc.empty--><p style="padding: 32px 24px; text-align: center; color: var(--muted)">{{dc.emptyMsg}}</p><!--/IF-->
+                  <!--IF dc.hasRows-->
+                    <div style="overflow-x: auto" tabindex="0" role="region" aria-label="Tabla de documentos, desplazable horizontalmente">
+                      <table class="tbl" style="min-width: 820px">
+                        <thead><tr><th scope="col">Título</th><th scope="col">Categoría</th><th scope="col">Tamaño</th><th scope="col">Fecha</th><th scope="col">Acciones</th></tr></thead>
+                        <tbody>
+                          <!--FOR dc.rows|d-->
+                            <tr style="height: 64px">
+                              <td><div style="font-weight: 600">{{d.titulo}}</div><!--IF d.hasBadge--><span class="{{d.badgeCls}}" style="margin-top: 4px">{{d.badge}}</span><!--/IF--></td>
+                              <td>{{d.cat}}</td>
+                              <td style="white-space: nowrap; font-variant-numeric: tabular-nums">{{d.size}}</td>
+                              <td style="white-space: nowrap">{{d.fecha}}</td>
+                              <td><div style="display: flex; flex-wrap: wrap; gap: 8px">
+                                <button class="btn btn-s" onClick="{{d.ver}}" aria-label="{{d.ariaVer}}">Ver</button>
+                                <button class="btn btn-s" onClick="{{d.desc}}" aria-label="{{d.ariaDesc}}">Descargar</button>
+                                <!--IF d.canVis--><button class="btn btn-s" onClick="{{d.vis}}">{{d.visLabel}}</button><!--/IF-->
+                                <!--IF d.canArch--><button class="btn btn-s" onClick="{{d.arch}}">Archivar</button><!--/IF-->
+                              </div></td>
+                            </tr>
+                          <!--/FOR-->
+                        </tbody>
+                      </table>
+                    </div>
+                  <!--/IF-->
+                </div>
+              </div>
+            <!--/IF-->
+          </div>
+        <!--/IF-->
+
+        <!-- ===== CATEGORIAS ===== -->
+        <!--IF isCategorias-->
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px">
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <h1 style="font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Categorías documentales</h1>
+                <p style="color: var(--muted)">Organiza los documentos de las fichas. El catálogo es plano, sin carpetas anidadas</p>
+              </div>
+              <button class="btn btn-p" onClick="{{cat.create}}">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nueva categoría
+              </button>
+            </div>
+            <div class="card" style="padding: 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+              <div style="flex: 2 1 260px; min-width: 0"><label class="lbl" for="cq">Buscar categoría</label><input class="inp" id="cq" type="search" value="{{cat.q}}" onChange="{{cat.setQ}}" placeholder="Nombre de la categoría"></div>
+              <div style="flex: 1 1 180px; min-width: 0"><label class="lbl" for="ce">Estado</label>
+                <select class="inp" id="ce" value="{{cat.est}}" onChange="{{cat.setEst}}"><option value="activas">Activas</option><option value="inactivas">Inactivas</option><option value="todas">Todas</option></select>
+              </div>
+            </div>
+            <div class="card" style="overflow: hidden">
+              <!--IF cat.empty--><p style="padding: 32px 24px; text-align: center; color: var(--muted)">Ninguna categoría coincide con la búsqueda.</p><!--/IF-->
+              <!--IF cat.hasRows-->
+                <div style="overflow-x: auto" tabindex="0" role="region" aria-label="Tabla de categorías, desplazable horizontalmente">
+                  <table class="tbl" style="min-width: 640px">
+                    <thead><tr><th scope="col">Nombre</th><th scope="col">Estado</th><th scope="col">Documentos</th><th scope="col">Acciones</th></tr></thead>
+                    <tbody>
+                      <!--FOR cat.rows|c-->
+                        <tr style="height: 64px">
+                          <td style="font-weight: 600">{{c.nombre}}</td>
+                          <td><span class="{{c.badgeCls}}">{{c.estado}}</span></td>
+                          <td style="font-variant-numeric: tabular-nums">{{c.docs}}</td>
+                          <td><div style="display: flex; flex-wrap: wrap; gap: 8px">
+                            <button class="btn btn-s" onClick="{{c.edit}}" aria-label="{{c.ariaEdit}}">Editar nombre</button>
+                            <!--IF c.activa--><button class="btn btn-s" onClick="{{c.toggle}}" aria-label="{{c.ariaToggle}}">Desactivar</button><!--/IF-->
+                            <!--IF c.inactiva--><button class="btn btn-s" onClick="{{c.toggle}}" aria-label="{{c.ariaToggle}}">Reactivar</button><!--/IF-->
+                          </div></td>
+                        </tr>
+                      <!--/FOR-->
+                    </tbody>
+                  </table>
+                </div>
+                <div style="padding: 12px 16px; border-top: 1px solid var(--border); font-size: 14px; color: var(--muted)" role="status">{{cat.rango}}</div>
+              <!--/IF-->
+            </div>
+          </div>
+        <!--/IF-->
+
+        <!-- ===== SELECCIÓN (fragmento) ===== -->
+        <!--IF isSeleccion-->
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <p style="font-size: 13px; font-weight: 600; color: var(--muted)">Selección › Desarrollador de software › Contratación confirmada</p>
+              <h1 style="font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Contratación</h1>
+              <p style="color: var(--muted)">Fragmento del flujo de contratación existente de Selección</p>
+            </div>
+            <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                <h2 style="font-size: 16px">Persona contratada</h2>
+                <span class="{{sel.cand.badgeCls}}">{{sel.cand.estado}}</span>
+              </div>
+              <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+                <!--FOR sel.cand.rows|r--><div><dt style="font-size: 13px; color: var(--muted)">{{r.k}}</dt><dd style="margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere"><span style="{{r.vStyle}}">{{r.v}}</span></dd></div><!--/FOR-->
+              </dl>
+              <p style="font-size: 14px; color: var(--muted)">Incorporar crea la ficha o reutiliza la existente sin sobrescribir sus datos. No crea una cuenta ni un vínculo laboral: el ingreso se registra después desde la ficha.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+                <button class="btn btn-p" onClick="{{sel.run}}" disabled="{{sel.busy}}" aria-busy="{{sel.busy}}"><!--IF sel.busy--><span class="spin" aria-hidden="true"></span><!--/IF-->{{sel.btnLabel}}</button>
+              </div>
+            </section>
+            <!--IF sel.res.show-->
+              <section role="status" style="{{sel.res.style}}">
+                <h2 style="font-size: 16px">{{sel.res.title}}</h2>
+                <p>{{sel.res.text}}</p>
+                <!--IF sel.res.hasCode--><p style="font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums">Código: {{sel.res.code}}</p><!--/IF-->
+                <!--IF sel.res.hasIssues--><ul style="margin: 0; padding-left: 20px"><!--FOR sel.res.issues|i--><li>{{i}}</li><!--/FOR--></ul><!--/IF-->
+                <div style="display: flex; flex-wrap: wrap; gap: 8px"><!--FOR sel.res.actions|a--><button class="{{a.cls}}" onClick="{{a.go}}">{{a.label}}</button><!--/FOR--></div>
+              </section>
+            <!--/IF-->
+          </div>
+        <!--/IF-->
+
+        <!-- ===== EXPORTAR MI FICHA ===== -->
+        <!--IF isMisExport-->
+          <div style="display: flex; flex-direction: column; gap: 20px; max-width: 720px">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <h1 style="font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Exportar mi ficha</h1>
+              <p style="color: var(--muted)">Descarga un PDF con tus datos guardados</p>
+            </div>
+            <section class="card" style="padding: 24px; display: flex; flex-direction: column; gap: 16px">
+              <p>El PDF incluye identificación y datos personales, situación laboral, puesto y unidad, formación, experiencia, movilidad, trayectoria y el momento de generación. No incluye documentos adjuntos.</p>
+              <div><button class="btn btn-p" onClick="{{det.doExport}}" disabled="{{det.exportBusy}}" aria-busy="{{det.exportBusy}}"><!--IF det.exportBusy--><span class="spin" aria-hidden="true"></span><!--/IF-->{{det.exportLabel}}</button></div>
+              <!--IF exb.show-->
+                <div role="status" style="{{exb.style}}"><span>{{exb.text}}</span><!--IF exb.hasAction--><button class="btn btn-s" onClick="{{exb.act}}">{{exb.actionLabel}}</button><!--/IF--></div>
+              <!--/IF-->
+            </section>
+          </div>
+        <!--/IF-->
+
+        <!-- ===== DENEGADO / SIN ACCESO ===== -->
+        <!--IF isDenegado-->
+          <section role="alert" class="card" style="padding: 40px 24px; max-width: 640px; display: flex; flex-direction: column; gap: 12px">
+            <span class="badge b-err" style="align-self: flex-start">Acceso denegado</span>
+            <h1 style="font-size: 24px">No tienes permiso para ver esta información</h1>
+            <p style="color: var(--muted)">El servidor rechazó la solicitud porque este permiso no está habilitado para tu cuenta. Si lo necesitas, solicítalo al administrador de Talento Humano.</p>
+          </section>
+        <!--/IF-->
+        <!--IF isSinAcceso-->
+          <section class="card" style="padding: 40px 24px; max-width: 640px; display: flex; flex-direction: column; gap: 12px">
+            <h1 style="font-size: 24px">Aún no tienes accesos habilitados</h1>
+            <p style="color: var(--muted)">El administrador de Talento Humano todavía no ha habilitado la consulta de tu ficha, de tus documentos ni la exportación. Cuando lo haga, aparecerán aquí.</p>
+          </section>
+        <!--/IF-->
+
+        <!-- ===== DIÁLOGOS / FORMULARIO ===== -->
+        <!--IF hasDlg-->
+          <div style="{{dlg.wrapStyle}}">
+            <form novalidate onSubmit="{{dlg.submit}}" role="{{dlg.role}}" aria-modal="{{dlg.modal}}" aria-labelledby="dlg-title" style="{{dlg.panelStyle}}">
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <h2 id="dlg-title" tabindex="-1" style="font-size: 22px; letter-spacing: -0.01em">{{dlg.title}}</h2>
+                <!--IF dlg.hasSub--><p style="color: var(--muted); font-size: 14px">{{dlg.sub}}</p><!--/IF-->
+              </div>
+              <!--IF dlg.hasBody--><p style="font-size: 15px">{{dlg.body}}</p><!--/IF-->
+              <!--IF dlg.hasNotice-->
+                <div role="alert" style="{{dlg.notice.style}}">
+                  <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 700">{{dlg.notice.title}}</span><span>{{dlg.notice.text}}</span></div>
+                  <!--FOR dlg.notice.actions|a--><div><button type="button" class="btn btn-s" onClick="{{a.go}}">{{a.label}}</button></div><!--/FOR-->
+                </div>
+              <!--/IF-->
+              <!--FOR dlg.sections|sec-->
+                <fieldset style="border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+                  <!--IF sec.hasTitle--><legend style="padding: 0; font-size: 16px; font-weight: 700; margin-bottom: 4px">{{sec.title}}</legend><!--/IF-->
+                  <!--IF sec.hasDesc--><p style="font-size: 13px; color: var(--muted); margin-top: -8px">{{sec.desc}}</p><!--/IF-->
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+                    <!--FOR sec.fields|f-->
+                      <div style="{{f.cell}}">
+                        <!--IF f.isCheck-->
+                          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; cursor: pointer"><input type="checkbox" checked="{{f.checked}}" onChange="{{f.onChange}}" style="width: 22px; height: 22px; margin-top: 2px"><span><span style="font-weight: 600">{{f.label}}</span><span class="hint" style="display: block; margin-top: 0">{{f.hint}}</span></span></label>
+                        <!--/IF-->
+                        <!--IF f.isRadio-->
+                          <fieldset style="border: 0; padding: 0; margin: 0"><legend class="lbl">{{f.label}}</legend>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                              <!--FOR f.opts|o--><label style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid #8B95A3; border-radius: 8px; cursor: pointer"><input type="radio" name="{{f.id}}" checked="{{o.checked}}" onChange="{{o.pick}}">{{o.label}}</label><!--/FOR-->
+                            </div>
+                          </fieldset>
+                        <!--/IF-->
+                        <!--IF f.isLabeled-->
+                          <label class="lbl" for="{{f.id}}">{{f.label}}<!--IF f.req--><span aria-hidden="true" style="color: var(--danger)"> *</span><span class="sr"> (obligatorio)</span><!--/IF--></label>
+                          <!--IF f.isInput--><input class="{{f.cls}}" id="{{f.id}}" type="{{f.type}}" value="{{f.value}}" onChange="{{f.onChange}}" aria-invalid="{{f.invalid}}" aria-describedby="{{f.descId}}" min="{{f.min}}"><!--/IF-->
+                          <!--IF f.isSelect--><select class="{{f.cls}}" id="{{f.id}}" value="{{f.value}}" onChange="{{f.onChange}}" aria-invalid="{{f.invalid}}" aria-describedby="{{f.descId}}"><!--FOR f.opts|o--><option value="{{o.v}}">{{o.label}}</option><!--/FOR--></select><!--/IF-->
+                          <!--IF f.isArea--><textarea class="{{f.cls}}" id="{{f.id}}" value="{{f.value}}" onChange="{{f.onChange}}" aria-invalid="{{f.invalid}}" aria-describedby="{{f.descId}}"></textarea><!--/IF-->
+                          <!--IF f.isFile-->
+                            <input class="{{f.cls}}" id="{{f.id}}" type="file" accept="application/pdf,.pdf" onChange="{{f.onChange}}" aria-invalid="{{f.invalid}}" aria-describedby="{{f.descId}}" style="padding: 8px 12px; height: auto">
+                            <p style="margin-top: 6px; font-size: 14px; font-weight: 600">{{f.fileInfo}}</p>
+                          <!--/IF-->
+                          <!--IF f.isRead--><div id="{{f.id}}" style="min-height: 44px; display: flex; align-items: center; padding: 0 12px; border-radius: 8px; background: var(--bg); border: 1px dashed #B9C0CA; color: var(--muted); font-weight: 600">{{f.value}}</div><!--/IF-->
+                          <!--IF f.hasError--><p class="err" id="{{f.descId}}">{{f.error}}</p><!--/IF-->
+                          <!--IF f.showHint--><p class="hint" id="{{f.descId}}">{{f.hint}}</p><!--/IF-->
+                        <!--/IF-->
+                      </div>
+                    <!--/FOR-->
+                  </div>
+                </fieldset>
+              <!--/FOR-->
+              <!--IF dlg.hasInfo-->
+                <div style="padding: 16px; border-radius: 8px; background: var(--bg); display: flex; flex-direction: column; gap: 8px">
+                  <p style="font-size: 13px; font-weight: 700; color: var(--muted)">{{dlg.infoTitle}}</p>
+                  <dl style="margin: 0; display: grid; grid-template-columns: minmax(100px, 30%) minmax(0, 1fr); gap: 8px 16px">
+                    <!--FOR dlg.info|r--><div style="display: contents"><dt style="font-size: 14px; color: var(--muted)">{{r.k}}</dt><dd style="margin: 0; font-weight: 600">{{r.v}}</dd></div><!--/FOR-->
+                  </dl>
+                </div>
+              <!--/IF-->
+              <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 8px">
+                <!--FOR dlg.actions|a--><button type="{{a.type}}" class="{{a.cls}}" onClick="{{a.go}}" disabled="{{a.disabled}}">{{a.label}}</button><!--/FOR-->
+              </div>
+            </form>
+          </div>
+        <!--/IF-->
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== CONTROLES DEL PROTOTIPO (no forman parte del producto) ===== -->
+  <!--IF ctl.show-->
+  <div style="position: fixed; right: 16px; bottom: 16px; z-index: 80; display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
+    <!--IF ctl.open-->
+      <section aria-label="Controles del prototipo" style="width: min(340px, calc(100vw - 32px)); max-height: min(70vh, 620px); overflow: auto; background: #1B2430; color: #fff; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.3)">
+        <div><h2 style="font-size: 15px">Controles del prototipo</h2><p style="font-size: 12px; color: #C3CBD6">Solo para la demostración. No representan una función del producto.</p></div>
+        <!--FOR ctl.selects|c-->
+          <div><label for="{{c.id}}" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px">{{c.label}}</label>
+            <select id="{{c.id}}" value="{{c.value}}" onChange="{{c.onChange}}" style="width: 100%; min-height: 40px; border-radius: 8px; border: 1px solid #4A5667; background: #0F161F; color: #fff; padding: 0 8px"><!--FOR c.opts|o--><option value="{{o.v}}">{{o.label}}</option><!--/FOR--></select>
+          </div>
+        <!--/FOR-->
+        <fieldset style="border: 1px solid #4A5667; border-radius: 8px; padding: 8px 12px; margin: 0"><legend style="font-size: 13px; font-weight: 600; padding: 0 4px">Permisos del colaborador</legend>
+          <!--FOR ctl.perms|p--><label style="display: flex; align-items: center; gap: 10px; min-height: 36px; font-size: 14px"><input type="checkbox" checked="{{p.checked}}" onChange="{{p.onChange}}" style="width: 18px; height: 18px">{{p.label}}</label><!--/FOR-->
+        </fieldset>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 36px; font-size: 14px"><input type="checkbox" checked="{{ctl.dep}}" onChange="{{ctl.setDep}}" style="width: 18px; height: 18px">Fallo de dependencia (datos laborales)</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px"><button type="button" class="btn btn-s" onClick="{{ctl.goSel}}">Ir a Selección</button><button type="button" class="btn btn-s" onClick="{{ctl.reset}}">Restablecer datos</button></div>
+        <p style="font-size: 12px; color: #C3CBD6">Para probar un duplicado usa Cédula 1712345678. Reloj del sistema: 15 oct 2026.</p>
+      </section>
+    <!--/IF-->
+    <button type="button" class="btn btn-s" onClick="{{ctl.toggle}}" aria-expanded="{{ctl.open}}" style="background: #1B2430; color: #fff; border-color: #1B2430">Controles del prototipo</button>
+  </div>
+  <!--/IF-->
+</div>
+</script>
+<script>
+(function(){
+  var HOLE=/\{\{\s*([^}]+?)\s*\}\}/g;
+  var NS='http://www.w3.org/1999/xhtml';
+  var holder=document.createElement('template');
+  holder.innerHTML=document.getElementById('tpl').textContent;
+  var ROOT=Array.prototype.slice.call(holder.content.childNodes);
+  function look(path,scope){
+    path=path.trim();
+    if(path==='true')return true; if(path==='false')return false;
+    var p=path.split('.'),v=scope[p[0]];
+    for(var i=1;i<p.length;i++){v=v==null?undefined:v[p[i]];}
+    return v;
+  }
+  function evalAttr(raw,scope){
+    var m=raw.match(/^\{\{\s*([^}]+?)\s*\}\}$/);
+    if(m)return look(m[1],scope);
+    if(raw.indexOf('{{')<0)return raw;
+    return raw.replace(HOLE,function(_,p){var v=look(p,scope);return v==null?'':String(v);});
+  }
+  var TEXTY=['','text','search','number','date','email','tel'];
+  function renderEl(n,scope){
+    var el=n.namespaceURI===NS?document.createElement(n.localName):document.createElementNS(n.namespaceURI,n.localName);
+    var tv=n.hasAttribute('type')?String(evalAttr(n.getAttribute('type'),scope)||''):'';
+    var hasValue=false,pending,checked,hasChecked=false;
+    Array.prototype.forEach.call(n.attributes,function(a){
+      var name=a.name,raw=a.value;
+      if(name.indexOf('hint-')===0)return;
+      if(name==='onclick'||name==='onchange'||name==='onsubmit'){
+        var fn=evalAttr(raw,scope);
+        if(typeof fn==='function'){
+          var ev=name.slice(2);
+          if(ev==='change'&&((el.localName==='input'&&TEXTY.indexOf(tv)>=0)||el.localName==='textarea'))ev='input';
+          el.addEventListener(ev,fn);
+        }
+        return;
+      }
+      var v=evalAttr(raw,scope);
+      if(name==='value'&&el.localName!=='option'){hasValue=true;pending=v==null?'':String(v);return;}
+      if(name==='checked'){hasChecked=true;checked=!!v;return;}
+      if(name==='disabled'){if(v)el.setAttribute('disabled','');return;}
+      if(name.indexOf('aria-')===0){if(v==null)return;el.setAttribute(name,String(v));return;}
+      if(v===false||v==null)return;
+      if(v===true){el.setAttribute(name,'');return;}
+      el.setAttribute(name,String(v));
+    });
+    renderList(Array.prototype.slice.call(n.childNodes),scope,el);
+    if(hasValue){try{el.value=pending;}catch(e){}}
+    if(hasChecked)el.checked=checked;
+    return el;
+  }
+  function renderList(nodes,scope,out){
+    for(var i=0;i<nodes.length;i++){
+      var n=nodes[i];
+      if(n.nodeType===8){
+        var d=n.data;
+        if(d.indexOf('IF ')===0||d.indexOf('FOR ')===0){
+          var depth=1,j=i+1;
+          for(;j<nodes.length;j++){
+            var x=nodes[j];
+            if(x.nodeType===8){
+              if(x.data.indexOf('IF ')===0||x.data.indexOf('FOR ')===0)depth++;
+              else if(x.data==='/IF'||x.data==='/FOR'){depth--;if(depth===0)break;}
+            }
+          }
+          var inner=nodes.slice(i+1,j);
+          if(d.indexOf('IF ')===0){
+            if(look(d.slice(3),scope))renderList(inner,scope,out);
+          }else{
+            var parts=d.slice(4).split('|'),arr=look(parts[0],scope)||[];
+            arr.forEach(function(item,k){var s=Object.create(scope);s[parts[1]]=item;s.$index=k;renderList(inner,s,out);});
+          }
+          i=j;
+        }
+        continue;
+      }
+      if(n.nodeType===3){out.appendChild(document.createTextNode(n.data.replace(HOLE,function(_,p){var v=look(p,scope);return v==null?'':String(v);})));continue;}
+      if(n.nodeType===1)out.appendChild(renderEl(n,scope));
+    }
+  }
+  var inst,container,queued=false;
+  function render(){
+    queued=false;
+    var ae=document.activeElement,fid=ae&&ae.id,ss=null,se=null;
+    try{if(ae&&ae.selectionStart!=null){ss=ae.selectionStart;se=ae.selectionEnd;}}catch(e){}
+    var y=window.scrollY;
+    var frag=document.createDocumentFragment();
+    renderList(ROOT,inst.renderVals(),frag);
+    container.replaceChildren(frag);
+    if(fid){var e2=document.getElementById(fid);if(e2){e2.focus({preventScroll:true});try{if(ss!=null)e2.setSelectionRange(ss,se);}catch(_){}}}
+    window.scrollTo(0,y);
+  }
+  function schedule(){if(!queued){queued=true;Promise.resolve().then(render);}}
+  window.DCLogic=class{
+    constructor(props){this.props=props||{};}
+    setState(p){Object.assign(this.state,typeof p==='function'?p(this.state):p);schedule();}
+    forceUpdate(){schedule();}
+  };
+  window.__boot=function(Cls,props){
+    inst=new Cls(props);
+    container=document.getElementById('app');
+    render();
+    if(inst.componentDidMount)inst.componentDidMount();
+  };
+})();
+</script>
+<script>
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.HOY = '2026-10-15';
+    this.state = this.seed(props || {});
+    this._k = this.keyOf(props || {});
+  }
+  keyOf(q) { return JSON.stringify([q.preset, q.startScreen, q.startRole]); }
+  componentDidMount() {
+    const q = this.props || {};
+    const k = this.keyOf(q);
+    if (k !== this._k) { this._k = k; this.setState(this.seed(q)); }
+  }
+
+  /* ---------- utilidades ---------- */
+  norm(s) { return String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+  fmt(d) {
+    if (!d) return '';
+    const m = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const p = d.split('-');
+    return parseInt(p[2], 10) + ' ' + m[parseInt(p[1], 10) - 1] + ' ' + p[0];
+  }
+  size(b) { return b >= 1000000 ? (b / 1000000).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1000)) + ' KB'; }
+  actVinculo(f) { return f.vinculos.find((x) => x.inicio <= this.HOY && (!x.fin || x.fin > this.HOY)); }
+  progVinculo(f) { return f.vinculos.filter((x) => x.inicio > this.HOY).sort((a, b) => a.inicio.localeCompare(b.inicio))[0]; }
+  estadoDe(f) {
+    if (this.actVinculo(f)) return 'Activo';
+    if (f.vinculos.some((x) => x.fin && x.fin <= this.HOY)) return 'Desvinculado';
+    return 'Sin vínculo vigente';
+  }
+  badgeOf(e) { return e === 'Activo' ? 'badge b-ok' : e === 'Desvinculado' ? 'badge b-off' : 'badge b-warn'; }
+  pos(st, id) { return st.positions.find((p) => p.id === id); }
+  fichaVals(f) {
+    return { tipoId: f.tipoId, numId: f.numId, nombres: f.nombres, apellidos: f.apellidos, nacimiento: f.nacimiento || '', nacionalidad: f.nacionalidad || '', genero: f.genero || '', estadoCivil: f.estadoCivil || '', hijos: f.hijos === '' || f.hijos == null ? '' : String(f.hijos), direccion: f.direccion || '', telefono: f.telefono || '', correo: f.correo || '', ecNombre: f.ec.nombre || '', ecRel: f.ec.rel || '', ecTel: f.ec.tel || '' };
+  }
+
+  /* ---------- datos de demostración ---------- */
+  seed(p) {
+    const HOY = this.HOY;
+    const units = ['Comercial', 'Tecnología', 'Talento Humano', 'Administración', 'Operaciones'];
+    const positions = [
+      { id: 'POS-101', puesto: 'Ejecutivo comercial', unidad: 'Comercial', jefe: 'Sofía Andrade' },
+      { id: 'POS-102', puesto: 'Ejecutivo comercial', unidad: 'Comercial', jefe: 'Sofía Andrade' },
+      { id: 'POS-201', puesto: 'Desarrollador de software', unidad: 'Tecnología', jefe: 'Diego Salazar' },
+      { id: 'POS-202', puesto: 'Desarrollador de software', unidad: 'Tecnología', jefe: 'Valeria Mena' },
+      { id: 'POS-203', puesto: 'Desarrollador de software', unidad: 'Tecnología', jefe: 'Diego Salazar' },
+      { id: 'POS-301', puesto: 'Analista administrativo', unidad: 'Administración', jefe: 'Rodrigo Paredes' },
+      { id: 'POS-401', puesto: 'Asistente de talento humano', unidad: 'Talento Humano', jefe: 'Marta Ríos' },
+      { id: 'POS-501', puesto: 'Supervisor de operaciones', unidad: 'Operaciones', jefe: 'Hugo Cevallos' }
+    ];
+    const px = ['Analista de datos', 'Asistente contable', 'Ejecutivo comercial', 'Técnico de soporte', 'Coordinador de operaciones', 'Asistente administrativo'];
+    const ux = ['Tecnología', 'Administración', 'Comercial', 'Tecnología', 'Operaciones', 'Administración'];
+    const jx = ['Diego Salazar', 'Rodrigo Paredes', 'Sofía Andrade', 'Valeria Mena', 'Hugo Cevallos', 'Rodrigo Paredes'];
+    for (let i = 0; i < 12; i++) positions.push({ id: 'POS-6' + (10 + i), puesto: px[i % 6], unidad: ux[i % 6], jefe: jx[i % 6] });
+    const mov0 = { estado: 'No informada', obs: '', fecha: '' };
+    const blank = { nacimiento: '', nacionalidad: '', genero: '', estadoCivil: '', hijos: '', direccion: '', telefono: '', correo: '', ec: { nombre: '', rel: '', tel: '' }, formacion: [], experiencia: [], movilidad: mov0 };
+    const fichas = [
+      Object.assign({}, blank, { id: 'EMP-001', tipoId: 'Cédula', numId: '1712345678', nombres: 'María', apellidos: 'González', nacimiento: '1989-04-12', nacionalidad: 'Ecuatoriana', genero: 'Femenino', estadoCivil: 'Casada', hijos: 2, direccion: 'Av. Los Shyris N34-120 y Portugal, Quito', telefono: '+593 99 123 4567', correo: 'maria.gonzalez@altavista.example', ec: { nombre: 'Pedro Vega', rel: 'Esposo', tel: '+593 98 765 4321' },
+        vinculos: [{ inicio: '2023-03-01', fin: null, contrato: 'Indefinido', pos: 'POS-101' }],
+        formacion: [
+          { nivel: 'Tercer nivel', titulo: 'Licenciatura en Marketing', institucion: 'Instituto Superior Andino', estado: 'Completada', inicio: '2007-09-01', fin: '2012-07-15', obs: '' },
+          { nivel: 'Cuarto nivel', titulo: 'Maestría en Gestión Comercial', institucion: 'Universidad del Pacífico', estado: 'En curso', inicio: '2025-03-01', fin: '', obs: 'Cursa módulos de fin de semana.' }
+        ],
+        experiencia: [
+          { org: 'Distribuidora Pichincha', cargo: 'Asesora comercial', inicio: '2014-02-01', fin: '2019-12-31', funciones: 'Gestión de cartera de clientes.', obs: '' },
+          { org: 'Comercial Los Andes', cargo: 'Vendedora', inicio: '2012-09-01', fin: '', funciones: '', obs: '' }
+        ],
+        movilidad: { estado: 'No disponible', obs: 'Prefiere permanecer en Quito por motivos familiares.', fecha: '2026-05-20' } }),
+      Object.assign({}, blank, { id: 'EMP-002', tipoId: 'Cédula', numId: '1723456789', nombres: 'Juan', apellidos: 'Pérez', nacimiento: '1994-11-03', nacionalidad: 'Ecuatoriana', genero: 'Masculino', estadoCivil: 'Soltero', hijos: 0, telefono: '+593 99 555 0101', correo: 'juan.perez@altavista.example', ec: { nombre: 'Lucía Pérez', rel: 'Madre', tel: '+593 99 555 0102' },
+        vinculos: [{ inicio: '2022-06-01', fin: null, contrato: 'Indefinido', pos: 'POS-201' }],
+        formacion: [{ nivel: 'Tercer nivel', titulo: 'Ingeniería de Software', institucion: 'Escuela Politécnica del Norte', estado: 'Completada', inicio: '2012-10-01', fin: '2018-03-30', obs: '' }],
+        experiencia: [{ org: 'Soluciones Digitales Cía. Ltda.', cargo: 'Desarrollador junior', inicio: '2018-06-01', fin: '2022-05-15', funciones: 'Desarrollo de aplicaciones web.', obs: '' }],
+        movilidad: { estado: 'Disponible', obs: 'Disponible para proyectos en otras ciudades.', fecha: '2026-06-10' } }),
+      Object.assign({}, blank, { id: 'EMP-003', tipoId: 'Cédula', numId: '0912345678', nombres: 'Carlos', apellidos: 'Ruiz', vinculos: [] }),
+      Object.assign({}, blank, { id: 'EMP-004', tipoId: 'Cédula', numId: '1809876543', nombres: 'Ana', apellidos: 'Martínez', nacionalidad: 'Ecuatoriana', correo: 'ana.martinez@altavista.example', telefono: '+593 98 222 3344',
+        vinculos: [{ inicio: '2021-02-15', fin: '2026-09-30', contrato: 'Plazo fijo', pos: 'POS-301' }],
+        formacion: [{ nivel: 'Tecnología', titulo: 'Tecnología en Administración', institucion: 'Instituto Superior Central', estado: 'Incompleta', inicio: '2015-04-01', fin: '', obs: '' }] }),
+      Object.assign({}, blank, { id: 'EMP-005', tipoId: 'Cédula', numId: '1756789012', nombres: 'Luis', apellidos: 'Torres', correo: 'luis.torres@altavista.example', nacionalidad: 'Ecuatoriana',
+        vinculos: [{ inicio: '2026-11-01', fin: null, contrato: 'Indefinido', pos: 'POS-202' }] })
+    ];
+    const nom = ['Andrea', 'Bruno', 'Camila', 'Daniel', 'Elena', 'Fabián', 'Gabriela', 'Héctor', 'Isabel', 'Jorge', 'Karla', 'Mateo', 'Natalia', 'Óscar', 'Patricia', 'Ricardo', 'Sandra', 'Tomás', 'Valentina', 'Xavier', 'Yolanda', 'Zoila'];
+    const ape = ['Aguirre', 'Benítez', 'Cárdenas', 'Delgado', 'Espinosa', 'Flores', 'Guerrero', 'Herrera', 'Iturralde', 'Jiménez', 'Lara', 'Morales', 'Núñez', 'Ortega', 'Pacheco', 'Quiroz', 'Ramos', 'Salinas', 'Terán', 'Uribe', 'Vega', 'Yánez'];
+    nom.forEach((n, i) => {
+      const act = i < 12, des = i >= 12 && i < 16;
+      const vinc = act ? [{ inicio: '202' + (i % 4) + '-0' + ((i % 9) + 1) + '-01', fin: null, contrato: i % 3 === 0 ? 'Plazo fijo' : 'Indefinido', pos: 'POS-6' + (10 + i) }] : des ? [{ inicio: '2020-0' + ((i % 9) + 1) + '-15', fin: '2026-0' + ((i % 8) + 1) + '-30', contrato: 'Plazo fijo', pos: 'POS-301' }] : [];
+      fichas.push(Object.assign({}, blank, { id: 'EMP-' + String(6 + i).padStart(3, '0'), tipoId: i % 7 === 3 ? 'Pasaporte' : 'Cédula', numId: i % 7 === 3 ? 'PA' + (400100 + i * 311) : '17' + String(20000000 + i * 137531).slice(0, 8), nombres: n, apellidos: ape[i], correo: i % 2 === 0 ? this.norm(n).replace(/ /g, '') + '.' + this.norm(ape[i]) + '@altavista.example' : '', vinculos: vinc }));
+    });
+    const cats = [
+      { id: 'c1', nombre: 'Contratos', activa: true }, { id: 'c2', nombre: 'Formación', activa: true }, { id: 'c3', nombre: 'Identificación', activa: true }, { id: 'c4', nombre: 'Certificados médicos', activa: true },
+      { id: 'c5', nombre: 'Evaluaciones antiguas', activa: false }, { id: 'c6', nombre: 'Anexos 2019', activa: false }
+    ];
+    const docs = [
+      { id: 'd1', ficha: 'EMP-001', titulo: 'Contrato de trabajo firmado', cat: 'c1', bytes: 482113, fecha: '2023-03-01', visible: true, arch: false },
+      { id: 'd2', ficha: 'EMP-001', titulo: 'Título de Licenciatura', cat: 'c2', bytes: 1204551, fecha: '2023-03-05', visible: false, arch: false },
+      { id: 'd3', ficha: 'EMP-001', titulo: 'Certificado médico 2022', cat: 'c4', bytes: 310220, fecha: '2022-11-20', visible: true, arch: true },
+      { id: 'd4', ficha: 'EMP-002', titulo: 'Cédula de identidad', cat: 'c3', bytes: 205330, fecha: '2022-06-01', visible: true, arch: false },
+      { id: 'd5', ficha: 'EMP-002', titulo: 'Evaluación 2019', cat: 'c5', bytes: 98000, fecha: '2022-06-02', visible: false, arch: false }
+    ];
+    const st = { rol: 'admin', perms: { ficha: true, docs: true, exp: true }, screen: 'lista', tab: 'personal', detailId: null, fichas, positions, units, cats, docs, q: '', fEstado: '', fUnidad: '', page: 1, dlg: null, toastMsg: null, exportSt: 'idle', ctlOpen: false, simLista: 'datos', simDep: false, simSave: 'normal', simIngreso: 'normal', simExport: 'normal', simUpload: 'normal', simFile: 'none', simSel: 'nueva', sel: { status: 'idle' }, docQ: '', docCat: '', docVista: 'disp', catQ: '', catEst: 'activas', nextDoc: 10, nextCat: 10 };
+    if (p.preset) { this.applyPreset(st, p.preset); return st; }
+    const ss = p.startScreen || 'lista';
+    if (p.startRole === 'colab') { st.rol = 'colab'; st.screen = 'misficha'; return st; }
+    if (ss === 'detalle' || ss === 'desarrollo' || ss === 'documentos' || ss === 'ingreso') {
+      st.screen = 'detalle'; st.detailId = ss === 'ingreso' ? 'EMP-003' : 'EMP-001';
+      st.tab = ss === 'desarrollo' ? 'desarrollo' : ss === 'documentos' ? 'docs' : 'personal';
+      if (ss === 'ingreso') st.dlg = this.mkDlg('ingreso', { id: 'EMP-003' }, st);
+    }
+    if (ss === 'form') { st.screen = 'form'; st.dlg = this.mkDlg('ficha', { mode: 'new' }, st); }
+    if (ss === 'categorias') st.screen = 'categorias';
+    if (ss === 'seleccion') st.screen = 'seleccion';
+    return st;
+  }
+
+  /* ---------- estados predefinidos para los marcos del lienzo ---------- */
+  applyPreset(st, id) {
+    const HOY = this.HOY;
+    const D = (kind, ctx) => this.mkDlg(kind, ctx, st);
+    const det = (fid, tab) => { st.screen = 'detalle'; st.detailId = fid; st.tab = tab || 'personal'; };
+    const fill = (d) => { d.v.tipoId = 'Cédula'; d.v.numId = '1750011223'; d.v.nombres = 'Laura'; d.v.apellidos = 'Mena'; d.orig = Object.assign({}, d.v); return d; };
+    const ing = (fid, o) => { det(fid); const d = D('ingreso', { id: fid }); Object.assign(d.v, { contrato: 'Indefinido', pos: 'POS-203' }, o.v || {}); d.status = o.status || 'idle'; d.note = o.note || ''; st.dlg = d; };
+    const sel = (sc, status, fid) => { st.screen = 'seleccion'; st.simSel = sc; st.sel = fid ? { status, id: fid } : { status }; };
+    const colab = (scr, perms) => { st.rol = 'colab'; st.screen = scr; if (perms) st.perms = perms; };
+    if (id === 'sel-nueva') st.fichas.push({ id: 'EMP-028', tipoId: 'Cédula', numId: '1718765432', nombres: 'Paola', apellidos: 'Vásconez', nacimiento: '', nacionalidad: '', genero: '', estadoCivil: '', hijos: '', direccion: '', telefono: '', correo: 'paola.vasconez@correo.example', ec: { nombre: '', rel: '', tel: '' }, vinculos: [], formacion: [], experiencia: [], movilidad: { estado: 'No informada', obs: '', fecha: '' } });
+    switch (id) {
+      case 'lista-carga': st.simLista = 'carga'; break;
+      case 'lista-vacio': st.simLista = 'vacio'; break;
+      case 'lista-sinmatch': st.q = 'zzz'; break;
+      case 'lista-error': st.simLista = 'error'; break;
+      case 'lista-filtros': st.fEstado = 'Activo'; st.fUnidad = 'Tecnología'; break;
+      case 'lista-pag2': st.page = 2; break;
+      case 'form-nueva': st.screen = 'form'; st.dlg = D('ficha', { mode: 'new' }); break;
+      case 'form-errores': { st.screen = 'form'; const d = D('ficha', { mode: 'new' }); Object.assign(d.v, { nombres: 'Laura', correo: 'laura@', hijos: '-1', ecNombre: 'Marco' }); d.err = { numId: 'Ingresa el número de identificación.', apellidos: 'Ingresa los apellidos.', correo: 'Ingresa un correo válido, por ejemplo nombre@dominio.com.', hijos: 'Ingresa un número entero igual o mayor que cero.', ecTel: 'Si agregas un contacto, el teléfono es obligatorio.' }; d.status = 'invalid'; st.dlg = d; break; }
+      case 'form-dup': { st.screen = 'form'; const d = fill(D('ficha', { mode: 'new' })); d.v.numId = '1712345678'; d.status = 'dup'; d.note = 'EMP-001'; st.dlg = d; break; }
+      case 'form-guardando': { st.screen = 'form'; const d = fill(D('ficha', { mode: 'new' })); d.status = 'saving'; st.dlg = d; break; }
+      case 'form-error': { st.screen = 'form'; const d = fill(D('ficha', { mode: 'new' })); d.status = 'err'; st.dlg = d; break; }
+      case 'form-editar': det('EMP-001'); st.screen = 'form'; st.dlg = D('ficha', { mode: 'edit', id: 'EMP-001' }); break;
+      case 'form-conc': { det('EMP-001'); st.screen = 'form'; const d = D('ficha', { mode: 'edit', id: 'EMP-001' }); d.v.direccion = 'Av. Amazonas N21-147, Quito'; d.status = 'conc'; st.dlg = d; break; }
+      case 'det-personal': det('EMP-001'); break;
+      case 'det-minima': det('EMP-003'); break;
+      case 'det-desvinculada': det('EMP-004'); break;
+      case 'det-programado': det('EMP-005'); break;
+      case 'det-depfail': det('EMP-001'); st.simDep = true; break;
+      case 'det-des-completo': det('EMP-001', 'desarrollo'); break;
+      case 'det-des-vacio': det('EMP-005', 'desarrollo'); break;
+      case 'det-docs': det('EMP-001', 'docs'); break;
+      case 'det-docs-arch': det('EMP-001', 'docs'); st.docVista = 'arch'; break;
+      case 'ingreso-listo': ing('EMP-003', {}); break;
+      case 'ingreso-confirmando': ing('EMP-003', { status: 'confirmando' }); break;
+      case 'ingreso-exito': ing('EMP-003', { status: 'ok', note: 'Activo' }); break;
+      case 'ingreso-futuro': ing('EMP-003', { v: { fecha: '2026-11-15' }, status: 'ok', note: 'Sin vínculo vigente' }); break;
+      case 'ingreso-ocupada': ing('EMP-003', { status: 'ocupada' }); break;
+      case 'ingreso-incompat': ing('EMP-001', { v: { pos: 'POS-102' }, status: 'incompat' }); break;
+      case 'ingreso-dep': ing('EMP-003', { status: 'dep' }); break;
+      case 'reingreso': ing('EMP-004', { v: { fecha: '2026-11-02', contrato: 'Plazo fijo' } }); break;
+      case 'formacion-dlg': det('EMP-001', 'desarrollo'); st.dlg = D('formacion', { id: 'EMP-001', idx: null }); break;
+      case 'formacion-error': { det('EMP-001', 'desarrollo'); const d = D('formacion', { id: 'EMP-001', idx: null }); Object.assign(d.v, { nivel: 'Tercer nivel', institucion: 'Instituto Superior Andino', inicio: '2020-09-01', fin: '2019-07-01' }); d.err = { titulo: 'Ingresa el título o programa.', estado: 'Selecciona el estado.', fin: 'La finalización no puede ser anterior al inicio.' }; d.status = 'invalid'; st.dlg = d; break; }
+      case 'experiencia-dlg': det('EMP-001', 'desarrollo'); st.dlg = D('experiencia', { id: 'EMP-001', idx: null }); break;
+      case 'movilidad-dlg': det('EMP-005', 'desarrollo'); st.dlg = D('movilidad', { id: 'EMP-005' }); break;
+      case 'cat-lista': st.screen = 'categorias'; break;
+      case 'cat-todas': st.screen = 'categorias'; st.catEst = 'todas'; break;
+      case 'cat-nueva': st.screen = 'categorias'; st.dlg = D('categoria', { idx: null }); break;
+      case 'cat-duplicada': { st.screen = 'categorias'; const d = D('categoria', { idx: null }); d.v.nombre = 'contratos '; d.err = { nombre: 'Ya existe una categoría con ese nombre.' }; d.status = 'invalid'; st.dlg = d; break; }
+      case 'cat-desactivar': st.screen = 'categorias'; st.dlg = D('confDesact', { id: 'c1' }); break;
+      case 'doc-subir': det('EMP-001', 'docs'); st.dlg = D('doc', { id: 'EMP-001' }); break;
+      case 'doc-invalido': { det('EMP-001', 'docs'); const d = D('doc', { id: 'EMP-001' }); Object.assign(d.v, { titulo: 'Foto del título', cat: 'c2', file: { name: 'foto.png', bytes: 340000, type: 'image/png' } }); d.err = { file: 'El formato no es válido. Selecciona un archivo PDF.' }; d.status = 'invalid'; st.dlg = d; break; }
+      case 'doc-sincat': det('EMP-001', 'docs'); st.cats = st.cats.map((c) => Object.assign({}, c, { activa: false })); st.dlg = D('doc', { id: 'EMP-001' }); break;
+      case 'doc-catgone': { det('EMP-001', 'docs'); const d = D('doc', { id: 'EMP-001' }); Object.assign(d.v, { titulo: 'Informe 2026', file: { name: 'informe-2026.pdf', bytes: 2400000, type: 'application/pdf' } }); d.status = 'catGone'; st.dlg = d; break; }
+      case 'doc-cargando': { det('EMP-001', 'docs'); const d = D('doc', { id: 'EMP-001' }); Object.assign(d.v, { titulo: 'Informe 2026', cat: 'c2', file: { name: 'informe-2026.pdf', bytes: 2400000, type: 'application/pdf' } }); d.status = 'cargando'; st.dlg = d; break; }
+      case 'doc-vis': det('EMP-001', 'docs'); st.dlg = D('confVis', { id: 'd2' }); break;
+      case 'doc-arch': det('EMP-001', 'docs'); st.dlg = D('confArch', { id: 'd1' }); break;
+      case 'export-preparando': det('EMP-001'); st.exportSt = 'preparando'; break;
+      case 'export-listo': det('EMP-001'); st.exportSt = 'listo'; break;
+      case 'export-fallo': det('EMP-001'); st.exportSt = 'fallo'; break;
+      case 'export-denegado': det('EMP-001'); st.exportSt = 'denegado'; break;
+      case 'colab-ficha': colab('misficha'); break;
+      case 'colab-des': colab('misficha'); st.tab = 'desarrollo'; break;
+      case 'colab-docs': colab('misdocs'); break;
+      case 'colab-export': colab('misexport'); break;
+      case 'colab-export-listo': colab('misexport'); st.exportSt = 'listo'; break;
+      case 'colab-solo-docs': colab('misdocs', { ficha: false, docs: true, exp: false }); break;
+      case 'colab-denegado': colab('misficha', { ficha: false, docs: true, exp: true }); break;
+      case 'colab-sinacceso': colab('misficha', { ficha: false, docs: false, exp: false }); break;
+      case 'sel-idle': sel('nueva', 'idle'); break;
+      case 'sel-cargando': sel('nueva', 'cargando'); break;
+      case 'sel-nueva': sel('nueva', 'nueva', 'EMP-028'); break;
+      case 'sel-existente': sel('existente', 'existente', 'EMP-003'); break;
+      case 'sel-disc': sel('disc', 'disc', 'EMP-003'); break;
+      case 'sel-noconf': sel('noconf', 'noconf'); break;
+      case 'sel-invalida': sel('invalida', 'invalida'); break;
+      case 'sel-fallo': sel('fallo', 'fallo'); break;
+      default: break;
+    }
+    return st;
+  }
+
+  /* ---------- diálogos ---------- */
+  mkDlg(kind, ctx, st) {
+    const HOY = this.HOY;
+    let v = {};
+    if (kind === 'ficha') {
+      if (ctx.mode === 'edit') { const f = st.fichas.find((x) => x.id === ctx.id); v = this.fichaVals(f); }
+      else v = { tipoId: 'Cédula', numId: '', nombres: '', apellidos: '', nacimiento: '', nacionalidad: '', genero: '', estadoCivil: '', hijos: '', direccion: '', telefono: '', correo: '', ecNombre: '', ecRel: '', ecTel: '' };
+    }
+    if (kind === 'ingreso') v = { fecha: HOY, contrato: '', pos: '' };
+    if (kind === 'formacion') { const x = ctx.idx != null ? st.fichas.find((f) => f.id === ctx.id).formacion[ctx.idx] : null; v = x ? Object.assign({}, x) : { nivel: '', titulo: '', institucion: '', estado: '', inicio: '', fin: '', obs: '' }; }
+    if (kind === 'experiencia') { const x = ctx.idx != null ? st.fichas.find((f) => f.id === ctx.id).experiencia[ctx.idx] : null; v = x ? Object.assign({}, x) : { org: '', cargo: '', inicio: '', fin: '', funciones: '', obs: '' }; }
+    if (kind === 'movilidad') { const m = st.fichas.find((f) => f.id === ctx.id).movilidad; v = { estado: m.estado, obs: m.obs }; }
+    if (kind === 'categoria') v = { nombre: ctx.idx ? st.cats.find((c) => c.id === ctx.idx).nombre : '' };
+    if (kind === 'doc') v = { titulo: '', cat: '', file: null, visible: false };
+    return { kind, ctx, v, orig: Object.assign({}, v), err: {}, status: 'idle', note: '' };
+  }
+  openDlg(kind, ctx, screen) {
+    const dlg = this.mkDlg(kind, ctx, this.state);
+    const patch = { dlg };
+    if (screen) patch.screen = screen;
+    this.setState(patch);
+    setTimeout(() => { try { const h = document.getElementById('dlg-title'); if (h) h.focus(); } catch (e) {} }, 60);
+  }
+  setDlg(patch) { const d = this.state.dlg; if (d) this.setState({ dlg: Object.assign({}, d, patch) }); }
+  closeDlg() {
+    const s = this.state;
+    if (s.dlg && s.dlg.kind === 'ficha' && s.screen === 'form') this.setState({ dlg: null, screen: s.detailId && s.dlg.ctx.mode === 'edit' ? 'detalle' : 'lista' });
+    else this.setState({ dlg: null });
+  }
+  toast(tone, text) {
+    this.setState({ toastMsg: { tone, text } });
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => this.setState({ toastMsg: null }), 6000);
+  }
+  availablePos(st, fichaId, fecha) {
+    const taken = {};
+    st.fichas.forEach((f) => f.vinculos.forEach((x) => { if (!x.fin || x.fin > fecha) taken[x.pos] = true; }));
+    return st.positions.filter((p) => !taken[p.id]);
+  }
+
+  /* ---------- acciones de formulario ---------- */
+  setVal(key) {
+    return (e) => {
+      const d = this.state.dlg; if (!d) return;
+      const t = e.target;
+      const val = t.type === 'checkbox' ? t.checked : t.type === 'file' ? (t.files && t.files[0] ? { name: t.files[0].name, bytes: t.files[0].size, type: t.files[0].type } : null) : t.value;
+      const v = Object.assign({}, d.v, { [key]: val });
+      const err = Object.assign({}, d.err, { [key]: null });
+      let status = d.status, note = d.note;
+      if (d.kind === 'ficha' && (key === 'tipoId' || key === 'numId') && d.status === 'dup') { status = 'idle'; }
+      if (d.kind === 'ingreso') {
+        if (['ocupada', 'incompat', 'dep'].indexOf(status) >= 0) status = 'idle';
+        if (key === 'fecha' && v.pos) {
+          const ok = this.availablePos(this.state, d.ctx.id, val).some((p) => p.id === v.pos);
+          if (!ok) { v.pos = ''; note = 'Cambiaste la fecha y la posición elegida ya no está disponible. Selecciona otra.'; }
+        }
+      }
+      if (d.kind === 'doc' && status === 'catGone') status = 'idle';
+      this.setState({ dlg: Object.assign({}, d, { v, err, status, note }) });
+    };
+  }
+  validate(d) {
+    const v = d.v, e = {}; const T = (s) => String(s == null ? '' : s).trim();
+    const req = (k, label, max) => { const x = T(v[k]); if (!x) e[k] = 'Ingresa ' + label + '.'; else if (max && x.length > max) e[k] = 'Máximo ' + max + ' caracteres.'; };
+    const opt = (k, max) => { if (T(v[k]).length > max) e[k] = 'Máximo ' + max + ' caracteres.'; };
+    if (d.kind === 'ficha') {
+      if (!v.tipoId) e.tipoId = 'Selecciona el tipo de identificación.';
+      req('numId', 'el número de identificación', 50); req('nombres', 'los nombres', 150); req('apellidos', 'los apellidos', 150);
+      if (v.nacimiento && v.nacimiento > this.HOY) e.nacimiento = 'La fecha de nacimiento no puede ser futura.';
+      opt('nacionalidad', 100); opt('genero', 80); opt('estadoCivil', 80); opt('direccion', 500); opt('telefono', 30); opt('ecNombre', 150); opt('ecRel', 100); opt('ecTel', 30);
+      if (T(v.hijos) !== '' && !/^\d+$/.test(T(v.hijos))) e.hijos = 'Ingresa un número entero igual o mayor que cero.';
+      if (T(v.correo) && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(T(v.correo)) || T(v.correo).length > 254)) e.correo = 'Ingresa un correo válido, por ejemplo nombre@dominio.com.';
+      if (T(v.ecNombre) || T(v.ecRel) || T(v.ecTel)) { if (!T(v.ecNombre)) e.ecNombre = 'Si agregas un contacto, el nombre es obligatorio.'; if (!T(v.ecTel)) e.ecTel = 'Si agregas un contacto, el teléfono es obligatorio.'; }
+    }
+    if (d.kind === 'ingreso') { if (!v.fecha) e.fecha = 'Indica la fecha efectiva de ingreso.'; if (!v.contrato) e.contrato = 'Selecciona el tipo de contrato.'; if (!v.pos) e.pos = 'Selecciona una posición.'; }
+    if (d.kind === 'formacion') {
+      req('nivel', 'el nivel', 100); req('titulo', 'el título o programa', 200); req('institucion', 'la institución', 200);
+      if (!v.estado) e.estado = 'Selecciona el estado.'; opt('obs', 2000);
+      if (v.inicio && v.fin && v.fin < v.inicio) e.fin = 'La finalización no puede ser anterior al inicio.';
+    }
+    if (d.kind === 'experiencia') {
+      req('org', 'la organización', 200); req('cargo', 'el cargo', 200); if (!v.inicio) e.inicio = 'Indica la fecha de inicio.';
+      opt('funciones', 2000); opt('obs', 2000);
+      if (v.inicio && v.fin && v.fin < v.inicio) e.fin = 'La finalización debe ser igual o posterior al inicio.';
+    }
+    if (d.kind === 'movilidad') opt('obs', 2000);
+    if (d.kind === 'categoria') {
+      req('nombre', 'el nombre de la categoría', 100);
+      const n = this.norm(v.nombre);
+      if (n && this.state.cats.some((c) => c.id !== d.ctx.idx && this.norm(c.nombre) === n)) e.nombre = 'Ya existe una categoría con ese nombre.';
+    }
+    if (d.kind === 'doc') {
+      req('titulo', 'el título', 200); if (!v.cat) e.cat = 'Selecciona una categoría activa.';
+      const f = v.file;
+      if (!f) e.file = 'Selecciona un archivo PDF.';
+      else if (f.bytes === 0) e.file = 'El archivo está vacío.';
+      else if (!/\.pdf$/i.test(f.name) || (f.type && f.type !== 'application/pdf')) e.file = 'El formato no es válido. Selecciona un archivo PDF.';
+      else if (f.bytes > 10000000) e.file = 'El archivo supera el límite de 10 MB (10 000 000 bytes).';
+    }
+    return e;
+  }
+  submit() {
+    const s = this.state, d = s.dlg; if (!d) return;
+    if (d.status === 'ok') { this.closeDlg(); return; }
+    if (['confVis', 'confArch', 'confDesact'].indexOf(d.kind) >= 0) { this.applyConfirm(d); return; }
+    const err = this.validate(d);
+    if (Object.keys(err).length) { this.setDlg({ err, status: 'invalid', note: '' }); return; }
+    if (d.kind === 'ficha') return this.saveFicha(d);
+    if (d.kind === 'ingreso') return this.saveIngreso(d);
+    if (d.kind === 'formacion' || d.kind === 'experiencia') return this.saveListItem(d);
+    if (d.kind === 'movilidad') { const fs = s.fichas.map((f) => f.id === d.ctx.id ? Object.assign({}, f, { movilidad: { estado: d.v.estado, obs: d.v.obs.trim(), fecha: this.HOY } }) : f); this.setState({ fichas: fs, dlg: null }); this.toast('ok', 'Disponibilidad para movilidad guardada.'); return; }
+    if (d.kind === 'categoria') {
+      const nombre = d.v.nombre.trim();
+      if (d.ctx.idx) this.setState({ cats: s.cats.map((c) => c.id === d.ctx.idx ? Object.assign({}, c, { nombre }) : c), dlg: null });
+      else this.setState({ cats: s.cats.concat([{ id: 'c' + s.nextCat, nombre, activa: true }]), nextCat: s.nextCat + 1, dlg: null });
+      this.toast('ok', d.ctx.idx ? 'Nombre de la categoría actualizado.' : 'Categoría creada y activa.'); return;
+    }
+    if (d.kind === 'doc') return this.saveDoc(d);
+  }
+  saveFicha(d) {
+    const s = this.state, v = d.v, T = (x) => String(x == null ? '' : x).trim();
+    const editId = d.ctx.mode === 'edit' ? d.ctx.id : null;
+    const dup = s.fichas.find((f) => f.id !== editId && f.tipoId === v.tipoId && f.numId.trim() === T(v.numId));
+    if (dup) { this.setDlg({ status: 'dup', err: {}, note: dup.id }); return; }
+    this.setDlg({ status: 'saving' });
+    setTimeout(() => {
+      const st = this.state; const sim = st.simSave;
+      if (sim !== 'normal') this.setState({ simSave: 'normal' });
+      if (sim === 'err') { this.setDlg({ status: 'err' }); return; }
+      if (sim === 'conc') { this.setDlg({ status: 'conc' }); return; }
+      const base = { tipoId: v.tipoId, numId: T(v.numId), nombres: T(v.nombres), apellidos: T(v.apellidos), nacimiento: v.nacimiento, nacionalidad: T(v.nacionalidad), genero: T(v.genero), estadoCivil: T(v.estadoCivil), hijos: T(v.hijos) === '' ? '' : parseInt(T(v.hijos), 10), direccion: T(v.direccion), telefono: T(v.telefono), correo: T(v.correo), ec: { nombre: T(v.ecNombre), rel: T(v.ecRel), tel: T(v.ecTel) } };
+      if (editId) {
+        this.setState({ fichas: st.fichas.map((f) => f.id === editId ? Object.assign({}, f, base) : f), dlg: null, screen: 'detalle' });
+        this.toast('ok', 'Datos de la ficha guardados.');
+      } else {
+        const n = st.fichas.reduce((m, f) => Math.max(m, parseInt(f.id.slice(4), 10)), 0) + 1;
+        const id = 'EMP-' + String(n).padStart(3, '0');
+        const nf = Object.assign({ id, vinculos: [], formacion: [], experiencia: [], movilidad: { estado: 'No informada', obs: '', fecha: '' } }, base);
+        this.setState({ fichas: st.fichas.concat([nf]), dlg: null, screen: 'detalle', detailId: id, tab: 'personal' });
+        this.toast('ok', 'Ficha creada con el código ' + id + '. No se creó ninguna cuenta ni vínculo laboral.');
+      }
+    }, 900);
+  }
+  reloadConc() {
+    const s = this.state, d = s.dlg; const id = d.ctx.id;
+    const ficha = s.fichas.find((f) => f.id === id);
+    const nf = Object.assign({}, ficha, { telefono: '+593 99 872 1100' });
+    const latest = this.fichaVals(nf); const v = Object.assign({}, d.v);
+    Object.keys(latest).forEach((k) => { if (d.v[k] === d.orig[k]) v[k] = latest[k]; });
+    this.setState({ fichas: s.fichas.map((f) => f.id === id ? nf : f), dlg: Object.assign({}, d, { v, orig: latest, status: 'reloaded', err: {} }) });
+  }
+  saveIngreso(d) {
+    const s = this.state, v = d.v;
+    this.setDlg({ status: 'confirmando', note: '' });
+    setTimeout(() => {
+      const st = this.state; const sim = st.simIngreso;
+      if (sim !== 'normal') this.setState({ simIngreso: 'normal' });
+      const f = st.fichas.find((x) => x.id === d.ctx.id);
+      if (sim === 'dep') { this.setDlg({ status: 'dep' }); return; }
+      if (sim === 'incompat' || f.vinculos.some((x) => !x.fin || x.fin > v.fecha)) { this.setDlg({ status: 'incompat' }); return; }
+      const libre = this.availablePos(st, f.id, v.fecha).some((p) => p.id === v.pos);
+      if (sim === 'ocupada' || !libre) { this.setDlg({ status: 'ocupada' }); return; }
+      const nf = Object.assign({}, f, { vinculos: f.vinculos.concat([{ inicio: v.fecha, fin: null, contrato: v.contrato, pos: v.pos }]) });
+      this.setState({ fichas: st.fichas.map((x) => x.id === f.id ? nf : x), dlg: Object.assign({}, this.state.dlg, { status: 'ok', note: this.estadoDe(nf) }) });
+    }, 900);
+  }
+  saveListItem(d) {
+    const s = this.state, f = s.fichas.find((x) => x.id === d.ctx.id); const T = (x) => String(x == null ? '' : x).trim();
+    const key = d.kind === 'formacion' ? 'formacion' : 'experiencia'; const arr = f[key].slice();
+    const item = {}; Object.keys(d.v).forEach((k) => { item[k] = T(d.v[k]); });
+    if (d.ctx.idx != null) arr[d.ctx.idx] = item; else arr.push(item);
+    this.setState({ fichas: s.fichas.map((x) => x.id === f.id ? Object.assign({}, x, { [key]: arr }) : x), dlg: null });
+    this.toast('ok', d.kind === 'formacion' ? 'Formación académica guardada.' : 'Experiencia anterior guardada.');
+  }
+  saveDoc(d) {
+    this.setDlg({ status: 'cargando' });
+    setTimeout(() => {
+      const st = this.state; const sim = st.simUpload; const v = d.v;
+      if (sim !== 'normal') this.setState({ simUpload: 'normal' });
+      if (sim === 'catGone') {
+        this.setState({ cats: st.cats.map((c) => c.id === v.cat ? Object.assign({}, c, { activa: false }) : c) });
+        this.setDlg({ status: 'catGone', v: Object.assign({}, v, { cat: '' }) }); return;
+      }
+      if (sim === 'err') { this.setDlg({ status: 'err' }); return; }
+      const nd = { id: 'd' + st.nextDoc, ficha: st.detailId, titulo: v.titulo.trim(), cat: v.cat, bytes: v.file.bytes, fecha: this.HOY, visible: !!v.visible, arch: false };
+      this.setState({ docs: st.docs.concat([nd]), nextDoc: st.nextDoc + 1, dlg: null, docVista: 'disp' });
+      this.toast('ok', 'Documento cargado y disponible. ' + (nd.visible ? 'Es visible para el colaborador.' : 'Es privado: solo lo ve Talento Humano.'));
+    }, 1200);
+  }
+  applyConfirm(d) {
+    const s = this.state;
+    if (d.kind === 'confVis') { this.setState({ docs: s.docs.map((x) => x.id === d.ctx.id ? Object.assign({}, x, { visible: !x.visible }) : x), dlg: null }); this.toast('ok', 'Visibilidad actualizada.'); }
+    if (d.kind === 'confArch') { this.setState({ docs: s.docs.map((x) => x.id === d.ctx.id ? Object.assign({}, x, { arch: true }) : x), dlg: null }); this.toast('ok', 'Documento archivado. El colaborador ya no tiene acceso.'); }
+    if (d.kind === 'confDesact') { this.setState({ cats: s.cats.map((x) => x.id === d.ctx.id ? Object.assign({}, x, { activa: false }) : x), dlg: null }); this.toast('ok', 'Categoría desactivada. Sus documentos se conservan.'); }
+  }
+  doExport() {
+    if (this.state.exportSt === 'preparando') return;
+    this.setState({ exportSt: 'preparando' });
+    setTimeout(() => {
+      const sim = this.state.simExport;
+      if (sim !== 'normal') this.setState({ simExport: 'normal' });
+      this.setState({ exportSt: sim === 'fallo' ? 'fallo' : sim === 'denegado' ? 'denegado' : 'listo' });
+    }, 1500);
+  }
+  runSel() {
+    const s = this.state; if (s.sel.status === 'cargando') return;
+    this.setState({ sel: { status: 'cargando' } });
+    setTimeout(() => {
+      const st = this.state; const sc = st.simSel;
+      if (sc === 'nueva') {
+        let f = st.fichas.find((x) => x.numId === '1718765432');
+        let fichas = st.fichas;
+        if (!f) {
+          const n = fichas.reduce((m, x) => Math.max(m, parseInt(x.id.slice(4), 10)), 0) + 1;
+          f = { id: 'EMP-' + String(n).padStart(3, '0'), tipoId: 'Cédula', numId: '1718765432', nombres: 'Paola', apellidos: 'Vásconez', nacimiento: '', nacionalidad: '', genero: '', estadoCivil: '', hijos: '', direccion: '', telefono: '', correo: 'paola.vasconez@correo.example', ec: { nombre: '', rel: '', tel: '' }, vinculos: [], formacion: [], experiencia: [], movilidad: { estado: 'No informada', obs: '', fecha: '' } };
+          fichas = fichas.concat([f]);
+        }
+        this.setState({ fichas, sel: { status: 'nueva', id: f.id } });
+      } else if (sc === 'existente') this.setState({ sel: { status: 'existente', id: 'EMP-003' } });
+      else if (sc === 'disc') this.setState({ sel: { status: 'disc', id: 'EMP-003' } });
+      else if (sc === 'noconf') this.setState({ sel: { status: 'noconf' } });
+      else if (sc === 'invalida') this.setState({ sel: { status: 'invalida' } });
+      else this.setState({ sel: { status: 'fallo' } });
+    }, 1200);
+  }
+
+  /* ---------- vista ---------- */
+  renderVals() {
+    const s = this.state, HOY = this.HOY, self = this;
+    const colab = s.rol === 'colab';
+    const perms = s.perms;
+    let screen = s.screen;
+    if (colab) {
+      if (!(perms.ficha || perms.docs || perms.exp)) screen = 'sinacceso';
+      else if (({ misficha: perms.ficha, misdocs: perms.docs, misexport: perms.exp })[screen] !== true) screen = 'denegado';
+    }
+    const go = (scr) => () => this.setState({ screen: scr, dlg: null, exportSt: 'idle', toastMsg: null });
+    const ic = { users: 'M3 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6M9.5 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5', folder: 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z', file: 'M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9zM14 3v6h6M8 13h8M8 17h5', dl: 'M12 4v11M7 11l5 5 5-5M5 20h14', user: 'M12 12a4 4 0 100-8 4 4 0 000 8M4 21c0-4 3.5-6 8-6s8 2 8 6' };
+    let navItems;
+    if (!colab) navItems = [
+      { label: 'Fichas de colaboradores', icon: ic.users, cur: (screen === 'lista' || screen === 'detalle' || screen === 'form') ? 'page' : 'false', go: go('lista') },
+      { label: 'Categorías documentales', icon: ic.folder, cur: screen === 'categorias' ? 'page' : 'false', go: go('categorias') }
+    ]; else {
+      navItems = [];
+      if (perms.ficha) navItems.push({ label: 'Mi ficha', icon: ic.user, cur: screen === 'misficha' ? 'page' : 'false', go: go('misficha') });
+      if (perms.docs) navItems.push({ label: 'Mis documentos', icon: ic.file, cur: screen === 'misdocs' ? 'page' : 'false', go: go('misdocs') });
+      if (perms.exp) navItems.push({ label: 'Exportar mi ficha', icon: ic.dl, cur: screen === 'misexport' ? 'page' : 'false', go: go('misexport') });
+    }
+    const user = colab ? { ini: 'MG', nombre: 'María González', rol: 'Colaboradora' } : { ini: 'MR', nombre: 'Marta Ríos', rol: 'Administrador de Talento Humano' };
+
+    const tones = { ok: ['#E3F2F0', '#0B5A55'], err: ['#FDECEA', '#B42318'], info: ['#E8F0FA', '#1D4E89'], warn: ['#FFF4E0', '#8A4B00'] };
+    const boxStyle = (t) => 'display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:10px;font-size:15px;background:' + tones[t][0] + ';color:' + tones[t][1];
+    const tm = s.toastMsg;
+
+    /* ----- listado ----- */
+    const estadoOpts = [{ v: '', label: 'Todos los estados' }, { v: 'Activo', label: 'Activo' }, { v: 'Desvinculado', label: 'Desvinculado' }, { v: 'Sin vínculo vigente', label: 'Sin vínculo vigente' }];
+    const unidadOpts = [{ v: '', label: 'Todas las unidades' }].concat(s.units.map((u) => ({ v: u, label: u })));
+    let list = s.fichas.map((f) => { const a = this.actVinculo(f) || null; const p = a ? this.pos(s, a.pos) : null; return { f, estado: this.estadoDe(f), p }; });
+    const nq = this.norm(s.q);
+    list = list.filter((r) => (!s.fEstado || r.estado === s.fEstado) && (!s.fUnidad || (r.p && r.p.unidad === s.fUnidad)) && (!nq || this.norm(r.f.nombres + ' ' + r.f.apellidos + ' ' + r.f.id + ' ' + (r.p ? r.p.puesto : '')).indexOf(nq) >= 0));
+    list.sort((a, b) => a.f.apellidos.localeCompare(b.f.apellidos, 'es') || a.f.nombres.localeCompare(b.f.nombres, 'es') || a.f.id.localeCompare(b.f.id));
+    const total = list.length, pages = Math.max(1, Math.ceil(total / 20)); const page = Math.min(s.page, pages);
+    const slice = list.slice((page - 1) * 20, page * 20);
+    const muted = 'color:var(--muted)';
+    const rows = slice.map((r) => ({
+      codigo: r.f.id, nombre: r.f.apellidos + ', ' + r.f.nombres, correo: r.f.correo || '', puesto: r.p ? r.p.puesto : 'No registrado', puestoStyle: r.p ? '' : muted, unidad: r.p ? r.p.unidad : 'No registrado', unidadStyle: r.p ? '' : muted,
+      estado: r.estado, badgeCls: this.badgeOf(r.estado), aria: 'Ver ficha de ' + r.f.nombres + ' ' + r.f.apellidos, open: () => this.setState({ screen: 'detalle', detailId: r.f.id, tab: 'personal', exportSt: 'idle' })
+    }));
+    const vacioReal = s.fichas.length === 0;
+    const isLoading = s.simLista === 'carga', isError = s.simLista === 'error', simVacio = s.simLista === 'vacio';
+    const showData = !isLoading && !isError && !simVacio && !vacioReal;
+    const isLista = screen === 'lista';
+
+    /* ----- detalle ----- */
+    const fid = colab ? 'EMP-001' : s.detailId;
+    const ficha = s.fichas.find((f) => f.id === fid);
+    const isDetalle = !!ficha && (screen === 'detalle' || screen === 'misficha' || screen === 'misdocs');
+    const empty = { show: false };
+    let det = { canBack: false }, tabs = [], cards = [], des = {}, dc = {}, tabEff = 'personal', exb = { show: false, style: '' };
+    const nrv = (v) => (v === undefined || v === null || v === '') ? { v: 'No registrado', vStyle: 'color:var(--muted);font-style:italic' } : { v: String(v), vStyle: '' };
+    const row = (k, v, extra) => Object.assign({ k }, nrv(v), { hasBadge: false, badge: '', badgeCls: '' }, extra || {});
+    const exStatus = s.exportSt;
+    const exportBusy = exStatus === 'preparando';
+    const exportLabel = exportBusy ? 'Preparando PDF…' : (colab ? 'Exportar mi ficha' : 'Exportar ficha');
+    if (exStatus !== 'idle') {
+      const e = { preparando: ['info', 'Preparando el PDF de la ficha con los datos guardados…', ''], listo: ['ok', 'PDF generado el 15 oct 2026, 11:44 con los datos guardados. No incluye cambios pendientes ni adjuntos.', 'Descargar PDF'], fallo: ['err', 'No se pudo generar el PDF. Tus datos no se modificaron.', 'Reintentar'], denegado: ['err', 'No tienes permiso para exportar esta ficha.', ''] }[exStatus];
+      exb = { show: true, style: boxStyle(e[0]), text: e[1], hasAction: !!e[2], actionLabel: e[2], act: exStatus === 'listo' ? () => this.toast('ok', 'Descarga iniciada: Ficha_' + fid + '.pdf') : () => this.doExport() };
+    }
+    if (ficha) {
+      const est = this.estadoDe(ficha), act = this.actVinculo(ficha), prog = this.progVinculo(ficha);
+      const mode = screen === 'misdocs' ? 'docs' : (colab ? 'colab' : 'admin');
+      tabEff = mode === 'docs' ? 'docs' : (mode === 'colab' && s.tab === 'docs' ? 'personal' : s.tab);
+      det = {
+        canBack: !colab, back: () => this.setState({ screen: 'lista', exportSt: 'idle' }),
+        eyebrow: mode === 'docs' ? 'Mis documentos' : (colab ? 'Mi ficha' : 'Expediente del colaborador'),
+        title: mode === 'docs' ? 'Mis documentos' : ficha.nombres + ' ' + ficha.apellidos, codigo: ficha.id, estado: est, badgeCls: this.badgeOf(est),
+        hasProg: !!prog && mode !== 'docs', progTxt: prog ? 'Ingreso programado: ' + this.fmt(prog.inicio) : '',
+        canEdit: mode === 'admin', edit: () => this.openDlg('ficha', { mode: 'edit', id: ficha.id }, 'form'),
+        canIngreso: mode === 'admin', ingreso: () => this.openDlg('ingreso', { id: ficha.id }),
+        canExport: mode !== 'docs' && (!colab || perms.exp), exportBusy, exportLabel, doExport: () => this.doExport(), showTabs: mode !== 'docs'
+      };
+      const tl = mode === 'admin' ? [['personal', 'Personal y puesto'], ['desarrollo', 'Desarrollo'], ['docs', 'Documentos']] : [['personal', 'Personal y puesto'], ['desarrollo', 'Desarrollo']];
+      tabs = tl.map((t) => ({ label: t[1], sel: tabEff === t[0], go: () => this.setState({ tab: t[0] }) }));
+      const depFail = s.simDep;
+      const ec = ficha.ec || {};
+      const sit = [row('Estado', est, { hasBadge: false })];
+      sit[0] = { k: 'Estado', v: '', vStyle: '', hasBadge: true, badge: est, badgeCls: this.badgeOf(est) };
+      if (act) { sit.push(row('Ingreso', this.fmt(act.inicio))); sit.push(row('Tipo de contrato', act.contrato)); }
+      else if (est === 'Desvinculado') { const u = ficha.vinculos.filter((x) => x.fin && x.fin <= HOY).sort((a, b) => b.fin.localeCompare(a.fin))[0]; sit.push(row('Último vínculo', this.fmt(u.inicio) + ' – ' + this.fmt(u.fin))); sit.push(row('Salida efectiva', this.fmt(u.fin))); sit.push(row('Tipo de contrato', u.contrato)); }
+      else sit.push(row('Vínculo', 'No hay vínculos registrados'));
+      if (prog) sit.push(row('Ingreso programado', this.fmt(prog.inicio) + ' · ' + prog.contrato));
+      const ref = act || prog; const pp = ref ? this.pos(s, ref.pos) : null;
+      const asg = pp ? [row('Posición', pp.id), row('Puesto', pp.puesto), row('Unidad organizacional', pp.unidad), row('Jefatura', pp.jefe)] : [row('Posición', ''), row('Puesto', ''), row('Unidad organizacional', ''), row('Jefatura', '')];
+      cards = [
+        { title: 'Identificación', rows: [row('Código', ficha.id), row('Tipo de identificación', ficha.tipoId), row('Número de identificación', ficha.numId), row('Nombres', ficha.nombres), row('Apellidos', ficha.apellidos)], ok: true },
+        { title: 'Datos personales y contacto', rows: [row('Fecha de nacimiento', this.fmt(ficha.nacimiento)), row('Nacionalidad', ficha.nacionalidad), row('Género', ficha.genero), row('Estado civil', ficha.estadoCivil), row('Número de hijos', ficha.hijos), row('Dirección', ficha.direccion), row('Teléfono', ficha.telefono), row('Correo', ficha.correo)], ok: true },
+        { title: 'Contacto de emergencia', rows: [row('Nombre', ec.nombre), row('Relación', ec.rel), row('Teléfono', ec.tel)], ok: true },
+        { title: 'Situación laboral', sub: 'Información laboral, solo lectura', rows: sit, ok: !depFail, dep: depFail },
+        { title: 'Asignación organizacional', sub: act ? 'Posición vigente, solo lectura' : (prog ? 'Asignación programada, aún no vigente' : 'Sin asignación vigente'), rows: asg, ok: !depFail, dep: depFail }
+      ].map((c) => Object.assign({ hasSub: !!c.sub, sub: c.sub || '', hasProg: false, prog: '', dep: false }, c));
+      if (prog) cards[3].hasProg = true, cards[3].prog = 'El ingreso del ' + this.fmt(prog.inicio) + ' está programado. Hasta esa fecha el estado de la ficha es «' + est + '».';
+      const canE = mode === 'admin';
+      const fr = (x) => (x.inicio ? this.fmt(x.inicio) : 'Inicio no registrado') + ' – ' + (x.fin ? this.fmt(x.fin) : 'Fin no registrado');
+      const bc = { 'En curso': 'badge b-info', 'Completada': 'badge b-ok', 'Incompleta': 'badge b-off' };
+      const mv = ficha.movilidad;
+      const tray = [];
+      ficha.vinculos.forEach((v) => { const p = this.pos(s, v.pos); const dt = p ? p.puesto + ' · ' + p.unidad + ' · ' + p.id : 'Asignación no disponible'; tray.push({ f: v.inicio, tipo: 'Ingreso', detalle: dt + ' · Contrato ' + v.contrato.toLowerCase(), prog: v.inicio > HOY }); if (v.fin) tray.push({ f: v.fin, tipo: 'Salida efectiva', detalle: 'Fin del vínculo de ' + (p ? p.puesto : 'la posición'), prog: v.fin > HOY }); });
+      tray.sort((a, b) => b.f.localeCompare(a.f));
+      des = {
+        canEdit: canE, addFor: () => this.openDlg('formacion', { id: ficha.id, idx: null }), addExp: () => this.openDlg('experiencia', { id: ficha.id, idx: null }), editMov: () => this.openDlg('movilidad', { id: ficha.id }),
+        noFor: ficha.formacion.length === 0, noExp: ficha.experiencia.length === 0,
+        formaciones: ficha.formacion.map((x, i) => ({ titulo: x.titulo, nivel: x.nivel, institucion: x.institucion, fechas: fr(x), obs: x.obs || 'Sin observaciones', estado: x.estado, badgeCls: bc[x.estado], canEdit: canE, aria: 'Editar formación ' + x.titulo, edit: () => this.openDlg('formacion', { id: ficha.id, idx: i }) })),
+        experiencias: ficha.experiencia.map((x, i) => ({ cargo: x.cargo, org: x.org, fechas: fr(x), funciones: x.funciones || 'No registrado', obs: x.obs || 'No registrado', canEdit: canE, aria: 'Editar experiencia ' + x.cargo, edit: () => this.openDlg('experiencia', { id: ficha.id, idx: i }) })),
+        movEstado: mv.estado, movCls: mv.estado === 'Disponible' ? 'badge b-ok' : mv.estado === 'No disponible' ? 'badge b-off' : 'badge b-warn', movFecha: mv.fecha ? 'Actualizada el ' + this.fmt(mv.fecha) : '', movObs: mv.obs || (mv.estado === 'No informada' ? 'La persona aún no ha declarado su disponibilidad.' : 'Sin observaciones'),
+        trayDep: depFail, trayEmpty: !depFail && tray.length === 0,
+        tray: depFail ? [] : tray.map((t) => ({ tipo: t.tipo, fecha: this.fmt(t.f), detalle: t.detalle, chip: t.prog ? 'Programado' : 'Efectivo', chipCls: t.prog ? 'badge b-info' : 'badge b-ok' }))
+      };
+      const docsF = s.docs.filter((d) => d.ficha === ficha.id);
+      const nq2 = this.norm(s.docQ);
+      let dl = docsF.filter((d) => (!nq2 || this.norm(d.titulo).indexOf(nq2) >= 0) && (!s.docCat || d.cat === s.docCat));
+      if (colab) dl = dl.filter((d) => d.visible && !d.arch); else dl = dl.filter((d) => s.docVista === 'arch' ? d.arch : !d.arch);
+      const catName = (id) => (s.cats.find((c) => c.id === id) || {}).nombre || '';
+      dc = {
+        isAdmin: !colab, q: s.docQ, setQ: (e) => this.setState({ docQ: e.target.value }), cat: s.docCat, setCat: (e) => this.setState({ docCat: e.target.value }),
+        catOpts: [{ v: '', label: 'Todas las categorías' }].concat(s.cats.map((c) => ({ v: c.id, label: c.nombre + (c.activa ? '' : ' (inactiva)') }))),
+        pDisp: s.docVista === 'disp', pArch: s.docVista === 'arch', setDisp: () => this.setState({ docVista: 'disp' }), setArch: () => this.setState({ docVista: 'arch' }),
+        upload: () => this.openDlg('doc', { id: ficha.id }),
+        empty: dl.length === 0, hasRows: dl.length > 0, emptyMsg: colab ? 'No hay documentos disponibles para ti.' : (s.docVista === 'arch' ? 'No hay documentos archivados.' : 'Esta ficha aún no tiene documentos disponibles.'),
+        rows: dl.map((d) => ({
+          titulo: d.titulo, cat: catName(d.cat), size: this.size(d.bytes), fecha: this.fmt(d.fecha),
+          hasBadge: !colab, badge: d.arch ? 'Archivado' : (d.visible ? 'Visible para el colaborador' : 'Privado'), badgeCls: d.arch ? 'badge b-off' : (d.visible ? 'badge b-ok' : 'badge b-warn'),
+          ariaVer: 'Ver ' + d.titulo, ariaDesc: 'Descargar ' + d.titulo,
+          ver: () => this.toast('info', 'La vista previa no está disponible para este documento. Puedes descargarlo.'), desc: () => this.toast('ok', 'Descarga iniciada: ' + d.titulo + '.pdf'),
+          canVis: !colab && !d.arch, visLabel: d.visible ? 'Hacer privado' : 'Hacer visible', vis: () => this.openDlg('confVis', { id: d.id }),
+          canArch: !colab && !d.arch, arch: () => this.openDlg('confArch', { id: d.id })
+        }))
+      };
+    }
+
+    /* ----- categorías ----- */
+    const nc = this.norm(s.catQ);
+    const cl = s.cats.filter((c) => (s.catEst === 'todas' || (s.catEst === 'activas') === c.activa) && (!nc || this.norm(c.nombre).indexOf(nc) >= 0));
+    const cat = {
+      q: s.catQ, setQ: (e) => this.setState({ catQ: e.target.value }), est: s.catEst, setEst: (e) => this.setState({ catEst: e.target.value }), create: () => this.openDlg('categoria', { idx: null }),
+      empty: cl.length === 0, hasRows: cl.length > 0, rango: cl.length ? 'Mostrando 1–' + cl.length + ' de ' + cl.length + ' categorías' : '',
+      rows: cl.map((c) => ({ nombre: c.nombre, estado: c.activa ? 'Activa' : 'Inactiva', badgeCls: c.activa ? 'badge b-ok' : 'badge b-off', docs: s.docs.filter((d) => d.cat === c.id).length, activa: c.activa, inactiva: !c.activa,
+        ariaEdit: 'Editar nombre de ' + c.nombre, ariaToggle: (c.activa ? 'Desactivar ' : 'Reactivar ') + c.nombre,
+        edit: () => this.openDlg('categoria', { idx: c.id }),
+        toggle: c.activa ? () => this.openDlg('confDesact', { id: c.id }) : () => { this.setState({ cats: s.cats.map((x) => x.id === c.id ? Object.assign({}, x, { activa: true }) : x) }); this.toast('ok', 'Categoría reactivada. Los documentos archivados no se restauran.'); } }))
+    };
+
+    /* ----- selección ----- */
+    const sc = s.simSel, ss = s.sel;
+    const cands = {
+      nueva: { n: 'Paola Vásconez', id: 'Cédula 1718765432', c: 'paola.vasconez@correo.example', e: 'Contratación confirmada' },
+      existente: { n: 'CARLOS   RUIZ', id: 'Cédula 0912345678', c: 'c.ruiz@correo.example', e: 'Contratación confirmada' },
+      disc: { n: 'Carlos Roberto Ríos', id: 'Cédula 0912345678', c: 'c.rios@correo.example', e: 'Contratación confirmada' },
+      noconf: { n: 'Paola Vásconez', id: 'Cédula 1718765432', c: 'paola.vasconez@correo.example', e: 'Pendiente de confirmar' },
+      invalida: { n: 'Paola Vásconez', id: '', c: 'paola.vasconez@correo.example', e: 'Contratación confirmada' },
+      fallo: { n: 'Paola Vásconez', id: 'Cédula 1718765432', c: 'paola.vasconez@correo.example', e: 'Contratación confirmada' }
+    }[sc];
+    const sfi = ss.id ? s.fichas.find((f) => f.id === ss.id) : null;
+    const openF = (id) => () => this.setState({ screen: 'detalle', detailId: id, tab: 'personal', exportSt: 'idle' });
+    const R = { show: false, style: '', title: '', text: '', hasCode: false, code: '', hasIssues: false, issues: [], actions: [] };
+    const panel = (t) => 'display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:12px;background:' + tones[t][0] + ';color:' + tones[t][1];
+    const st1 = ss.status;
+    if (st1 === 'cargando') { R.show = true; R.style = panel('info'); R.title = 'Incorporando…'; R.text = 'Estamos creando o localizando la ficha de esta persona.'; }
+    if (st1 === 'nueva') { R.show = true; R.style = panel('ok'); R.title = 'Ficha nueva incorporada'; R.text = 'Se creó la ficha con los datos de la contratación. No se creó cuenta ni vínculo laboral; registra el ingreso desde la ficha.'; R.hasCode = true; R.code = ss.id; R.actions = [{ label: 'Abrir ficha', cls: 'btn btn-p', go: openF(ss.id) }]; }
+    if (st1 === 'existente') { R.show = true; R.style = panel('ok'); R.title = 'Ficha existente vinculada'; R.text = 'La identificación y los nombres son compatibles con una ficha existente. No se sobrescribió ningún dato.'; R.hasCode = true; R.code = ss.id; R.actions = [{ label: 'Abrir ficha', cls: 'btn btn-p', go: openF(ss.id) }]; }
+    if (st1 === 'disc') { R.show = true; R.style = panel('warn'); R.title = 'Discrepancia de identidad'; R.text = 'La identificación coincide con la ficha de ' + (sfi ? sfi.nombres + ' ' + sfi.apellidos : '') + ', pero los nombres no. No se vinculó automáticamente. Revisa los datos de la contratación en Selección.'; R.actions = [{ label: 'Ver ficha existente', cls: 'btn', go: openF(ss.id) }]; }
+    if (st1 === 'noconf') { R.show = true; R.style = panel('warn'); R.title = 'Contratación no confirmada'; R.text = 'Solo se puede incorporar una ficha desde una contratación confirmada. Confirma la contratación en Selección y vuelve a intentarlo.'; }
+    if (st1 === 'invalida') { R.show = true; R.style = panel('err'); R.title = 'Datos inválidos'; R.text = 'No se pudo incorporar porque la contratación tiene datos incompletos:'; R.hasIssues = true; R.issues = ['Falta el número de identificación.']; }
+    if (st1 === 'fallo') { R.show = true; R.style = panel('err'); R.title = 'No se pudo completar la incorporación'; R.text = 'Ocurrió un fallo temporal. Reintentar no duplicará la ficha.'; R.actions = [{ label: 'Reintentar', cls: 'btn btn-p', go: () => { this.setState({ simSel: 'nueva' }); setTimeout(() => this.runSel(), 0); } }]; }
+    const sel = { cand: { estado: cands.e, badgeCls: cands.e === 'Contratación confirmada' ? 'badge b-ok' : 'badge b-warn', rows: [{ k: 'Nombre completo', v: cands.n, vStyle: '' }, { k: 'Identificación', v: cands.id || 'No registrado', vStyle: cands.id ? '' : 'color:var(--danger)' }, { k: 'Correo', v: cands.c, vStyle: '' }, { k: 'Puesto', v: 'Desarrollador de software', vStyle: '' }] }, busy: st1 === 'cargando', btnLabel: st1 === 'cargando' ? 'Incorporando…' : 'Incorporar ficha', run: () => this.runSel(), res: R };
+
+    /* ----- diálogo ----- */
+    let dlg = null;
+    if (s.dlg) dlg = this.buildDlg(s.dlg);
+
+    /* ----- controles ----- */
+    const sel2 = (id, label, key, opts, extra) => ({ id, label, value: s[key], opts: opts.map((o) => ({ v: o[0], label: o[1] })), onChange: (e) => this.setState(Object.assign({ [key]: e.target.value }, extra ? extra(e.target.value) : {})) });
+    const ctl = {
+      show: !(this.props && this.props.hideCtl), open: s.ctlOpen, toggle: () => this.setState({ ctlOpen: !s.ctlOpen }),
+      selects: [
+        { id: 'c-rol', label: 'Rol', value: s.rol, opts: [{ v: 'admin', label: 'Administrador de Talento Humano' }, { v: 'colab', label: 'Colaborador (María González)' }], onChange: (e) => { const r = e.target.value; const sc2 = r === 'admin' ? 'lista' : (perms.ficha ? 'misficha' : perms.docs ? 'misdocs' : perms.exp ? 'misexport' : 'misficha'); this.setState({ rol: r, screen: sc2, dlg: null, exportSt: 'idle', toastMsg: null }); } },
+        sel2('c-lista', 'Listado de fichas', 'simLista', [['datos', 'Con datos'], ['carga', 'Cargando'], ['vacio', 'Sin fichas'], ['error', 'Error de carga']]),
+        sel2('c-save', 'Próximo guardado de ficha', 'simSave', [['normal', 'Correcto'], ['err', 'Error técnico recuperable'], ['conc', 'Edición concurrente']]),
+        sel2('c-ing', 'Próximo registro de ingreso', 'simIngreso', [['normal', 'Correcto'], ['ocupada', 'Posición ocupada'], ['incompat', 'Vínculo incompatible'], ['dep', 'Dependencia no disponible']]),
+        sel2('c-exp', 'Próxima exportación', 'simExport', [['normal', 'Correcta'], ['fallo', 'Falla'], ['denegado', 'Permiso denegado']]),
+        sel2('c-up', 'Próxima carga de documento', 'simUpload', [['normal', 'Correcta'], ['catGone', 'Categoría desactivada antes de confirmar'], ['err', 'Error de carga']]),
+        { id: 'c-file', label: 'Archivo de ejemplo (en «Subir documento»)', value: s.simFile, opts: [{ v: 'none', label: 'Elegir con el selector' }, { v: 'ok', label: 'informe-2026.pdf · 2,4 MB' }, { v: 'big', label: 'archivo-grande.pdf · 12 MB' }, { v: 'png', label: 'foto.png · formato no válido' }, { v: 'zero', label: 'vacio.pdf · 0 bytes' }], onChange: (e) => { const k = e.target.value; const m = { ok: { name: 'informe-2026.pdf', bytes: 2400000, type: 'application/pdf' }, big: { name: 'archivo-grande.pdf', bytes: 12000000, type: 'application/pdf' }, png: { name: 'foto.png', bytes: 340000, type: 'image/png' }, zero: { name: 'vacio.pdf', bytes: 0, type: 'application/pdf' } }[k]; const d = s.dlg; const p = { simFile: k }; if (d && d.kind === 'doc' && m) p.dlg = Object.assign({}, d, { v: Object.assign({}, d.v, { file: m }), err: Object.assign({}, d.err, { file: null }) }); this.setState(p); } },
+        sel2('c-sel', 'Escenario de Selección', 'simSel', [['nueva', 'Ficha nueva'], ['existente', 'Ficha existente compatible'], ['disc', 'Discrepancia de identidad'], ['noconf', 'Contratación no confirmada'], ['invalida', 'Datos inválidos'], ['fallo', 'Fallo transitorio']], () => ({ sel: { status: 'idle' } }))
+      ],
+      perms: [['ficha', 'Consultar su ficha'], ['docs', 'Consultar sus documentos'], ['exp', 'Exportar su ficha']].map((p) => ({ label: p[1], checked: !!perms[p[0]], onChange: (e) => this.setState({ perms: Object.assign({}, perms, { [p[0]]: e.target.checked }) }) })),
+      dep: s.simDep, setDep: (e) => this.setState({ simDep: e.target.checked }),
+      goSel: () => this.setState({ rol: 'admin', screen: 'seleccion', dlg: null, sel: { status: 'idle' } }),
+      reset: () => { const p = this.seed({}); p.ctlOpen = true; p.simSave = 'normal'; this.setState(p); }
+    };
+
+    return {
+      user, navItems, hasToast: !!tm, toast: tm ? { text: tm.text, style: boxStyle(tm.tone) } : { text: '', style: '' }, closeToast: () => this.setState({ toastMsg: null }),
+      isLista, newFicha: () => this.openDlg('ficha', { mode: 'new' }, 'form'),
+      q: s.q, setQ: (e) => this.setState({ q: e.target.value, page: 1 }), fEstado: s.fEstado, setEstado: (e) => this.setState({ fEstado: e.target.value, page: 1 }), fUnidad: s.fUnidad, setUnidad: (e) => this.setState({ fUnidad: e.target.value, page: 1 }),
+      estadoOpts, unidadOpts, noFiltros: !(s.q || s.fEstado || s.fUnidad), clearFilters: () => this.setState({ q: '', fEstado: '', fUnidad: '', page: 1 }),
+      isError, isLoading, skelRows: [1, 2, 3, 4, 5, 6], isEmptyAll: !isLoading && !isError && (simVacio || vacioReal), noMatch: showData && total === 0, hasRows: showData && total > 0, rows,
+      rango: total ? 'Mostrando ' + ((page - 1) * 20 + 1) + '–' + Math.min(page * 20, total) + ' de ' + total + ' colaboradores' : '', pageLabel: 'Página ' + page + ' de ' + pages,
+      noPrev: page <= 1, noNext: page >= pages, prev: () => this.setState({ page: page - 1 }), next: () => this.setState({ page: page + 1 }),
+      retryLista: () => { this.setState({ simLista: 'carga' }); setTimeout(() => this.setState({ simLista: 'datos' }), 900); },
+      isDetalle, det, tabs, tabPersonal: isDetalle && tabEff === 'personal', tabDes: isDetalle && tabEff === 'desarrollo', tabDocs: isDetalle && tabEff === 'docs', cards, des, dc, exb, retryDep: () => this.setState({ simDep: false }),
+      isCategorias: screen === 'categorias', cat,
+      isSeleccion: screen === 'seleccion', sel,
+      isMisExport: screen === 'misexport', isDenegado: screen === 'denegado', isSinAcceso: screen === 'sinacceso',
+      hasDlg: !!dlg, dlg: dlg || { wrapStyle: '', panelStyle: '', title: '', hasSub: false, sub: '', hasBody: false, body: '', hasNotice: false, notice: { style: '', title: '', text: '', actions: [] }, sections: [], hasInfo: false, info: [], infoTitle: '', actions: [], role: 'dialog', modal: true, submit: () => {} },
+      ctl
+    };
+  }
+
+  buildDlg(d) {
+    const s = this.state, v = d.v, err = d.err; const self = this;
+    const tones = { ok: ['#E3F2F0', '#0B5A55'], err: ['#FDECEA', '#B42318'], info: ['#E8F0FA', '#1D4E89'], warn: ['#FFF4E0', '#8A4B00'] };
+    const nstyle = (t) => 'display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:10px;font-size:14px;background:' + tones[t][0] + ';color:' + tones[t][1];
+    const F = (key, label, o) => Object.assign({ key, label, type: 'text', req: false, hint: '', wide: false, opts: [], kind: 'input' }, o || {});
+    const sections = []; let title = '', sub = '', body = '', notice = null, info = [], infoTitle = '', actions = [], page = false, narrow = false, hideSubmit = false;
+    const cancel = { type: 'button', cls: 'btn', label: 'Cancelar', go: () => this.closeDlg(), disabled: false };
+    const primary = (label, disabled, cls) => ({ type: 'submit', cls: cls || 'btn btn-p', label, go: () => {}, disabled: !!disabled });
+    const N = (t, ti, tx, acts) => ({ style: nstyle(t), title: ti, text: tx, actions: acts || [] });
+    const busy = ['saving', 'confirmando', 'cargando'].indexOf(d.status) >= 0;
+    if (d.status === 'invalid') notice = N('err', 'Revisa los campos marcados', 'Hay campos con errores. Corrígelos para continuar; tus valores se conservaron.');
+
+    if (d.kind === 'ficha') {
+      page = true; const edit = d.ctx.mode === 'edit'; const ficha = edit ? s.fichas.find((f) => f.id === d.ctx.id) : null;
+      title = edit ? 'Editar datos de ' + ficha.nombres + ' ' + ficha.apellidos : 'Nueva ficha';
+      sub = edit ? 'Edita los datos personales. La asignación organizacional y la situación laboral no se modifican aquí.' : 'Crear la ficha no crea una cuenta de acceso ni un vínculo laboral.';
+      sections.push({ title: 'Identificación', fields: [
+        F('codigo', 'Código', { kind: 'read', value: edit ? ficha.id : 'El código se asignará al guardar' }),
+        F('tipoId', 'Tipo de identificación', { kind: 'select', req: true, opts: [['Cédula', 'Cédula'], ['Pasaporte', 'Pasaporte'], ['Otro', 'Otro']] }),
+        F('numId', 'Número de identificación', { req: true, hint: 'Se conservan los ceros iniciales. Máximo 50 caracteres.' }),
+        F('nombres', 'Nombres', { req: true }), F('apellidos', 'Apellidos', { req: true })
+      ] });
+      sections.push({ title: 'Datos personales y contacto', fields: [
+        F('nacimiento', 'Fecha de nacimiento', { type: 'date' }), F('nacionalidad', 'Nacionalidad'), F('genero', 'Género'), F('estadoCivil', 'Estado civil'), F('hijos', 'Número de hijos', { type: 'number', min: '0' }),
+        F('telefono', 'Teléfono', { type: 'tel', hint: 'Admite prefijo internacional, por ejemplo +593.' }), F('correo', 'Correo electrónico', { type: 'email' }),
+        F('direccion', 'Dirección', { kind: 'area', wide: true })
+      ] });
+      sections.push({ title: 'Contacto de emergencia', desc: 'Opcional. Si agregas un contacto, el nombre y el teléfono son obligatorios.', fields: [F('ecNombre', 'Nombre del contacto'), F('ecRel', 'Relación'), F('ecTel', 'Teléfono del contacto', { type: 'tel' })] });
+      if (d.status === 'dup') { const x = s.fichas.find((f) => f.id === d.note); notice = N('err', 'Ya existe una ficha con esta identificación', x.id + ' · ' + x.nombres + ' ' + x.apellidos + '. No se puede crear un duplicado.', [{ label: 'Abrir ficha existente', go: () => this.setState({ dlg: null, screen: 'detalle', detailId: x.id, tab: 'personal' }) }]); }
+      if (d.status === 'saving') notice = N('info', 'Guardando…', 'Estamos guardando la ficha.');
+      if (d.status === 'err') notice = N('err', 'No se pudo guardar', 'Ocurrió un problema técnico. Tus datos se conservaron en el formulario; puedes reintentar.');
+      if (d.status === 'conc') notice = N('warn', 'Los datos de esta ficha cambiaron', 'Otra persona modificó la ficha mientras la editabas. Tus cambios no se guardaron y siguen en el formulario. Recarga los datos actuales para continuar.', [{ label: 'Recargar datos', go: () => this.reloadConc() }]);
+      if (d.status === 'reloaded') notice = N('ok', 'Datos recargados', 'Se actualizaron los campos modificados por otra persona (por ejemplo, el teléfono) y se conservaron tus cambios. Revisa y guarda de nuevo.');
+      actions = [cancel, primary(d.status === 'saving' ? 'Guardando…' : 'Guardar ficha', busy || d.status === 'dup' || d.status === 'conc')];
+    }
+    if (d.kind === 'ingreso') {
+      const f = s.fichas.find((x) => x.id === d.ctx.id); const re = f.vinculos.length > 0;
+      title = re ? 'Registrar reingreso' : 'Registrar ingreso'; sub = f.nombres + ' ' + f.apellidos + ' · ' + f.id;
+      body = (re ? 'Un reingreso conserva la ficha y crea un nuevo vínculo laboral. ' : '') + 'Registrar el ingreso no crea ni reactiva cuentas de acceso.';
+      const avail = this.availablePos(s, f.id, v.fecha || this.HOY);
+      sections.push({ title: '', fields: [
+        F('fecha', 'Fecha efectiva de ingreso', { type: 'date', req: true, hint: 'Admite fechas pasadas, actuales y futuras. El día de ingreso está incluido en el periodo.' }),
+        F('contrato', 'Tipo de contrato', { kind: 'select', req: true, opts: [['', 'Selecciona un tipo'], ['Indefinido', 'Indefinido'], ['Plazo fijo', 'Plazo fijo'], ['Servicios ocasionales', 'Servicios ocasionales'], ['Pasantía', 'Pasantía']] }),
+        F('pos', 'Posición', { kind: 'select', req: true, wide: true, hint: avail.length ? 'Se muestran las posiciones disponibles desde la fecha elegida.' : 'No hay posiciones disponibles para esa fecha.', opts: [['', 'Selecciona una posición']].concat(avail.map((p) => [p.id, p.puesto + ' · ' + p.unidad + ' · ' + p.id])) })
+      ] });
+      const pp = v.pos ? this.pos(s, v.pos) : null; infoTitle = 'Derivado de la posición'; info = pp ? [{ k: 'Puesto', v: pp.puesto }, { k: 'Unidad organizacional', v: pp.unidad }, { k: 'Jefatura', v: pp.jefe }] : [{ k: 'Puesto', v: 'Selecciona una posición' }, { k: 'Unidad organizacional', v: '—' }, { k: 'Jefatura', v: '—' }];
+      if (d.note && d.status === 'idle') notice = N('warn', 'Posición actualizada', d.note);
+      if (d.status === 'confirmando') notice = N('info', 'Confirmando…', 'Verificando la disponibilidad y registrando el vínculo.');
+      if (d.status === 'ocupada') notice = N('err', 'Posición ocupada', 'La posición seleccionada ya no está disponible para esa fecha. Elige otra posición; tus demás valores se conservaron.');
+      if (d.status === 'incompat') notice = N('err', 'Vínculo incompatible', 'Esta persona ya tiene un vínculo vigente o programado que se superpone con la fecha elegida. Una persona no puede tener vínculos superpuestos.');
+      if (d.status === 'dep') notice = N('warn', 'Dependencia no disponible', 'No se pudo verificar la disponibilidad de la posición. Tus valores se conservaron; reintenta en unos momentos.');
+      if (d.status === 'ok') {
+        const hoy = v.fecha <= this.HOY;
+        notice = N('ok', 'Ingreso registrado', hoy ? 'El vínculo comenzó el ' + this.fmt(v.fecha) + '. La ficha ahora está «' + d.note + '».' : 'El ingreso quedó programado para el ' + this.fmt(v.fecha) + '. Hasta esa fecha la ficha sigue «' + d.note + '».');
+        actions = [{ type: 'submit', cls: 'btn btn-p', label: 'Cerrar', go: () => {}, disabled: false }];
+      } else actions = [cancel, primary(d.status === 'confirmando' ? 'Confirmando…' : (d.status === 'dep' ? 'Reintentar' : 'Confirmar ingreso'), busy)];
+    }
+    if (d.kind === 'formacion') {
+      title = d.ctx.idx != null ? 'Editar formación académica' : 'Agregar formación académica'; sub = 'Se guarda de forma independiente de las demás secciones.';
+      sections.push({ title: '', fields: [F('nivel', 'Nivel', { req: true }), F('estado', 'Estado', { kind: 'select', req: true, opts: [['', 'Selecciona un estado'], ['En curso', 'En curso'], ['Completada', 'Completada'], ['Incompleta', 'Incompleta']] }), F('titulo', 'Título o programa', { req: true, wide: true }), F('institucion', 'Institución', { req: true, wide: true }), F('inicio', 'Fecha de inicio', { type: 'date' }), F('fin', 'Fecha de finalización', { type: 'date' }), F('obs', 'Observaciones', { kind: 'area', wide: true })] });
+      actions = [cancel, primary('Guardar formación')];
+    }
+    if (d.kind === 'experiencia') {
+      title = d.ctx.idx != null ? 'Editar experiencia anterior' : 'Agregar experiencia anterior'; sub = 'Experiencia externa. Si dejas vacía la fecha final, se mostrará «No registrado».';
+      sections.push({ title: '', fields: [F('org', 'Organización', { req: true }), F('cargo', 'Cargo', { req: true }), F('inicio', 'Fecha de inicio', { type: 'date', req: true }), F('fin', 'Fecha final', { type: 'date' }), F('funciones', 'Funciones', { kind: 'area', wide: true }), F('obs', 'Observaciones', { kind: 'area', wide: true })] });
+      actions = [cancel, primary('Guardar experiencia')];
+    }
+    if (d.kind === 'movilidad') {
+      narrow = true; title = 'Actualizar disponibilidad para movilidad'; sub = 'Estar disponible no significa que exista un traslado aprobado.';
+      sections.push({ title: '', fields: [F('estado', 'Disponibilidad', { kind: 'radio', opts: [['Disponible', 'Disponible'], ['No disponible', 'No disponible'], ['No informada', 'No informada']], wide: true }), F('obs', 'Observaciones', { kind: 'area', wide: true })] });
+      actions = [cancel, primary('Guardar disponibilidad')];
+    }
+    if (d.kind === 'categoria') {
+      narrow = true; title = d.ctx.idx ? 'Editar nombre de la categoría' : 'Nueva categoría'; sub = d.ctx.idx ? '' : 'La categoría nace activa.';
+      sections.push({ title: '', fields: [F('nombre', 'Nombre', { req: true, wide: true, hint: 'Máximo 100 caracteres. No se distinguen mayúsculas ni espacios exteriores.' })] });
+      actions = [cancel, primary(d.ctx.idx ? 'Guardar nombre' : 'Crear categoría')];
+    }
+    if (d.kind === 'doc') {
+      title = 'Subir documento'; const act = s.cats.filter((c) => c.activa); sub = 'Se agregará a la ficha de ' + (s.fichas.find((f) => f.id === d.ctx.id) || {}).nombres + '. No se puede editar después de cargarlo.';
+      if (act.length === 0) { notice = N('warn', 'No hay categorías activas', 'Para subir un documento necesitas al menos una categoría activa.', [{ label: 'Ir a categorías documentales', go: () => this.setState({ dlg: null, screen: 'categorias' }) }]); actions = [cancel]; }
+      else {
+        sections.push({ title: '', fields: [F('titulo', 'Título', { req: true, wide: true }), F('cat', 'Categoría', { kind: 'select', req: true, wide: true, opts: [['', 'Selecciona una categoría activa']].concat(act.map((c) => [c.id, c.nombre])) }), F('file', 'Archivo', { kind: 'file', req: true, wide: true, hint: 'PDF, máximo 10 MB' }), F('visible', 'Visible para el colaborador', { kind: 'check', wide: true, hint: 'Si no la marcas, el documento será privado y solo lo verá Talento Humano.' })] });
+        if (d.status === 'cargando') notice = N('info', 'Cargando documento…', 'No cierres esta ventana.');
+        if (d.status === 'catGone') notice = N('warn', 'La categoría se desactivó', 'La categoría elegida dejó de estar activa antes de confirmar. Selecciona otra; el resto del formulario se conservó.');
+        if (d.status === 'err') notice = N('err', 'No se pudo cargar el documento', 'Ocurrió un problema durante la carga. El formulario se conservó; puedes reintentar.');
+        actions = [cancel, primary(d.status === 'cargando' ? 'Cargando…' : (d.status === 'err' ? 'Reintentar' : 'Cargar documento'), busy)];
+      }
+    }
+    if (d.kind === 'confVis') {
+      narrow = true; const x = s.docs.find((q) => q.id === d.ctx.id); title = x.visible ? 'Hacer privado el documento' : 'Hacer visible el documento';
+      body = x.visible ? '«' + x.titulo + '» dejará de ser visible para el colaborador. Solo lo verá Talento Humano.' : '«' + x.titulo + '» será visible para el colaborador en «Mis documentos», si tiene el permiso documental.';
+      actions = [cancel, primary('Guardar cambio de visibilidad')];
+    }
+    if (d.kind === 'confArch') {
+      narrow = true; const x = s.docs.find((q) => q.id === d.ctx.id); title = 'Archivar documento';
+      body = '«' + x.titulo + '» se conservará y podrás consultarlo en Archivados, pero el colaborador perderá el acceso. No se puede restaurar ni eliminar.';
+      actions = [cancel, primary('Archivar documento', false, 'btn btn-d')];
+    }
+    if (d.kind === 'confDesact') {
+      narrow = true; const x = s.cats.find((q) => q.id === d.ctx.id); title = 'Desactivar «' + x.nombre + '»';
+      body = 'La categoría dejará de estar disponible para nuevas cargas. Sus documentos se conservarán';
+      actions = [cancel, primary('Desactivar categoría', false, 'btn btn-d')];
+    }
+
+    const fldView = (f) => {
+      const k = f.key; const e = err[k]; const val = f.kind === 'read' ? f.value : v[k];
+      const o = f.opts || [];
+      const common = { id: 'f-' + k, descId: 'd-' + k, label: f.label, req: f.req, hint: f.hint, cell: f.wide ? 'grid-column: 1 / -1; min-width: 0' : 'min-width: 0', cls: 'inp' + (e ? ' bad' : ''), invalid: !!e, error: e || '', hasError: !!e, showHint: !e && !!f.hint && f.kind !== 'check', value: val == null ? '' : val, onChange: this.setVal(k), type: f.type, min: f.min || '' };
+      return Object.assign(common, {
+        isCheck: f.kind === 'check', checked: !!v[k], isRadio: f.kind === 'radio', isLabeled: f.kind !== 'check' && f.kind !== 'radio',
+        isInput: f.kind === 'input', isSelect: f.kind === 'select', isArea: f.kind === 'area', isFile: f.kind === 'file', isRead: f.kind === 'read',
+        fileInfo: f.kind === 'file' ? (v[k] ? v[k].name + ' · ' + this.size(v[k].bytes) : 'Ningún archivo seleccionado') : '',
+        opts: f.kind === 'radio' ? o.map((x) => ({ label: x[1], checked: v[k] === x[0], pick: () => this.setVal(k)({ target: { value: x[0], type: 'radio' } }) })) : o.map((x) => ({ v: x[0], label: x[1] }))
+      });
+    };
+    return {
+      wrapStyle: page ? 'display:block' : 'position:fixed;inset:0;z-index:60;background:rgba(18,23,29,.55);display:flex;align-items:center;justify-content:center;padding:16px',
+      panelStyle: (page ? 'max-width:960px;margin:0 auto;' : 'width:100%;max-width:' + (narrow ? '520px' : '720px') + ';max-height:calc(100vh - 32px);overflow:auto;') + 'background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(18,23,29,.2);padding:24px;display:flex;flex-direction:column;gap:20px',
+      role: page ? 'region' : 'dialog', modal: !page, submit: (e) => { if (e && e.preventDefault) e.preventDefault(); this.submit(); },
+      title, hasSub: !!sub, sub, hasBody: !!body, body, hasNotice: !!notice, notice: notice || { style: '', title: '', text: '', actions: [] },
+      sections: sections.map((sc) => ({ hasTitle: !!sc.title, title: sc.title, hasDesc: !!sc.desc, desc: sc.desc || '', fields: sc.fields.map(fldView) })),
+      hasInfo: info.length > 0, info, infoTitle, actions: actions.map((a) => Object.assign({}, a))
+    };
+  }
+}
+
+window.__boot(Component, {preset:"det-des-completo"});
+</script>
+</body>
+</html>

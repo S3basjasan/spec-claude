@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null getCuentaDeUsuario(int $usuarioId) {tenant_id, colaborador_id} de la ficha asociada a la cuenta del usuario, o null si no tiene.
  * @method static array posicionesConAsignacionVigenteOFutura(array $posicionIds, string $fecha) Posiciones con asignación vigente o futura en la fecha.
  * @method static array registrarFicha(int $tenantId, int $actorId, string $claveDeOperacion, array $datos) Alta idempotente (GP-07) con las mismas reglas del alta manual.
+ * @method static array getDesarrollo(int $tenantId, array $colaboradorIds) Formación, experiencia y movilidad por colaborador (GP-06); lanza InformacionNoDisponible si la lectura falla.
  *
  * @see PersonalService
  */

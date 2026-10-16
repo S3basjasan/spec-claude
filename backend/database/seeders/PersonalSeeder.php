@@ -6,6 +6,8 @@ use App\Modules\GestionPersonal\Domain\Services\NormalizadorDeTexto;
 use App\Modules\GestionPersonal\Domain\ValueObjects\CodigoColaborador;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorCuentaModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ExperienciaAnteriorModel;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\FormacionAcademicaModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Database\Seeder;
@@ -44,6 +46,8 @@ class PersonalSeeder extends Seeder
         $this->ficha(1, 'Cedula', '0000123456', 'Carla', 'Vera Lema', (int) $admin);
         $this->ficha(2, 'Cedula', '0102030405', 'Rosa', 'Chávez Díaz', (int) $admin);
         $this->ficha(2, 'Pasaporte', 'ZX900', 'Pablo', 'Rivas Ortiz', (int) $admin);
+
+        $this->desarrollo((int) $admin, $ana, $luis, $maria);
 
         $this->acceso($usuario, $ana, true);
         $this->acceso($colaborador2, $luis, true);
@@ -112,5 +116,52 @@ class PersonalSeeder extends Seeder
                 'puede_exportar' => false,
             ],
         );
+    }
+
+    /** Formación, experiencia y movilidad de ejemplo (GP-03), idempotente por ficha. */
+    private function desarrollo(int $actor, int $ana, int $luis, int $maria): void
+    {
+        if (FormacionAcademicaModel::query()->where('colaborador_id', $ana)->exists()) {
+            return;
+        }
+
+        $comun = ['tenant_id' => 1, 'version' => 1, 'created_by' => $actor, 'updated_by' => $actor];
+
+        FormacionAcademicaModel::query()->create($comun + [
+            'colaborador_id' => $ana, 'nivel' => 'Tercer nivel', 'titulo_programa' => 'Ingeniería de Sistemas',
+            'institucion' => 'Escuela Politécnica Nacional', 'estado' => 'Completada',
+            'fecha_inicio' => '2008-10-01', 'fecha_finalizacion' => '2014-07-15',
+        ]);
+        FormacionAcademicaModel::query()->create($comun + [
+            'colaborador_id' => $ana, 'nivel' => 'Cuarto nivel', 'titulo_programa' => 'Maestría en Gestión del Talento Humano',
+            'institucion' => 'Universidad Andina', 'estado' => 'EnCurso', 'fecha_inicio' => '2024-03-01',
+        ]);
+        FormacionAcademicaModel::query()->create($comun + [
+            'colaborador_id' => $luis, 'nivel' => 'Tecnología', 'titulo_programa' => 'Tecnología en Electrónica',
+            'institucion' => 'Instituto Superior', 'estado' => 'Incompleta', 'observaciones' => 'Abandonó en el quinto semestre.',
+        ]);
+
+        ExperienciaAnteriorModel::query()->create($comun + [
+            'colaborador_id' => $ana, 'organizacion' => 'Consultora Andina', 'cargo' => 'Analista de Procesos',
+            'fecha_inicio' => '2014-09-01', 'fecha_finalizacion' => '2019-12-31', 'funciones' => 'Levantamiento y mejora de procesos.',
+        ]);
+        ExperienciaAnteriorModel::query()->create($comun + [
+            'colaborador_id' => $ana, 'organizacion' => 'Proyectos Libres', 'cargo' => 'Consultor independiente',
+            'fecha_inicio' => '2018-06-01', 'fecha_finalizacion' => '2020-06-30',
+        ]);
+        ExperienciaAnteriorModel::query()->create($comun + [
+            'colaborador_id' => $luis, 'organizacion' => 'Industrias del Sur', 'cargo' => 'Técnico', 'fecha_inicio' => '2016-02-01',
+        ]);
+
+        $ahora = now();
+        ColaboradorModel::query()->whereKey($ana)->update([
+            'movilidad_estado' => 'Disponible', 'movilidad_observaciones' => 'Disponible para traslado a otra ciudad.',
+            'movilidad_version' => 2, 'movilidad_actualizada_at' => $ahora, 'movilidad_actualizada_por' => $actor,
+        ]);
+        ColaboradorModel::query()->whereKey($luis)->update([
+            'movilidad_estado' => 'NoDisponible', 'movilidad_version' => 2,
+            'movilidad_actualizada_at' => $ahora, 'movilidad_actualizada_por' => $actor,
+        ]);
+        // $maria permanece en NoInformada (valor inicial).
     }
 }

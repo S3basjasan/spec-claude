@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { ColaboradorDetalle } from '../api'
+import { SeccionDesarrollo } from '../../desarrollo/components/SeccionDesarrollo'
 import { fichasText } from '../text'
 import { FichaDatos } from './FichaDatos'
 
@@ -10,13 +11,15 @@ type Seccion = 'personal' | 'desarrollo' | 'documentos'
 interface FichaContenidoProps {
   ficha: ColaboradorDetalle
   onReintentar: () => void
+  /** Vista propia (Mi ficha): el desarrollo se consulta por `/api/mi-ficha` y es de solo lectura. */
+  esMiFicha?: boolean
 }
 
 /**
  * Secciones de la ficha: «Personal y puesto» siempre; Desarrollo y Documentos solo cuando su
- * funcionalidad está instalada y autorizada (`capacidades`). Hoy el servidor las devuelve en false.
+ * funcionalidad está instalada y autorizada (`capacidades`). El panel se monta solo al activar su pestaña.
  */
-export function FichaContenido({ ficha, onReintentar }: FichaContenidoProps) {
+export function FichaContenido({ ficha, onReintentar, esMiFicha = false }: FichaContenidoProps) {
   const [activa, setActiva] = useState<Seccion>('personal')
 
   const disponibles: { id: Seccion; label: string }[] = [{ id: 'personal', label: tabs.personal }]
@@ -49,6 +52,7 @@ export function FichaContenido({ ficha, onReintentar }: FichaContenidoProps) {
       </div>
       <div id={`panel-${activa}`} role="tabpanel" aria-labelledby={`tab-${activa}`}>
         {activa === 'personal' ? <FichaDatos ficha={ficha} onReintentar={onReintentar} /> : null}
+        {activa === 'desarrollo' ? <SeccionDesarrollo colaboradorId={esMiFicha ? null : ficha.id} /> : null}
       </div>
     </div>
   )

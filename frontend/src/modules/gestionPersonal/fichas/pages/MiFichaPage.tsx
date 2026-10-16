@@ -59,7 +59,7 @@ export function MiFichaPage() {
           <span className="font-semibold">{ficha.codigo}</span>
           {estado !== null && <Badge variant="neutral">{estado}</Badge>}
         </p>
-        <FichaContenido ficha={ficha} onReintentar={() => void consulta.refetch()} />
+        <FichaContenido ficha={ficha} esMiFicha onReintentar={() => void consulta.refetch()} />
       </>
     )
   }

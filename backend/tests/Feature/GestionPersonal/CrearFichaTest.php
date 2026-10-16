@@ -22,7 +22,7 @@ it('crea una ficha mínima con código, versión 1, estado Sin vínculo vigente 
         ->and($respuesta->json('data.laboral.estado'))->toBe('SinVinculoVigente')
         ->and($respuesta->json('data.laboral.puesto'))->toBeNull()
         ->and($respuesta->json('data.trayectoria.hechos'))->toBe([])
-        ->and($respuesta->json('data.capacidades'))->toBe(['desarrollo' => false, 'documentos' => false, 'registrar_ingreso' => true, 'exportar' => false])
+        ->and($respuesta->json('data.capacidades'))->toBe(['desarrollo' => true, 'documentos' => false, 'registrar_ingreso' => true, 'exportar' => false])
         ->and($respuesta->json('data.acciones.editar'))->toBeTrue()
         ->and($ficha->tenant_id)->toBe(1)
         ->and($ficha->created_by)->toBe($admin->id)
@@ -135,4 +135,13 @@ it('no deja una ficha creada si el guardado falla por validación del dominio', 
     crearFichaApi($this, datosFicha(['fecha_nacimiento' => '2999-01-01']))->assertUnprocessable();
 
     expect(ColaboradorModel::query()->count())->toBe(0);
+});
+
+it('conserva Desarrollo al deshabilitar ingresos en la configuración', function () {
+    actuarComoAdminDeTenant();
+    config(['hrms.gestion_personal.ingresos_habilitados' => false]);
+
+    crearFichaApi($this, datosFicha())->assertCreated()
+        ->assertJsonPath('data.capacidades.desarrollo', true)
+        ->assertJsonPath('data.capacidades.registrar_ingreso', false);
 });
