@@ -2,16 +2,20 @@
 
 namespace App\Modules\Desarrollo\Application\Services;
 
+use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
 use App\Modules\Desarrollo\Domain\ValueObjects\FiltroDnf;
 use App\Modules\Desarrollo\Domain\ValueObjects\PrioridadBrecha;
 use App\Modules\Desarrollo\Domain\ValueObjects\RecursoFormativo;
 
 /**
  * Servicio inter-módulos del módulo Desarrollo (detrás de DesarrolloFacade). Solo lectura: ningún módulo
- * consumidor puede modificar asociaciones. Ver specs/005-catalogo-formativo/contracts/desarrollo-puertos.md.
+ * consumidor puede modificar asociaciones. Ver specs/005-catalogo-formativo/contracts/desarrollo-puertos.md. La única
+ * escritura es `crearBorradorDesdeDnf` (feature 013), que solo crea un plan en Borrador; ver
+ * specs/013-plan-formacion-anual/contracts/plan-puertos-y-facades.md.
  */
 class DesarrolloService
 {
@@ -19,7 +23,41 @@ class DesarrolloService
         private readonly CatalogoFormativoRepositoryInterface $repositorio,
         private readonly ObtenerBrechasActivas $brechasActivas,
         private readonly DnfRepositoryInterface $dnf,
+        private readonly PlanRepositoryInterface $planes,
+        private readonly CrearBorradorDesdeDnf $crearBorrador,
     ) {}
+
+    /**
+     * Crea un plan en Borrador del año actual a partir de las brechas de una DNF (una acción por competencia con
+     * brecha y los colaboradores con brecha como participantes). Devuelve el id del plan.
+     *
+     * @param  list<array{colaborador_id: int, competencia_id: int}>  $brechas
+     */
+    public function crearBorradorDesdeDnf(int $tenantId, int $actorId, int $dnfId, array $brechas): int
+    {
+        return $this->crearBorrador->ejecutar($tenantId, $actorId, $dnfId, $brechas);
+    }
+
+    /**
+     * Acciones no canceladas de los planes en Ejecutando con sus participantes (para Actividades Formativas). Solo lectura.
+     *
+     * @return list<array{accion_id: int, plan_id: int, nombre: string, tipo: string|null, fecha_inicio: string|null, fecha_fin: string|null, participantes: list<int>}>
+     */
+    public function getAccionesDePlanesEjecutando(int $tenantId): array
+    {
+        return $this->planes->accionesDePlanesEjecutando($tenantId);
+    }
+
+    /**
+     * Planes con sus acciones, horas, costos y estados (para Reportes). Filtros opcionales: anio, estado, plan_id. Solo lectura.
+     *
+     * @param  array{anio?: int, estado?: string, plan_id?: int}  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function getPlanesYAcciones(int $tenantId, array $filtros = []): array
+    {
+        return $this->planes->planesConAcciones($tenantId, $filtros);
+    }
 
     /**
      * Oferta formativa disponible de una competencia (cursos y micro-contenidos no archivados).

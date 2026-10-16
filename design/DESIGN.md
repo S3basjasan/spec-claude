@@ -37,7 +37,8 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 | `--danger` | `#B42318` | `#FF8A80` | Eliminar, errores |
 | `--dangersoft` | `#FDECEA` | `#3A1B1A` | Fondo de alertas de error |
 | `--ondanger` | `#FFFFFF` | `#2A0B09` | Texto sobre `--danger` |
-| `--warning` | `#B54708` | `#F5B454` | Advertencias que no son errores (p. ej. el ícono "No sigue la cadena"); contraste ≥ 4.5:1 sobre `--surface` |
+| `--warning` | `#B54708` | `#F5B454` | Advertencias que no son errores (p. ej. el ícono "No sigue la cadena") y el estado **Vacante**; contraste ≥ 4.5:1 sobre `--surface` y sobre `--warningsoft` |
+| `--warningsoft` | `#FFF3E0` | `#3A2A10` | Fondo del Badge **Vacante** (variante de advertencia) |
 
 **Colores semánticos de estado** *(añadidos por la feature 006, DNF; valores tomados de `DNFAdmin.dc.html`)*. Se usan en los Badges de prioridad y estado, siempre con texto, nunca solo con color:
 
@@ -49,6 +50,19 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 | `--infosoft` | `#E4EDFB` | `#172A4A` | Fondo informativo |
 | `--neutral` | `#3B4654` | `#B8C2CD` | Texto neutro sobre `--neutralsoft` (prioridad Baja, Sin evaluación) |
 | `--neutralsoft` | `#ECEEF1` | `#232B34` | Fondo neutro |
+
+**Colores por tipo de acción formativa** *(añadidos por la feature 013, Plan de formación anual; valores de `PlanAnualAdmin.dc.html`)*. Los tipos Presencial, Virtual, E-learning y OJT reutilizan tokens existentes; Codesarrollo y Mentoring añaden dos pares. Siempre llevan el nombre del tipo como texto:
+
+| Tipo | Texto / fondo (claro) | Texto / fondo (oscuro) | Tokens |
+|---|---|---|---|
+| Presencial | `#0B5A55` / `#E3F2F0` | `#7FE0D6` / `#12302D` | `--accent` / `--soft` |
+| Virtual | `#1F4E9C` / `#E4EDFB` | `#9DBEF5` / `#172A4A` | `--info` / `--infosoft` |
+| E-learning | `#8A4B0B` / `#FDEFD9` | `#F2C27A` / `#3A2A12` | `--warn` / `--warnsoft` |
+| OJT | `#3B4654` / `#ECEEF1` | `#B8C2CD` / `#232B34` | `--neutral` / `--neutralsoft` |
+| Codesarrollo | `#5B2E91` / `#F0E7FA` | `#CDA9F2` / `#2C1D44` | `--violet` / `--violetsoft` *(nuevos)* |
+| Mentoring | `#9C2250` / `#FBE6EC` | `#F2A6C0` / `#40182A` | `--rose` / `--rosesoft` *(nuevos)* |
+
+**Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
 
@@ -127,7 +141,7 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Input / Select / Textarea** | Alto 44px (textarea según filas), padding 10–12px, radio 8, borde `--input-border`, fondo `--surface`, 15px. Error: borde `--danger` + `aria-invalid="true"`. |
 | **FormField** | Label arriba (14px, 600), control, y debajo ayuda (13px `--muted`) o error (13px `--danger`, enlazado con `aria-describedby`). |
 | **SearchInput** | Input con icono de lupa a la izquierda (padding-left 38px), `type="search"`, label oculto visualmente. |
-| **Badge** | Píldora, fondo `--soft`, texto `--accent`, 13px, 600, padding 3px 10px. Variante **neutra** para estados inactivos: fondo `--border`, texto `--muted` (contraste ≥ 4.5:1 en ambos temas). Un estado se muestra siempre con texto, nunca solo con color. |
+| **Badge** | Píldora, fondo `--soft`, texto `--accent`, 13px, 600, padding 3px 10px. Variante **neutra** para estados inactivos: fondo `--border`, texto `--muted` (contraste ≥ 4.5:1 en ambos temas). Variante **advertencia** (estado **Vacante** de una posición): fondo `--warningsoft`, texto `--warning`. Variante **peligro** (estado **Suprimida**): fondo `--dangersoft`, texto `--danger`. Ocupada usa el estilo normal. Un estado se muestra siempre con texto, nunca solo con color. |
 | **Card** | `--surface`, borde `--border`, radio 12, padding 20–24px. |
 | **DataTable** | Contenedor Card sin padding con scroll horizontal (`min-width` 640px). Encabezados 13px 600 `--muted`; filas separadas por borde superior; hover de fila `--soft`; columna de acciones alineada a la derecha. |
 | **Pagination** | "Mostrando X–Y de Z" a la izquierda; "Anterior", "Página N de M" y "Siguiente" a la derecha. Botón deshabilitado con opacidad 0.45. |
@@ -178,6 +192,20 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Mis brechas prioritarias** | Sección con `h2` y subtítulo; hasta tres tarjetas de brecha numeradas (1–3) de mayor a menor prioridad; debajo «Otras brechas detectadas» y un bloque plegable «Competencias que ya cumples (N)». |
 | **Botón «Generar Plan de Formación»** | Botón primario solo para el Administrador. Deshabilitado con motivo visible (13px `--muted`, enlazado con `aria-describedby`) si no hay brechas o si ya generó plan; en este caso se sustituye por el enlace «Ver plan». |
 
+**Componentes del Plan de formación anual** *(feature 013; referencias `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Tabs (pestañas)** | `role="tablist"` con botones `role="tab"` de alto 44px, `aria-selected`, texto `--muted` y, en el activo, `--accent` con borde inferior de 3px `--accent`; navegación con flechas izquierda/derecha. El panel asociado lleva `role="tabpanel"`. |
+| **Chip de tipo** | Píldora 12–13px 700 con el nombre del tipo y los colores de la tabla «Colores por tipo de acción». |
+| **Badge de estado del plan / de la acción** | Píldora con texto y los colores de «Estados del plan y de la acción». Las acciones canceladas llevan además el badge «Cancelada». |
+| **Calendario mensual** | Rejilla de 7 columnas (Lun–Dom) con título del mes, botones «Mes anterior», «Mes siguiente» y «Hoy» (44px); celdas con el número del día y, debajo, un chip por acción coloreado por tipo, con el nombre truncado y `title`; el día actual con borde `--accent`; más de 3 acciones en un día muestran «+N más». Cada chip es un botón que abre el detalle de la acción. Bajo 640px la rejilla pasa a una lista por día. Los días de otros meses van atenuados. Cada chip mide al menos 24×24px (WCAG 2.5.8) y las canceladas van tachadas además de llevar el nombre del tipo; el día actual se marca con borde `--accent` y `aria-current="date"`. |
+| **Panel de detalle de acción** | Panel lateral (como el del Catálogo) con nombre, badge de tipo y de estado, competencias, fechas, formador, inscritos/capacidad y costo. |
+| **Tarjeta de acción (colaborador)** | Card con nombre (h3), `Chip` de tipo, competencia, fechas, formador, badge de estado y botón «Ver detalle». La cancelada muestra el motivo en `--muted`. |
+| **Barra de progreso del plan** | Misma barra que el indicador de cobertura (`role="progressbar"` con `aria-valuenow/min/max` y `aria-label`; relleno `--accent` sobre `--border`) con el texto «% del plan completado». |
+| **Selector de participantes** | `Combobox` de búsqueda por colaborador con el contador «n/capacidad» (`--muted`; en `--warn` al llegar al máximo, con el botón de agregar deshabilitado) y lista de inscritos con botón «Quitar» por fila; el aviso de cruce de fechas (`--warn`, icono y texto) se muestra junto al participante. |
+| **Historial del plan** | Lista cronológica (más reciente primero): badge de tipo (Estado, Participante, Cancelación, Aprobador), usuario y fecha (13px `--muted`), detalle «anterior → nuevo» y el motivo si existe. |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -201,6 +229,7 @@ Referencia: `Competencias.dc.html`. Para cualquier catálogo o lista de registro
 
 10. Cuando el detalle de cada fila es la **definición completa de un recurso** (p. ej. un puesto), **toda la fila es el botón** que la despliega (`h2` con botón `aria-expanded` y `aria-controls`, y panel `role="region"` con `aria-label`), con chevron a la derecha; solo una fila permanece abierta. Referencia: `Puestos.dc.html`. El panel muestra bloques en tarjetas `--surface`: Misión (texto), Funciones (`<ol>` con el tipo de cada una en `Badge`), Requisitos (`<ul>` agrupado por tipo, con un `h4` por tipo) y Competencias (tabla con competencia, tipo y grado requerido en insignia `--accent`; las inactivas con `Badge` neutro). Los botones **Editar** y **Activar/Desactivar** van al final del panel, solo para quien gestiona el recurso; Desactivar pasa por ConfirmDialog y, si el backend lo rechaza, el diálogo muestra el motivo con la cantidad. El filtro de estado y la paginación siguen el punto 7. El mensaje de lista sin coincidencias es "Ningún puesto coincide con la búsqueda.".
 
+11. Cuando el listado es de una **estructura de reporte** (p. ej. posiciones; referencia `Posiciones.dc.html`) la fila desplegable sigue el punto 10 con estas particularidades: columnas Código, Puesto, Unidad, **Reporta a** (código y, debajo, puesto; "—" y "Máxima autoridad" en la máxima autoridad), **Ocupante** ("Sin ocupante" atenuado y en cursiva), **Estado** (Badge: Ocupada normal, **Vacante** advertencia, **Suprimida** peligro) y Modalidad. Bajo la búsqueda ("Código, puesto, unidad u ocupante") va el contador de resultados ("11 posiciones") en una región `aria-live`. La barra de filtros añade el select **Estado** (Vigentes por defecto, Ocupada, Vacante; Suprimida y Todas solo para el Administrador), un select **Unidad organizacional** con las unidades en orden de árbol con sangría y el botón **Limpiar filtros**. El panel muestra tarjetas Ocupante ("Sin ocupante"), Supervisor (código, puesto y ocupante), Supervisa a, Puesto, Unidad (nombre, tipo y estado) y, solo para el Administrador, Auditoría. Editar y Suprimir van al final del panel, solo para el Administrador y no en posiciones Suprimidas; Suprimir se muestra deshabilitado con su motivo como descripción accesible (ocupada o con N subordinadas). Crear y editar usan el patrón **Formulario en modal**; en el selector de unidad las inactivas van deshabilitadas con "La unidad está inactiva" la unidad raíz va deshabilitada con "La Gerencia General ya tiene su posición (máxima autoridad)" si ya la tiene; el supervisor se habilita al elegir la unidad, con opciones "código · puesto · ocupante" agrupadas (`optgroup`) por unidad desde la elegida hasta la raíz, y queda fijo en "Sin supervisor (máxima autoridad)" si la unidad es la raíz. Al editar, las unidades que dejarían subordinadas en una unidad superior van deshabilitadas con "Tiene subordinadas en unidades superiores a esta". Suprimir pasa por ConfirmDialog (definitivo) y, si el backend lo rechaza, muestra el motivo. El mensaje sin coincidencias es "Ninguna posición coincide con los filtros.".
 11. **Matriz formativa** (catálogo formativo, Administrador). Referencia: `CatalogoAdmin.dc.html`. Encabezado (h1 + subtítulo) y aviso neutro "El diccionario de competencias es de solo lectura"; **indicador de cobertura** arriba; barra de filtros con `SearchField` y selects de tipo, área formativa, con/sin cursos asociados y estado (este último solo para el Administrador, Activas por defecto); `DataTable` con columnas competencia (código y nombre), tipo, área formativa, cursos asociados, micro-contenidos asociados y la acción **Ver detalle**, que abre el **panel lateral**. Los contadores cuentan solo recursos disponibles. No hay botón para cambiar de vista: cada usuario tiene un solo rol.
 
 12. **Tarjetas agrupadas por área** (catálogo formativo, Colaborador). Referencia: `CatalogoColaborador.dc.html`. Sección destacada **"Recomendados para cerrar mis brechas"** arriba (solo si hay recomendados), y debajo un grupo por área formativa (el último, "Sin área formativa") con **tarjetas de competencia**; al elegir una se abre el detalle con los grados A–D, los cursos y los micro-contenidos disponibles (con la nota de que son aptos para conocimientos, no para competencias conductuales).
@@ -290,6 +319,16 @@ Referencia: `Main.dc.html`. Saludo (h1) + subtítulo; grilla de StatCards (`minm
 ### Páginas públicas
 Referencias: `Login.dc.html`, `Landing.dc.html`. Sin app shell. Login: tarjeta centrada de 420px como máximo, con marca encima, sobre `--bg`. Por ahora solo tema claro.
 
+### Plan de formación anual *(feature 013)*
+Referencias: `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html`. Se omiten los controles de prototipo («Ver como…», menú con Empleados/Ajustes).
+
+1. **Planes de formación (Listado)**: patrón Listado (`Competencias.dc.html`) con columnas código, nombre, año, estado (badge), acciones, costo total, aprobador y botones por estado; filtros año, estado y búsqueda por nombre; botón primario «Nuevo plan».
+2. **Acciones formativas (Calendario y Lista)**: `Tabs` «Calendario» y «Lista» con filtros comunes (estado del plan, tipo, competencia, desde, hasta, «Limpiar filtros») sobre las pestañas; Lista como tabla con paginación; Calendario como se define en §4. Por defecto el año actual.
+3. **Asistente de 3 pasos**: `Stepper` (Datos generales, Acciones formativas, Participantes y aprobador); cada paso es un formulario con el patrón Formulario; «Guardar borrador» siempre visible; el paso 2 lista las acciones con Editar y Quitar y un formulario de acción (modal o panel) con selección múltiple de competencias y selector «Partir de un curso del catálogo»; el paso 3 usa el selector de participantes por acción y el `SelectField` del aprobador.
+4. **Detalle del plan**: patrón Detalle de un registro; bloques datos generales, acciones (con costo y horas totales) e historial; botones de estado según el estado del plan.
+5. **Mi plan (colaborador)**: encabezado con la barra de progreso, «Próximas actividades» (hasta 3) y lista cronológica de tarjetas de acción; mensaje vacío «Aún no tienes acciones formativas asignadas».
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; los diálogos de motivo y de confirmación usan `Modal`/`ConfirmDialog`.
+
 ---
 
 ## 6. Iconos
@@ -374,6 +413,7 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `Unidades.dc.html` dejaba a **Operaciones (UO-008)** inactiva con una posición asignada | Una unidad solo se desactiva sin posiciones Ocupadas ni Vacantes: Operaciones está inactiva y solo conserva posiciones **Suprimidas**, que no lo impiden |
 | `Unidades.dc.html` trae en el menú Organigrama, Perfilamiento, Empleados, Vacantes y Ajustes, y una columna sin **Nivel N** para lectores de pantalla | Esos ítems pertenecen a otras features y no se implementan en 005 (el menú real solo añade "Unidades"); la implementación añade el prefijo oculto "Nivel N" y usa `--input-border` en los controles |
 | `Unidades.dc.html` (revisión 2026-10-15) | La spec revisada añade la cadena de tipos, el árbol expandible con Expandir / Contraer todo, la búsqueda con ancestras, "No sigue la cadena", modales (Crear, Editar, Nuevo tipo, Editar tipos, Bloqueo), tipo calculado y no elegido, sin columna de unidad padre, desactivación en cascada con confirmación siempre y raíz no desactivable; el tablero se actualiza en esa línea |
+| `Posiciones.dc.html` (tablero del usuario) solo muestra el listado con búsqueda y badges; no tiene filtros de estado y unidad, "Limpiar filtros", paginador, filas desplegables, Editar, Suprimir ni modales; muestra el POS-0305 Suprimido por defecto | La navegación real incluye "Posiciones" tras "Unidades"; las modalidades son Nombramiento, Contrato, Encargo y Subrogación (los mockups anteriores hablaban de Híbrida, Presencial y Remota); la unidad es propia de la posición, el supervisor es otra posición (código `POS-####`) y no se permiten posiciones sobre puestos o unidades inactivos |
 | `CatalogoAdmin.dc.html` y `CatalogoColaborador.dc.html` traen los botones "Ver como colaborador" y "Ver como administrador" | Cada usuario tiene un solo rol (spec 005, FR-005b): no se implementan |
 | `CatalogoAdmin.dc.html` muestra "Cobertura por área formativa", la columna "Nivel requerido" y el tipo "Gerencial" | No están en la spec 005: se omiten; solo el indicador global de cobertura, y los tipos son Cardinal y Específica |
 | `CatalogoAdmin.dc.html` dice "Ver sin cursos" y "Los cambios se guardan al instante" | El enlace pasa a "Ver sin cobertura" (competencias sin ningún curso ni micro-contenido disponible) y los cambios se confirman con el botón **Guardar**, con advertencia de cambios sin guardar |
@@ -394,6 +434,14 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `GP-02_Registrar-ingreso.html` incluye formación académica, experiencia anterior, movilidad, documentos y la barra de «Controles del prototipo» | Pertenecen a GP-03, GP-05 y a la propia demostración; GP-02 solo registra el vínculo y la asignación inicial |
 | `GP-02_Registrar-ingreso.html` no muestra la jefatura de la posición | La spec la pide en solo lectura; mientras Estructura no la publique se muestra «No registrado» |
 | `ColaboradorIngreso.dc.html` | Tablero del formulario de ingreso, creado en 006 (Constitución III) |
+| `PlanAnualAdmin.dc.html` pide en el paso 1 «Inicio del período», «Fin del período», «Presupuesto estimado (USD)» y «Objetivo del plan» | Manda la spec 013 (FR-002): solo nombre, año y descripción; el período es el año |
+| `PlanAnualAdmin.dc.html` ofrece «Precargar acciones desde el último DNF» | Se omite: el borrador desde la DNF lo crea la DNF mediante la Facade del módulo (FR-029) |
+| `PlanAnualAdmin.dc.html` asigna «Participantes por departamento» | La spec pide participantes por acción, con búsqueda por colaborador, capacidad usada y avisos de cruce junto al participante |
+| `PlanAnualAdmin.dc.html` elige una sola «Competencia objetivo» y no tiene curso del catálogo ni duración | La spec pide una o más competencias, curso opcional que propone tipo/formador/competencias y duración en horas |
+| `PlanAnualAdmin.dc.html` muestra KPI de avance de ejemplo | Solo se muestran cantidad de acciones, costo total y horas totales (FR-021) |
+| `PlanAnualColaborador.dc.html` usa los estados «Completada», «Inscrito» y «Por confirmar», «Tu avance %» y «Lugar o plataforma» | La spec usa el estado de la acción (Programada, En curso, Finalizada, Cancelada), solo el «% del plan completado» general y no registra lugar o plataforma |
+| `PlanAnualColaborador.dc.html` no muestra acciones canceladas | La spec aclarada (FR-022) las muestra con estado «Cancelada» y su motivo, fuera del progreso y de las próximas actividades |
+| `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html` traen «Ver como colaborador/administrador», «Empleados», «Ajustes» y «Mi perfil» | Controles de prototipo o de otras features: no se implementan (un solo rol por persona) |
 | `GP-03_Desarrollo-profesional.html` muestra el estado de la formación con insignias de color propias (`b-info`, `b-ok`, `b-off`), fechas como «Inicio no registrado · Fin no registrado», «Sin observaciones» y el bloque «Trayectoria interna» dentro de la pestaña Desarrollo, y edita en un diálogo con `form` propio | La pestaña usa el `Badge` del sistema (normal para En curso y Completada, neutro para Incompleta y movilidad no disponible o no informada), fechas como «Inicio: … · Fin: No registrado», «No registrado» en observaciones ausentes y los diálogos dentro de `Modal`. La trayectoria interna sigue en GP-01/GP-02 y no se duplica en esta pestaña; el estado vacío dice «Formación académica no registrada» y «Experiencia anterior no registrada» |
 | `GP-05_Documentos-del-colaborador.html` (pantalla Categorías documentales) muestra la columna «Documentos», el botón «Editar nombre», Desactivar sin explicación y Reactivar sin confirmación, y no pagina | El catálogo no consulta documentos, así que no hay columna «Documentos»; el botón es «Editar»; Desactivar confirma con «Sus documentos se conservarán» y Reactivar confirma con «No se reactivan documentos archivados»; el listado se pagina (20 por página) y conserva búsqueda, estado y página en la URL; los diálogos usan `Modal` y `ConfirmDialog` |
 | `GP-05_Documentos-del-colaborador.html` (pestaña Documentos) muestra la vista previa embebida del PDF, y el Colaborador solo accede desde Mi ficha | «Abrir» muestra el PDF en una pestaña con un blob local obtenido con el cliente HTTP autenticado (no hay URL permanente ni vista previa embebida) y «Descargar» fuerza el nombre `Documento_{id}.pdf`; el Colaborador dispone de la página `/mis-documentos` porque el permiso documental es independiente del de ficha (la pestaña de Mi ficha se mantiene); la vista de archivados es un conmutador Disponibles/Archivados solo para el Administrador, sin acciones de escritura; el cambio de visibilidad y el archivo no se actualizan hasta la respuesta del servidor |

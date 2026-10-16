@@ -37,6 +37,7 @@ class EstructuraServiceProvider extends ServiceProvider
         $this->app->bind(ComportamientoRepositoryInterface::class, EloquentComportamientoRepository::class);
         $this->app->bind(PreguntaRepositoryInterface::class, EloquentPreguntaRepository::class);
         $this->app->bind(PuestoRepositoryInterface::class, EloquentPuestoRepository::class);
+        $this->app->bind(PosicionRepositoryInterface::class, EloquentPosicionRepository::class);
         $this->app->bind(UnidadRepositoryInterface::class, EloquentUnidadRepository::class);
         $this->app->bind(TipoUnidadRepositoryInterface::class, EloquentTipoUnidadRepository::class);
         $this->app->bind(NombresDeUsuariosInterface::class, SharedNombresDeUsuarios::class);

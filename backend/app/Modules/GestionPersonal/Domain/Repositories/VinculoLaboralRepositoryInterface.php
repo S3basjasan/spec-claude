@@ -51,6 +51,14 @@ interface VinculoLaboralRepositoryInterface
      */
     public function fichasEnPosiciones(int $tenantId, array $posicionIds, string $fecha): array;
 
+    /**
+     * Fichas con un vínculo laboral vigente en la fecha (ingreso no posterior y salida nula o posterior).
+     *
+     * @param  list<int>|null  $colaboradorIds  si se da, restringe el resultado a estas fichas
+     * @return list<int>
+     */
+    public function fichasConVinculoVigente(int $tenantId, ?array $colaboradorIds, string $fecha): array;
+
     /** @return array{vinculo: VinculoLaboral, hash: string, actor: int}|null */
     public function porOperacion(int $tenantId, string $operacionId): ?array;
 

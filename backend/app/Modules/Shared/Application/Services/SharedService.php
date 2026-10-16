@@ -37,6 +37,22 @@ class SharedService
     }
 
     /**
+     * Usuarios con rol Administrador del tenant, por nombre (solo lectura; p. ej. aprobadores de planes).
+     *
+     * @return list<array{id: int, nombre: string}>
+     */
+    public function getAdministradores(int $tenantId): array
+    {
+        return DB::table('users')
+            ->where('tenant_id', $tenantId)
+            ->where('role', 'admin')
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn ($u) => ['id' => (int) $u->id, 'nombre' => (string) $u->name])
+            ->all();
+    }
+
+    /**
      * Contexto de tenant de una cuenta, o null si la cuenta no existe.
      *
      * @return array{tenant_id: int, nombre: string, zona_horaria: string}|null
@@ -53,5 +69,19 @@ class SharedService
             'nombre' => (string) $fila->nombre,
             'zona_horaria' => (string) $fila->zona_horaria,
         ];
+    }
+
+    /** Máximo de usuarios que devuelve una búsqueda por nombre. */
+    public const LIMITE_BUSQUEDA_POR_NOMBRE = 200;
+
+    /**
+     * Ids de los usuarios cuyo nombre contiene el texto (sin distinguir mayúsculas ni tildes), ordenados por nombre y
+     * limitados a 200, para que otros módulos busquen por persona sin leer la tabla de usuarios.
+     *
+     * @return array<int, int>
+     */
+    public function buscarIdsDeUsuariosPorNombre(string $texto): array
+    {
+        return $this->usuarios->idsPorNombre($texto, self::LIMITE_BUSQUEDA_POR_NOMBRE);
     }
 }

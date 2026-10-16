@@ -2,6 +2,7 @@
 
 use App\Modules\Estructura\Presentation\Controllers\CompetenciaController;
 use App\Modules\Estructura\Presentation\Controllers\ComportamientoController;
+use App\Modules\Estructura\Presentation\Controllers\PosicionController;
 use App\Modules\Estructura\Presentation\Controllers\PreguntaController;
 use App\Modules\Estructura\Presentation\Controllers\PuestoController;
 use App\Modules\Estructura\Presentation\Controllers\TipoUnidadController;
@@ -128,5 +129,28 @@ Route::prefix('api/tipos-unidad')->middleware('api')->group(function () {
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::post('/', [TipoUnidadController::class, 'store'])->name('tipos-unidad.store');
         Route::put('/', [TipoUnidadController::class, 'update'])->name('tipos-unidad.update');
+    });
+});
+
+// Posiciones (feature 006). Prefijo /api/posiciones por contrato. No existe DELETE, ni reactivar, ni asignar ocupante:
+// las posiciones nunca se eliminan, se suprimen; el ocupante lo gestiona el módulo de personal.
+Route::prefix('api/posiciones')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [PosicionController::class, 'index'])->name('posiciones.index');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        // Antes de `/{posicionId}` para que el texto no se interprete como identificador.
+        Route::get('/opciones', [PosicionController::class, 'opciones'])->name('posiciones.opciones');
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/{posicionId}', [PosicionController::class, 'show'])->whereNumber('posicionId')->name('posiciones.show');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::post('/', [PosicionController::class, 'store'])->name('posiciones.store');
+        Route::put('/{posicionId}', [PosicionController::class, 'update'])->whereNumber('posicionId')->name('posiciones.update');
+        Route::post('/{posicionId}/suprimir', [PosicionController::class, 'suprimir'])->whereNumber('posicionId')->name('posiciones.suprimir');
     });
 });

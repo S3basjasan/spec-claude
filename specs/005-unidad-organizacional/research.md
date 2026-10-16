@@ -110,3 +110,7 @@ Sin `NEEDS CLARIFICATION` abiertos. Revisión del 2026-10-15: decisiones a parti
 ## D-19 Pruebas
 
 - **Decision**: Unit (árbol, rama, cadena, comparadores, casos de uso con dobles en memoria); Feature (API de unidades y tipos, repositorios, atomicidad de la cascada y de la cadena, concurrencia, auditoría, volumen de 500 unidades); Vitest (árbol, expansión, modales, borrador de tipos); Playwright (consulta, creación, edición, cascada, tipos, accesibilidad y escala).
+
+## D-20 Reubicación y posiciones (ampliación desde 006)
+
+- **Decision**: Reubicar una unidad se rechaza si dejaría una posición vigente reportando a otra de una unidad inferior o de otra rama. La regla y su razonamiento están en D-25 de `specs/006-posiciones/research.md`.

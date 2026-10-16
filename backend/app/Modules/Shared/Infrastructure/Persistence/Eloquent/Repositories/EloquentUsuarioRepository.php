@@ -7,6 +7,7 @@ use App\Modules\Shared\Domain\Repositories\UsuarioRepositoryInterface;
 use App\Modules\Shared\Domain\ValueObjects\Rol;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
+use Illuminate\Support\Str;
 
 final class EloquentUsuarioRepository implements UsuarioRepositoryInterface
 {
@@ -30,6 +31,22 @@ final class EloquentUsuarioRepository implements UsuarioRepositoryInterface
         $nombres = UserModel::query()->whereIn('id', array_values(array_unique($ids)))->pluck('name', 'id')->all();
 
         return $nombres;
+    }
+
+    public function idsPorNombre(string $texto, int $limite): array
+    {
+        $buscado = mb_strtolower(trim(Str::ascii($texto)));
+        if ($buscado === '') {
+            return [];
+        }
+
+        return UserModel::query()->orderBy('name')->get(['id', 'name'])
+            ->filter(fn (UserModel $usuario) => str_contains(mb_strtolower(Str::ascii((string) $usuario->name)), $buscado))
+            ->take($limite)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
     }
 
     private function aEntidad(?UserModel $modelo): ?Usuario
