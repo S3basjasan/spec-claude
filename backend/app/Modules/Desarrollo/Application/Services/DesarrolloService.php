@@ -2,6 +2,7 @@
 
 namespace App\Modules\Desarrollo\Application\Services;
 
+use App\Modules\Desarrollo\Application\UseCases\ConsultarActividadesParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
@@ -31,6 +32,7 @@ class DesarrolloService
         private readonly MicrocontenidoRepositoryInterface $microcontenidos,
         private readonly ProgresoMicroRepositoryInterface $progresosMicro,
         private readonly CalculadorDeResumen $calculadorDeResumen,
+        private readonly ConsultarActividadesParaOtrosModulos $actividades,
     ) {}
 
     /**
@@ -188,5 +190,45 @@ class DesarrolloService
     public function getCompletaciones(int $tenantId, array $filtros = []): array
     {
         return array_values($this->progresosMicro->completaciones($tenantId, $filtros));
+    }
+
+    /**
+     * Asistencia y calificación del colaborador en las actividades de las acciones indicadas (solo lectura; sin observaciones).
+     * La asistencia sin registro se reporta Pendiente.
+     *
+     * @param  list<int>  $accionIds
+     * @return list<array{accion_id: int, actividad_id: int, estado: string, asistencia: string, calificacion: int|null}>
+     */
+    public function getAsistenciaDeColaborador(int $tenantId, int $colaboradorId, array $accionIds): array
+    {
+        return $this->actividades->asistenciaDeColaborador($tenantId, $colaboradorId, $accionIds);
+    }
+
+    /** Indica si el colaborador ya tiene asistencia registrada en la actividad de la acción (para impedir quitarlo de la acción). */
+    public function tieneAsistenciaRegistrada(int $tenantId, int $accionId, int $colaboradorId): bool
+    {
+        return $this->actividades->tieneAsistenciaRegistrada($tenantId, $accionId, $colaboradorId);
+    }
+
+    /**
+     * Actividades formativas del tenant con su estado calculado, horas y promedio (para Reportes). Solo lectura.
+     *
+     * @param  array{anio?: int, plan_id?: int, tipo?: string, estado?: string, departamento_id?: int, competencia_id?: int, fecha_desde?: string, fecha_hasta?: string}  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function getActividades(int $tenantId, array $filtros = []): array
+    {
+        return $this->actividades->actividades($tenantId, $filtros);
+    }
+
+    /**
+     * Registros de asistencia y calificación (sin observaciones) de las actividades del tenant (para Reportes). Solo lectura.
+     *
+     * @param  array{anio?: int, plan_id?: int, tipo?: string, estado?: string, departamento_id?: int, competencia_id?: int, fecha_desde?: string, fecha_hasta?: string, colaborador_id?: int, actividad_id?: int}  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function getAsistencias(int $tenantId, array $filtros = []): array
+    {
+        return $this->actividades->asistencias($tenantId, $filtros);
     }
 }

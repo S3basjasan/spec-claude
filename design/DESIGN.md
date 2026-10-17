@@ -73,6 +73,22 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 
 Estados: Borrador `Badge` de advertencia (`--warning`/`--warningsoft`); Publicado `Badge` por defecto (`--accent`/`--soft`); Archivado `Badge` neutro (`--muted` sobre `--border`).
 
+**Colores por estado de actividad y asistencia** *(feature 017, Actividades formativas; sin tokens nuevos)*. El color nunca es la única señal: siempre va con el nombre del estado.
+
+| Elemento | Texto / fondo | Tokens |
+|---|---|---|
+| Actividad Programada | `--info` / `--infosoft` | igual que la acción |
+| Actividad En curso | `--accent` / `--soft` | |
+| Actividad Finalizada | `--neutral` / `--neutralsoft` | |
+| Actividad Cancelada | `--danger` / `--dangersoft` | |
+| Asistencia Pendiente | `--neutral` / `--neutralsoft` | sin registro |
+| Asistencia Presente | `--accent` / `--soft` | |
+| Asistencia Ausente | `--danger` / `--dangersoft` | |
+| Asistencia Justificado | `--warning` / `--warningsoft` | |
+| Badge «Asistencia pendiente» | `--warning` / `--warningsoft` | actividad Finalizada con inscritos sin registro |
+
+Los tipos de actividad usan los mismos colores que el tipo de la acción del plan.
+
 **Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
@@ -229,6 +245,16 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Tarjeta de aprendizaje** | Como la de micro-contenido para el colaborador: estado (Sin iniciar, En progreso, Completado), motivo de asignación, posición de retoma, último puntaje «N de M» y botones Iniciar/Continuar/Ver y «Descargar certificado». |
 | **Resumen de aprendizaje** | Cuatro `StatCard` en `dl` (`minmax(180px, 1fr)`): completados, en progreso, horas acumuladas y certificados. |
 
+**Componentes de Actividades formativas** *(feature 017; referencias `ActividadesAdmin.dc.html`, `ActividadesAsistencia.dc.html`, `ActividadesCalificaciones.dc.html` y `ActividadesColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Control de asistencia** | Grupo (`role="group"`, `aria-label` con el nombre del participante) de tres botones de 40px «Presente», «Ausente» y «Justificado» con `aria-pressed`; la opción elegida lleva el color de su asistencia con borde (`--accent`, `--danger`, `--warning`). Pulsar de nuevo la elegida vuelve a Pendiente. Deshabilitado si la actividad no admite registro. |
+| **Campo de calificación** | `input type="number"` de 40px de alto y 80px de ancho, mín. 1, máx. 5, paso 1, con etiqueta accesible por participante; deshabilitado salvo con Presente; el error aparece debajo con `role="alert"`. |
+| **Resumen de asistencia** | Lista de chips (píldoras 13px 700): Presentes, Ausentes, Justificados y Sin registrar, cada uno con su cantidad. |
+| **Tarjeta de actividad** | `article` de `--surface` con borde `--border` y radio 12px: título (h3), `Etiqueta de tipo` y badge de estado, aviso de proximidad («Es hoy», «Empieza mañana», «Empieza en N días», «Está en curso») y lista de datos (fecha, lugar o enlace, formador, asistencia y calificación). Nunca muestra observaciones. |
+| **Resumen del colaborador** | Cuatro tarjetas (`minmax(180px, 1fr)`): actividades inscritas, finalizadas, % de asistencia y calificación promedio; «—» cuando no hay datos. |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -364,6 +390,18 @@ Referencias: `MicroAdmin.dc.html` (repositorio, formulario, vista previa), `Micr
 
 ---
 
+### Actividades formativas *(feature 017)*
+Referencias: `ActividadesAdmin.dc.html` (lista y formulario en modal), `ActividadesAsistencia.dc.html` (registro de asistencia), `ActividadesCalificaciones.dc.html` (calificaciones) y `ActividadesColaborador.dc.html` (Mis actividades). Se omiten los controles de prototipo («Ver como colaborador», menú con Empleados/Ajustes) y el panel «Fundamento de cada tipo».
+
+1. **Lista (Administrador)**: encabezado con «+ Nueva Actividad», pestañas «Actividades» y «Calificaciones» (en la URL), búsqueda por nombre, filtros (tipo, estado, departamento, competencia, plan, rango de fechas —año actual por defecto— y «Limpiar filtros») y tabla con código, nombre, tipo, fechas, lugar o enlace, formador, departamento, capacidad, inscritos, estado y las acciones «Asistencia» y «Editar». No hay botón de eliminar ni de cancelar.
+2. **Formulario (Modal de 860px)**: selector de la acción del plan (con filtro por plan), datos heredados en solo lectura y solo lugar o enlace y departamento editables; al editar, la acción es fija.
+3. **Registro de asistencia**: encabezado con datos y estado de la actividad, resumen de asistencia, «Marcar todos presentes», tabla de inscritos (control de asistencia, calificación 1–5 y observaciones), «Guardar» con confirmación si cambia un registro previo y acceso al historial. Con la actividad Programada, Cancelada o el plan Cerrado la vista queda deshabilitada con su explicación.
+4. **Calificaciones**: sub-pestañas «Por actividad» y «Por participante», filtros de fechas, tipo, departamento y plan, y detalle por actividad de un participante.
+5. **Mis actividades (Colaborador)**: resumen, «Próximas actividades» e «Historial» con tarjetas; mensaje informativo si no hay actividades.
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito.
+
+---
+
 ## 6. Iconos
 
 Se usa **Tabler Icons** (`@tabler/icons-react`), trazo 1.75, 20px en el menú y 18px en botones. Los SVG de los mockups son de referencia; al implementar se usan sus equivalentes de Tabler:
@@ -486,3 +524,8 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `MicroAdmin.dc.html` trae «Ver como colaborador», tarjetas KPI y un bloque largo «Úsalo para conocimientos» con una cita | Cada persona tiene un solo rol: sin «Ver como…»; sin KPI; la nota de alcance es un `Alert` neutro breve |
 | `MicroAdmin.dc.html` ofrece «Archivar en su lugar» en el diálogo de eliminar, incluso con completaciones | Con progreso de colaboradores el botón Eliminar no se ofrece; el diálogo de eliminar solo aparece en contenidos sin progreso |
 | `MicroColaborador.dc.html` muestra un porcentaje de avance en la tarjeta | La tarjeta muestra el estado, la duración, la posición de retoma de un Video y el último puntaje «N de M» de un Quiz |
+| `ActividadesAdmin.dc.html` crea la actividad con nombre, tipo, competencia, fechas, horas, formador, capacidad y campos de codesarrollo, mentoring y OJT | La actividad nace de una acción del plan: el modal elige la acción (datos heredados en solo lectura) y solo edita lugar o enlace y departamento |
+| `ActividadesAdmin.dc.html` ofrece «Cancelar» por fila y «Ver como colaborador» | La actividad no se cancela aquí (se cancela la acción en el plan) y cada persona tiene un solo rol |
+| `ActividadesAdmin.dc.html` filtra por tipo sin E-learning y sin código, competencia, plan ni rango de fechas | Se agregan el tipo E-learning, la columna Código y los filtros de competencia, plan y fechas (año actual por defecto), además del badge «Asistencia pendiente» |
+| `ActividadesAsistencia.dc.html` admite calificaciones con pasos de 0,5 | La calificación es un entero de 1 a 5, solo con asistencia Presente; las observaciones solo con asistencia registrada |
+| `ActividadesColaborador.dc.html` muestra las observaciones del formador en la tarjeta | Las observaciones son de uso interno y nunca se muestran al colaborador |

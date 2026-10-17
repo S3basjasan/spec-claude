@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\Desarrollo\Presentation\Controllers\ActividadAsistenciaController;
+use App\Modules\Desarrollo\Presentation\Controllers\ActividadController;
 use App\Modules\Desarrollo\Presentation\Controllers\AreaFormativaController;
 use App\Modules\Desarrollo\Presentation\Controllers\CatalogoFormativoController;
 use App\Modules\Desarrollo\Presentation\Controllers\CertificadoMicroController;
@@ -7,6 +9,7 @@ use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
 use App\Modules\Desarrollo\Presentation\Controllers\IntentoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiAprendizajeController;
 use App\Modules\Desarrollo\Presentation\Controllers\MicrocontenidoController;
+use App\Modules\Desarrollo\Presentation\Controllers\MisActividadesController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanAccionController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanController;
 use App\Modules\Desarrollo\Presentation\Controllers\ProgresoMicroController;
@@ -80,6 +83,27 @@ Route::prefix('api/plan-acciones')->middleware(['api', 'auth:sanctum', 'admin'])
     Route::get('/', [PlanAccionController::class, 'index'])->name('plan-acciones.index');
     Route::put('/{id}/participantes', [PlanAccionController::class, 'participantes'])->whereNumber('id')->name('plan-acciones.participantes');
     Route::patch('/{id}/cancelar', [PlanAccionController::class, 'cancelar'])->whereNumber('id')->name('plan-acciones.cancelar');
+});
+
+// Actividades formativas (feature 017). Prefijo /api/actividades por contrato.
+// No existe DELETE: las actividades y su historial nunca se eliminan. Las rutas fijas
+// (`acciones-disponibles`, `departamentos`, `opciones`, `calificaciones`, `mis-actividades`) se declaran antes de cualquier `/{id}`.
+Route::prefix('api/actividades')->middleware('api')->group(function () {
+    // Actividades propias del colaborador: solo autenticación; los datos son siempre los del usuario del token.
+    Route::get('/mis-actividades', [MisActividadesController::class, 'show'])->middleware('auth:sanctum')->name('actividades.mis-actividades');
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/acciones-disponibles', [ActividadController::class, 'accionesDisponibles'])->name('actividades.acciones-disponibles');
+        Route::get('/departamentos', [ActividadController::class, 'departamentos'])->name('actividades.departamentos');
+        Route::get('/opciones', [ActividadController::class, 'opciones'])->name('actividades.opciones');
+        Route::get('/calificaciones', [ActividadController::class, 'calificaciones'])->name('actividades.calificaciones');
+        Route::get('/', [ActividadController::class, 'index'])->name('actividades.index');
+        Route::post('/', [ActividadController::class, 'store'])->name('actividades.store');
+        Route::get('/{id}', [ActividadController::class, 'show'])->whereNumber('id')->name('actividades.show');
+        Route::put('/{id}', [ActividadController::class, 'update'])->whereNumber('id')->name('actividades.update');
+        Route::put('/{id}/asistencia', [ActividadAsistenciaController::class, 'update'])->whereNumber('id')->name('actividades.asistencia');
+        Route::get('/{id}/historial', [ActividadController::class, 'historial'])->whereNumber('id')->name('actividades.historial');
+    });
 });
 
 // Micro-learning (feature 016). Prefijo /api/microcontenidos por contrato.

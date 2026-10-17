@@ -2,14 +2,17 @@
 
 namespace App\Modules\Desarrollo\Infrastructure\Providers;
 
+use App\Modules\Desarrollo\Application\Ports\AccionesDePlanInterface;
 use App\Modules\Desarrollo\Application\Ports\AprobadoresInterface;
 use App\Modules\Desarrollo\Application\Ports\AsistenciaInterface;
+use App\Modules\Desarrollo\Application\Ports\AsistenciaRegistradaInterface;
 use App\Modules\Desarrollo\Application\Ports\BrechasActivasInterface;
 use App\Modules\Desarrollo\Application\Ports\CertificadoPdfInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresEvaluablesInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresVigentesInterface;
 use App\Modules\Desarrollo\Application\Ports\CompetenciasInterface;
 use App\Modules\Desarrollo\Application\Ports\CuentaColaboradorInterface;
+use App\Modules\Desarrollo\Application\Ports\DepartamentosInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesActualesInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\NombreDeColaboradorInterface;
@@ -19,19 +22,23 @@ use App\Modules\Desarrollo\Application\Ports\PerfilesDePuestoInterface;
 use App\Modules\Desarrollo\Application\Ports\PlanDeFormacionInterface;
 use App\Modules\Desarrollo\Application\Ports\RelojInterface;
 use App\Modules\Desarrollo\Application\Services\DesarrolloService;
+use App\Modules\Desarrollo\Domain\Repositories\ActividadRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AccionesDesdePlan;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AprobadoresDesdeShared;
-use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaSinDatos;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaDesdeActividades;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaRegistradaDesdeActividades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasActivasDesdeDnf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CertificadoPdfDompdf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresVigentesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CompetenciasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CuentaColaboradorDesdePersonal;
+use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentosDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesActualesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesDeColaboradorSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombreDeColaboradorDesdePersonal;
@@ -43,6 +50,7 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresEvaluabl
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresVigentesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\NivelesActualesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\RelojDelSistema;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentActividadRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentCatalogoFormativoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentDnfRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentMicrocontenidoRepository;
@@ -72,8 +80,12 @@ class DesarrolloServiceProvider extends ServiceProvider
         $this->app->bind(ColaboradoresVigentesInterface::class, ColaboradoresVigentesDesdePersonal::class);
         $this->app->bind(AprobadoresInterface::class, AprobadoresDesdeShared::class);
         $this->app->bind(RelojInterface::class, RelojDelSistema::class);
-        // PROVISIONAL: Actividades Formativas aún no existe, así que no hay asistencias.
-        $this->app->bind(AsistenciaInterface::class, AsistenciaSinDatos::class);
+        // Actividades formativas (017): la asistencia real alimenta el progreso del plan y bloquea quitar participantes con registro.
+        $this->app->bind(ActividadRepositoryInterface::class, EloquentActividadRepository::class);
+        $this->app->bind(AccionesDePlanInterface::class, AccionesDesdePlan::class);
+        $this->app->bind(DepartamentosInterface::class, DepartamentosDesdeEstructura::class);
+        $this->app->bind(AsistenciaInterface::class, AsistenciaDesdeActividades::class);
+        $this->app->bind(AsistenciaRegistradaInterface::class, AsistenciaRegistradaDesdeActividades::class);
 
         $this->app->bind(CompetenciasInterface::class, CompetenciasDesdeEstructura::class);
         $this->app->bind(PerfilesDePuestoInterface::class, PerfilesDePuestoDesdeEstructura::class);

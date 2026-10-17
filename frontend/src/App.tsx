@@ -4,6 +4,10 @@ import { AuthenticatedLayout } from './modules/auth/login/components/Authenticat
 import { RedirectIfAuthenticated } from './modules/auth/login/components/RedirectIfAuthenticated'
 import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
+import { RequireRole as RequireRoleActividades } from './modules/desarrollo/actividades/components/RequireRole'
+import { actividadesNav } from './modules/desarrollo/actividades/nav'
+import { ActividadesPage } from './modules/desarrollo/actividades/pages/ActividadesPage'
+import { AsistenciaPage } from './modules/desarrollo/actividades/pages/AsistenciaPage'
 import { catalogoFormativoNav } from './modules/desarrollo/catalogo-formativo/nav'
 import { CatalogoPage } from './modules/desarrollo/catalogo-formativo/pages/CatalogoPage'
 import { RequireRole as RequireRoleMicro } from './modules/desarrollo/micro-learning/components/RequireRole'
@@ -60,7 +64,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, microLearningNav, unidadesNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, actividadesNav, microLearningNav, unidadesNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -117,6 +121,8 @@ function App() {
               <Route path="plan-formacion/:id/editar" element={<AsistentePlanPage />} />
               <Route path="plan-formacion/:id" element={<PlanDetallePage />} />
             </Route>
+            <Route path="actividades" element={<ActividadesPage />} />
+            <Route path="actividades/:id/asistencia" element={<RequireRoleActividades admin={<AsistenciaPage />} />} />
             <Route path="micro-learning" element={<MicroLearningPage />} />
             <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />

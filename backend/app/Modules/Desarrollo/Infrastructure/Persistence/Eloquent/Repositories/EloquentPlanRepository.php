@@ -6,6 +6,7 @@ use App\Modules\Desarrollo\Domain\Entities\AccionFormativa;
 use App\Modules\Desarrollo\Domain\Entities\Plan;
 use App\Modules\Desarrollo\Domain\Exceptions\NombreDePlanDuplicado;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
+use App\Modules\Desarrollo\Domain\ValueObjects\AccionDeActividad;
 use App\Modules\Desarrollo\Domain\ValueObjects\CodigoPlan;
 use App\Modules\Desarrollo\Domain\ValueObjects\EstadoPlan;
 use App\Modules\Desarrollo\Domain\ValueObjects\FiltroAcciones;
@@ -20,6 +21,7 @@ use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\PlanModel;
 use DateTimeImmutable;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class EloquentPlanRepository implements PlanRepositoryInterface
@@ -408,6 +410,99 @@ final class EloquentPlanRepository implements PlanRepositoryInterface
                 ], $plan->acciones),
             ];
         })->all();
+    }
+
+    public function accionesPorIds(int $tenantId, array $ids): array
+    {
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        if ($ids === []) {
+            return [];
+        }
+
+        return $this->aAccionesDeActividad($this->consultaAccionesDeActividad($tenantId)->whereIn('a.id', $ids)->get());
+    }
+
+    public function accionesElegiblesParaActividad(int $tenantId, array $idsConActividad, ?int $planId, ?string $q, int $pagina, int $porPagina): array
+    {
+        $consulta = fn () => $this->consultaAccionesDeActividad($tenantId)
+            ->where('p.estado', EstadoPlan::Ejecutando->value)
+            ->where('a.cancelada', false)
+            ->when($idsConActividad !== [], fn ($c) => $c->whereNotIn('a.id', $idsConActividad))
+            ->when($planId !== null, fn ($c) => $c->where('a.plan_id', $planId))
+            ->when($q !== null && trim($q) !== '', fn ($c) => $c->whereRaw('lower(a.nombre) like ?', ['%'.mb_strtolower(trim($q)).'%']));
+
+        $total = $consulta()->count();
+        $filas = $consulta()->orderBy('a.id')->forPage($pagina, $porPagina)->get();
+
+        return ['items' => array_values($this->aAccionesDeActividad($filas)), 'total' => $total];
+    }
+
+    public function idsDeAccionesDeColaboradorEnEjecucion(int $tenantId, int $colaboradorId): array
+    {
+        return DB::table('plan_accion_participantes as pp')
+            ->join('plan_acciones as a', 'a.id', '=', 'pp.plan_accion_id')
+            ->join('planes as p', 'p.id', '=', 'a.plan_id')
+            ->where('p.tenant_id', $tenantId)
+            ->where('pp.colaborador_id', $colaboradorId)
+            ->whereIn('p.estado', [EstadoPlan::Ejecutando->value, EstadoPlan::Cerrado->value])
+            ->orderBy('a.id')
+            ->pluck('a.id')->map(fn ($i) => (int) $i)->all();
+    }
+
+    public function planesParaActividades(int $tenantId): array
+    {
+        return DB::table('planes')
+            ->where('tenant_id', $tenantId)
+            ->whereIn('estado', [EstadoPlan::Ejecutando->value, EstadoPlan::Cerrado->value])
+            ->orderByDesc('anio')->orderByDesc('numero')
+            ->get(['id', 'codigo', 'nombre', 'anio', 'estado'])
+            ->map(fn ($p) => ['id' => (int) $p->id, 'codigo' => (string) $p->codigo, 'nombre' => (string) $p->nombre, 'anio' => (int) $p->anio, 'estado' => (string) $p->estado])
+            ->all();
+    }
+
+    private function consultaAccionesDeActividad(int $tenantId): Builder
+    {
+        return DB::table('plan_acciones as a')
+            ->join('planes as p', 'p.id', '=', 'a.plan_id')
+            ->where('p.tenant_id', $tenantId)
+            ->select(['a.id', 'a.plan_id', 'p.codigo as plan_codigo', 'p.nombre as plan_nombre', 'p.estado as plan_estado', 'a.nombre', 'a.tipo',
+                'a.fecha_inicio', 'a.fecha_fin', 'a.duracion_horas', 'a.formador', 'a.capacidad_maxima', 'a.cancelada']);
+    }
+
+    /**
+     * @param  Collection<int, object>  $filas
+     * @return array<int, AccionDeActividad>
+     */
+    private function aAccionesDeActividad($filas): array
+    {
+        if ($filas->isEmpty()) {
+            return [];
+        }
+        $competencias = DB::table('plan_accion_competencias')->whereIn('plan_accion_id', $filas->pluck('id'))->orderBy('id')->get()->groupBy('plan_accion_id');
+        $participantes = DB::table('plan_accion_participantes')->whereIn('plan_accion_id', $filas->pluck('id'))->orderBy('id')->get()->groupBy('plan_accion_id');
+
+        $resultado = [];
+        foreach ($filas as $f) {
+            $resultado[(int) $f->id] = new AccionDeActividad(
+                (int) $f->id,
+                (int) $f->plan_id,
+                (string) $f->plan_codigo,
+                (string) $f->plan_nombre,
+                EstadoPlan::from($f->plan_estado),
+                (string) $f->nombre,
+                $f->tipo === null ? null : TipoAccion::from($f->tipo),
+                $f->fecha_inicio === null ? null : $this->fecha($f->fecha_inicio),
+                $f->fecha_fin === null ? null : $this->fecha($f->fecha_fin),
+                $f->duracion_horas === null ? null : (float) $f->duracion_horas,
+                $f->formador,
+                $f->capacidad_maxima === null ? null : (int) $f->capacidad_maxima,
+                (bool) $f->cancelada,
+                ($competencias[$f->id] ?? collect())->pluck('competencia_id')->map(fn ($i) => (int) $i)->all(),
+                ($participantes[$f->id] ?? collect())->pluck('colaborador_id')->map(fn ($i) => (int) $i)->all(),
+            );
+        }
+
+        return $resultado;
     }
 
     private function insertarAccion(int $planId, AccionFormativa $accion, int $usuarioId): int
