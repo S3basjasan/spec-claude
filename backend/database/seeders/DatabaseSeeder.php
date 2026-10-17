@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ComportamientosSeeder::class);
         $this->call(PreguntasSeeder::class);
         $this->call(PuestosSeeder::class);
+        $this->call(MicroLearningSeeder::class);
         $this->call(CatalogoFormativoSeeder::class);
         $this->call(TiposUnidadSeeder::class);
         $this->call(UnidadesSeeder::class);
@@ -27,5 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(IngresosSeeder::class);
         $this->call(DnfSeeder::class);
         $this->call(PlanFormacionSeeder::class);
+        // Progresos e intentos de ejemplo: necesitan las fichas de Personal, que se siembran después de los contenidos.
+        $this->call(MicroLearningSeeder::class);
     }
 }

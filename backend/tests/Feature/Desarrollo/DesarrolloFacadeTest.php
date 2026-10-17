@@ -9,7 +9,7 @@ it('getOfertaPorCompetencia devuelve solo recursos disponibles como arreglos', f
     $area = AreaFormativaModel::factory()->create(['nombre' => 'Técnica']);
     $curso = CursoModel::factory()->conDestino('/cursos/1')->create(['nombre' => 'Visible']);
     $archivado = CursoModel::factory()->archivado()->create();
-    $micro = MicrocontenidoModel::factory()->create();
+    $micro = MicrocontenidoModel::factory()->publicado()->create();
     configurarFormativa(20, $area->id, [$curso->id, $archivado->id], [$micro->id]);
 
     $oferta = DesarrolloFacade::getOfertaPorCompetencia(20);

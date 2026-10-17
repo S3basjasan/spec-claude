@@ -8,7 +8,7 @@ it('devuelve el detalle con grados, área y solo recursos disponibles, sin datos
     $competencia = CompetenciaModel::factory()->create();
     $disponible = CursoModel::factory()->conDestino('/cursos/9')->create(['nombre' => 'Curso visible']);
     $archivado = CursoModel::factory()->archivado()->create();
-    $micro = MicrocontenidoModel::factory()->create();
+    $micro = MicrocontenidoModel::factory()->publicado()->create();
     configurarFormativa($competencia->id, null, [$disponible->id, $archivado->id], [$micro->id]);
     conNiveles([$competencia->id => 'C']);
     conBrechas([['competencia_id' => $competencia->id, 'nivel_requerido' => 'A']]);

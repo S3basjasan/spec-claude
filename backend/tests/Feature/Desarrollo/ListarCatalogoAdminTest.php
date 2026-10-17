@@ -39,7 +39,7 @@ it('el filtro cobertura distingue con cursos, sin cursos y sin oferta', function
     CompetenciaModel::factory()->create(['nombre' => 'Nada']);
     $soloArchivado = CompetenciaModel::factory()->create(['nombre' => 'Solo archivado']);
     configurarFormativa($conCurso->id, null, [CursoModel::factory()->create()->id]);
-    configurarFormativa($soloMicro->id, null, [], [MicrocontenidoModel::factory()->create()->id]);
+    configurarFormativa($soloMicro->id, null, [], [MicrocontenidoModel::factory()->publicado()->create()->id]);
     configurarFormativa($soloArchivado->id, null, [CursoModel::factory()->archivado()->create()->id]);
     actuarComoAdmin();
 

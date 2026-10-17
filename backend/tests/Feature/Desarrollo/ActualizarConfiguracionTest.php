@@ -11,7 +11,7 @@ use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\Competenci
 it('asocia cursos y micro-contenidos, sube la versión y actualiza el detalle', function () {
     $competencia = CompetenciaModel::factory()->create();
     [$c1, $c2] = [CursoModel::factory()->create(), CursoModel::factory()->create()];
-    $micro = MicrocontenidoModel::factory()->create();
+    $micro = MicrocontenidoModel::factory()->publicado()->create();
     actuarComoAdmin();
 
     $respuesta = $this->putJson("/api/catalogo-formativo/{$competencia->id}", cuerpoFormativo([

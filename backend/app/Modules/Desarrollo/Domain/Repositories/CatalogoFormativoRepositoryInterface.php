@@ -84,4 +84,12 @@ interface CatalogoFormativoRepositoryInterface
      * @return array{items: array<int, array{fecha: string, usuario_id: ?int, tipo_cambio: string, accion: string, recurso: ?string, valor_anterior: ?string, valor_nuevo: ?string}>, total: int}
      */
     public function historialDe(int $competenciaId, int $pagina, int $porPagina): array;
+
+    /**
+     * Deja los vínculos de un micro-contenido exactamente como `$competenciaIds` (altas y bajas), registra el historial del
+     * Catálogo (`Asociado`/`Quitado`) y sube la `version` de cada configuración afectada. No abre transacción propia.
+     *
+     * @param  array<int, int>  $competenciaIds
+     */
+    public function sincronizarCompetenciasDeMicrocontenido(int $microcontenidoId, array $competenciaIds, ?int $actorId): void;
 }

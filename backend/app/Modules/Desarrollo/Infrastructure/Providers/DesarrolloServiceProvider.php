@@ -5,12 +5,14 @@ namespace App\Modules\Desarrollo\Infrastructure\Providers;
 use App\Modules\Desarrollo\Application\Ports\AprobadoresInterface;
 use App\Modules\Desarrollo\Application\Ports\AsistenciaInterface;
 use App\Modules\Desarrollo\Application\Ports\BrechasActivasInterface;
+use App\Modules\Desarrollo\Application\Ports\CertificadoPdfInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresEvaluablesInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresVigentesInterface;
 use App\Modules\Desarrollo\Application\Ports\CompetenciasInterface;
 use App\Modules\Desarrollo\Application\Ports\CuentaColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesActualesInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesDeColaboradorInterface;
+use App\Modules\Desarrollo\Application\Ports\NombreDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeReferenciaInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeUsuarioInterface;
 use App\Modules\Desarrollo\Application\Ports\PerfilesDePuestoInterface;
@@ -19,16 +21,20 @@ use App\Modules\Desarrollo\Application\Ports\RelojInterface;
 use App\Modules\Desarrollo\Application\Services\DesarrolloService;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AprobadoresDesdeShared;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasActivasDesdeDnf;
+use App\Modules\Desarrollo\Infrastructure\Adapters\CertificadoPdfDompdf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresVigentesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CompetenciasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CuentaColaboradorDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesActualesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesDeColaboradorSinDatos;
+use App\Modules\Desarrollo\Infrastructure\Adapters\NombreDeColaboradorDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombresDeReferenciaDesdeFacades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombresDeUsuarioDesdeShared;
 use App\Modules\Desarrollo\Infrastructure\Adapters\PerfilesDePuestoDesdeEstructura;
@@ -39,7 +45,9 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\NivelesActualesDePrue
 use App\Modules\Desarrollo\Infrastructure\Adapters\RelojDelSistema;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentCatalogoFormativoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentDnfRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentMicrocontenidoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentPlanRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentProgresoMicroRepository;
 use Illuminate\Support\ServiceProvider;
 
 class DesarrolloServiceProvider extends ServiceProvider
@@ -53,6 +61,12 @@ class DesarrolloServiceProvider extends ServiceProvider
         $this->app->bind(CatalogoFormativoRepositoryInterface::class, EloquentCatalogoFormativoRepository::class);
         $this->app->bind(DnfRepositoryInterface::class, EloquentDnfRepository::class);
         $this->app->bind(PlanRepositoryInterface::class, EloquentPlanRepository::class);
+
+        // Micro-learning (016): contenidos y aprendizaje del colaborador; el nombre del certificado viene de Personal.
+        $this->app->bind(MicrocontenidoRepositoryInterface::class, EloquentMicrocontenidoRepository::class);
+        $this->app->bind(ProgresoMicroRepositoryInterface::class, EloquentProgresoMicroRepository::class);
+        $this->app->bind(NombreDeColaboradorInterface::class, NombreDeColaboradorDesdePersonal::class);
+        $this->app->bind(CertificadoPdfInterface::class, CertificadoPdfDompdf::class);
 
         // Plan de formación anual (013): datos de otros módulos por sus Facades, tras puertos propios.
         $this->app->bind(ColaboradoresVigentesInterface::class, ColaboradoresVigentesDesdePersonal::class);

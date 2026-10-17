@@ -6,6 +6,10 @@ import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
 import { catalogoFormativoNav } from './modules/desarrollo/catalogo-formativo/nav'
 import { CatalogoPage } from './modules/desarrollo/catalogo-formativo/pages/CatalogoPage'
+import { RequireRole as RequireRoleMicro } from './modules/desarrollo/micro-learning/components/RequireRole'
+import { microLearningNav } from './modules/desarrollo/micro-learning/nav'
+import { MicroLearningPage } from './modules/desarrollo/micro-learning/pages/MicroLearningPage'
+import { ReproduccionPage } from './modules/desarrollo/micro-learning/pages/ReproduccionPage'
 import { RequireAdmin as RequireAdminDnf } from './modules/desarrollo/dnf/components/RequireAdmin'
 import { dnfNav } from './modules/desarrollo/dnf/nav'
 import { DnfDetallePage } from './modules/desarrollo/dnf/pages/DnfDetallePage'
@@ -56,7 +60,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, microLearningNav, unidadesNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -113,6 +117,8 @@ function App() {
               <Route path="plan-formacion/:id/editar" element={<AsistentePlanPage />} />
               <Route path="plan-formacion/:id" element={<PlanDetallePage />} />
             </Route>
+            <Route path="micro-learning" element={<MicroLearningPage />} />
+            <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />
             <Route element={<RequireAdminPuestos />}>
               <Route path="puestos/nuevo" element={<PuestoFormPage />} />

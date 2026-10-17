@@ -23,10 +23,13 @@ class CatalogoFormativoSeeder extends Seeder
      * archivado), una competencia inactiva (Adaptabilidad) que conserva su curso, un curso usado por varias
      * competencias, una competencia activa sin área formativa y un curso con destino.
      *
-     * Los cursos y micro-contenidos son provisionales: las features dueñas de esos recursos reemplazarán esta siembra.
+     * Los cursos son provisionales (su feature reemplazará esta siembra); los micro-contenidos los siembra MicroLearningSeeder.
      */
     public function run(): void
     {
+        // Los micro-contenidos son de Micro-learning (016): se resuelven por código y no se crean aquí.
+        $this->call(MicroLearningSeeder::class);
+
         if (AreaFormativaModel::query()->exists()) {
             return;
         }
@@ -56,8 +59,11 @@ class CatalogoFormativoSeeder extends Seeder
                 $cursos[$clave] = CursoModel::query()->create($datos)->id;
             }
             $micros = [];
-            foreach ($this->microcontenidos() as $clave => $datos) {
-                $micros[$clave] = MicrocontenidoModel::query()->create($datos)->id;
+            foreach ($this->microcontenidos() as $clave => $codigo) {
+                $id = MicrocontenidoModel::query()->where('codigo', $codigo)->value('id');
+                if ($id !== null) {
+                    $micros[$clave] = (int) $id;
+                }
             }
 
             foreach ($this->configuracion() as $competencia => [$area, $listaCursos, $listaMicros]) {
@@ -76,6 +82,9 @@ class CatalogoFormativoSeeder extends Seeder
                     CompetenciaCursoModel::query()->create(['competencia_id' => $competenciaId, 'curso_id' => $cursos[$clave], 'created_by' => $actorId]);
                 }
                 foreach ($listaMicros as $clave) {
+                    if (! isset($micros[$clave])) {
+                        continue;
+                    }
                     CompetenciaMicrocontenidoModel::query()->create(['competencia_id' => $competenciaId, 'microcontenido_id' => $micros[$clave], 'created_by' => $actorId]);
                 }
             }
@@ -90,8 +99,8 @@ class CatalogoFormativoSeeder extends Seeder
     private function configuracion(): array
     {
         return [
-            'Comunicación efectiva' => ['Habilidades interpersonales', ['asertiva', 'escucha'], ['feedback_video']],
-            'Trabajo en equipo' => ['Habilidades interpersonales', ['asertiva', 'colaborativo'], []],
+            'Comunicación efectiva' => ['Habilidades interpersonales', ['asertiva', 'escucha'], ['feedback_video', 'pausas']],
+            'Trabajo en equipo' => ['Habilidades interpersonales', ['asertiva', 'colaborativo'], ['quiz_feedback']],
             'Liderazgo' => ['Liderazgo y gestión', ['liderazgo'], ['guia_feedback']],
             'Gestión de proyectos' => ['Desempeño y resultados', ['proyectos'], ['pdca']],
             'Orientación a resultados' => ['Desempeño y resultados', ['taller_metas'], []],
@@ -118,15 +127,18 @@ class CatalogoFormativoSeeder extends Seeder
     }
 
     /**
-     * @return array<string, array<string, mixed>>
+     * Clave => código del micro-contenido sembrado por MicroLearningSeeder.
+     *
+     * @return array<string, string>
      */
     private function microcontenidos(): array
     {
         return [
-            'guia_feedback' => ['nombre' => 'Guía rápida de retroalimentación', 'tipo' => 'Lectura', 'duracion_minutos' => 10, 'formador' => 'Marta Ríos', 'estado' => 'Disponible'],
-            'feedback_video' => ['nombre' => 'Cómo dar y recibir retroalimentación', 'tipo' => 'Video', 'duracion_minutos' => 8, 'formador' => 'Ana Salas', 'estado' => 'Disponible'],
-            'pdca' => ['nombre' => 'Infografía del ciclo PDCA', 'tipo' => 'Infografia', 'duracion_minutos' => 5, 'formador' => null, 'estado' => 'Disponible'],
-            'pausas' => ['nombre' => 'Pausas activas para concentrarte', 'tipo' => 'Audio', 'duracion_minutos' => 6, 'formador' => null, 'estado' => 'Disponible'],
+            'feedback_video' => 'MICRO-0001',
+            'guia_feedback' => 'MICRO-0002',
+            'pdca' => 'MICRO-0003',
+            'pausas' => 'MICRO-0004',
+            'quiz_feedback' => 'MICRO-0005',
         ];
     }
 }
