@@ -62,6 +62,17 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 | Codesarrollo | `#5B2E91` / `#F0E7FA` | `#CDA9F2` / `#2C1D44` | `--violet` / `--violetsoft` *(nuevos)* |
 | Mentoring | `#9C2250` / `#FBE6EC` | `#F2A6C0` / `#40182A` | `--rose` / `--rosesoft` *(nuevos)* |
 
+**Colores por tipo y estado de micro-contenido** *(feature 016, Micro-learning; sin tokens nuevos)*. El color nunca es la única señal: siempre va con el nombre del tipo o del estado.
+
+| Tipo | Texto / fondo | Tokens |
+|---|---|---|
+| Video (rojo) | `--danger` / `--dangersoft` | también el borde superior de la tarjeta |
+| PDF (azul) | `--info` / `--infosoft` | |
+| Artículo (verde) | `--accent` / `--soft` | |
+| Quiz (púrpura) | `--violet` / `--violetsoft` | |
+
+Estados: Borrador `Badge` de advertencia (`--warning`/`--warningsoft`); Publicado `Badge` por defecto (`--accent`/`--soft`); Archivado `Badge` neutro (`--muted` sobre `--border`).
+
 **Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
@@ -206,6 +217,18 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Selector de participantes** | `Combobox` de búsqueda por colaborador con el contador «n/capacidad» (`--muted`; en `--warn` al llegar al máximo, con el botón de agregar deshabilitado) y lista de inscritos con botón «Quitar» por fila; el aviso de cruce de fechas (`--warn`, icono y texto) se muestra junto al participante. |
 | **Historial del plan** | Lista cronológica (más reciente primero): badge de tipo (Estado, Participante, Cancelación, Aprobador), usuario y fecha (13px `--muted`), detalle «anterior → nuevo» y el motivo si existe. |
 
+**Componentes de Micro-learning** *(feature 016; referencias `MicroAdmin.dc.html`, `MicroColaborador.dc.html`, `MicroReproduccion.dc.html` y `MicroQuiz.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Tarjeta de micro-contenido** | `article` con borde superior de 4px del color del tipo: miniatura (o imagen genérica por tipo, `role="img"`), `Etiqueta de tipo` y `Badge` de estado, código, título (h3), «Apto para conocimientos» (13px 600 `--accent`), primera competencia con «+N», duración, completaciones y botones de 44px por estado (Vista previa, Editar, Publicar/Archivar/Reactivar, Historial y Eliminar solo sin progreso). Cuadrícula `repeat(auto-fill, minmax(280px, 1fr))`. |
+| **Etiqueta de tipo** | Píldora 13px 700 con el nombre del tipo y los colores de la tabla «Colores por tipo y estado de micro-contenido». |
+| **Constructor de preguntas** | `fieldset` con la leyenda «Preguntas de opción múltiple (n/20)»; cada pregunta es una tarjeta `--bg` con enunciado (contador n/500), de 2 a 5 opciones con radio «correcta» y texto (n/300), IconButton Quitar y los controles Subir/Bajar (patrón *Reordenar*) con un `role="status"` que anuncia el cambio. En solo lectura (`fieldset disabled`) con `Alert` neutro si el quiz ya tiene intentos terminados. |
+| **Reproductor (marcador de posición)** | Caja 16:9 `--neutralsoft` con ícono, tiempo `m:ss / m:ss`, botón primario Reproducir/Pausar o «Reanudar desde m:ss» y un `input range` con `aria-valuetext`. No hospeda video. |
+| **Opción de quiz con retroalimentación** | Botón de 44px con letra en círculo; tras responder, la correcta con borde `--accent` y fondo `--soft` y la elegida errónea con `--danger`/`--dangersoft`, ambas con texto («Opción correcta», «Tu respuesta»); mensaje «Correcto»/«Incorrecto» en `role="status"`. |
+| **Tarjeta de aprendizaje** | Como la de micro-contenido para el colaborador: estado (Sin iniciar, En progreso, Completado), motivo de asignación, posición de retoma, último puntaje «N de M» y botones Iniciar/Continuar/Ver y «Descargar certificado». |
+| **Resumen de aprendizaje** | Cuatro `StatCard` en `dl` (`minmax(180px, 1fr)`): completados, en progreso, horas acumuladas y certificados. |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -329,6 +352,16 @@ Referencias: `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html`. Se omite
 5. **Mi plan (colaborador)**: encabezado con la barra de progreso, «Próximas actividades» (hasta 3) y lista cronológica de tarjetas de acción; mensaje vacío «Aún no tienes acciones formativas asignadas».
 6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; los diálogos de motivo y de confirmación usan `Modal`/`ConfirmDialog`.
 
+### Micro-learning *(feature 016)*
+Referencias: `MicroAdmin.dc.html` (repositorio, formulario, vista previa), `MicroColaborador.dc.html` (Mi aprendizaje), `MicroReproduccion.dc.html` (video, PDF y artículo) y `MicroQuiz.dc.html` (quiz). Se omiten los controles de prototipo («Ver como…», menú con Empleados/Ajustes).
+
+1. **Repositorio (cuadrícula)**: encabezado con «+ Nuevo Contenido», `Alert` neutro de alcance en conocimientos, búsqueda por título y filtros (tipo, estado —«Borrador y Publicado» por defecto—, competencia, «Limpiar filtros») y `Paginación`.
+2. **Formulario (Modal de 640px)**: título, tipo (bloqueado al editar), competencias activas con `Combobox` y chips «Quitar», duración, URL o constructor de preguntas, miniatura; pie con Vista previa, Cancelar, «Guardar borrador» y «Guardar y publicar».
+3. **Vista previa (Modal)**: el contenido tal como lo ve el colaborador, resuelto en el cliente, sin progreso ni intentos.
+4. **Mi aprendizaje**: resumen, `Tabs` «Asignado (n)» y «Completado (n)» (en la URL) y cuadrícula de tarjetas de aprendizaje; mensaje por pestaña vacía.
+5. **Reproducción y quiz**: ancho máximo 900px; reproductor o visor, botón «Marcar como completado» (oculto si ya completado), quiz de una pregunta a la vez con «Pregunta N de M» y resultado «N de M» con «Reintentar quiz».
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; archivar y eliminar usan `ConfirmDialog`.
+
 ---
 
 ## 6. Iconos
@@ -446,3 +479,10 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `GP-05_Documentos-del-colaborador.html` (pantalla Categorías documentales) muestra la columna «Documentos», el botón «Editar nombre», Desactivar sin explicación y Reactivar sin confirmación, y no pagina | El catálogo no consulta documentos, así que no hay columna «Documentos»; el botón es «Editar»; Desactivar confirma con «Sus documentos se conservarán» y Reactivar confirma con «No se reactivan documentos archivados»; el listado se pagina (20 por página) y conserva búsqueda, estado y página en la URL; los diálogos usan `Modal` y `ConfirmDialog` |
 | `GP-05_Documentos-del-colaborador.html` (pestaña Documentos) muestra la vista previa embebida del PDF, y el Colaborador solo accede desde Mi ficha | «Abrir» muestra el PDF en una pestaña con un blob local obtenido con el cliente HTTP autenticado (no hay URL permanente ni vista previa embebida) y «Descargar» fuerza el nombre `Documento_{id}.pdf`; el Colaborador dispone de la página `/mis-documentos` porque el permiso documental es independiente del de ficha (la pestaña de Mi ficha se mantiene); la vista de archivados es un conmutador Disponibles/Archivados solo para el Administrador, sin acciones de escritura; el cambio de visibilidad y el archivo no se actualizan hasta la respuesta del servidor |
 | `GP-01_Fichas-de-colaboradores.html` (acción de exportación) permite exportar desde la ficha y desde Mi ficha | «Exportar ficha» aparece en el detalle administrativo y, para el Colaborador, en `/exportar-mi-ficha` (y en Mi ficha si puede consultarla) porque el permiso de exportación es independiente; obtiene el PDF como blob con el cliente autenticado, muestra «Generando PDF…», deshabilita el botón mientras dura la petición, no descarga respuestas que no sean PDF, ofrece Reintentar ante 503 y oculta la acción ante 403; el PDF no se agrega a Documentos |
+| `MicroColaborador.dc.html` indica «Aprueba un quiz con 70 % o más para obtener tu primer certificado», muestra un panel «Mis certificados» y un resultado aprobado/reprobado | No hay puntaje mínimo: completar un intento da el certificado. Se omite el panel; el certificado se descarga desde la pestaña Completado y se cuenta en el resumen. El resultado es «N de M» con un mensaje neutro |
+| `MicroAdmin.dc.html` y `MicroQuiz.dc.html` fijan 4 opciones (A–D) por pregunta | Entre 2 y 5 opciones por pregunta con exactamente una correcta; el constructor permite agregar y quitar |
+| `MicroAdmin.dc.html` asocia una sola competencia con un select simple | Selección múltiple de competencias activas |
+| `MicroAdmin.dc.html` filtra el estado con Todos, Publicado y Archivado | Por defecto Borrador y Publicado («Borrador y Publicado»); opciones Borrador, Publicado, Archivado y Todos |
+| `MicroAdmin.dc.html` trae «Ver como colaborador», tarjetas KPI y un bloque largo «Úsalo para conocimientos» con una cita | Cada persona tiene un solo rol: sin «Ver como…»; sin KPI; la nota de alcance es un `Alert` neutro breve |
+| `MicroAdmin.dc.html` ofrece «Archivar en su lugar» en el diálogo de eliminar, incluso con completaciones | Con progreso de colaboradores el botón Eliminar no se ofrece; el diálogo de eliminar solo aparece en contenidos sin progreso |
+| `MicroColaborador.dc.html` muestra un porcentaje de avance en la tarjeta | La tarjeta muestra el estado, la duración, la posición de retoma de un Video y el último puntaje «N de M» de un Quiz |

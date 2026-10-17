@@ -11,7 +11,7 @@ use Laravel\Sanctum\Sanctum;
 it('registra asociaciones, desasociaciones, cambio de área y renombrado, del más reciente al más antiguo', function () {
     $competencia = CompetenciaModel::factory()->create();
     $curso = CursoModel::factory()->create(['nombre' => 'Curso uno']);
-    $micro = MicrocontenidoModel::factory()->create(['nombre' => 'Micro uno']);
+    $micro = MicrocontenidoModel::factory()->publicado()->create(['titulo' => 'Micro uno']);
     $area = AreaFormativaModel::factory()->create(['nombre' => 'Área vieja']);
     $admin = UserModel::factory()->admin()->create(['name' => 'Marta Ríos']);
     Sanctum::actingAs($admin, ['admin']);

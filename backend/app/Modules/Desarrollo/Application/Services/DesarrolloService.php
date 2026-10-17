@@ -6,7 +6,10 @@ use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Services\CalculadorDeResumen;
 use App\Modules\Desarrollo\Domain\ValueObjects\FiltroDnf;
 use App\Modules\Desarrollo\Domain\ValueObjects\PrioridadBrecha;
 use App\Modules\Desarrollo\Domain\ValueObjects\RecursoFormativo;
@@ -25,6 +28,9 @@ class DesarrolloService
         private readonly DnfRepositoryInterface $dnf,
         private readonly PlanRepositoryInterface $planes,
         private readonly CrearBorradorDesdeDnf $crearBorrador,
+        private readonly MicrocontenidoRepositoryInterface $microcontenidos,
+        private readonly ProgresoMicroRepositoryInterface $progresosMicro,
+        private readonly CalculadorDeResumen $calculadorDeResumen,
     ) {}
 
     /**
@@ -139,5 +145,48 @@ class DesarrolloService
         } while ($pagina <= $resultado->ultimaPagina());
 
         return $registradas;
+    }
+
+    /**
+     * Micro-contenidos Publicados vinculados a la competencia (micro-learning). Solo lectura.
+     *
+     * @return list<array{id: int, codigo: string, titulo: string, tipo: string, duracion_minutos: int, miniatura_url: string|null, url_destino: string}>
+     */
+    public function getMicrocontenidosPublicadosPorCompetencia(int $competenciaId): array
+    {
+        return array_values(array_map(fn ($m) => [
+            'id' => $m->id,
+            'codigo' => $m->codigo,
+            'titulo' => $m->titulo,
+            'tipo' => $m->tipo->value,
+            'duracion_minutos' => $m->duracionMinutos,
+            'miniatura_url' => $m->miniaturaUrl,
+            'url_destino' => '/micro-learning/'.$m->id,
+        ], $this->microcontenidos->publicadosDeCompetencia($competenciaId)));
+    }
+
+    /**
+     * Resumen de aprendizaje de un colaborador para «Mi progreso» de Reportes. Solo lectura. Horas = suma de la duración
+     * de los micro-contenidos completados dividida entre 60, con un decimal.
+     *
+     * @return array{completados: int, en_progreso: int, horas_acumuladas: float, certificados: int}
+     */
+    public function getResumenAprendizaje(int $tenantId, int $colaboradorId): array
+    {
+        $r = $this->progresosMicro->resumenDe($tenantId, $colaboradorId);
+
+        return $this->calculadorDeResumen->resumir($r['completados'], $r['en_progreso'], $r['minutos']);
+    }
+
+    /**
+     * Completaciones de micro-contenidos del tenant para los indicadores de Reportes. Solo lectura. Filtros opcionales:
+     * colaborador_id, microcontenido_id, desde y hasta (AAAA-MM-DD, sobre la fecha de finalización).
+     *
+     * @param  array{colaborador_id?: int, microcontenido_id?: int, desde?: string, hasta?: string}  $filtros
+     * @return list<array{microcontenido_id: int, codigo: string, titulo: string, tipo: string, duracion_minutos: int, colaborador_id: int, fecha_inicio: string, fecha_completado: string}>
+     */
+    public function getCompletaciones(int $tenantId, array $filtros = []): array
+    {
+        return array_values($this->progresosMicro->completaciones($tenantId, $filtros));
     }
 }

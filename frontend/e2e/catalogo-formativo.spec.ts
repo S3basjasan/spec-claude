@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 // Datos sembrados en backend/.env.e2e (CatalogoFormativoSeeder, sobre las siete competencias de CompetenciasSeeder):
 //   Activas: Orientación a resultados (solo un curso archivado), Trabajo en equipo (2 cursos), Comunicación efectiva
-//   (2 cursos y 1 micro-contenido), Liderazgo (1 curso con destino y 1 micro-contenido), Pensamiento analítico (sin
+//   (2 cursos y 2 micro-contenidos), Liderazgo (1 curso con destino y 1 micro-contenido), Pensamiento analítico (sin
 //   área ni recursos) y Gestión de proyectos (1 curso y 1 micro-contenido). Inactiva: Adaptabilidad (conserva 1 curso).
 //   Cobertura: 4 de 6 activas = 67 %.
 // Las pruebas son seriales: las que cambian datos los restablecen al terminar.
@@ -74,9 +74,9 @@ test('Colaborador: ve las tarjetas por área, abre el detalle y no tiene control
   await expect(page.getByRole('link', { name: 'Iniciar Liderazgo para jefaturas' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Micro-contenidos (1)' })).toBeVisible()
   await expect(page.getByText('Aptos para desarrollo de conocimientos, no de competencias conductuales.')).toBeVisible()
-  const sinDestino = page.getByRole('button', { name: /Guía rápida de retroalimentación: Próximamente/ })
-  await expect(sinDestino).toBeDisabled()
-  await expect(sinDestino).toContainText('Próximamente')
+  // Los micro-contenidos tienen destino: la reproducción de micro-learning.
+  const conDestino = page.getByRole('link', { name: 'Ver Guía rápida de retroalimentación' })
+  await expect(conDestino).toHaveAttribute('href', /\/micro-learning\/\d+$/)
 
   await page.getByRole('button', { name: 'Volver al catálogo' }).click()
   await expect(page.getByRole('heading', { name: 'Catálogo formativo', level: 1 })).toBeVisible()

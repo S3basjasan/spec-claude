@@ -2,9 +2,14 @@
 
 use App\Modules\Desarrollo\Presentation\Controllers\AreaFormativaController;
 use App\Modules\Desarrollo\Presentation\Controllers\CatalogoFormativoController;
+use App\Modules\Desarrollo\Presentation\Controllers\CertificadoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
+use App\Modules\Desarrollo\Presentation\Controllers\IntentoMicroController;
+use App\Modules\Desarrollo\Presentation\Controllers\MiAprendizajeController;
+use App\Modules\Desarrollo\Presentation\Controllers\MicrocontenidoController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanAccionController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanController;
+use App\Modules\Desarrollo\Presentation\Controllers\ProgresoMicroController;
 use Illuminate\Support\Facades\Route;
 
 // Catálogo formativo de competencias (feature 005). Prefijo /api/catalogo-formativo por contrato.
@@ -75,4 +80,35 @@ Route::prefix('api/plan-acciones')->middleware(['api', 'auth:sanctum', 'admin'])
     Route::get('/', [PlanAccionController::class, 'index'])->name('plan-acciones.index');
     Route::put('/{id}/participantes', [PlanAccionController::class, 'participantes'])->whereNumber('id')->name('plan-acciones.participantes');
     Route::patch('/{id}/cancelar', [PlanAccionController::class, 'cancelar'])->whereNumber('id')->name('plan-acciones.cancelar');
+});
+
+// Micro-learning (feature 016). Prefijo /api/microcontenidos por contrato.
+// No existen DELETE de progreso ni PUT de historial: el progreso y el historial de estados solo se agregan.
+// Las rutas fijas (`opciones`, `mi-aprendizaje`, `intentos/...`) se declaran antes de cualquier `/{id}`.
+Route::prefix('api/microcontenidos')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [MicrocontenidoController::class, 'index'])->name('microcontenidos.index');
+        Route::get('/mi-aprendizaje', [MiAprendizajeController::class, 'show'])->name('microcontenidos.mi-aprendizaje');
+        Route::post('/intentos/{intentoId}/respuestas', [IntentoMicroController::class, 'responderPregunta'])->whereNumber('intentoId')->name('microcontenidos.responder');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/opciones', [MicrocontenidoController::class, 'opciones'])->name('microcontenidos.opciones');
+        Route::post('/', [MicrocontenidoController::class, 'store'])->name('microcontenidos.store');
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/{id}', [MicrocontenidoController::class, 'show'])->whereNumber('id')->name('microcontenidos.show');
+        Route::put('/{id}/progreso', [ProgresoMicroController::class, 'avance'])->whereNumber('id')->name('microcontenidos.avance');
+        Route::post('/{id}/completar', [ProgresoMicroController::class, 'completar'])->whereNumber('id')->name('microcontenidos.completar');
+        Route::post('/{id}/intentos', [IntentoMicroController::class, 'iniciar'])->whereNumber('id')->name('microcontenidos.intentos');
+        Route::get('/{id}/certificado', [CertificadoMicroController::class, 'show'])->whereNumber('id')->name('microcontenidos.certificado');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::put('/{id}', [MicrocontenidoController::class, 'update'])->whereNumber('id')->name('microcontenidos.update');
+        Route::patch('/{id}/estado', [MicrocontenidoController::class, 'estado'])->whereNumber('id')->name('microcontenidos.estado');
+        Route::delete('/{id}', [MicrocontenidoController::class, 'destroy'])->whereNumber('id')->name('microcontenidos.destroy');
+        Route::get('/{id}/historial', [MicrocontenidoController::class, 'historial'])->whereNumber('id')->name('microcontenidos.historial');
+    });
 });

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Micro-learning — Colaborador</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.tabbtn:focus-visible,.pill:focus-visible,.cchip:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.tabbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.tabbtn:hover{color:var(--text)}
+.tabbtn[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;font-weight:600}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.cchip{display:block;width:100%;box-sizing:border-box;text-align:left;border:0;padding:3px 6px;border-radius:4px;font:inherit;font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400;box-sizing:border-box;width:100%}
+textarea.fi{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+</style>
+</helmet>
+<div style="min-height: 1500px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">DP</span>
+      <span style="font-size: 14px; font-weight: 600">Diego Paredes</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="CatalogoColaborador.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="DNFColaborador.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="PlanAnualColaborador.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Plan anual</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9.5l5 2.5-5 2.5z"></path></svg>Micro-learning</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>Mi perfil</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <!-- ================= INICIO ================= -->
+        <sc-if value="{{v.home}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 28px">
+            <div>
+              <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+              <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Micro-learning</h1>
+              <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Cápsulas breves para aprender a tu ritmo. Ideales para reforzar conocimientos.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+              <sc-for list="{{stats}}" as="k" hint-placeholder-count="4">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px">
+                  <div style="font-size: 13px; color: var(--muted)">{{k.label}}</div>
+                  <div style="margin-top: 4px; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{k.valor}}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{hayAviso}}" hint-placeholder-val="{{false}}">
+              <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600"><span>{{aviso}}</span><button class="btn" onClick="{{cerrarAviso}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button></div>
+            </sc-if>
+
+            <section aria-label="Mis cápsulas" style="display: flex; flex-direction: column; gap: 16px">
+              <div role="tablist" aria-label="Estado" style="display: flex; border-bottom: 1px solid var(--border)">
+                <button class="tabbtn" role="tab" id="tab-asi" aria-selected="{{tabs.asi}}" aria-controls="panel-mis" onClick="{{verAsignado}}">Asignado ({{tabs.nAsi}})</button>
+                <button class="tabbtn" role="tab" id="tab-com" aria-selected="{{tabs.com}}" aria-controls="panel-mis" onClick="{{verCompletado}}">Completado ({{tabs.nCom}})</button>
+              </div>
+              <div id="panel-mis" role="tabpanel" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px">
+                <sc-for list="{{tarjetas}}" as="c" hint-placeholder-count="5">
+                  <article style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column">
+                    <div style="{{c.thumbStyle}}">
+                      <sc-if value="{{c.esVideo}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 001.5.86l11-6.5a1 1 0 000-1.72l-11-6.5A1 1 0 008 5.5z"></path></svg></sc-if>
+                      <sc-if value="{{c.esPdf}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></sc-if>
+                      <sc-if value="{{c.esArt}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8M8 13h8M8 17h4"></path></svg></sc-if>
+                      <sc-if value="{{c.esQuiz}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17h.01"></path></svg></sc-if>
+                      <span style="position: absolute; right: 10px; bottom: 10px; padding: 2px 8px; border-radius: 6px; background: rgba(0,0,0,0.65); color: #fff; font-size: 12px; font-weight: 700">{{c.duracion}}</span>
+                    </div>
+                    <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1">
+                      <div style="display: flex; flex-wrap: wrap; gap: 6px"><span style="{{c.tipoStyle}}">{{c.tipo}}</span><span style="{{c.estadoStyle}}">{{c.estado}}</span></div>
+                      <h3 style="margin: 0; font-size: 16px; line-height: 1.35">{{c.titulo}}</h3>
+                      <div style="font-size: 14px; color: var(--muted)">{{c.comp}}</div>
+                      <sc-if value="{{c.hayProg}}" hint-placeholder-val="{{false}}">
+                        <div style="display: flex; align-items: center; gap: 10px"><div role="progressbar" aria-label="Avance" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{c.pct}}" style="flex: 1; height: 8px; border-radius: 999px; background: var(--border); overflow: hidden"><div style="{{c.bar}}"></div></div><span style="font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums">{{c.pct}} %</span></div>
+                      </sc-if>
+                      <sc-if value="{{c.hayScore}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; font-weight: 600; color: var(--accent)">{{c.scoreTxt}}</div></sc-if>
+                      <div style="margin-top: auto; padding-top: 6px"><button class="btn {{c.btnClass}}" onClick="{{c.abrir}}" aria-label="{{c.btnLabel}}: {{c.titulo}}" style="width: 100%">{{c.btnLabel}}</button></div>
+                    </div>
+                  </article>
+                </sc-for>
+              </div>
+              <sc-if value="{{sinTarjetas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 24px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted)">No tienes cápsulas en esta pestaña.</p></sc-if>
+            </section>
+
+            <section aria-labelledby="cert-t" style="display: flex; flex-direction: column; gap: 12px">
+              <h2 id="cert-t" style="margin: 0; font-size: 20px">Mis certificados</h2>
+              <sc-if value="{{sinCert}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 15px; color: var(--muted)">Aprueba un quiz con 70 % o más para obtener tu primer certificado.</p></sc-if>
+              <ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px">
+                <sc-for list="{{certs}}" as="x" hint-placeholder-count="1">
+                  <li style="display: flex; gap: 14px; align-items: center; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px">
+                    <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg></span>
+                    <div><div style="font-size: 15px; font-weight: 600">{{x.titulo}}</div><div style="font-size: 13px; color: var(--muted)">{{x.detalle}}</div></div>
+                  </li>
+                </sc-for>
+              </ul>
+            </section>
+          </div>
+        </sc-if>
+
+        <!-- ================= REPRODUCCIÓN ================= -->
+        <sc-if value="{{v.player}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 20px; max-width: 880px; width: 100%; margin: 0 auto">
+            <div><button class="btn" onClick="{{irInicio}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Mi aprendizaje</button></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+              <span style="{{p.tipoStyle}}">{{p.tipo}}</span>
+              <span style="font-size: 14px; color: var(--muted)">{{p.comp}} · {{p.duracion}}</span>
+              <span style="padding: 3px 10px; border-radius: 999px; background: var(--neutralsoft); color: var(--neutral); font-size: 12px; font-weight: 700">Apto para conocimientos</span>
+            </div>
+            <h1 style="margin: 0; font-size: 26px; line-height: 1.25; letter-spacing: -0.02em">{{p.titulo}}</h1>
+
+            <sc-if value="{{p.esVideo}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <sc-if value="{{p.hayReanudar}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--accent)">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--accent)">Retomas donde lo dejaste: {{p.posTxt}}</span>
+                    <button class="btn btn-primary" onClick="{{p.reanudar}}" style="height: 36px; font-size: 14px">Reanudar desde {{p.posTxt}}</button>
+                  </div>
+                </sc-if>
+                <div style="aspect-ratio: 16 / 9; border-radius: 12px; background: #11161C; color: #fff; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                  <button onClick="{{p.alternar}}" aria-label="{{p.playLabel}}" style="width: 72px; height: 72px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,0.12); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center">
+                    <sc-if value="{{p.paused}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 001.5.86l11-6.5a1 1 0 000-1.72l-11-6.5A1 1 0 008 5.5z"></path></svg></sc-if>
+                    <sc-if value="{{p.playing}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></sc-if>
+                  </button>
+                  <span style="position: absolute; left: 14px; top: 12px; font-size: 12px; opacity: 0.75">Reproductor de video (marcador de posición)</span>
+                  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: rgba(255,255,255,0.25)"><div style="{{p.barStyle}}"></div></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span style="font-size: 14px; font-variant-numeric: tabular-nums; min-width: 44px">{{p.posTxt}}</span>
+                  <input type="range" min="0" max="{{p.totalSec}}" value="{{p.pos}}" onChange="{{p.mover}}" aria-label="Posición del video" style="flex: 1; accent-color: var(--accent); height: 44px">
+                  <span style="font-size: 14px; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right">{{p.totalTxt}}</span>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{p.esPdf}}" hint-placeholder-val="{{false}}">
+              <div style="border-radius: 12px; border: 1px solid var(--border); background: var(--surface); padding: 32px; display: flex; flex-direction: column; gap: 12px; min-height: 280px">
+                <div style="height: 16px; width: 45%; border-radius: 4px; background: var(--border)"></div>
+                <div style="height: 10px; border-radius: 4px; background: var(--border)"></div><div style="height: 10px; border-radius: 4px; background: var(--border)"></div><div style="height: 10px; width: 78%; border-radius: 4px; background: var(--border)"></div>
+                <div style="height: 10px; border-radius: 4px; background: var(--border)"></div><div style="height: 10px; width: 60%; border-radius: 4px; background: var(--border)"></div>
+                <span style="margin-top: auto; font-size: 13px; color: var(--muted)">Visor de documento PDF (marcador de posición)</span>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{p.esArt}}" hint-placeholder-val="{{false}}">
+              <div style="border-radius: 12px; border: 1px solid var(--border); background: var(--surface); padding: 28px; display: flex; flex-direction: column; gap: 12px">
+                <p style="margin: 0; font-size: 17px; line-height: 1.7">{{p.texto1}}</p>
+                <p style="margin: 0; font-size: 17px; line-height: 1.7">{{p.texto2}}</p>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{p.esQuiz}}" hint-placeholder-val="{{false}}">
+              <div style="border-radius: 12px; border: 1px solid var(--border); background: var(--surface); padding: 28px; display: flex; flex-direction: column; gap: 12px">
+                <p style="margin: 0; font-size: 16px; line-height: 1.6">{{p.quizIntro}}</p>
+                <div><button class="btn btn-primary" onClick="{{p.iniciarQuiz}}">{{p.quizBtn}}</button></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{p.noQuiz}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+                <button class="btn btn-primary" onClick="{{p.completar}}" disabled="{{p.yaCompleto}}">{{p.completarLabel}}</button>
+                <sc-if value="{{p.yaCompleto}}" hint-placeholder-val="{{false}}"><span role="status" style="font-size: 14px; font-weight: 600; color: var(--accent)">Progreso registrado.</span></sc-if>
+              </div>
+            </sc-if>
+
+            <p style="margin: 0; font-size: 13px; line-height: 1.55; color: var(--muted)">Esta cápsula refuerza conocimientos. No reemplaza la práctica ni la capacitación presencial para desarrollar competencias conductuales.</p>
+          </div>
+        </sc-if>
+
+        <!-- ================= QUIZ ================= -->
+        <sc-if value="{{v.quiz}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 20px; max-width: 760px; width: 100%; margin: 0 auto">
+            <div><button class="btn" onClick="{{irInicio}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Salir del quiz</button></div>
+            <div>
+              <div style="font-size: 13px; color: var(--muted)">{{qz.titulo}}</div>
+              <div style="margin-top: 2px; font-size: 14px; font-weight: 700; color: var(--accent)">Pregunta {{qz.n}} de {{qz.total}}</div>
+              <div role="progressbar" aria-label="Avance del quiz" aria-valuemin="0" aria-valuemax="{{qz.total}}" aria-valuenow="{{qz.n}}" style="margin-top: 8px; height: 8px; border-radius: 999px; background: var(--border); overflow: hidden"><div style="{{qz.bar}}"></div></div>
+            </div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; display: flex; flex-direction: column; gap: 16px">
+              <h1 style="margin: 0; font-size: 22px; line-height: 1.4">{{qz.texto}}</h1>
+              <div role="group" aria-label="Opciones" style="display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{qz.opts}}" as="o" hint-placeholder-count="4">
+                  <button onClick="{{o.elegir}}" style="{{o.style}}"><span style="font-weight: 700; width: 20px">{{o.letra}}</span><span style="flex: 1">{{o.texto}}</span><span style="font-size: 13px; font-weight: 700">{{o.marca}}</span></button>
+                </sc-for>
+              </div>
+              <sc-if value="{{qz.hayFeedback}}" hint-placeholder-val="{{false}}">
+                <div role="status" aria-live="polite" style="{{qz.fbStyle}}"><b>{{qz.fbTitulo}}</b> {{qz.fbTexto}}</div>
+              </sc-if>
+              <div style="display: flex; justify-content: flex-end"><button class="btn btn-primary" onClick="{{qz.siguiente}}" disabled="{{qz.sinResponder}}">{{qz.siguienteLabel}}</button></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ================= RESULTADO ================= -->
+        <sc-if value="{{v.result}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 20px; max-width: 640px; width: 100%; margin: 0 auto; align-items: stretch">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+              <div style="font-size: 14px; color: var(--muted)">{{rs.titulo}}</div>
+              <h1 style="margin: 0; font-size: 56px; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">{{rs.pct}} %</h1>
+              <div style="font-size: 16px; font-weight: 600">{{rs.correctas}} respuestas correctas de {{rs.total}}</div>
+              <span style="{{rs.estadoStyle}}">{{rs.estado}}</span>
+              <p style="margin: 4px 0 0; font-size: 15px; line-height: 1.55; color: var(--muted)">{{rs.msg}}</p>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center">
+              <button class="btn" onClick="{{rs.reintentar}}">Reintentar quiz</button>
+              <button class="btn btn-primary" onClick="{{irInicio}}">Volver a Mi aprendizaje</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = Object.assign({
+      dark: null, view: 'home', tab: 'asignado', sel: null, aviso: '', playing: false,
+      est: d.estado0, qi: 0, ans: [], score: null
+    }, {});
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    const tipoLight = { 'Video': ['#FDECEA', '#B42318'], 'PDF': ['#E4EDFB', '#1F4E9C'], 'Artículo': ['#E3F4E8', '#1E6B3A'], 'Quiz': ['#F0E7FA', '#5B2E91'] };
+    const tipoDark = { 'Video': ['#3A1B1A', '#FF8A80'], 'PDF': ['#172A4A', '#9DBEF5'], 'Artículo': ['#12301D', '#7FD99C'], 'Quiz': ['#2C1D44', '#CDA9F2'] };
+    const Q = (texto, opts, ok, exp) => ({ texto, opts, ok, exp });
+    const qEscucha = [
+      Q('¿Qué caracteriza a la escucha activa?', ['Preparar tu respuesta mientras el otro habla', 'Concentrarte en el mensaje y confirmar que lo entendiste', 'Interrumpir para corregir', 'Tomar notas sin mirar a la persona'], 1, 'Se trata de atender al otro y verificar el entendimiento.'),
+      Q('Parafrasear sirve para…', ['Ganar tiempo', 'Comprobar que entendiste lo dicho', 'Cambiar de tema', 'Mostrar desacuerdo'], 1, 'Repetir con tus palabras confirma la comprensión.'),
+      Q('¿Cuál de estas es una barrera de la escucha?', ['Hacer preguntas abiertas', 'Mantener contacto visual', 'Juzgar antes de terminar de escuchar', 'Resumir lo acordado'], 2, 'Los juicios prematuros bloquean la comprensión.'),
+      Q('Una pregunta abierta suele comenzar con…', ['¿Es verdad que…?', '¿Cómo o qué…?', '¿Verdad que sí…?', '¿Estás de acuerdo…?'], 1, 'Las preguntas abiertas invitan a explicar.'),
+      Q('El lenguaje no verbal en una conversación…', ['No influye', 'Solo importa en videollamadas', 'Refuerza o contradice lo que se dice', 'Reemplaza siempre al lenguaje verbal'], 2, 'Gestos y tono acompañan al mensaje.')
+    ];
+    const C = (id, titulo, tipo, comp, dur, extra) => Object.assign({ id, titulo, tipo, comp, dur }, extra || {});
+    const items = [
+      C('M01', 'Introducción a consultas SQL', 'Video', 'Análisis de datos', 8),
+      C('M02', 'Guía rápida de tablas dinámicas', 'PDF', 'Análisis de datos', 6),
+      C('M04', 'Quiz: conceptos básicos de estadística', 'Quiz', 'Análisis de datos', 10, { qs: qEscucha.slice(0, 3) }),
+      C('M05', 'Storytelling con datos en 7 minutos', 'Video', 'Comunicación efectiva', 7),
+      C('M03', 'Cómo dar feedback efectivo', 'Artículo', 'Comunicación efectiva', 5, { t1: 'El feedback efectivo describe hechos observables, no juicios sobre la persona. Empieza por el contexto: cuándo ocurrió, qué se vio y qué efecto tuvo en el equipo o en el resultado.', t2: 'Después, acuerda una acción concreta y un plazo para revisarla. Cierra confirmando que la otra persona entendió y tiene lo necesario para aplicarlo.' }),
+      C('M08', 'Quiz: escucha activa', 'Quiz', 'Comunicación efectiva', 8, { qs: qEscucha }),
+      C('M07', 'Qué es la gestión del cambio', 'Artículo', 'Gestión del cambio', 6, { t1: 'La gestión del cambio ayuda a las personas a pasar de la situación actual a la deseada con el menor desgaste posible. No se limita a comunicar la decisión: requiere entender cómo la vive cada grupo.', t2: 'Tres ideas clave: explicar el porqué, involucrar pronto a quienes se verán afectados y acompañar los primeros pasos con apoyo visible.' }),
+      C('M06', 'Matriz de Eisenhower para priorizar', 'PDF', 'Gestión del tiempo', 4),
+      C('M11', 'Principios de la negociación', 'Artículo', 'Negociación', 7, { t1: 'Negociar bien es buscar un acuerdo que ambas partes puedan sostener. Se prepara con anticipación: intereses propios, alternativas y márgenes.', t2: 'Separar a las personas del problema y proponer opciones de beneficio mutuo reduce el desgaste y mejora los acuerdos.' })
+    ];
+    const estado0 = {
+      M01: { e: 'Completado', pct: 100, pos: 480 }, M02: { e: 'Completado', pct: 100, pos: 0 }, M04: { e: 'Completado', pct: 100, pos: 0, score: 100 },
+      M06: { e: 'Completado', pct: 100, pos: 0 }, M11: { e: 'Completado', pct: 100, pos: 0 },
+      M05: { e: 'En progreso', pct: 45, pos: 188 }, M03: { e: 'Asignado', pct: 0, pos: 0 }, M08: { e: 'Asignado', pct: 0, pos: 0 }, M07: { e: 'Asignado', pct: 0, pos: 0 }
+    };
+    return { light, dark, tipoLight, tipoDark, items, estado0 };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const L = ['A', 'B', 'C', 'D'];
+    const chip = (bg, fg, extra) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;box-sizing:border-box;background:' + bg + ';color:' + fg + ';' + (extra || '');
+    const tipoChip = (t) => chip(tp[t][0], tp[t][1]);
+    const EST = { 'Completado': chip('var(--soft)', 'var(--accent)'), 'En progreso': chip('var(--accent)', 'var(--onaccent)'), 'Asignado': chip('var(--infosoft)', 'var(--info)') };
+    const mmss = (sec) => Math.floor(sec / 60) + ':' + (sec % 60 < 10 ? '0' : '') + (sec % 60);
+    const bar = (p) => 'height:100%;width:' + p + '%;background:var(--accent);';
+    const PASA = 70;
+    const set = (id, patch) => this.setState({ est: Object.assign({}, this.state.est, { [id]: Object.assign({}, this.state.est[id], patch) }) });
+    const byId = (id) => d.items.find((i) => i.id === id);
+    const it = s.sel ? byId(s.sel) : null;
+
+    // ---- inicio
+    const completos = d.items.filter((i) => s.est[i.id].e === 'Completado');
+    const asignados = d.items.filter((i) => s.est[i.id].e !== 'Completado');
+    const minutos = d.items.reduce((a, i) => a + (i.dur * s.est[i.id].pct) / 100, 0);
+    const horasTxt = minutos >= 60 ? (Math.round(minutos / 6) / 10).toString().replace('.', ',') + ' h' : Math.round(minutos) + ' min';
+    const certsList = completos.filter((i) => i.tipo === 'Quiz' && s.est[i.id].score >= PASA);
+    const stats = [
+      { label: 'Completados', valor: String(completos.length) },
+      { label: 'En progreso', valor: String(d.items.filter((i) => s.est[i.id].e === 'En progreso').length) },
+      { label: 'Horas acumuladas', valor: horasTxt },
+      { label: 'Certificados', valor: String(certsList.length) }
+    ];
+    const abrir = (i) => () => {
+      if (i.tipo === 'Quiz' && s.est[i.id].e !== 'Completado') this.setState({ view: 'quiz', sel: i.id, qi: 0, ans: [], aviso: '' });
+      else this.setState({ view: 'player', sel: i.id, playing: false, aviso: '' });
+    };
+    const lista = s.tab === 'asignado' ? asignados : completos;
+    const tarjetas = lista.map((i) => {
+      const e = s.est[i.id];
+      const label = e.e === 'Completado' ? (i.tipo === 'Quiz' ? 'Ver resultado' : 'Ver de nuevo') : (e.e === 'En progreso' ? 'Continuar' : (i.tipo === 'Quiz' ? 'Iniciar quiz' : 'Iniciar'));
+      return {
+        titulo: i.titulo, tipo: i.tipo, tipoStyle: tipoChip(i.tipo), estado: e.e, estadoStyle: EST[e.e], comp: i.comp, duracion: i.dur + ' min',
+        esVideo: i.tipo === 'Video', esPdf: i.tipo === 'PDF', esArt: i.tipo === 'Artículo', esQuiz: i.tipo === 'Quiz',
+        thumbStyle: 'position:relative;height:112px;display:flex;align-items:center;justify-content:center;background:' + tp[i.tipo][0] + ';color:' + tp[i.tipo][1] + ';',
+        hayProg: e.e === 'En progreso', pct: e.pct, bar: bar(e.pct),
+        hayScore: typeof e.score === 'number', scoreTxt: typeof e.score === 'number' ? 'Puntaje: ' + e.score + ' %' + (e.score >= PASA ? ' · Aprobado' : ' · No aprobado') : '',
+        btnLabel: label, btnClass: e.e === 'Completado' ? '' : 'btn-primary',
+        abrir: i.tipo === 'Quiz' && e.e === 'Completado' ? () => this.setState({ view: 'result', sel: i.id, aviso: '' }) : abrir(i)
+      };
+    });
+    const tabs = { asi: s.tab === 'asignado', com: s.tab === 'completado', nAsi: asignados.length, nCom: completos.length };
+    const certs = certsList.map((i) => ({ titulo: i.titulo.replace('Quiz: ', 'Certificado: '), detalle: i.comp + ' · Puntaje ' + s.est[i.id].score + ' %' }));
+
+    // ---- reproducción
+    const e0 = it ? s.est[it.id] : { e: 'Asignado', pct: 0, pos: 0 };
+    const total = it && it.tipo === 'Video' ? it.dur * 60 : 0;
+    const p = it ? {
+      tipo: it.tipo, tipoStyle: tipoChip(it.tipo), comp: it.comp, duracion: it.dur + ' min', titulo: it.titulo,
+      esVideo: it.tipo === 'Video', esPdf: it.tipo === 'PDF', esArt: it.tipo === 'Artículo', esQuiz: it.tipo === 'Quiz', noQuiz: it.tipo !== 'Quiz',
+      hayReanudar: e0.pos > 0 && e0.e !== 'Completado' && !s.playing, posTxt: mmss(e0.pos), totalTxt: mmss(total), totalSec: total, pos: e0.pos,
+      reanudar: () => this.setState({ playing: true }),
+      playing: s.playing, paused: !s.playing, playLabel: s.playing ? 'Pausar' : 'Reproducir',
+      alternar: () => {
+        const nuevo = !this.state.playing;
+        this.setState({ playing: nuevo });
+        if (it.tipo === 'Video' && this.state.est[it.id].e === 'Asignado') set(it.id, { e: 'En progreso' });
+      },
+      barStyle: 'height:100%;width:' + (total ? Math.round((e0.pos * 100) / total) : 0) + '%;background:#fff;',
+      mover: (ev) => {
+        const pos = parseInt(ev.target.value, 10) || 0;
+        const pct = Math.min(99, Math.round((pos * 100) / total));
+        if (this.state.est[it.id].e !== 'Completado') set(it.id, { pos, pct, e: pos > 0 ? 'En progreso' : 'Asignado' });
+      },
+      texto1: it.t1 || '', texto2: it.t2 || '',
+      quizIntro: it.tipo === 'Quiz' ? (e0.e === 'Completado' ? 'Ya completaste este quiz.' : 'Responde ' + (it.qs ? it.qs.length : 0) + ' preguntas de opción múltiple. Verás si acertaste después de cada una. Con ' + PASA + ' % o más obtienes certificado.') : '',
+      quizBtn: 'Iniciar quiz',
+      iniciarQuiz: () => this.setState({ view: 'quiz', qi: 0, ans: [] }),
+      yaCompleto: e0.e === 'Completado', completarLabel: e0.e === 'Completado' ? 'Completado' : 'Marcar como completado',
+      completar: () => { set(it.id, { e: 'Completado', pct: 100, pos: total }); this.setState({ playing: false }); }
+    } : { tipo: 'Video', tipoStyle: '', comp: '', duracion: '', titulo: '', esVideo: false, esPdf: false, esArt: false, esQuiz: false, noQuiz: false, hayReanudar: false, posTxt: '', totalTxt: '', totalSec: 0, pos: 0, reanudar: () => {}, playing: false, paused: true, playLabel: '', alternar: () => {}, barStyle: '', mover: () => {}, texto1: '', texto2: '', quizIntro: '', quizBtn: '', iniciarQuiz: () => {}, yaCompleto: false, completarLabel: '', completar: () => {} };
+
+    // ---- quiz
+    const qs = it && it.qs ? it.qs : [];
+    const cur = qs[s.qi];
+    const resp = s.ans[s.qi];
+    const respondida = resp !== undefined;
+    const correcta = respondida && cur && resp === cur.ok;
+    const ultima = s.qi >= qs.length - 1;
+    const qz = {
+      titulo: it ? it.titulo : '', n: s.qi + 1, total: qs.length, bar: bar(qs.length ? Math.round(((s.qi + (respondida ? 1 : 0)) * 100) / qs.length) : 0),
+      texto: cur ? cur.texto : '',
+      opts: cur ? cur.opts.map((t, j) => {
+        const esOk = j === cur.ok, esEl = resp === j;
+        const bg = respondida ? (esOk ? 'var(--soft)' : (esEl ? 'var(--dangersoft)' : 'var(--surface)')) : 'var(--surface)';
+        const bd = respondida ? (esOk ? 'var(--accent)' : (esEl ? 'var(--danger)' : 'var(--border)')) : 'var(--border)';
+        return {
+          letra: L[j], texto: t, marca: respondida ? (esOk ? 'Correcta' : (esEl ? 'Tu respuesta' : '')) : '',
+          elegir: () => { if (this.state.ans[this.state.qi] === undefined) { const a = this.state.ans.slice(); a[this.state.qi] = j; this.setState({ ans: a }); } },
+          style: 'display:flex;gap:12px;align-items:flex-start;min-height:48px;padding:12px 16px;box-sizing:border-box;text-align:left;border-radius:10px;border:1px solid ' + bd + ';background:' + bg + ';color:var(--text);font:inherit;font-size:16px;cursor:pointer;width:100%;'
+        };
+      }) : [],
+      hayFeedback: respondida, fbTitulo: correcta ? 'Correcto.' : 'Incorrecto.', fbTexto: cur ? cur.exp : '',
+      fbStyle: 'padding:12px 16px;border-radius:10px;font-size:15px;line-height:1.5;' + (correcta ? 'background:var(--soft);color:var(--accent);' : 'background:var(--dangersoft);color:var(--danger);'),
+      sinResponder: !respondida, siguienteLabel: ultima ? 'Ver resultado' : 'Siguiente pregunta',
+      siguiente: () => {
+        if (this.state.ans[this.state.qi] === undefined) return;
+        if (this.state.qi < qs.length - 1) { this.setState({ qi: this.state.qi + 1 }); return; }
+        const ok = qs.reduce((a, q, k) => a + (this.state.ans[k] === q.ok ? 1 : 0), 0);
+        const pct = Math.round((ok * 100) / qs.length);
+        set(it.id, { e: 'Completado', pct: 100, score: pct });
+        this.setState({ view: 'result', aviso: '' });
+      }
+    };
+
+    // ---- resultado
+    const sc = it ? s.est[it.id].score : 0;
+    const qsR = it && it.qs ? it.qs : [];
+    const okN = Math.round(((sc || 0) * qsR.length) / 100);
+    const rs = {
+      titulo: it ? it.titulo : '', pct: sc || 0, correctas: okN, total: qsR.length,
+      estado: (sc || 0) >= PASA ? 'Aprobado' : 'No aprobado', estadoStyle: (sc || 0) >= PASA ? chip('var(--soft)', 'var(--accent)') : chip('var(--warnsoft)', 'var(--warn)'),
+      msg: (sc || 0) >= PASA ? 'Obtuviste el certificado de este quiz. Lo verás en «Mis certificados».' : 'Necesitas ' + PASA + ' % para aprobar. Puedes repasar la cápsula y reintentar cuando quieras.',
+      reintentar: () => { set(it.id, { e: 'Asignado', pct: 0, score: undefined }); this.setState({ view: 'quiz', qi: 0, ans: [] }); }
+    };
+
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      v: { home: s.view === 'home', player: s.view === 'player', quiz: s.view === 'quiz', result: s.view === 'result' },
+      hayAviso: s.aviso !== '', aviso: s.aviso, cerrarAviso: () => this.setState({ aviso: '' }),
+      irInicio: () => this.setState({ view: 'home', sel: null, playing: false, tab: s.view === 'result' || (it && s.est[it.id].e === 'Completado') ? 'completado' : 'asignado' }),
+      stats, tabs, verAsignado: () => this.setState({ tab: 'asignado' }), verCompletado: () => this.setState({ tab: 'completado' }),
+      tarjetas, sinTarjetas: tarjetas.length === 0, certs, sinCert: certs.length === 0,
+      p, qz, rs
+    };
+  }
+}
+</script>
+</body>
+</html>

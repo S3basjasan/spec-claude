@@ -372,33 +372,6 @@ class EstructuraService
         ];
     }
 
-    /**
-     * Posición (también Suprimida, para registros históricos), o null si no existe. Sin datos de auditoría.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getPosicion(int $id): ?array
-    {
-        $posicion = $this->posiciones->obtener($id);
-
-        return $posicion === null ? null : $this->posicionAArreglo($posicion);
-    }
-
-    /**
-     * Posiciones existentes entre los ids dados, incluidas las Suprimidas.
-     *
-     * @param  array<int, int>  $ids
-     * @return array<int, array<string, mixed>>
-     */
-    public function getPosicionesPorIds(array $ids): array
-    {
-        if ($ids === []) {
-            return [];
-        }
-
-        return array_map($this->posicionAArreglo(...), $this->posiciones->obtenerPorIds(array_values(array_unique($ids))));
-    }
-
     public function existePosicion(int $id): bool
     {
         return $this->posiciones->obtener($id) !== null;
@@ -425,41 +398,28 @@ class EstructuraService
         ], $this->posiciones->arbolDeSupervision());
     }
 
+    // ------------------------------------------------------------------ Posiciones (GP-02)
+
     /**
-     * @return array<string, mixed>
+     * Posición (también Suprimida) con su puesto, unidad y jefatura (puesto del supervisor, o null) vigentes, o null si no existe.
+     *
+     * @return array<string, mixed>|null
      */
-    private function posicionAArreglo(Posicion $posicion): array
+    public function getPosicion(int $id): ?array
     {
-        return [
-            'id' => $posicion->id,
-            'codigo' => $posicion->codigo,
-            'estado' => $posicion->estado->value,
-            'modalidad' => $posicion->modalidad->value,
-            'puesto' => [
-                'id' => $posicion->puesto['id'],
-                'codigo' => $posicion->puesto['codigo'],
-                'nombre' => $posicion->puesto['nombre'],
-            ],
-            'unidad' => [
-                'id' => $posicion->unidad['id'],
-                'codigo' => $posicion->unidad['codigo'],
-                'nombre' => $posicion->unidad['nombre'],
-                'estado' => $posicion->unidad['estado'],
-            ],
-            'supervisor' => $posicion->supervisor === null ? null : [
-                'id' => $posicion->supervisor['id'],
-                'codigo' => $posicion->supervisor['codigo'],
-                'nombre' => $posicion->supervisor['puesto'],
-            ],
-            'ocupante_id' => $posicion->ocupanteId,
-            'subordinadas_vigentes' => $posicion->subordinadasVigentes,
-        ];
+        return $this->posiciones->datosDe($id);
     }
 
     /**
-     * @return array<string, mixed>
+     * Posiciones existentes entre los ids dados, incluidas las suprimidas (histórico).
+     *
+     * @param  array<int, int>  $ids
+     * @return array<int, array<string, mixed>> Indexado por id.
      */
-    // ------------------------------------------------------------------ Posiciones (GP-02)
+    public function getPosicionesPorIds(array $ids): array
+    {
+        return $this->posiciones->datosPorIds(array_values(array_unique($ids)));
+    }
 
     /**
      * Posiciones del tenant que admiten nuevas asignaciones (no suprimidas, puesto activo y unidad activa);

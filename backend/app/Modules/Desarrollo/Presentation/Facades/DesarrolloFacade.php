@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Facade;
  * @method static int crearBorradorDesdeDnf(int $tenantId, int $actorId, int $dnfId, array $brechas) Crea un plan en Borrador del año actual con una acción por competencia con brecha y los colaboradores con brecha como participantes; devuelve el id del plan.
  * @method static array getAccionesDePlanesEjecutando(int $tenantId) Acciones no canceladas de planes Ejecutando con sus participantes: [{accion_id, plan_id, nombre, tipo, fecha_inicio, fecha_fin, participantes}].
  * @method static array getPlanesYAcciones(int $tenantId, array $filtros = []) Planes con sus acciones, horas, costos y estados (filtros: anio, estado, plan_id).
+ * @method static array getMicrocontenidosPublicadosPorCompetencia(int $competenciaId) Micro-contenidos Publicados de la competencia: [{id, codigo, titulo, tipo, duracion_minutos, miniatura_url, url_destino}].
+ * @method static array getResumenAprendizaje(int $tenantId, int $colaboradorId) Resumen del colaborador: {completados, en_progreso, horas_acumuladas, certificados}.
+ * @method static array getCompletaciones(int $tenantId, array $filtros = []) Completaciones de micro-contenidos del tenant (filtros: colaborador_id, microcontenido_id, desde, hasta).
  *
  * @see DesarrolloService
  */
