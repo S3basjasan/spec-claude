@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Categorías de reconocimiento</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.sk,.spin{animation:none!important}}
+.sk{background:var(--border);border-radius:6px;animation:pulse 1.4s ease-in-out infinite}
+.spin{animation:spin .9s linear infinite}
+.nav{display:flex;align-items:center;gap:12px;min-height:44px;padding:6px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500;line-height:1.25}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--text);cursor:pointer;flex:none;padding:0}
+.ibtn:hover:not(:disabled){background:var(--soft)}
+.ibtn:disabled{opacity:.4;cursor:not-allowed}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:8px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none}
+.btn:hover:not(:disabled){background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{height:40px;padding:0 12px;font-size:14px}
+.btn-p{border-color:transparent;background:var(--accent);color:var(--onaccent)}
+.btn-p:hover:not(:disabled){background:var(--accent);filter:brightness(.92)}
+.btn-d{border-color:transparent;background:var(--danger);color:var(--onDanger)}
+.btn-d:hover:not(:disabled){background:var(--danger);filter:brightness(.92)}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label,.lbl{font-size:14px;font-weight:600}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{padding:0}
+.inp{width:100%;box-sizing:border-box;height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--inputborder);background:var(--surface);color:var(--text);font:inherit;font-size:15px}
+textarea.inp{height:auto;min-height:96px;padding:10px 12px;resize:vertical;line-height:1.45}
+.inp::placeholder{color:var(--muted);opacity:1}
+.inp:disabled{background:var(--bg);color:var(--muted);cursor:not-allowed}
+.inp[aria-invalid="true"]{border-color:var(--danger);box-shadow:inset 0 0 0 1px var(--danger)}
+.err{margin:0;font-size:13px;color:var(--danger);display:flex;gap:6px;align-items:flex-start}
+.help{margin:0;font-size:13px;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pg{min-width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
+.pg:hover:not(:disabled){background:var(--soft)}
+.pg:disabled{opacity:.45;cursor:not-allowed}
+.ic{position:relative;display:block}
+.ic input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.ic .tile{display:flex;align-items:center;justify-content:center;height:48px;border-radius:10px;border:1px solid var(--inputborder);background:var(--surface);color:var(--text)}
+.ic:hover .tile{background:var(--soft)}
+.ic input:checked + .tile{border:2px solid var(--accent);background:var(--soft);color:var(--accent)}
+.ic input:focus-visible + .tile{outline:2px solid var(--accent);outline-offset:2px}
+.ic input[aria-invalid="true"] + .tile{border-color:var(--danger)}
+.nav-wrap{flex:0 0 248px;box-sizing:border-box;padding:16px 12px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.only-m{display:none}
+.only-cards{display:none}
+.main-p{padding:32px}
+.mdl{padding:24px}
+@media (max-width:1180px){.only-tabla{display:none}.only-cards{display:grid}}
+@media (max-width:840px){
+  .only-m{display:inline-flex}
+  .nav-wrap{display:none;flex-basis:100%;border-right:0;border-bottom:1px solid var(--border)}
+  .nav-wrap.open{display:flex}
+}
+@media (max-width:640px){.main-p{padding:16px}.hide-s{display:none!important}}
+@media (max-width:480px){.mdl{padding:16px}.hdr{padding:0 12px!important;gap:8px!important}}
+</style>
+</helmet>
+<div style="min-height: 1100px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <!-- Barra de prototipo: no forma parte del producto -->
+  <sc-if value="{{verCtl}}" hint-placeholder-val="{{true}}">
+    <div style="box-sizing: border-box; padding: 10px 24px 12px; background: var(--bg); border-bottom: 1px dashed var(--inputborder); display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 16px">
+        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding-bottom: 12px">Prototipo · no forma parte del producto</span>
+        <div class="fld" style="gap: 2px">
+          <label for="p-rol" style="font-size: 12px; color: var(--muted)">Rol de la vista</label>
+          <select class="inp" id="p-rol" value="{{rol}}" onChange="{{setRol}}" style="height: 36px; font-size: 14px; width: auto">
+            <option value="admin">Administrador de Talento Humano</option>
+            <option value="lider">Líder</option>
+            <option value="colaborador">Colaborador</option>
+            <option value="gerencia">Gerencia</option>
+            <option value="candidato">Candidato</option>
+          </select>
+        </div>
+        <div class="fld" style="gap: 2px">
+          <label for="p-dat" style="font-size: 12px; color: var(--muted)">Estado del listado</label>
+          <select class="inp" id="p-dat" value="{{datos}}" onChange="{{setDatos}}" style="height: 36px; font-size: 14px; width: auto">
+            <option value="exito">Éxito</option>
+            <option value="cargando">Cargando</option>
+            <option value="vacio">Catálogo vacío</option>
+            <option value="error">Error</option>
+          </select>
+        </div>
+        <div class="fld" style="gap: 2px">
+          <label for="p-gua" style="font-size: 12px; color: var(--muted)">Resultado al guardar o cambiar estado</label>
+          <select class="inp" id="p-gua" value="{{guardado}}" onChange="{{setGuardado}}" style="height: 36px; font-size: 14px; width: auto">
+            <option value="ok">Éxito</option>
+            <option value="conflicto">Conflicto (409)</option>
+            <option value="error">Error del servidor</option>
+          </select>
+        </div>
+      </div>
+      <p style="margin: 0; font-size: 12px; color: var(--muted)">Dirección en el navegador: <code style="font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--text); overflow-wrap: anywhere">{{urlTxt}}</code></p>
+    </div>
+  </sc-if>
+
+  <header class="hdr" style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <button type="button" class="ibtn only-m" aria-label="Menú principal" aria-expanded="{{navAria}}" aria-controls="nav-principal" onClick="{{navToggle}}" style="border-color: var(--border)"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+    <div style="display: flex; align-items: center; gap: 12px; min-width: 0">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button type="button" class="ibtn" aria-label="{{temaLabel}}" onClick="{{toggleTema}}" style="border-color: var(--border); background: var(--surface)">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button type="button" style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false" aria-label="Cuenta de {{userName}}">
+      <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex: none">{{userInit}}</span>
+      <span class="hide-s" style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2">
+        <span style="font-size: 14px; font-weight: 600">{{userName}}</span>
+        <span style="font-size: 12px; color: var(--muted)">{{userRol}}</span>
+      </span>
+      <svg class="hide-s" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav id="nav-principal" aria-label="Principal" class="{{navCls}}">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Posiciones.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="11" r="2.5"></circle><path d="M5.5 17c.5-2 2-3 3.5-3s3 1 3.5 3M15 9h3M15 13h3"></path></svg>Posiciones</a>
+      <a class="nav" href="Unidades.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 17.5h7M17.5 14v7"></path></svg>Unidades</a>
+      <a class="nav" href="Organigrama.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="8" y="3" width="8" height="5" rx="1"></rect><rect x="2" y="16" width="8" height="5" rx="1"></rect><rect x="14" y="16" width="8" height="5" rx="1"></rect><path d="M12 8v4M6 16v-4h12v4"></path></svg>Organigrama</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"></path></svg>Vacantes</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path></svg>Categorías de reconocimiento</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main class="main-p" style="flex: 999 1 560px; min-width: 0; box-sizing: border-box">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+
+        <!-- Sin permiso (Candidato) -->
+        <sc-if value="{{sinPermiso}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+            <div aria-hidden="true" style="width: 56px; height: 56px; border-radius: 50%; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; justify-content: center">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"></path><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"></path><path d="M8 11v-4a4 4 0 1 1 8 0v4"></path></svg>
+            </div>
+            <h1 style="margin: 0; font-size: 22px; letter-spacing: -0.01em">No tienes permiso para ver esta sección</h1>
+            <p style="margin: 0; max-width: 420px; color: var(--muted); font-size: 15px">Tu rol no incluye acceso al catálogo de categorías de reconocimiento.</p>
+            <a class="btn" href="Main.dc.html" style="margin-top: 6px">Volver al inicio</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{conPermiso}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 20px">
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+              <div style="min-width: 0; flex: 1 1 320px">
+                <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Categorías de reconocimiento</h1>
+                <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">{{subtitulo}}</p>
+              </div>
+              <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                <button type="button" class="btn btn-p" onClick="{{abrirCrear}}">
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Nueva categoría
+                </button>
+              </sc-if>
+            </div>
+
+            <div role="status" aria-live="polite">
+              <sc-if value="{{avisoOk}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 4px 4px 4px 14px; border-radius: 8px; background: var(--soft); color: var(--accent); font-size: 14px; font-weight: 600">
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M9 12l2 2l4 -4"></path></svg>
+                  <span style="flex: 1; padding: 8px 0">{{avisoTexto}}</span>
+                  <button type="button" class="ibtn" aria-label="Cerrar aviso" onClick="{{cerrarAviso}}" style="color: var(--accent)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12M6 6l12 12"></path></svg></button>
+                </div>
+              </sc-if>
+            </div>
+            <div role="alert">
+              <sc-if value="{{avisoErr}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 4px 4px 4px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+                  <span style="flex: 1; padding: 8px 0">{{avisoTexto}}</span>
+                  <button type="button" class="ibtn" aria-label="Cerrar aviso" onClick="{{cerrarAviso}}" style="color: var(--danger)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12M6 6l12 12"></path></svg></button>
+                </div>
+              </sc-if>
+            </div>
+
+            <!-- Búsqueda y filtros -->
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+              <div style="position: relative; flex: 1 1 260px; max-width: 380px">
+                <label for="cr-q" class="sr">Buscar por nombre de categoría o de competencia</label>
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+                <input class="inp" id="cr-q" type="search" maxLength="100" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar por categoría o competencia" style="padding-left: 38px">
+              </div>
+              <div class="fld" style="flex: 0 1 240px; min-width: 180px">
+                <label for="cr-c" style="font-size: 13px; color: var(--muted); font-weight: 500">Competencia</label>
+                <select class="inp" id="cr-c" value="{{comp}}" onChange="{{setComp}}">
+                  <option value="">Todas las competencias</option>
+                  <sc-for list="{{compOpts}}" as="o" hint-placeholder-count="5">
+                    <option value="{{o.id}}">{{o.label}}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                <div class="fld" style="flex: 0 1 160px; min-width: 130px">
+                  <label for="cr-e" style="font-size: 13px; color: var(--muted); font-weight: 500">Estado</label>
+                  <select class="inp" id="cr-e" value="{{est}}" onChange="{{setEst}}">
+                    <option value="todos">Todos</option>
+                    <option value="activos">Activos</option>
+                    <option value="inactivos">Inactivos</option>
+                  </select>
+                </div>
+              </sc-if>
+              <span style="margin-left: auto; padding-bottom: 12px; font-size: 14px; color: var(--muted)">{{resumen}}</span>
+            </div>
+
+            <!-- Cargando -->
+            <sc-if value="{{cargando}}" hint-placeholder-val="{{false}}">
+              <div aria-busy="true" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 20px">
+                <p role="status" class="sr">Cargando categorías…</p>
+                <sc-for list="{{skeletons}}" as="s" hint-placeholder-count="6">
+                  <div aria-hidden="true" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 14px 0; border-top: 1px solid var(--border)">
+                    <div class="sk" style="width: 64px; height: 14px"></div>
+                    <div class="sk" style="width: 36px; height: 36px; border-radius: 8px"></div>
+                    <div class="sk" style="width: 200px; max-width: 100%; height: 14px"></div>
+                    <div class="sk" style="flex: 1 1 120px; height: 14px"></div>
+                    <div class="sk" style="width: 72px; height: 22px; border-radius: 999px"></div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <!-- Error con reintento -->
+            <sc-if value="{{hayError}}" hint-placeholder-val="{{false}}">
+              <div role="alert" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+                <div aria-hidden="true" style="width: 56px; height: 56px; border-radius: 50%; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; justify-content: center">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+                </div>
+                <h2 style="margin: 0; font-size: 18px">No se pudo cargar el listado</h2>
+                <p style="margin: 0; max-width: 320px; color: var(--muted); font-size: 15px">Hubo un problema al conectar con el servidor. Inténtalo de nuevo.</p>
+                <button type="button" class="btn" onClick="{{reintentar}}" style="margin-top: 6px">Reintentar</button>
+              </div>
+            </sc-if>
+
+            <!-- Catálogo vacío -->
+            <sc-if value="{{vacioCat}}" hint-placeholder-val="{{false}}">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+                <div aria-hidden="true" style="width: 56px; height: 56px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path></svg>
+                </div>
+                <h2 style="margin: 0; font-size: 18px">Aún no hay categorías de reconocimiento</h2>
+                <p style="margin: 0; max-width: 360px; color: var(--muted); font-size: 15px">{{vacioTexto}}</p>
+                <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                  <button type="button" class="btn btn-p" onClick="{{abrirCrear}}" style="margin-top: 6px">Nueva categoría</button>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- Sin coincidencias -->
+            <sc-if value="{{sinRes}}" hint-placeholder-val="{{false}}">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+                <div aria-hidden="true" style="width: 56px; height: 56px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+                </div>
+                <h2 style="margin: 0; font-size: 18px">Sin resultados</h2>
+                <p style="margin: 0; max-width: 360px; color: var(--muted); font-size: 15px">No se encontraron categorías de reconocimiento que coincidan con la búsqueda.</p>
+              </div>
+            </sc-if>
+
+            <!-- Éxito: tabla (≥1181 px) y tarjetas (≤1180 px) -->
+            <sc-if value="{{hayDatos}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 16px">
+                <div class="only-tabla" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 15px">
+                    <caption class="sr">Categorías de reconocimiento, ordenadas por código</caption>
+                    <thead>
+                      <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                        <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Código</th>
+                        <th scope="col" style="padding: 14px 8px; font-weight: 600">Ícono</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600">Nombre</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600">Competencia asociada</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Puntuación base</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600">Estado</th>
+                        <th scope="col" style="padding: 14px 12px 14px 12px; font-weight: 600; text-align: right">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <sc-for list="{{filas}}" as="r" hint-placeholder-count="6">
+                        <tr class="row" style="border-top: 1px solid var(--border)">
+                          <td style="padding: 10px 12px 10px 20px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap">{{r.id}}</td>
+                          <td style="padding: 10px 8px">
+                            <span aria-hidden="true" style="{{r.tileStyle}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.icoD}}"></path></svg></span>
+                          </td>
+                          <td style="padding: 10px 12px; font-weight: 600; overflow-wrap: anywhere">{{r.nombre}}</td>
+                          <td style="padding: 10px 12px">
+                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+                              <span>{{r.compNombre}}</span>
+                              <sc-if value="{{r.compInactiva}}" hint-placeholder-val="{{false}}">
+                                <span style="{{r.warnStyle}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 9v4"></path><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path d="M12 16h.01"></path></svg>Competencia inactiva</span>
+                              </sc-if>
+                            </div>
+                          </td>
+                          <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.pts}}</td>
+                          <td style="padding: 10px 12px"><span style="{{r.badgeStyle}}">{{r.estado}}</span></td>
+                          <td style="padding: 8px 12px">
+                            <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px">
+                              <button type="button" class="btn btn-s" aria-label="Ver {{r.nombre}}" onClick="{{r.ver}}">Ver</button>
+                              <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                                <button type="button" class="btn btn-s" aria-label="Editar {{r.nombre}}" onClick="{{r.editar}}">Editar</button>
+                                <button type="button" class="btn btn-s" aria-label="{{r.tgLabel}}" onClick="{{r.alternar}}" style="{{r.tgStyle}}">{{r.tgTexto}}</button>
+                              </sc-if>
+                            </div>
+                          </td>
+                        </tr>
+                      </sc-for>
+                    </tbody>
+                  </table>
+                </div>
+
+                <ul class="only-cards" style="list-style: none; margin: 0; padding: 0; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px">
+                  <sc-for list="{{filas}}" as="r" hint-placeholder-count="4">
+                    <li style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+                      <div style="display: flex; align-items: flex-start; gap: 12px">
+                        <span aria-hidden="true" style="{{r.tileStyle}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.icoD}}"></path></svg></span>
+                        <div style="min-width: 0; flex: 1">
+                          <div style="font-weight: 600; font-size: 16px; overflow-wrap: anywhere">{{r.nombre}}</div>
+                          <div style="font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums">{{r.id}}</div>
+                        </div>
+                        <span style="{{r.badgeStyle}}">{{r.estado}}</span>
+                      </div>
+                      <dl style="margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; font-size: 14px">
+                        <div style="min-width: 0">
+                          <dt style="font-size: 12px; color: var(--muted); font-weight: 600">Competencia asociada</dt>
+                          <dd style="margin: 2px 0 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+                            <span>{{r.compNombre}}</span>
+                            <sc-if value="{{r.compInactiva}}" hint-placeholder-val="{{false}}">
+                              <span style="{{r.warnStyle}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 9v4"></path><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path d="M12 16h.01"></path></svg>Competencia inactiva</span>
+                            </sc-if>
+                          </dd>
+                        </div>
+                        <div style="text-align: right">
+                          <dt style="font-size: 12px; color: var(--muted); font-weight: 600">Puntuación base</dt>
+                          <dd style="margin: 2px 0 0; font-variant-numeric: tabular-nums; font-weight: 600">{{r.pts}}</dd>
+                        </div>
+                      </dl>
+                      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                        <button type="button" class="btn btn-s" aria-label="Ver {{r.nombre}}" onClick="{{r.ver}}">Ver</button>
+                        <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                          <button type="button" class="btn btn-s" aria-label="Editar {{r.nombre}}" onClick="{{r.editar}}">Editar</button>
+                          <button type="button" class="btn btn-s" aria-label="{{r.tgLabel}}" onClick="{{r.alternar}}" style="{{r.tgStyle}}">{{r.tgTexto}}</button>
+                        </sc-if>
+                      </div>
+                    </li>
+                  </sc-for>
+                </ul>
+
+                <nav aria-label="Paginación" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted)">
+                  <span>{{rango}}</span>
+                  <div style="display: flex; align-items: center; gap: 8px">
+                    <button type="button" class="pg" disabled="{{prevOff}}" onClick="{{prev}}" style="padding: 0 14px">Anterior</button>
+                    <span style="padding: 0 8px">{{pagTxt}}</span>
+                    <button type="button" class="pg" disabled="{{nextOff}}" onClick="{{next}}" style="padding: 0 14px">Siguiente</button>
+                  </div>
+                </nav>
+              </div>
+            </sc-if>
+
+            <p style="margin: 0; font-size: 13px; color: var(--muted)">La puntuación base solo se usa para ordenar el ranking interno. No es dinero ni se canjea por bienes, días libres ni bonos.</p>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+
+  <!-- Diálogo: detalle de la categoría -->
+  <sc-if value="{{abreDet}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 50; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="dialog" aria-modal="true" aria-labelledby="md-t" onKeyDown="{{teclaDet}}" class="mdl" style="width: 100%; max-width: 600px; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.25)">
+
+        <sc-if value="{{det404}}" hint-placeholder-val="{{false}}">
+          <div>
+            <div style="display: flex; align-items: flex-start; gap: 14px">
+              <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg></span>
+              <div>
+                <h2 id="md-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">No se encontró la categoría</h2>
+                <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted)">La categoría que buscas no existe o no está disponible.</p>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; padding-top: 20px">
+              <button type="button" class="btn btn-p" autoFocus="{{true}}" onClick="{{cerrarDet}}">Cerrar</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{detOk}}" hint-placeholder-val="{{true}}">
+          <div>
+            <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px">
+              <span aria-hidden="true" style="{{dt.tileGrande}}"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{dt.icoD}}"></path></svg></span>
+              <div style="min-width: 0; flex: 1">
+                <h2 id="md-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em; overflow-wrap: anywhere">{{dt.nombre}}</h2>
+                <div style="margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                  <span style="font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums">{{dt.id}}</span>
+                  <span style="{{dt.badgeStyle}}">{{dt.estado}}</span>
+                </div>
+              </div>
+              <button type="button" class="ibtn" aria-label="Cerrar" onClick="{{cerrarDet}}" style="margin: -8px -8px 0 0"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12M6 6l12 12"></path></svg></button>
+            </div>
+
+            <sc-if value="{{dt.avisoHist}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 0 0 16px; padding: 10px 14px; border-radius: 8px; background: var(--neutralbg); color: var(--neutraltx); font-size: 14px">Esta categoría está inactiva. Se muestra porque forma parte de registros históricos.</p>
+            </sc-if>
+
+            <dl style="margin: 0; display: flex; flex-direction: column; gap: 16px">
+              <div>
+                <dt style="font-size: 13px; font-weight: 600; color: var(--muted)">Descripción</dt>
+                <dd style="margin: 4px 0 0; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere">{{dt.desc}}</dd>
+              </div>
+              <div>
+                <dt style="font-size: 13px; font-weight: 600; color: var(--muted)">Competencia asociada</dt>
+                <dd style="margin: 4px 0 0; font-size: 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px">
+                  <span>{{dt.compNombre}}</span>
+                  <sc-if value="{{dt.compInactiva}}" hint-placeholder-val="{{false}}">
+                    <span style="{{dt.warnStyle}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 9v4"></path><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path d="M12 16h.01"></path></svg>Competencia inactiva</span>
+                    <span class="help">{{dt.compAyuda}}</span>
+                  </sc-if>
+                </dd>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 16px 40px">
+                <div>
+                  <dt style="font-size: 13px; font-weight: 600; color: var(--muted)">Puntuación base</dt>
+                  <dd style="margin: 4px 0 0; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums">{{dt.pts}}</dd>
+                </div>
+                <div>
+                  <dt style="font-size: 13px; font-weight: 600; color: var(--muted)">Ícono</dt>
+                  <dd style="margin: 4px 0 0; font-size: 15px">{{dt.icoNombre}}</dd>
+                </div>
+              </div>
+              <div>
+                <dt style="font-size: 13px; font-weight: 600; color: var(--muted)">Indicadores cualitativos</dt>
+                <dd style="margin: 4px 0 0">
+                  <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.45">
+                    <sc-for list="{{dt.inds}}" as="i" hint-placeholder-count="3">
+                      <li style="overflow-wrap: anywhere">{{i.t}}</li>
+                    </sc-for>
+                  </ul>
+                  <p class="help" style="margin-top: 8px">Son una guía orientativa de la conducta que se reconoce; no son condiciones que deba marcar quien otorga el reconocimiento.</p>
+                </dd>
+              </div>
+            </dl>
+
+            <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+              <section aria-labelledby="md-aud" style="margin-top: 20px; padding: 14px 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border)">
+                <h3 id="md-aud" style="margin: 0 0 10px; font-size: 14px">Auditoría <span style="font-weight: 500; color: var(--muted)">· solo lectura</span></h3>
+                <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 20px; font-size: 14px">
+                  <div><dt style="font-size: 12px; font-weight: 600; color: var(--muted)">Creada por</dt><dd style="margin: 2px 0 0">{{dt.creadaPor}}</dd></div>
+                  <div><dt style="font-size: 12px; font-weight: 600; color: var(--muted)">Fecha de creación</dt><dd style="margin: 2px 0 0">{{dt.creadaEl}}</dd></div>
+                  <div><dt style="font-size: 12px; font-weight: 600; color: var(--muted)">Última modificación por</dt><dd style="margin: 2px 0 0">{{dt.modPor}}</dd></div>
+                  <div><dt style="font-size: 12px; font-weight: 600; color: var(--muted)">Fecha de última modificación</dt><dd style="margin: 2px 0 0">{{dt.modEl}}</dd></div>
+                </dl>
+              </section>
+            </sc-if>
+
+            <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 20px">
+              <button type="button" class="btn" autoFocus="{{true}}" onClick="{{cerrarDet}}" style="font-weight: 500">Cerrar</button>
+              <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                <button type="button" class="btn btn-p" onClick="{{editarDesdeDet}}">Editar</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Diálogo: formulario crear / editar -->
+  <sc-if value="{{abreForm}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 50; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="dialog" aria-modal="true" aria-labelledby="mf-t" aria-describedby="mf-d" onKeyDown="{{teclaForm}}" class="mdl" style="width: 100%; max-width: 680px; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.25)">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px">
+          <div style="min-width: 0">
+            <h2 id="mf-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">{{fm.titulo}}</h2>
+            <p id="mf-d" class="help" style="margin-top: 4px">{{fm.ayudaCodigo}}</p>
+          </div>
+          <button type="button" class="ibtn" aria-label="Cerrar" onClick="{{intentarCerrar}}" style="margin: -8px -8px 0 0"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12M6 6l12 12"></path></svg></button>
+        </div>
+
+        <div role="alert">
+          <sc-if value="{{fm.conflicto}}" hint-placeholder-val="{{false}}">
+            <div style="margin-bottom: 16px; padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 14px; font-weight: 600">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 9v4"></path><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path d="M12 16h.01"></path></svg>
+              <span style="flex: 1 1 220px">La categoría fue modificada por otro usuario. Recarga para ver los cambios.</span>
+              <button type="button" class="btn btn-s" onClick="{{recargar}}">Recargar</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{fm.errSrv}}" hint-placeholder-val="{{false}}">
+            <div style="margin-bottom: 16px; padding: 12px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+              <span>No se pudo guardar la categoría. Inténtalo de nuevo.</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{fm.resumenErr}}" hint-placeholder-val="{{false}}">
+            <div style="margin-bottom: 16px; padding: 12px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+              <span>Revisa los campos marcados para poder guardar.</span>
+            </div>
+          </sc-if>
+        </div>
+
+        <form onSubmit="{{guardar}}" novalidate="" aria-busy="{{fm.ariaBusy}}" style="display: flex; flex-direction: column; gap: 18px">
+          <div class="fld">
+            <label for="mf-n">Nombre</label>
+            <input class="inp" id="mf-n" type="text" autoFocus="{{true}}" autoComplete="off" value="{{fm.nombre}}" onChange="{{setNombre}}" aria-invalid="{{fm.ariaNombre}}" aria-describedby="mf-n-e mf-n-h">
+            <div style="display: flex; justify-content: space-between; gap: 12px">
+              <div style="min-width: 0">
+                <sc-if value="{{fm.hayNombre}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-n-e">{{fm.errNombre}}</p></sc-if>
+                <p class="help" id="mf-n-h">De 3 a 100 caracteres. No puede repetir el nombre de otra categoría.</p>
+              </div>
+              <span class="help" aria-hidden="true" style="{{fm.cuentaNombreStyle}}">{{fm.cuentaNombre}}</span>
+            </div>
+          </div>
+
+          <div class="fld">
+            <label for="mf-d2">Descripción</label>
+            <textarea class="inp" id="mf-d2" value="{{fm.desc}}" onChange="{{setDesc}}" aria-invalid="{{fm.ariaDesc}}" aria-describedby="mf-d2-e mf-d2-h"></textarea>
+            <div style="display: flex; justify-content: space-between; gap: 12px">
+              <div style="min-width: 0">
+                <sc-if value="{{fm.hayDesc}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-d2-e">{{fm.errDesc}}</p></sc-if>
+                <p class="help" id="mf-d2-h">De 10 a 500 caracteres. Solo texto plano.</p>
+              </div>
+              <span class="help" aria-hidden="true" style="{{fm.cuentaDescStyle}}">{{fm.cuentaDesc}}</span>
+            </div>
+          </div>
+
+          <div class="fld">
+            <label for="mf-c">Competencia asociada</label>
+            <select class="inp" id="mf-c" value="{{fm.comp}}" onChange="{{setComp2}}" aria-invalid="{{fm.ariaComp}}" aria-describedby="mf-c-e mf-c-h">
+              <option value="">Selecciona una competencia</option>
+              <sc-for list="{{fm.opcionesComp}}" as="o" hint-placeholder-count="5">
+                <option value="{{o.id}}" disabled="{{o.off}}">{{o.label}}</option>
+              </sc-for>
+            </select>
+            <sc-if value="{{fm.hayComp}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-c-e">{{fm.errComp}}</p></sc-if>
+            <sc-if value="{{fm.compInactiva}}" hint-placeholder-val="{{false}}">
+              <span style="{{fm.warnStyle}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><path d="M12 9v4"></path><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path d="M12 16h.01"></path></svg>Competencia inactiva</span>
+            </sc-if>
+            <p class="help" id="mf-c-h">{{fm.ayudaComp}}</p>
+          </div>
+
+          <div class="fld" style="max-width: 220px">
+            <label for="mf-p">Puntuación base</label>
+            <input class="inp" id="mf-p" type="number" min="1" max="1000" step="1" inputMode="numeric" value="{{fm.pts}}" onChange="{{setPts}}" aria-invalid="{{fm.ariaPts}}" aria-describedby="mf-p-e mf-p-h">
+            <sc-if value="{{fm.hayPts}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-p-e">{{fm.errPts}}</p></sc-if>
+          </div>
+          <p class="help" id="mf-p-h" style="margin-top: -10px">Número entero de 1 a 1000. Es solo un valor de ordenamiento para el ranking interno: no es dinero ni se canjea por bienes, días libres ni bonos.</p>
+
+          <fieldset aria-describedby="mf-i-e">
+            <legend class="lbl" style="margin-bottom: 8px">Ícono</legend>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 8px">
+              <sc-for list="{{fm.iconos}}" as="o" hint-placeholder-count="12">
+                <label class="ic" title="{{o.nombre}}">
+                  <input type="radio" name="icono" value="{{o.id}}" checked="{{o.sel}}" onChange="{{o.pick}}" aria-invalid="{{fm.ariaIcono}}">
+                  <span class="tile"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="{{o.d}}"></path></svg></span>
+                  <span class="sr">{{o.nombre}}</span>
+                </label>
+              </sc-for>
+            </div>
+            <sc-if value="{{fm.hayIcono}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-i-e" style="margin-top: 8px">{{fm.errIcono}}</p></sc-if>
+          </fieldset>
+
+          <fieldset>
+            <legend class="lbl" style="margin-bottom: 4px">Indicadores cualitativos</legend>
+            <p class="help" id="mf-ind-h" style="margin-bottom: 10px">De 1 a 5 indicadores. Son una guía orientativa de la conducta que se reconoce; no son condiciones que deba marcar quien otorga el reconocimiento.</p>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+              <sc-for list="{{fm.inds}}" as="i" hint-placeholder-count="3">
+                <li style="display: flex; align-items: flex-start; gap: 8px">
+                  <span aria-hidden="true" style="flex: none; width: 24px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums">{{i.n}}</span>
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                    <input class="inp" type="text" autoComplete="off" aria-label="{{i.label}}" value="{{i.t}}" onChange="{{i.set}}" aria-invalid="{{i.ariaErr}}" aria-describedby="{{i.errId}}">
+                    <sc-if value="{{i.hayErr}}" hint-placeholder-val="{{false}}"><p class="err" id="{{i.errId}}">{{i.err}}</p></sc-if>
+                  </div>
+                  <button type="button" class="ibtn" aria-label="{{i.quitarLabel}}" title="{{i.quitarTip}}" disabled="{{fm.quitarOff}}" onClick="{{i.quitar}}" style="border-color: var(--border)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"></path></svg></button>
+                </li>
+              </sc-for>
+            </ul>
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+              <button type="button" class="btn btn-s" disabled="{{fm.agregarOff}}" onClick="{{agregarInd}}">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Agregar indicador
+              </button>
+              <span class="help" aria-live="polite">{{fm.contadorInd}}</span>
+            </div>
+          </fieldset>
+
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 4px">
+            <button type="button" class="btn" onClick="{{intentarCerrar}}" style="font-weight: 500">Cancelar</button>
+            <button type="submit" class="btn btn-p" disabled="{{fm.enviando}}">
+              <sc-if value="{{fm.enviando}}" hint-placeholder-val="{{false}}">
+                <svg class="spin" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9"></path></svg>
+              </sc-if>{{fm.textoGuardar}}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Confirmación: descartar cambios -->
+  <sc-if value="{{abreDescartar}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 60; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="mx-t" aria-describedby="mx-d" onKeyDown="{{teclaDescartar}}" class="mdl" style="width: 100%; max-width: 440px; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.3)">
+        <div style="display: flex; align-items: flex-start; gap: 14px">
+          <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--warnsoft); color: var(--warn); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path d="M12 16h.01"></path></svg></span>
+          <div>
+            <h2 id="mx-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">¿Descartar los cambios?</h2>
+            <p id="mx-d" style="margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted)">Tienes cambios sin guardar. Si cierras el formulario, se perderán.</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 20px">
+          <button type="button" class="btn btn-p" autoFocus="{{true}}" onClick="{{seguirEditando}}">Seguir editando</button>
+          <button type="button" class="btn btn-d" onClick="{{descartar}}">Descartar cambios</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Confirmación: desactivar categoría -->
+  <sc-if value="{{abreDes}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 60; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="mz-t" aria-describedby="mz-d" onKeyDown="{{teclaDes}}" class="mdl" style="width: 100%; max-width: 480px; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 16px 48px rgba(0,0,0,0.3)">
+        <div style="display: flex; align-items: flex-start; gap: 14px">
+          <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--dangersoft); color: var(--danger); display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6a7.75 7.75 0 1 0 10 0"></path><path d="M12 4l0 8"></path></svg></span>
+          <div>
+            <h2 id="mz-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">¿Desactivar la categoría?</h2>
+            <p id="mz-d" style="margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted)">«{{desNombre}}» no podrá usarse en nuevos hitos ni desafíos. Se conserva, se puede consultar y editar, y sigue visible en el historial del colaborador. Puedes activarla de nuevo cuando quieras.</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 20px">
+          <button type="button" class="btn" autoFocus="{{true}}" onClick="{{cerrarDes}}" style="font-weight: 500">Cancelar</button>
+          <button type="button" class="btn btn-d" onClick="{{confirmarDes}}">Desactivar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"preset":{"editor":null,"default":""},"tema":{"editor":null,"default":""},"hideCtl":{"editor":null,"default":""},"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const p = props || {};
+    const pr = p.preset || '';
+    const st = {
+      rol: 'admin', datos: 'exito', guardado: 'ok',
+      dark: p.dark === true || p.dark === '1' || p.dark === 'true' || p.tema === 'oscuro',
+      q: '', comp: '', est: 'activos', pag: 1,
+      navOpen: false, aviso: null,
+      cats: this.catsIniciales(),
+      det: null, form: null, descartar: false, des: null
+    };
+    const cat = (id) => st.cats.find((c) => c.id === id);
+    if (pr === 'lider') st.rol = 'lider';
+    if (pr === 'candidato') st.rol = 'candidato';
+    if (pr === 'cargando') st.datos = 'cargando';
+    if (pr === 'vacio') st.datos = 'vacio';
+    if (pr === 'error') st.datos = 'error';
+    if (pr === 'sinres') st.q = 'reconocimiento de ventas';
+    if (pr === 'exito') st.aviso = { tipo: 'ok', texto: 'Se creó la categoría «Reconocimiento de equipo» (CAT-022).' };
+    if (pr === 'conflicto-estado') st.aviso = { tipo: 'error', texto: 'La categoría fue modificada por otro usuario. Recarga para ver los cambios.' };
+    if (pr === 'detalle-admin') st.det = { id: 'CAT-006' };
+    if (pr === 'detalle-historico') { st.rol = 'colaborador'; st.det = { id: 'CAT-019', hist: true }; }
+    if (pr === 'detalle-404') { st.rol = 'colaborador'; st.det = { id: 'CAT-099', e404: true }; }
+    if (pr === 'crear') st.form = this.formDe('crear', null);
+    if (pr === 'crear-errores') {
+      const f = this.formDe('crear', null);
+      f.nombre = 'colaboración destacada ';
+      f.desc = 'Corta';
+      f.comp = '';
+      f.pts = '1500';
+      f.icono = '';
+      f.inds = [{ k: 1, t: 'abc' }, { k: 2, t: 'Ayuda a resolver bloqueos de compañeros' }, { k: 3, t: 'ayuda a resolver bloqueos de compañeros' }];
+      f.seq = 3;
+      f.intento = true;
+      st.form = f;
+    }
+    if (pr === 'editar-inactiva') st.form = this.formDe('editar', cat('CAT-006'));
+    if (pr === 'editar-max') st.form = this.formDe('editar', cat('CAT-003'));
+    if (pr === 'conflicto') {
+      const f = this.formDe('editar', cat('CAT-002'));
+      f.nombre = 'Superación sostenida de metas';
+      f.conflicto = true;
+      st.form = f;
+    }
+    if (pr === 'enviando') {
+      const f = this.formDe('editar', cat('CAT-002'));
+      f.nombre = 'Superación sostenida de metas';
+      f.enviando = true;
+      st.form = f;
+    }
+    if (pr === 'descartar') {
+      const f = this.formDe('editar', cat('CAT-002'));
+      f.nombre = 'Superación sostenida de metas';
+      st.form = f;
+      st.descartar = true;
+    }
+    if (pr === 'desactivar') st.des = 'CAT-008';
+    this.state = st;
+  }
+
+  // ---------- Datos de ejemplo (ficticios) ----------
+  competencias() {
+    return [
+      { id: 'C1', nombre: 'Trabajo en equipo', activa: true },
+      { id: 'C2', nombre: 'Orientación a resultados', activa: true },
+      { id: 'C3', nombre: 'Liderazgo', activa: true },
+      { id: 'C4', nombre: 'Análisis de datos', activa: true },
+      { id: 'C5', nombre: 'Comunicación efectiva', activa: true },
+      { id: 'C6', nombre: 'Gestión del tiempo', activa: false },
+      { id: 'C7', nombre: 'Innovación', activa: true },
+      { id: 'C8', nombre: 'Servicio al cliente', activa: true }
+    ];
+  }
+
+  iconos() {
+    return [
+      { id: 'estrella', nombre: 'Estrella', d: 'M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z' },
+      { id: 'trofeo', nombre: 'Trofeo', d: 'M8 21h8M12 17v4M7 4h10M17 4v8a5 5 0 0 1 -10 0v-8M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0' },
+      { id: 'corazon', nombre: 'Corazón', d: 'M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572' },
+      { id: 'bombilla', nombre: 'Bombilla', d: 'M3 12h1M12 3v1M20 12h1M5.6 5.6l.7 .7M18.4 5.6l-.7 .7M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3M9.7 17h4.6' },
+      { id: 'rayo', nombre: 'Rayo', d: 'M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11' },
+      { id: 'escudo', nombre: 'Escudo', d: 'M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3' },
+      { id: 'equipo', nombre: 'Equipo', d: 'M9 8m-3.5 0a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2.2.6 3.5 2.6 3.5 5' },
+      { id: 'objetivo', nombre: 'Objetivo', d: 'M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0' },
+      { id: 'mensaje', nombre: 'Mensaje', d: 'M8 9h8M8 13h6M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z' },
+      { id: 'libro', nombre: 'Libro', d: 'M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0M3 6l0 13M12 6l0 13M21 6l0 13' },
+      { id: 'bandera', nombre: 'Bandera', d: 'M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9zM5 21v-7' },
+      { id: 'diamante', nombre: 'Diamante', d: 'M6 5h12l3 5l-8.5 9.5a.7 .7 0 0 1 -1 0l-8.5 -9.5l3 -5' }
+    ];
+  }
+
+  fmtFecha(m, d, h, mi) {
+    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const z = (n) => String(n).padStart(2, '0');
+    return z(d) + ' ' + meses[m - 1] + ' 2026, ' + z(h) + ':' + z(mi);
+  }
+
+  catsIniciales() {
+    const filas = [
+      ['Colaboración destacada', 'C1', 50, 'equipo', 'Activo', 'Reconoce el trabajo conjunto que facilita el logro de objetivos compartidos.', ['Comparte información útil con su equipo sin que se la pidan', 'Reconoce los aportes de otras personas', 'Ayuda a resolver bloqueos de compañeros']],
+      ['Superación de metas', 'C2', 80, 'objetivo', 'Activo', 'Reconoce a quien supera de forma sostenida las metas acordadas, cuidando la calidad.', ['Entrega resultados por encima de lo acordado', 'Mantiene la calidad al superar la meta', 'Documenta lo aprendido para repetir el logro']],
+      ['Liderazgo inspirador', 'C3', 100, 'bandera', 'Activo', 'Reconoce a quien guía a otras personas con el ejemplo y genera confianza en su equipo.', ['Da el ejemplo en su forma de trabajar', 'Delega con claridad y da seguimiento', 'Reconoce y desarrolla a las personas de su equipo', 'Toma decisiones difíciles con transparencia', 'Mantiene la calma en momentos de presión']],
+      ['Decisión basada en datos', 'C4', 70, 'diamante', 'Activo', 'Reconoce el uso de información verificable para decidir y justificar acciones.', ['Sustenta sus propuestas con datos verificables', 'Explica los supuestos de su análisis', 'Corrige el rumbo cuando los datos lo indican']],
+      ['Comunicación clara', 'C5', 40, 'mensaje', 'Activo', 'Reconoce a quien transmite ideas de forma clara, oportuna y respetuosa.', ['Adapta el mensaje a quien lo recibe', 'Confirma que la información fue comprendida']],
+      ['Gestión ejemplar del tiempo', 'C6', 30, 'rayo', 'Activo', 'Reconoce la organización del trabajo para cumplir plazos sin sacrificar la calidad.', ['Prioriza según el impacto de cada tarea', 'Avisa con anticipación cuando un plazo está en riesgo']],
+      ['Idea innovadora', 'C7', 90, 'bombilla', 'Activo', 'Reconoce propuestas nuevas que mejoran un servicio, un producto o un proceso.', ['Propone una alternativa viable a un problema recurrente', 'Prueba su idea a pequeña escala antes de extenderla', 'Comparte el resultado con otras áreas']],
+      ['Servicio excepcional', 'C8', 60, 'corazon', 'Activo', 'Reconoce una atención al cliente que supera lo esperado y resuelve de raíz.', ['Escucha la necesidad real antes de responder', 'Da seguimiento hasta cerrar el caso']],
+      ['Mentoría a compañeros', 'C3', 75, 'libro', 'Activo', 'Reconoce el acompañamiento que ayuda a otras personas a crecer en su rol.', ['Dedica tiempo a orientar a quien se incorpora', 'Da retroalimentación concreta y respetuosa']],
+      ['Apoyo en momentos críticos', 'C1', 60, 'escudo', 'Activo', 'Reconoce la disposición para apoyar al equipo cuando la carga o la urgencia aumentan.', ['Se ofrece a ayudar sin que se lo pidan', 'Mantiene la actitud positiva bajo presión']],
+      ['Mejora de procesos', 'C7', 85, 'rayo', 'Activo', 'Reconoce cambios que hacen un proceso más simple, rápido o seguro.', ['Identifica pasos que no aportan valor', 'Mide el efecto de la mejora', 'Deja el nuevo proceso documentado']],
+      ['Cumplimiento impecable', 'C2', 45, 'estrella', 'Activo', 'Reconoce la entrega constante, sin errores y dentro de los acuerdos establecidos.', ['Cumple los acuerdos en el plazo comprometido', 'Entrega sin requerir correcciones posteriores']],
+      ['Aprendizaje continuo', 'C7', 35, 'libro', 'Activo', 'Reconoce el esfuerzo por aprender y aplicar nuevos conocimientos en el trabajo.', ['Aplica en su trabajo lo aprendido en una capacitación', 'Comparte lo aprendido con su equipo']],
+      ['Atención al cliente interno', 'C8', 55, 'corazon', 'Activo', 'Reconoce la atención oportuna a las solicitudes de otras áreas de la organización.', ['Responde dentro del plazo acordado', 'Explica con claridad el estado de la solicitud']],
+      ['Presentación memorable', 'C5', 50, 'mensaje', 'Activo', 'Reconoce presentaciones claras y bien preparadas que ayudan a tomar decisiones.', ['Estructura el contenido con un hilo conductor', 'Responde las preguntas con seguridad y respeto']],
+      ['Coordinación entre áreas', 'C1', 65, 'equipo', 'Activo', 'Reconoce la articulación de esfuerzos entre áreas para lograr un resultado común.', ['Alinea expectativas entre las áreas involucradas', 'Resuelve desacuerdos con una propuesta concreta']],
+      ['Entrega anticipada', 'C6', 40, 'diamante', 'Activo', 'Reconoce la entrega de trabajos antes del plazo sin afectar su calidad.', ['Entrega antes de la fecha comprometida', 'Mantiene la calidad acordada']],
+      ['Resolución de incidentes', 'C2', 70, 'escudo', 'Activo', 'Reconoce la rapidez y el criterio al resolver incidentes que afectan la operación.', ['Contiene el problema con rapidez', 'Comunica el avance a las personas afectadas', 'Registra la causa y la solución aplicada']],
+      ['Embajador de valores', 'C3', 95, 'trofeo', 'Inactivo', 'Reconoce a quien vive y promueve los valores de la organización en su día a día.', ['Actúa de forma coherente con los valores', 'Inspira a otras personas con su ejemplo']],
+      ['Campaña de seguridad', 'C1', 30, 'escudo', 'Inactivo', 'Reconoce la participación activa en campañas de seguridad y prevención.', ['Participa en las jornadas de prevención', 'Señala situaciones de riesgo a tiempo']],
+      ['Voluntariado interno', 'C8', 25, 'corazon', 'Inactivo', 'Reconoce la colaboración voluntaria en actividades internas fuera del rol habitual.', ['Aporta su tiempo en actividades internas', 'Invita a otras personas a sumarse']]
+    ];
+    const creadores = ['Marta Ríos', 'Andrés Paredes', 'Valeria Núñez'];
+    return filas.map((f, i) => ({
+      n: i + 1,
+      id: 'CAT-' + String(i + 1).padStart(3, '0'),
+      nombre: f[0], comp: f[1], pts: f[2], icono: f[3], estado: f[4], desc: f[5], inds: f[6],
+      creadaPor: creadores[i % 3],
+      creadaEl: this.fmtFecha(1 + (i % 6), 3 + i, 8 + (i % 9), (i * 7) % 60),
+      modPor: creadores[(i + 1) % 3],
+      modEl: this.fmtFecha(7 + (i % 3), 2 + i, 9 + (i % 8), (i * 11) % 60),
+      v: 1
+    }));
+  }
+
+  formDe(modo, c) {
+    const inds = c ? c.inds.map((t, i) => ({ k: i + 1, t })) : [{ k: 1, t: '' }];
+    const f = {
+      modo, id: c ? c.id : '', v: c ? c.v : 0,
+      nombre: c ? c.nombre : '', desc: c ? c.desc : '',
+      comp: c ? c.comp : '', compOrig: c ? c.comp : '',
+      pts: c ? String(c.pts) : '', icono: c ? c.icono : '',
+      inds, seq: inds.length,
+      intento: false, enviando: false, conflicto: false, errSrv: false
+    };
+    f.orig = this.firma(f);
+    return f;
+  }
+
+  firma(f) {
+    return JSON.stringify([f.nombre, f.desc, f.comp, f.pts, f.icono, f.inds.map((x) => x.t)]);
+  }
+
+  // ---------- Lógica de guardado simulada ----------
+  usuario() {
+    const u = { admin: 'Marta Ríos', lider: 'Diego Salazar', colaborador: 'Lucía Andrade', gerencia: 'Pablo Mena', candidato: 'Camila Torres' };
+    return u[this.state.rol];
+  }
+
+  ahora() {
+    const d = new Date();
+    return this.fmtFecha(d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes());
+  }
+
+  finGuardar() {
+    const S = this.state;
+    const f = S.form;
+    if (!f || !f.enviando) return;
+    if (S.guardado === 'conflicto' && f.modo === 'editar') {
+      this.setState({ form: { ...f, enviando: false, conflicto: true } });
+      return;
+    }
+    if (S.guardado === 'error') {
+      this.setState({ form: { ...f, enviando: false, errSrv: true } });
+      return;
+    }
+    const datos = {
+      nombre: f.nombre.trim(), desc: f.desc.trim(), comp: f.comp,
+      pts: parseInt(f.pts, 10), icono: f.icono, inds: f.inds.map((x) => x.t.trim())
+    };
+    if (f.modo === 'crear') {
+      const n = S.cats.reduce((m, c) => Math.max(m, c.n), 0) + 1;
+      const id = 'CAT-' + String(n).padStart(3, '0');
+      const nueva = { ...datos, n, id, estado: 'Activo', creadaPor: this.usuario(), creadaEl: this.ahora(), modPor: this.usuario(), modEl: this.ahora(), v: 1 };
+      const activas = S.cats.filter((c) => c.estado === 'Activo').length + 1;
+      this.setState({
+        cats: S.cats.concat([nueva]), form: null, q: '', comp: '', est: 'activos', pag: Math.ceil(activas / 15),
+        aviso: { tipo: 'ok', texto: 'Se creó la categoría «' + datos.nombre + '» (' + id + ').' }
+      });
+    } else {
+      this.setState({
+        cats: S.cats.map((c) => (c.id === f.id ? { ...c, ...datos, modPor: this.usuario(), modEl: this.ahora(), v: c.v + 1 } : c)),
+        form: null,
+        aviso: { tipo: 'ok', texto: 'Se guardaron los cambios de «' + datos.nombre + '».' }
+      });
+    }
+  }
+
+  cambiarEstado(id, nuevo) {
+    const S = this.state;
+    const c = S.cats.find((x) => x.id === id);
+    if (S.guardado === 'conflicto') {
+      this.setState({ des: null, aviso: { tipo: 'error', texto: 'La categoría fue modificada por otro usuario. Recarga para ver los cambios.' } });
+      return;
+    }
+    if (S.guardado === 'error') {
+      this.setState({ des: null, aviso: { tipo: 'error', texto: 'No se pudo cambiar el estado de la categoría. Inténtalo de nuevo.' } });
+      return;
+    }
+    this.setState({
+      cats: S.cats.map((x) => (x.id === id ? { ...x, estado: nuevo, modPor: this.usuario(), modEl: this.ahora(), v: x.v + 1 } : x)),
+      des: null,
+      aviso: { tipo: 'ok', texto: (nuevo === 'Activo' ? 'Se activó' : 'Se desactivó') + ' la categoría «' + c.nombre + '».' }
+    });
+  }
+
+  renderVals() {
+    const S = this.state;
+    const set = (p) => this.setState(p);
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', inputborder: '#7A8695', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', onDanger: '#FFFFFF', warn: '#B54708', warnsoft: '#FEF0C7', neutralbg: '#ECEEF1', neutraltx: '#475260' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', inputborder: '#6B7784', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', onDanger: '#2A0B09', warn: '#F7B955', warnsoft: '#3A2A0C', neutralbg: '#242C35', neutraltx: '#B4BEC9' };
+    const T = S.dark ? dark : light;
+    const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
+
+    const comps = this.competencias();
+    const compBy = {};
+    comps.forEach((c) => { compBy[c.id] = c; });
+    const iconos = this.iconos();
+    const icoBy = {};
+    iconos.forEach((o) => { icoBy[o.id] = o; });
+
+    const pill = 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;';
+    const badgeActivo = pill + 'background:var(--soft);color:var(--accent);';
+    const badgeInactivo = pill + 'background:var(--neutralbg);color:var(--neutraltx);';
+    const warnStyle = 'display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:var(--warnsoft);color:var(--warn);font-size:13px;font-weight:600;';
+    const tile = (activo, px) => 'display:inline-flex;align-items:center;justify-content:center;flex:none;width:' + px + 'px;height:' + px + 'px;border-radius:' + (px > 40 ? 12 : 8) + 'px;' + (activo ? 'background:var(--soft);color:var(--accent);' : 'background:var(--neutralbg);color:var(--neutraltx);');
+
+    const esAdmin = S.rol === 'admin';
+    const sinPermiso = S.rol === 'candidato';
+    const usuarios = {
+      admin: ['Marta Ríos', 'MR', 'Administrador de Talento Humano'],
+      lider: ['Diego Salazar', 'DS', 'Líder'],
+      colaborador: ['Lucía Andrade', 'LA', 'Colaborador'],
+      gerencia: ['Pablo Mena', 'PM', 'Gerencia'],
+      candidato: ['Camila Torres', 'CT', 'Candidato']
+    };
+    const us = usuarios[S.rol];
+
+    // ---------- Listado ----------
+    const estEf = esAdmin ? S.est : 'activos';
+    const base = S.datos === 'vacio' ? [] : S.cats;
+    let lista = base.filter((c) => (estEf === 'todos' ? true : estEf === 'activos' ? c.estado === 'Activo' : c.estado === 'Inactivo'));
+    if (S.comp) lista = lista.filter((c) => c.comp === S.comp);
+    const qn = norm(S.q.slice(0, 100));
+    if (qn) lista = lista.filter((c) => norm(c.nombre).indexOf(qn) >= 0 || norm(compBy[c.comp].nombre).indexOf(qn) >= 0);
+    lista = lista.slice().sort((a, b) => a.n - b.n);
+    const total = lista.length;
+    const porPag = 15;
+    const paginas = Math.max(1, Math.ceil(total / porPag));
+    const pag = Math.min(Math.max(1, S.pag), paginas);
+    const desde = (pag - 1) * porPag;
+    const visibles = lista.slice(desde, desde + porPag);
+
+    const cargando = !sinPermiso && S.datos === 'cargando';
+    const hayError = !sinPermiso && S.datos === 'error';
+    const okDatos = !sinPermiso && (S.datos === 'exito' || S.datos === 'vacio');
+    const catVacio = okDatos && base.length === 0;
+    const sinRes = okDatos && !catVacio && total === 0;
+    const hayDatos = okDatos && total > 0;
+
+    const filas = visibles.map((c) => {
+      const cp = compBy[c.comp];
+      const activo = c.estado === 'Activo';
+      return {
+        id: c.id, nombre: c.nombre, pts: c.pts, estado: c.estado,
+        compNombre: cp.nombre, compInactiva: !cp.activa, warnStyle,
+        badgeStyle: activo ? badgeActivo : badgeInactivo,
+        tileStyle: tile(activo, 36),
+        icoD: icoBy[c.icono].d,
+        tgTexto: activo ? 'Desactivar' : 'Activar',
+        tgLabel: (activo ? 'Desactivar ' : 'Activar ') + c.nombre,
+        tgStyle: activo ? 'color:var(--danger);' : 'color:var(--accent);',
+        ver: () => set({ det: { id: c.id } }),
+        editar: () => set({ form: this.formDe('editar', c) }),
+        alternar: () => (activo ? set({ des: c.id }) : this.cambiarEstado(c.id, 'Activo'))
+      };
+    });
+
+    // URL
+    const ps = [];
+    if (S.q) ps.push('q=' + encodeURIComponent(S.q));
+    if (S.comp) ps.push('competencia=' + S.comp);
+    if (esAdmin && S.est !== 'activos') ps.push('estado=' + S.est);
+    if (pag > 1) ps.push('pagina=' + pag);
+    const urlTxt = '/compensaciones/categorias-reconocimiento' + (ps.length ? '?' + ps.join('&') : '');
+
+    // ---------- Detalle ----------
+    let abreDet = !!S.det && !sinPermiso;
+    const detCat = S.det ? S.cats.find((c) => c.id === S.det.id) : null;
+    const det404 = abreDet && (!!S.det.e404 || !detCat);
+    const detOk = abreDet && !det404;
+    const dc = detCat || S.cats[0];
+    const dcp = compBy[dc.comp];
+    const dActivo = dc.estado === 'Activo';
+    const dt = {
+      id: dc.id, nombre: dc.nombre, desc: dc.desc, pts: dc.pts, estado: dc.estado,
+      badgeStyle: dActivo ? badgeActivo : badgeInactivo,
+      tileGrande: tile(dActivo, 48),
+      icoD: icoBy[dc.icono].d, icoNombre: icoBy[dc.icono].nombre,
+      compNombre: dcp.nombre, compInactiva: !dcp.activa, warnStyle,
+      compAyuda: esAdmin
+        ? 'Mientras la competencia siga inactiva, la categoría no es seleccionable para nuevos hitos ni desafíos. Reasigna una competencia activa o reactiva la competencia.'
+        : 'Mientras la competencia siga inactiva, la categoría no es seleccionable para nuevos hitos ni desafíos.',
+      inds: dc.inds.map((t) => ({ t })),
+      creadaPor: dc.creadaPor, creadaEl: dc.creadaEl, modPor: dc.modPor, modEl: dc.modEl,
+      avisoHist: !dActivo && !esAdmin
+    };
+
+    // ---------- Formulario ----------
+    const f = S.form;
+    const abreForm = !!f && esAdmin;
+    const F = f || this.formDe('crear', null);
+    const errs = {};
+    const indErr = {};
+    {
+      const nombre = F.nombre.trim();
+      if (!nombre) errs.nombre = 'Ingresa el nombre de la categoría.';
+      else if (nombre.length < 3) errs.nombre = 'El nombre debe tener al menos 3 caracteres.';
+      else if (nombre.length > 100) errs.nombre = 'El nombre no puede superar los 100 caracteres.';
+      else if (S.cats.some((c) => c.id !== F.id && norm(c.nombre) === norm(nombre))) errs.nombre = 'Ya existe una categoría con ese nombre.';
+      const desc = F.desc.trim();
+      if (!desc) errs.desc = 'Ingresa una descripción.';
+      else if (desc.length < 10) errs.desc = 'La descripción debe tener al menos 10 caracteres.';
+      else if (desc.length > 500) errs.desc = 'La descripción no puede superar los 500 caracteres.';
+      if (!F.comp) errs.comp = 'Selecciona una competencia.';
+      else if ((F.modo === 'crear' || F.comp !== F.compOrig) && !(compBy[F.comp] && compBy[F.comp].activa)) errs.comp = 'Selecciona una competencia activa.';
+      const pts = F.pts.trim();
+      if (!pts) errs.pts = 'Ingresa la puntuación base.';
+      else if (!/^\d+$/.test(pts) || parseInt(pts, 10) < 1 || parseInt(pts, 10) > 1000) errs.pts = 'Ingresa un número entero entre 1 y 1000.';
+      if (!F.icono || !icoBy[F.icono]) errs.icono = 'Selecciona un ícono.';
+      const vistos = {};
+      F.inds.forEach((x) => {
+        const t = x.t.trim();
+        const k = norm(t);
+        if (!t) indErr[x.k] = 'Ingresa el texto del indicador.';
+        else if (t.length < 5) indErr[x.k] = 'El indicador debe tener al menos 5 caracteres.';
+        else if (t.length > 250) indErr[x.k] = 'El indicador no puede superar los 250 caracteres.';
+        else if (vistos[k]) indErr[x.k] = 'Este indicador está repetido en la categoría.';
+        vistos[k] = true;
+      });
+    }
+    const hayErrores = Object.keys(errs).length > 0 || Object.keys(indErr).length > 0;
+    const ver = F.intento;
+    const upd = (p) => set({ form: { ...S.form, ...p } });
+    const campo = (k) => (e) => upd({ [k]: e.target.value, conflicto: false, errSrv: false });
+    const dirty = !!f && this.firma(F) !== F.orig;
+    const n = F.inds.length;
+    const compActual = compBy[F.comp];
+    const compInactiva = !!compActual && !compActual.activa;
+    const opcionesComp = comps
+      .filter((c) => c.activa || (F.modo === 'editar' && c.id === F.compOrig))
+      .map((c) => ({ id: c.id, label: c.activa ? c.nombre : c.nombre + ' (inactiva)', off: !c.activa }));
+    const nombreLen = F.nombre.trim().length;
+    const descLen = F.desc.trim().length;
+    const fm = {
+      titulo: F.modo === 'crear' ? 'Nueva categoría' : 'Editar categoría',
+      ayudaCodigo: F.modo === 'crear' ? 'El código (CAT-###) se asigna automáticamente al guardar.' : 'Código ' + F.id + '. No se puede modificar.',
+      nombre: F.nombre, desc: F.desc, comp: F.comp, pts: F.pts,
+      hayNombre: ver && !!errs.nombre, errNombre: errs.nombre || '', ariaNombre: ver && errs.nombre ? 'true' : 'false',
+      cuentaNombre: nombreLen + '/100', cuentaNombreStyle: nombreLen > 100 ? 'color:var(--danger);font-weight:600;white-space:nowrap;' : 'white-space:nowrap;',
+      hayDesc: ver && !!errs.desc, errDesc: errs.desc || '', ariaDesc: ver && errs.desc ? 'true' : 'false',
+      cuentaDesc: descLen + '/500', cuentaDescStyle: descLen > 500 ? 'color:var(--danger);font-weight:600;white-space:nowrap;' : 'white-space:nowrap;',
+      hayComp: ver && !!errs.comp, errComp: errs.comp || '', ariaComp: ver && errs.comp ? 'true' : 'false',
+      opcionesComp, compInactiva, warnStyle,
+      ayudaComp: compInactiva
+        ? 'La competencia actual está inactiva y no puede volver a elegirse. Elige una competencia activa para que la categoría sea seleccionable de nuevo.'
+        : 'Solo se muestran competencias activas del Diccionario de Competencias.',
+      hayPts: ver && !!errs.pts, errPts: errs.pts || '', ariaPts: ver && errs.pts ? 'true' : 'false',
+      hayIcono: ver && !!errs.icono, errIcono: errs.icono || '', ariaIcono: ver && errs.icono ? 'true' : 'false',
+      iconos: iconos.map((o) => ({ id: o.id, nombre: o.nombre, d: o.d, sel: F.icono === o.id, pick: () => upd({ icono: o.id, conflicto: false, errSrv: false }) })),
+      inds: F.inds.map((x, i) => ({
+        n: i + 1, t: x.t,
+        label: 'Indicador ' + (i + 1),
+        errId: 'mf-ind-' + x.k + '-e',
+        hayErr: ver && !!indErr[x.k], err: indErr[x.k] || '', ariaErr: ver && indErr[x.k] ? 'true' : 'false',
+        set: (e) => upd({ inds: S.form.inds.map((y) => (y.k === x.k ? { ...y, t: e.target.value } : y)), conflicto: false, errSrv: false }),
+        quitar: () => { if (S.form.inds.length > 1) upd({ inds: S.form.inds.filter((y) => y.k !== x.k) }); },
+        quitarLabel: 'Eliminar indicador ' + (i + 1),
+        quitarTip: n <= 1 ? 'Debe quedar al menos un indicador' : 'Eliminar'
+      })),
+      quitarOff: n <= 1,
+      agregarOff: n >= 5,
+      contadorInd: n + ' de 5 indicadores' + (n >= 5 ? ' · máximo alcanzado' : ''),
+      conflicto: F.conflicto, errSrv: F.errSrv,
+      resumenErr: ver && hayErrores && !F.enviando && !F.conflicto && !F.errSrv,
+      enviando: F.enviando, ariaBusy: F.enviando ? 'true' : 'false',
+      textoGuardar: F.enviando ? 'Guardando…' : F.modo === 'crear' ? 'Crear categoría' : 'Guardar cambios'
+    };
+
+    const cerrarForm = () => set({ form: null, descartar: false });
+    const intentarCerrar = () => { if (S.form && S.form.enviando) return; if (dirty) set({ descartar: true }); else cerrarForm(); };
+
+    // ---------- Diálogo de desactivación ----------
+    const desCat = S.des ? S.cats.find((c) => c.id === S.des) : null;
+
+    return {
+      themeStyle: Object.keys(T).map((k) => '--' + k + ':' + T[k]).join(';'),
+      verCtl: !(this.props.hideCtl === '1' || this.props.hideCtl === true),
+      rol: S.rol, datos: S.datos, guardado: S.guardado, urlTxt,
+      setRol: (e) => set({ rol: e.target.value, q: '', comp: '', est: 'activos', pag: 1, det: null, form: null, des: null, aviso: null }),
+      setDatos: (e) => set({ datos: e.target.value }),
+      setGuardado: (e) => set({ guardado: e.target.value }),
+      userName: us[0], userInit: us[1], userRol: us[2],
+      temaLabel: S.dark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro',
+      toggleTema: () => set({ dark: !S.dark }),
+      navCls: 'nav-wrap' + (S.navOpen ? ' open' : ''),
+      navAria: S.navOpen ? 'true' : 'false',
+      navToggle: () => set({ navOpen: !S.navOpen }),
+
+      esAdmin, sinPermiso, conPermiso: !sinPermiso,
+      subtitulo: esAdmin
+        ? 'Administra el catálogo de categorías que usan los hitos, los desafíos y el ranking.'
+        : 'Consulta las categorías de reconocimiento disponibles y los indicadores que describen cada conducta.',
+      abrirCrear: () => set({ form: this.formDe('crear', null) }),
+
+      avisoOk: !!S.aviso && S.aviso.tipo === 'ok', avisoErr: !!S.aviso && S.aviso.tipo === 'error',
+      avisoTexto: S.aviso ? S.aviso.texto : '',
+      cerrarAviso: () => set({ aviso: null }),
+
+      q: S.q, comp: S.comp, est: S.est,
+      setQ: (e) => set({ q: e.target.value.slice(0, 100), pag: 1 }),
+      setComp: (e) => set({ comp: e.target.value, pag: 1 }),
+      setEst: (e) => set({ est: e.target.value, pag: 1 }),
+      compOpts: comps.map((c) => ({ id: c.id, label: c.activa ? c.nombre : c.nombre + ' (inactiva)' })),
+      resumen: hayDatos ? total + (total === 1 ? ' categoría' : ' categorías') : '',
+
+      skeletons: [1, 2, 3, 4, 5, 6],
+      cargando, hayError, hayDatos,
+      vacioCat: catVacio,
+      vacioTexto: esAdmin
+        ? 'Crea la primera categoría para que pueda usarse en hitos y desafíos.'
+        : 'Cuando Talento Humano cree categorías, aparecerán aquí.',
+      sinRes,
+      reintentar: () => set({ datos: 'exito' }),
+      filas,
+      rango: total ? 'Mostrando ' + (desde + 1) + '–' + (desde + visibles.length) + ' de ' + total : '',
+      pagTxt: 'Página ' + pag + ' de ' + paginas,
+      prevOff: pag <= 1, nextOff: pag >= paginas,
+      prev: () => set({ pag: pag - 1 }), next: () => set({ pag: pag + 1 }),
+
+      abreDet, det404, detOk, dt,
+      cerrarDet: () => set({ det: null }),
+      teclaDet: (e) => { if (e.key === 'Escape') set({ det: null }); },
+      editarDesdeDet: () => set({ det: null, form: this.formDe('editar', detCat) }),
+
+      abreForm, fm,
+      setNombre: campo('nombre'), setDesc: campo('desc'), setComp2: campo('comp'), setPts: campo('pts'),
+      agregarInd: () => { if (S.form.inds.length < 5) upd({ inds: S.form.inds.concat([{ k: S.form.seq + 1, t: '' }]), seq: S.form.seq + 1 }); },
+      intentarCerrar,
+      teclaForm: (e) => { if (e.key === 'Escape') intentarCerrar(); },
+      recargar: () => {
+        const c = S.cats.find((x) => x.id === S.form.id);
+        set({ form: c ? this.formDe('editar', c) : null });
+      },
+      guardar: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (S.form.enviando) return;
+        if (hayErrores) { upd({ intento: true, conflicto: false, errSrv: false }); return; }
+        upd({ intento: true, enviando: true, conflicto: false, errSrv: false });
+        setTimeout(() => this.finGuardar(), 900);
+      },
+
+      abreDescartar: !!S.descartar && abreForm,
+      seguirEditando: () => set({ descartar: false }),
+      descartar: cerrarForm,
+      teclaDescartar: (e) => { if (e.key === 'Escape') set({ descartar: false }); },
+
+      abreDes: !!desCat, desNombre: desCat ? desCat.nombre : '',
+      cerrarDes: () => set({ des: null }),
+      teclaDes: (e) => { if (e.key === 'Escape') set({ des: null }); },
+      confirmarDes: () => this.cambiarEstado(S.des, 'Inactivo')
+    };
+  }
+}
+</script>
+</body>
+</html>
