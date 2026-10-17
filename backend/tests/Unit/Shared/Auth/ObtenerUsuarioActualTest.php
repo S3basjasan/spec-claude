@@ -25,6 +25,11 @@ function repoDeUnUsuario(?Usuario $usuario): UsuarioRepositoryInterface
         {
             return [];
         }
+
+        public function idsPorNombre(string $texto, int $limite): array
+        {
+            return [];
+        }
     };
 }
 

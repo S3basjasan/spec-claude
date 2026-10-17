@@ -372,33 +372,6 @@ class EstructuraService
         ];
     }
 
-    /**
-     * Posición (también Suprimida, para registros históricos), o null si no existe. Sin datos de auditoría.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getPosicion(int $id): ?array
-    {
-        $posicion = $this->posiciones->obtener($id);
-
-        return $posicion === null ? null : $this->posicionAArreglo($posicion);
-    }
-
-    /**
-     * Posiciones existentes entre los ids dados, incluidas las Suprimidas.
-     *
-     * @param  array<int, int>  $ids
-     * @return array<int, array<string, mixed>>
-     */
-    public function getPosicionesPorIds(array $ids): array
-    {
-        if ($ids === []) {
-            return [];
-        }
-
-        return array_map($this->posicionAArreglo(...), $this->posiciones->obtenerPorIds(array_values(array_unique($ids))));
-    }
-
     public function existePosicion(int $id): bool
     {
         return $this->posiciones->obtener($id) !== null;
@@ -425,50 +398,16 @@ class EstructuraService
         ], $this->posiciones->arbolDeSupervision());
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function posicionAArreglo(Posicion $posicion): array
-    {
-        return [
-            'id' => $posicion->id,
-            'codigo' => $posicion->codigo,
-            'estado' => $posicion->estado->value,
-            'modalidad' => $posicion->modalidad->value,
-            'puesto' => [
-                'id' => $posicion->puesto['id'],
-                'codigo' => $posicion->puesto['codigo'],
-                'nombre' => $posicion->puesto['nombre'],
-            ],
-            'unidad' => [
-                'id' => $posicion->unidad['id'],
-                'codigo' => $posicion->unidad['codigo'],
-                'nombre' => $posicion->unidad['nombre'],
-                'estado' => $posicion->unidad['estado'],
-            ],
-            'supervisor' => $posicion->supervisor === null ? null : [
-                'id' => $posicion->supervisor['id'],
-                'codigo' => $posicion->supervisor['codigo'],
-                'nombre' => $posicion->supervisor['puesto'],
-            ],
-            'ocupante_id' => $posicion->ocupanteId,
-            'subordinadas_vigentes' => $posicion->subordinadasVigentes,
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
     // ------------------------------------------------------------------ Posiciones (GP-02)
 
     /**
-     * Posición con su puesto y unidad vigentes, o null. La jefatura es null hasta que Estructura la publique.
+     * Posición (también Suprimida) con su puesto, unidad y jefatura (puesto del supervisor, o null) vigentes, o null si no existe.
      *
      * @return array<string, mixed>|null
      */
     public function getPosicion(int $id): ?array
     {
-        return $this->posiciones->obtener($id);
+        return $this->posiciones->datosDe($id);
     }
 
     /**
@@ -479,7 +418,7 @@ class EstructuraService
      */
     public function getPosicionesPorIds(array $ids): array
     {
-        return $this->posiciones->porIds($ids);
+        return $this->posiciones->datosPorIds(array_values(array_unique($ids)));
     }
 
     /**
