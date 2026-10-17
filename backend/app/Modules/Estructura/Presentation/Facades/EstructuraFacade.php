@@ -36,6 +36,12 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null getTipoDeUnidad(int $id) Tipo de unidad {id, nombre, nivel, es_raiz}, o null.
  * @method static array|null getPosicion(int $id) Posición (también Suprimida) con su puesto, unidad, supervisor y ocupante_id, o null.
  * @method static array getPosicionesPorIds(array $ids) Posiciones existentes entre los ids dados, incluidas las Suprimidas.
+ * @method static array|null getPosicionLaboral(int $id) Lectura laboral con tenant, puesto y unidad, o null.
+ * @method static array getPosicionesLaboralesPorIds(array $ids) Lecturas laborales indexadas por id, incluidas las suprimidas.
+ * @method static array posicionesAsignables(int $tenantId, ?string $texto, int $pagina, int $porPagina) Opciones para registrar ingresos.
+ * @method static array posicionEsAsignable(int $id, int $tenantId) Veredicto y motivo de elegibilidad laboral.
+ * @method static array getPosicionesPorPuesto(string $texto) Identificadores para buscar fichas por puesto.
+ * @method static array getPosicionesPorUnidad(int $unidadId) Identificadores para filtrar fichas por unidad.
  * @method static bool existePosicion(int $id) Indica si la posición existe (también Suprimida).
  * @method static bool posicionEstaVigente(int $id) Indica si existe y está Ocupada o Vacante.
  * @method static array getArbolDeSupervision() Posiciones no Suprimidas {id, codigo, estado, supervisor_id} para el organigrama.

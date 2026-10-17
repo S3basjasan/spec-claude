@@ -7,6 +7,7 @@ use App\Modules\Estructura\Application\Ports\OcupacionDePosicionesPort;
 use App\Modules\Estructura\Application\Services\EstructuraService;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
+use App\Modules\Estructura\Domain\Repositories\LecturaPosicionRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PosicionRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
@@ -16,6 +17,7 @@ use App\Modules\Estructura\Infrastructure\Adapters\OcupacionPorPersonalFacade;
 use App\Modules\Estructura\Infrastructure\Adapters\SharedNombresDeUsuarios;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentCompetenciaRepository;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentComportamientoRepository;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentLecturaPosicionRepository;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentPosicionRepository;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentPreguntaRepository;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Repositories\EloquentPuestoRepository;
@@ -41,6 +43,7 @@ class EstructuraServiceProvider extends ServiceProvider
         $this->app->bind(UnidadRepositoryInterface::class, EloquentUnidadRepository::class);
         $this->app->bind(TipoUnidadRepositoryInterface::class, EloquentTipoUnidadRepository::class);
         $this->app->bind(NombresDeUsuariosInterface::class, SharedNombresDeUsuarios::class);
+        $this->app->bind(LecturaPosicionRepositoryInterface::class, EloquentLecturaPosicionRepository::class);
         $this->app->bind(PosicionRepositoryInterface::class, EloquentPosicionRepository::class);
         $this->app->bind(OcupacionDePosicionesPort::class, OcupacionPorPersonalFacade::class);
 

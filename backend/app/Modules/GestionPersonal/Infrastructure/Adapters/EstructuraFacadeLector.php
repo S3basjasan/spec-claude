@@ -14,7 +14,7 @@ final class EstructuraFacadeLector implements LectorEstructuraPort
     {
         return $this->proteger(function () use ($posicionIds) {
             $salida = [];
-            foreach (EstructuraFacade::getPosicionesPorIds($posicionIds) as $id => $posicion) {
+            foreach (EstructuraFacade::getPosicionesLaboralesPorIds($posicionIds) as $id => $posicion) {
                 $salida[(int) $id] = [
                     'puesto' => $posicion['puesto'],
                     'unidad_id' => $posicion['unidad_id'],

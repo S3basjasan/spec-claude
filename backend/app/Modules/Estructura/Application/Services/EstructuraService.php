@@ -3,6 +3,7 @@
 namespace App\Modules\Estructura\Application\Services;
 
 use App\Modules\Estructura\Domain\Entities\Competencia;
+use App\Modules\Estructura\Domain\Entities\Posicion;
 use App\Modules\Estructura\Domain\Entities\Puesto;
 use App\Modules\Estructura\Domain\Entities\RegistroComportamientos;
 use App\Modules\Estructura\Domain\Entities\RegistroPreguntas;
@@ -10,6 +11,7 @@ use App\Modules\Estructura\Domain\Entities\TipoUnidad;
 use App\Modules\Estructura\Domain\Entities\Unidad;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
+use App\Modules\Estructura\Domain\Repositories\LecturaPosicionRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PosicionRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
@@ -17,6 +19,7 @@ use App\Modules\Estructura\Domain\Repositories\TipoUnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\ValueObjects\CompetenciaDePuesto;
 use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\NodoDePosicion;
 use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
 
 /**
@@ -36,6 +39,7 @@ class EstructuraService
         private readonly UnidadRepositoryInterface $unidades,
         private readonly TipoUnidadRepositoryInterface $tipos,
         private readonly PosicionRepositoryInterface $posiciones,
+        private readonly LecturaPosicionRepositoryInterface $lecturaPosiciones,
     ) {}
 
     /**
@@ -466,9 +470,9 @@ class EstructuraService
      *
      * @return array<string, mixed>|null
      */
-    public function getPosicion(int $id): ?array
+    public function getPosicionLaboral(int $id): ?array
     {
-        return $this->posiciones->obtener($id);
+        return $this->lecturaPosiciones->obtener($id);
     }
 
     /**
@@ -477,9 +481,9 @@ class EstructuraService
      * @param  array<int, int>  $ids
      * @return array<int, array<string, mixed>> Indexado por id.
      */
-    public function getPosicionesPorIds(array $ids): array
+    public function getPosicionesLaboralesPorIds(array $ids): array
     {
-        return $this->posiciones->porIds($ids);
+        return $this->lecturaPosiciones->porIds($ids);
     }
 
     /**
@@ -490,7 +494,7 @@ class EstructuraService
      */
     public function posicionesAsignables(int $tenantId, ?string $texto, int $pagina, int $porPagina): array
     {
-        return $this->posiciones->asignables($tenantId, $texto, $pagina, $porPagina);
+        return $this->lecturaPosiciones->asignables($tenantId, $texto, $pagina, $porPagina);
     }
 
     /**
@@ -501,7 +505,7 @@ class EstructuraService
      */
     public function posicionEsAsignable(int $id, int $tenantId): array
     {
-        $motivo = $this->posiciones->motivoNoAsignable($id, $tenantId);
+        $motivo = $this->lecturaPosiciones->motivoNoAsignable($id, $tenantId);
 
         return ['asignable' => $motivo === null, 'motivo' => $motivo];
     }
@@ -509,13 +513,13 @@ class EstructuraService
     /** @return array<int, int> */
     public function getPosicionesPorPuesto(string $texto): array
     {
-        return $this->posiciones->idsPorPuesto($texto);
+        return $this->lecturaPosiciones->idsPorPuesto($texto);
     }
 
     /** @return array<int, int> */
     public function getPosicionesPorUnidad(int $unidadId): array
     {
-        return $this->posiciones->idsPorUnidad($unidadId);
+        return $this->lecturaPosiciones->idsPorUnidad($unidadId);
     }
 
     private function puestoAArreglo(Puesto $puesto): array
