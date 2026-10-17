@@ -27,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(IngresosSeeder::class);
         $this->call(DnfSeeder::class);
         $this->call(PlanFormacionSeeder::class);
+        $this->call(CategoriasReconocimientoSeeder::class);
     }
 }

@@ -462,27 +462,6 @@ class EstructuraService
     // ------------------------------------------------------------------ Posiciones (GP-02)
 
     /**
-     * Posición con su puesto y unidad vigentes, o null. La jefatura es null hasta que Estructura la publique.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getPosicion(int $id): ?array
-    {
-        return $this->posiciones->obtener($id);
-    }
-
-    /**
-     * Posiciones existentes entre los ids dados, incluidas las suprimidas (histórico).
-     *
-     * @param  array<int, int>  $ids
-     * @return array<int, array<string, mixed>> Indexado por id.
-     */
-    public function getPosicionesPorIds(array $ids): array
-    {
-        return $this->posiciones->porIds($ids);
-    }
-
-    /**
      * Posiciones del tenant que admiten nuevas asignaciones (no suprimidas, puesto activo y unidad activa);
      * no considera la ocupación.
      *

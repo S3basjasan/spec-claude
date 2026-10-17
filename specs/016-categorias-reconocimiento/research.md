@@ -51,10 +51,15 @@ El insumo `plan-categorias-reconocimiento-v2.md` se contrastó con el repositori
 
 ### D8. Diseño frente a la spec
 
-- Presentes los 27 archivos (`CategoriasReconocimiento.dc.html` + 26 `V_cr-*.dc.html`).
-- Contraste puntual de textos entre diseño y spec: coinciden «No se encontraron…», «Competencia inactiva», «Nueva categoría», «Reintentar», «Agregar indicador», el aviso de conflicto 409 y los diálogos de descarte y desactivación; los doce íconos (estrella, trofeo, corazón, bombilla, rayo, escudo, equipo, objetivo, mensaje, libro, bandera, diamante) aparecen en el tablero. Contadores `n/100` y `n/500` presentes; **no se encontró un contador `n/250` literal para indicadores**: verificar al implementar.
-- El contraste campo por campo completo se hace en la primera tarea de frontend; cualquier contradicción se registra aquí y se consulta antes de resolverla.
-- Los íconos viven en el objeto de valor `Icono` y en una única constante `iconos.ts`; registrarlos en `design/DESIGN.md` queda como tarea aparte sujeta a aprobación (no se modifica `design/`).
+- Presentes los 27 archivos (`CategoriasReconocimiento.dc.html` + 26 `V_cr-*.dc.html`); `design/` no se modificó.
+- Contraste campo por campo (T056). Coinciden con la spec: columnas del listado, filtros (competencia para todos; estado solo Administrador, por defecto Activos), búsqueda de hasta 100 caracteres, estados cargando/vacío/sin resultados/error con «Reintentar», «Competencia inactiva», formulario en modal con contadores `n/100` y `n/500`, indicadores de 1 a 5 con «Agregar indicador» y «Eliminar», mensaje de conflicto, diálogos de descartar y de desactivar, avisos de éxito y la nota sobre la puntuación.
+- **No existe contador `n/250` para los indicadores** en el diseño: queda resuelto; la interfaz no lo muestra y el error por campo indica el rango de 5 a 250.
+- Diferencias registradas (la spec prevalece):
+  1. El diseño ofrece las competencias inactivas «(inactiva)» en el filtro a todos los roles; la spec (clarificación del 2026-10-16) limita eso al Administrador y los demás ven solo las activas.
+  2. El diseño incluye la pantalla «Sin permiso» del Candidato; ese rol no existe todavía (D2) y no se implementa.
+  3. El prototipo usa `Activo`/`Inactivo` en el filtro de estado con «Todos» primero; se conserva ese orden.
+  4. «Auditoría» muestra `Usuario <id>` porque el sistema aún no expone nombres de usuario a este módulo.
+- Los íconos viven en el objeto de valor `Icono` y en `iconos.ts`; registrarlos en `design/DESIGN.md` queda como tarea aparte sujeta a aprobación.
 
 ### D9. Reemplazo de indicadores
 
