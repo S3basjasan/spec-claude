@@ -116,3 +116,65 @@ body {
     opacity: 0.45;
   }
 }
+
+/* Organigrama (design/Organigrama.dc.html): árbol de listas anidadas con líneas de conexión. Color de línea = --border. */
+.organigrama-arbol ul {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 24px 0 0;
+  list-style: none;
+}
+.organigrama-arbol > ul {
+  padding-top: 0;
+}
+.organigrama-arbol li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 8px 0;
+}
+.organigrama-arbol li::before,
+.organigrama-arbol li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: 24px;
+  border-top: 2px solid var(--border);
+}
+.organigrama-arbol li::after {
+  right: auto;
+  left: 50%;
+  border-left: 2px solid var(--border);
+}
+.organigrama-arbol li:only-child {
+  padding-top: 0;
+}
+.organigrama-arbol li:only-child::before,
+.organigrama-arbol li:only-child::after {
+  display: none;
+}
+.organigrama-arbol li:first-child::before,
+.organigrama-arbol li:last-child::after {
+  border: 0 none;
+}
+.organigrama-arbol li:last-child::before {
+  border-right: 2px solid var(--border);
+  border-radius: 0 8px 0 0;
+}
+.organigrama-arbol li:first-child::after {
+  border-radius: 8px 0 0 0;
+}
+.organigrama-arbol ul ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 24px;
+  border-left: 2px solid var(--border);
+}

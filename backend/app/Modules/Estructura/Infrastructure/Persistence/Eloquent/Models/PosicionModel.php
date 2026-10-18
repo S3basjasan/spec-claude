@@ -20,7 +20,7 @@ class PosicionModel extends Model
     protected $table = 'posiciones';
 
     protected $fillable = [
-        'puesto_id', 'unidad_organizacional_id', 'posicion_jefe_id', 'estado', 'modalidad', 'version', 'created_by', 'updated_by',
+        'puesto_id', 'unidad_organizacional_id', 'posicion_jefe_id', 'estado', 'modalidad', 'version', 'created_by', 'updated_by', 'tenant_id',
     ];
 
     /** Código `POS-` + id con al menos 4 dígitos (`POS-0007`, `POS-10000`). */

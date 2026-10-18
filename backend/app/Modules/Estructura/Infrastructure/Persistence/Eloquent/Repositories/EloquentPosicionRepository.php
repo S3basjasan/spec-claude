@@ -55,6 +55,18 @@ final class EloquentPosicionRepository implements PosicionRepositoryInterface
         return new PaginaDePosiciones($this->construir($filas->all()), $total, $filtro->pagina, $filtro->porPagina);
     }
 
+    public function vigentes(int $tenantId): array
+    {
+        return $this->construir(
+            $this->consulta()
+                ->where('p.tenant_id', $tenantId)
+                ->whereIn('p.estado', [EstadoPosicion::Ocupada->value, EstadoPosicion::Vacante->value])
+                ->orderBy('p.id')
+                ->get()
+                ->all(),
+        );
+    }
+
     public function obtener(int $id): ?Posicion
     {
         $fila = $this->consulta()->where('p.id', $id)->first();
