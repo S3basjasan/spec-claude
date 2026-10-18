@@ -39,6 +39,12 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool existePosicion(int $id) Indica si la posición existe (también Suprimida).
  * @method static bool posicionEstaVigente(int $id) Indica si existe y está Ocupada o Vacante.
  * @method static array getArbolDeSupervision() Posiciones no Suprimidas {id, codigo, estado, supervisor_id} para el organigrama.
+ * @method static array|null getPosicionDeGestion(int $id) Posición con puesto y unidad vigentes como texto (jefatura null), para gestión de personal (GP-02).
+ * @method static array getPosicionesDeGestionPorIds(array $ids) Posiciones (formato de gestión de personal) indexadas por id, incluidas las suprimidas.
+ * @method static array posicionesAsignables(int $tenantId, ?string $texto, int $pagina, int $porPagina) Posiciones del tenant que admiten nuevas asignaciones {items, total}.
+ * @method static array posicionEsAsignable(int $id, int $tenantId) {asignable, motivo} en la conexión de quien llama.
+ * @method static array getPosicionesPorPuesto(string $texto) Ids de posición cuyo puesto contiene el texto.
+ * @method static array getPosicionesPorUnidad(int $unidadId) Ids de posición de la unidad.
  *
  * @see EstructuraService
  */

@@ -21,6 +21,14 @@ interface PosicionRepositoryInterface
     /** Página de posiciones ordenadas por código (numéricamente), con `subordinadasVigentes` de cada una. */
     public function listar(FiltroDePosiciones $filtro): PaginaDePosiciones;
 
+    /**
+     * Posiciones vigentes (Ocupadas y Vacantes) del tenant, por código, con puesto, unidad, supervisor y ocupante. Las
+     * Suprimidas nunca se incluyen. Para el organigrama.
+     *
+     * @return array<int, Posicion>
+     */
+    public function vigentes(int $tenantId): array;
+
     /** Detalle de una posición (con subordinadas y datos de auditoría), en cualquier estado, o null si no existe. */
     public function obtener(int $id): ?Posicion;
 
@@ -67,4 +75,57 @@ interface PosicionRepositoryInterface
      * @throws PosicionNoSuprimible
      */
     public function suprimir(int $id, ?int $actorId): Posicion;
+
+    // ------------------------------------------------------- Lecturas para gestión de personal (GP-02)
+
+    /**
+     * Lectura para gestión de personal (GP-02): puesto y unidad vigentes como texto. No confundir con `obtener()`.
+     *
+     * @return array{id: int, tenant_id: int, estado: string, puesto_id: int, puesto: string, puesto_activo: bool, unidad_id: int|null, unidad: string|null, unidad_activa: bool, jefatura: null}|null
+     */
+    public function obtenerParaGestion(int $id): ?array;
+
+    /**
+     * @param  array<int, int>  $ids
+     * @return array<int, array<string, mixed>> Indexado por id de posición.
+     */
+    public function porIds(array $ids): array;
+
+    /**
+     * Posiciones del tenant, no suprimidas, con puesto activo y unidad activa (sin considerar ocupación).
+     *
+     * @return array{items: array<int, array{id: int, puesto: string, unidad: string, jefatura: null}>, total: int}
+     */
+    public function asignables(int $tenantId, ?string $texto, int $pagina, int $porPagina): array;
+
+    /**
+     * Motivo por el que una posición no admite nuevas asignaciones, o null si las admite.
+     *
+     * @return string|null `inexistente`, `otro_tenant`, `suprimida`, `puesto_inactivo` o `unidad_inactiva`
+     */
+    public function motivoNoAsignable(int $id, int $tenantId): ?string;
+
+    /** @return array<int, int> */
+    public function idsPorPuesto(string $texto): array;
+
+    /** @return array<int, int> */
+    public function idsPorUnidad(int $unidadId): array;
+
+    /** Cantidad de posiciones Ocupadas o Vacantes del puesto (las que lo mantienen en uso). */
+    public function contarEnUsoDelPuesto(int $puestoId): int;
+
+    /**
+     * Posiciones Suprimidas de un puesto (las únicas que no bloquean por su estado guardado).
+     *
+     * @return array<int, int>
+     */
+    public function suprimidasDelPuesto(int $puestoId): array;
+
+    /**
+     * Posiciones Suprimidas de las unidades dadas, por unidad.
+     *
+     * @param  array<int, int>  $unidadIds
+     * @return array<int, array<int, int>> unidad_id => posicion_ids
+     */
+    public function suprimidasDeUnidades(array $unidadIds): array;
 }

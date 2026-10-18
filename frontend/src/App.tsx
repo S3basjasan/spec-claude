@@ -33,6 +33,8 @@ import { RequireAdmin as RequireAdminPuestos } from './modules/estructura/puesto
 import { puestosNav } from './modules/estructura/puestos/nav'
 import { PuestoFormPage } from './modules/estructura/puestos/pages/PuestoFormPage'
 import { PuestosPage } from './modules/estructura/puestos/pages/PuestosPage'
+import { organigramaNav } from './modules/estructura/organigrama/nav'
+import { OrganigramaPage } from './modules/estructura/organigrama/pages/OrganigramaPage'
 import { posicionesNav } from './modules/estructura/posiciones/nav'
 import { PosicionesPage } from './modules/estructura/posiciones/pages/PosicionesPage'
 import { unidadesNav } from './modules/estructura/unidades/nav'
@@ -50,7 +52,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, miFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, organigramaNav, colaboradoresNav, miFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -114,6 +116,7 @@ function App() {
             </Route>
             <Route path="unidades" element={<UnidadesPage />} />
             <Route path="posiciones" element={<PosicionesPage />} />
+            <Route path="organigrama" element={<OrganigramaPage />} />
             <Route path="mi-ficha" element={<MiFichaPage />} />
             <Route element={<RequireAdminFichas />}>
               <Route path="colaboradores" element={<ColaboradoresPage />} />

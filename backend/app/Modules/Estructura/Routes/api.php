@@ -2,6 +2,7 @@
 
 use App\Modules\Estructura\Presentation\Controllers\CompetenciaController;
 use App\Modules\Estructura\Presentation\Controllers\ComportamientoController;
+use App\Modules\Estructura\Presentation\Controllers\OrganigramaController;
 use App\Modules\Estructura\Presentation\Controllers\PosicionController;
 use App\Modules\Estructura\Presentation\Controllers\PreguntaController;
 use App\Modules\Estructura\Presentation\Controllers\PuestoController;
@@ -153,4 +154,10 @@ Route::prefix('api/posiciones')->middleware('api')->group(function () {
         Route::put('/{posicionId}', [PosicionController::class, 'update'])->whereNumber('posicionId')->name('posiciones.update');
         Route::post('/{posicionId}/suprimir', [PosicionController::class, 'suprimir'])->whereNumber('posicionId')->name('posiciones.suprimir');
     });
+});
+
+// Organigrama de posiciones (feature 007). Prefijo /api/organigrama por contrato. Solo lectura: no existen rutas de
+// escritura y cualquier persona autenticada ve lo mismo.
+Route::prefix('api/organigrama')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/', [OrganigramaController::class, 'show'])->name('organigrama.show');
 });
