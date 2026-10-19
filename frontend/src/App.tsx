@@ -6,6 +6,7 @@ import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
 import { RequireRole as RequireRoleActividades } from './modules/desarrollo/actividades/components/RequireRole'
 import { actividadesNav } from './modules/desarrollo/actividades/nav'
+
 import { ActividadesPage } from './modules/desarrollo/actividades/pages/ActividadesPage'
 import { AsistenciaPage } from './modules/desarrollo/actividades/pages/AsistenciaPage'
 import { catalogoFormativoNav } from './modules/desarrollo/catalogo-formativo/nav'
@@ -13,6 +14,8 @@ import { CatalogoPage } from './modules/desarrollo/catalogo-formativo/pages/Cata
 import { RequireRole as RequireRoleMicro } from './modules/desarrollo/micro-learning/components/RequireRole'
 import { microLearningNav } from './modules/desarrollo/micro-learning/nav'
 import { MicroLearningPage } from './modules/desarrollo/micro-learning/pages/MicroLearningPage'
+import { reportesNav } from './modules/desarrollo/reportes/nav'
+import { ReportesPage } from './modules/desarrollo/reportes/pages/ReportesPage'
 import { ReproduccionPage } from './modules/desarrollo/micro-learning/pages/ReproduccionPage'
 import { RequireAdmin as RequireAdminDnf } from './modules/desarrollo/dnf/components/RequireAdmin'
 import { dnfNav } from './modules/desarrollo/dnf/nav'
@@ -66,7 +69,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, actividadesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -125,6 +128,7 @@ function App() {
             </Route>
             <Route path="actividades" element={<ActividadesPage />} />
             <Route path="actividades/:id/asistencia" element={<RequireRoleActividades admin={<AsistenciaPage />} />} />
+            <Route path="reportes" element={<ReportesPage />} />
             <Route path="micro-learning" element={<MicroLearningPage />} />
             <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />

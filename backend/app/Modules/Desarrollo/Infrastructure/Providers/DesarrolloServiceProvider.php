@@ -12,7 +12,14 @@ use App\Modules\Desarrollo\Application\Ports\ColaboradoresEvaluablesInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresVigentesInterface;
 use App\Modules\Desarrollo\Application\Ports\CompetenciasInterface;
 use App\Modules\Desarrollo\Application\Ports\CuentaColaboradorInterface;
+use App\Modules\Desarrollo\Application\Ports\DepartamentoDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\DepartamentosInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDeActividadesInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDeDnfInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDeMicrolearningInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDePlanesInterface;
+use App\Modules\Desarrollo\Application\Ports\GeneradorDeExcelInterface;
+use App\Modules\Desarrollo\Application\Ports\GeneradorDeReportePdfInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesActualesInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\NombreDeColaboradorInterface;
@@ -28,7 +35,9 @@ use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\ReportesRepositoryInterface;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AccionesDesdePlan;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ActividadesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AprobadoresDesdeShared;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaDesdeActividades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaRegistradaDesdeActividades;
@@ -38,7 +47,11 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesSinDat
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresVigentesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CompetenciasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CuentaColaboradorDesdePersonal;
+use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentoDeColaboradorDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentosDesdeEstructura;
+use App\Modules\Desarrollo\Infrastructure\Adapters\DnfParaReportes;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ExcelConZip;
+use App\Modules\Desarrollo\Infrastructure\Adapters\MicrolearningParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesActualesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesDeColaboradorSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombreDeColaboradorDesdePersonal;
@@ -46,16 +59,19 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\NombresDeReferenciaDesdeFacad
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombresDeUsuarioDesdeShared;
 use App\Modules\Desarrollo\Infrastructure\Adapters\PerfilesDePuestoDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\PlanDeFormacionDesdePlanes;
+use App\Modules\Desarrollo\Infrastructure\Adapters\PlanesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresEvaluablesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresVigentesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\NivelesActualesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\RelojDelSistema;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ReportePdfDompdf;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentActividadRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentCatalogoFormativoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentDnfRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentMicrocontenidoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentPlanRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentProgresoMicroRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentReportesRepository;
 use Illuminate\Support\ServiceProvider;
 
 class DesarrolloServiceProvider extends ServiceProvider
@@ -86,6 +102,16 @@ class DesarrolloServiceProvider extends ServiceProvider
         $this->app->bind(DepartamentosInterface::class, DepartamentosDesdeEstructura::class);
         $this->app->bind(AsistenciaInterface::class, AsistenciaDesdeActividades::class);
         $this->app->bind(AsistenciaRegistradaInterface::class, AsistenciaRegistradaDesdeActividades::class);
+
+        // Reportes de evaluación (018): lectura de las demás features por puertos propios; solo se persisten encuestas, seguimientos e impactos.
+        $this->app->bind(ReportesRepositoryInterface::class, EloquentReportesRepository::class);
+        $this->app->bind(FuenteDePlanesInterface::class, PlanesParaReportes::class);
+        $this->app->bind(FuenteDeActividadesInterface::class, ActividadesParaReportes::class);
+        $this->app->bind(FuenteDeMicrolearningInterface::class, MicrolearningParaReportes::class);
+        $this->app->bind(FuenteDeDnfInterface::class, DnfParaReportes::class);
+        $this->app->bind(DepartamentoDeColaboradorInterface::class, DepartamentoDeColaboradorDesdePersonal::class);
+        $this->app->bind(GeneradorDeExcelInterface::class, ExcelConZip::class);
+        $this->app->bind(GeneradorDeReportePdfInterface::class, ReportePdfDompdf::class);
 
         $this->app->bind(CompetenciasInterface::class, CompetenciasDesdeEstructura::class);
         $this->app->bind(PerfilesDePuestoInterface::class, PerfilesDePuestoDesdeEstructura::class);

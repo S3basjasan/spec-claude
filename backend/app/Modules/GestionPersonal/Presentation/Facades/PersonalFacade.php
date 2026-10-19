@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array vigentesPorIds(int $tenantId, array $ids, string $fecha) Ids, entre los dados, con vínculo laboral vigente en la fecha.
  * @method static array posicionesConAsignacionVigenteOFutura(array $posicionIds, string $fecha) Posiciones con asignación vigente o futura en la fecha.
  * @method static array registrarFicha(int $tenantId, int $actorId, string $claveDeOperacion, array $datos) Alta idempotente (GP-07) con las mismas reglas del alta manual.
+ * @method static array getDepartamentoActual(int $tenantId, array $colaboradorIds, string $fecha) colaborador_id => unidad_id|null: la unidad de la posición de su asignación laboral vigente en la fecha; lanza InformacionNoDisponible si falla la lectura de Estructura.
  * @method static array getDesarrollo(int $tenantId, array $colaboradorIds) Formación, experiencia y movilidad por colaborador (GP-06); lanza InformacionNoDisponible si la lectura falla.
  * @method static array getCategoriasActivas(int $tenantId) Categorías documentales Activas {id, nombre} para cargas nuevas (GP-05); lanza InformacionNoDisponible si la lectura falla.
  * @method static array getCategoriasPorIds(int $tenantId, array $ids) Nombre vigente {id, nombre, estado} de categorías de cualquier estado.

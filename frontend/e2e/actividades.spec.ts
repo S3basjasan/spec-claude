@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 // Datos sembrados en backend/.env.e2e (PlanFormacionSeeder, PersonalSeeder y ActividadesSeeder):
 //   admin@hrms.test es el Administrador y el aprobador designado; usuario@hrms.test es Ana Núñez Paredes.
-//   6 actividades ACT-0001…0006: Presencial (plan cerrado del año anterior, Finalizada, Ana Presente con 5), Codesarrollo
+//   7 actividades ACT-0001…0007 (la 7.ª, «[Rep] Taller de reingreso», la siembra ReportesSeeder sin Ana): Presencial (plan cerrado del año anterior, Finalizada, Ana Presente con 5), Codesarrollo
 //   (En curso, Ana Presente con 4), Mentoring (Finalizada sin registros: «Asistencia pendiente»), OJT (Programada),
 //   Virtual «[Act] Analítica con tableros» (En curso, Ana Presente sin nota) y E-learning (acción cancelada, Ana Presente con 3).
 // Las pruebas son seriales: el administrador crea la actividad de una acción nueva, registra asistencia y después Ana la ve.
@@ -105,10 +105,10 @@ test('Administrador: crea la actividad de una acción nueva, registra asistencia
   await dialogo.getByLabel('Lugar').fill('Sala de capacitación, piso 3')
   await dialogo.getByRole('button', { name: 'Crear actividad' }).click()
   await expect(dialogo).toBeHidden()
-  await expect(page.getByText(/Se creó la actividad ACT-0007/)).toBeVisible()
+  await expect(page.getByText(/Se creó la actividad ACT-0008/)).toBeVisible()
 
   const fila = page.getByRole('row', { name: new RegExp(ACCION) })
-  await expect(fila).toContainText('ACT-0007')
+  await expect(fila).toContainText('ACT-0008')
   await expect(fila).toContainText('En curso')
 
   // Registro de asistencia: marcar todos presentes, calificar a Ana y guardar.
@@ -157,7 +157,7 @@ test('Administrador: edita el lugar de la actividad mientras el plan no esté ce
   await expect(edicion.getByRole('combobox', { name: 'Acción del plan' })).toHaveCount(0)
   await edicion.getByLabel('Lugar').fill('Auditorio principal')
   await edicion.getByRole('button', { name: 'Guardar cambios' }).click()
-  await expect(page.getByText('Se actualizó la actividad ACT-0007.')).toBeVisible()
+  await expect(page.getByText('Se actualizó la actividad ACT-0008.')).toBeVisible()
   await expect(page.getByRole('row', { name: new RegExp(ACCION) })).toContainText('Auditorio principal')
 })
 
