@@ -89,6 +89,18 @@ Estados: Borrador `Badge` de advertencia (`--warning`/`--warningsoft`); Publicad
 
 Los tipos de actividad usan los mismos colores que el tipo de la acción del plan.
 
+**Colores de los reportes** *(feature 018, Reportes de evaluación; sin tokens nuevos)*. El color nunca es la única señal: la variación lleva siempre su signo y la alerta su texto.
+
+| Elemento | Texto / fondo | Tokens |
+|---|---|---|
+| Variación positiva respecto del período anterior | `--accent` | con signo «+» |
+| Variación negativa | `--danger` | con signo «−» |
+| Variación nula o sin comparación | `--muted` | |
+| Badge «Alerta de reingreso» | `--danger` / `--dangersoft` | también la franja `role="alert"` de la sección |
+| Badge «Con evaluación» | `--accent` / `--soft` | |
+| Badge «Sin evaluación» | `--neutral` / `--neutralsoft` | |
+| Series de los gráficos | Presencial `--accent`, Virtual `--info`, E-learning `--violet`, OJT `--warning`, Codesarrollo `--rose`, Mentoring `--danger`, Micro-learning `--neutral` | cada gráfico lleva una tabla de datos equivalente |
+
 **Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
@@ -255,6 +267,18 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Tarjeta de actividad** | `article` de `--surface` con borde `--border` y radio 12px: título (h3), `Etiqueta de tipo` y badge de estado, aviso de proximidad («Es hoy», «Empieza mañana», «Empieza en N días», «Está en curso») y lista de datos (fecha, lugar o enlace, formador, asistencia y calificación). Nunca muestra observaciones. |
 | **Resumen del colaborador** | Cuatro tarjetas (`minmax(180px, 1fr)`): actividades inscritas, finalizadas, % de asistencia y calificación promedio; «—» cuando no hay datos. |
 
+**Componentes de Reportes** *(feature 018; referencias `ReportesAdmin.dc.html` y `ReportesColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Tarjeta de indicador con comparación** | `article` de `--surface` con borde `--border` y radio 12px: título en mayúsculas 13px (`--muted`), valor de 32px (26px en los de gestión), nota de 13px y, abajo y separada por un borde, «Período anterior: …» con la diferencia y la variación coloreadas y con signo. Sin período anterior: «Sin datos del período anterior.». Indicador sin datos: guion y nota que explica por qué. Fuente caída: «No disponible». |
+| **Fila de indicadores de gestión** | Tres tarjetas pequeñas bajo las cinco principales, con el mismo componente. |
+| **Gráfico de barras, línea y pastel** | `figure` con `figcaption` (título y descripción), el gráfico con `role="img"` y `aria-label`, leyenda y una tabla `sr-only` equivalente. Barras: horas por departamento (actividades `--accent`, micro-learning `--info`); línea: dos series (activas y cerradas) sin meta; pastel: `conic-gradient` con los siete tipos. Sin librería de gráficos. |
+| **Celda de hito 30-60-90** | Texto «Aplicación N» / «Apoyo N» y «N resp. · P %»; «Sin respuestas» si no hay. Cada celda lleva `aria-label` con los cuatro datos. |
+| **Escala de 1 a 5** | `fieldset` con cinco radios de 44px (`label` con el número); el elegido va en `--accent`; el foco es visible y el error aparece debajo con `role="alert"`. |
+| **Formulario de encuesta y de seguimiento** | Modal de 640px: escala(s) de 1 a 5, comentario opcional con contador (máx. 1 000) y, antes de enviar, `ConfirmDialog` de tono primario («Una vez enviada no podrás modificarla»). |
+| **Tarjetas de «Mi progreso»** | Cuatro tarjetas (`minmax(180px, 1fr)`): formaciones completadas, competencias adquiridas, horas acumuladas y certificados. |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -413,6 +437,16 @@ Referencias: `ActividadesAdmin.dc.html` (lista y formulario en modal), `Activida
 5. **Mis actividades (Colaborador)**: resumen, «Próximas actividades» e «Historial» con tarjetas; mensaje informativo si no hay actividades.
 6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito.
 
+### Reportes de evaluación de resultados *(feature 018)*
+Referencias: `ReportesAdmin.dc.html` (administrador) y `ReportesColaborador.dc.html` («Mi progreso»). Se omiten «Ver como colaborador», las metas y la comparación con 2025.
+
+1. **Dashboard con pestañas (Administrador)**: encabezado con «Exportar Excel» y «Exportar PDF», barra de filtros (desde, hasta, departamento, tipo con «Micro-learning», plan y «Limpiar filtros»; año actual por defecto y todo en la URL), pestañas «Indicadores», «Detalle», «Impacto 30-60-90» y «Evaluación de impacto». Indicadores: cinco tarjetas con su comparación, fila de gestión y tres gráficos.
+2. **Detalle**: búsqueda, tabla paginada (código, nombre, tipo, fechas, departamento, asistentes/inscritos, horas-persona, costo, calificación y satisfacción) y «Ver comentarios» por fila, que abre un modal con los comentarios anónimos.
+3. **Impacto 30-60-90**: una fila por actividad Finalizada, una celda por hito, badge «Alerta de reingreso» y franja de alerta.
+4. **Evaluación de impacto con modal**: lista de acciones Finalizadas con «Con evaluación» / «Sin evaluación», filtros por plan y por evaluación, «Registrar impacto» / «Editar impacto» y un modal con los seis campos y el ROI calculado (o «No aplica» con costo cero).
+5. **Mi progreso (Colaborador)**: tarjetas, evolución de competencias, certificados descargables, «Mi plan de desarrollo» y «Pendientes por responder» con sus formularios. Sin datos: mensaje informativo.
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; las fuentes caídas se avisan con un `Alert` neutro.
+
 ---
 
 ## 6. Iconos
@@ -543,3 +577,11 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `ActividadesAdmin.dc.html` filtra por tipo sin E-learning y sin código, competencia, plan ni rango de fechas | Se agregan el tipo E-learning, la columna Código y los filtros de competencia, plan y fechas (año actual por defecto), además del badge «Asistencia pendiente» |
 | `ActividadesAsistencia.dc.html` admite calificaciones con pasos de 0,5 | La calificación es un entero de 1 a 5, solo con asistencia Presente; las observaciones solo con asistencia registrada |
 | `ActividadesColaborador.dc.html` muestra las observaciones del formador en la tarjeta | Las observaciones son de uso interno y nunca se muestran al colaborador |
+| `ReportesAdmin.dc.html` compara cada indicador con una meta y con 2025, y oculta la comparación con filtros activos | Se compara con el período anterior equivalente (igual duración) con los mismos filtros, también con filtros activos |
+| `ReportesAdmin.dc.html` ofrece «Ver como colaborador» | Cada persona tiene un solo rol |
+| `ReportesAdmin.dc.html` filtra sin plan y sin «Micro-learning» | Se agregan el filtro de plan y el tipo «Micro-learning» |
+| `ReportesAdmin.dc.html` grafica brechas cerradas acumuladas frente a una meta anual | Se grafican por mes las brechas activas al cierre y las cerradas en el mes, sin meta |
+| `ReportesAdmin.dc.html` muestra Brechas cerradas, ROI y Estado por acción, sin paginación ni comentarios | La tabla trae las columnas de la spec, paginación y «Ver comentarios»; el ROI por acción está en «Evaluación de impacto» |
+| `ReportesAdmin.dc.html` mide el impacto con «Brecha antes → después» y riesgo alto, medio o bajo | Por hito: tasa de respuesta, promedio de aplicación y de apoyo; alerta de reingreso binaria (caída de 1 punto con 3 respuestas) |
+| `ReportesAdmin.dc.html` no tiene evaluación de impacto ni formulario | Se agrega la pestaña «Evaluación de impacto» con su modal |
+| `ReportesColaborador.dc.html` no tiene «Pendientes por responder» y compara «enero frente a hoy» | Se agregan los pendientes; la evolución compara la primera DNF con la más reciente |

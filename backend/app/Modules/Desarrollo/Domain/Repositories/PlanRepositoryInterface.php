@@ -88,7 +88,8 @@ interface PlanRepositoryInterface
     public function accionesDePlanesEjecutando(int $tenantId): array;
 
     /**
-     * Planes con sus acciones para Reportes.
+     * Planes con sus acciones para Reportes. Cada plan incluye `nombre`; cada acción, además de horas, costo y fechas,
+     * incluye `nombre`, `competencia_ids` y `participante_ids`.
      *
      * @param  array{anio?: int, estado?: string, plan_id?: int}  $filtros
      * @return list<array<string, mixed>>

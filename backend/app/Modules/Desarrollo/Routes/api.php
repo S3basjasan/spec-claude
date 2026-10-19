@@ -9,10 +9,13 @@ use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
 use App\Modules\Desarrollo\Presentation\Controllers\IntentoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiAprendizajeController;
 use App\Modules\Desarrollo\Presentation\Controllers\MicrocontenidoController;
+use App\Modules\Desarrollo\Presentation\Controllers\MiProgresoController;
 use App\Modules\Desarrollo\Presentation\Controllers\MisActividadesController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanAccionController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanController;
 use App\Modules\Desarrollo\Presentation\Controllers\ProgresoMicroController;
+use App\Modules\Desarrollo\Presentation\Controllers\ReportesController;
+use App\Modules\Desarrollo\Presentation\Controllers\ReportesImpactoController;
 use Illuminate\Support\Facades\Route;
 
 // Catálogo formativo de competencias (feature 005). Prefijo /api/catalogo-formativo por contrato.
@@ -134,5 +137,28 @@ Route::prefix('api/microcontenidos')->middleware('api')->group(function () {
         Route::patch('/{id}/estado', [MicrocontenidoController::class, 'estado'])->whereNumber('id')->name('microcontenidos.estado');
         Route::delete('/{id}', [MicrocontenidoController::class, 'destroy'])->whereNumber('id')->name('microcontenidos.destroy');
         Route::get('/{id}/historial', [MicrocontenidoController::class, 'historial'])->whereNumber('id')->name('microcontenidos.historial');
+    });
+});
+
+// Reportes de evaluación de resultados (feature 018). Prefijo /api/reportes por contrato.
+// No existen PUT ni DELETE sobre encuestas ni seguimientos: son inmutables. Las rutas fijas se declaran antes de cualquier `/{id}`.
+// Las métricas se calculan bajo demanda: solo se guardan encuestas, seguimientos y evaluaciones de impacto.
+Route::prefix('api/reportes')->middleware('api')->group(function () {
+    // Del colaborador: solo autenticación; los datos son siempre los del usuario del token.
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/mi-progreso', [MiProgresoController::class, 'show'])->name('reportes.mi-progreso');
+        Route::post('/encuestas', [MiProgresoController::class, 'responderEncuesta'])->name('reportes.encuestas.store');
+        Route::post('/seguimientos', [MiProgresoController::class, 'responderSeguimiento'])->name('reportes.seguimientos.store');
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/opciones', [ReportesController::class, 'opciones'])->name('reportes.opciones');
+        Route::get('/dashboard', [ReportesController::class, 'dashboard'])->name('reportes.dashboard');
+        Route::get('/detalle', [ReportesController::class, 'detalle'])->name('reportes.detalle');
+        Route::get('/actividades/{actividadId}/satisfaccion', [ReportesController::class, 'satisfaccion'])->whereNumber('actividadId')->name('reportes.satisfaccion');
+        Route::get('/seguimiento', [ReportesController::class, 'seguimiento'])->name('reportes.seguimiento');
+        Route::get('/exportar', [ReportesController::class, 'exportar'])->name('reportes.exportar');
+        Route::get('/impactos', [ReportesImpactoController::class, 'index'])->name('reportes.impactos.index');
+        Route::put('/impactos/{planAccionId}', [ReportesImpactoController::class, 'update'])->whereNumber('planAccionId')->name('reportes.impactos.update');
     });
 });

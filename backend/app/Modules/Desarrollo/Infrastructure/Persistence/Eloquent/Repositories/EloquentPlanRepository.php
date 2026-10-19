@@ -394,12 +394,16 @@ final class EloquentPlanRepository implements PlanRepositoryInterface
             return [
                 'id' => (int) $m->id,
                 'codigo' => $plan->codigo(),
+                'nombre' => $plan->nombre,
                 'anio' => $plan->anio,
                 'estado' => $plan->estado->value,
                 'costo_total' => $plan->costoTotal(),
                 'horas_totales' => $plan->horasTotales(),
                 'acciones' => array_map(fn (AccionFormativa $a) => [
                     'id' => $a->id,
+                    'nombre' => $a->nombre,
+                    'competencia_ids' => $a->competenciaIds,
+                    'participante_ids' => $a->colaboradorIds,
                     'tipo' => $a->tipo?->value,
                     'horas' => $a->duracionHoras,
                     'costo' => $a->costo,

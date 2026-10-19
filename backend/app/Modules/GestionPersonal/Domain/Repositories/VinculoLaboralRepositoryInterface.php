@@ -52,6 +52,15 @@ interface VinculoLaboralRepositoryInterface
     public function fichasEnPosiciones(int $tenantId, array $posicionIds, string $fecha): array;
 
     /**
+     * Posición de la asignación laboral vigente en la fecha de cada ficha (inicio no posterior y fin nulo o posterior).
+     * Las fichas sin asignación vigente no aparecen.
+     *
+     * @param  list<int>  $colaboradorIds
+     * @return array<int, int> colaborador_id => posicion_id
+     */
+    public function posicionesVigentesDeFichas(int $tenantId, array $colaboradorIds, string $fecha): array;
+
+    /**
      * Fichas con un vínculo laboral vigente en la fecha (ingreso no posterior y salida nula o posterior).
      *
      * @param  list<int>|null  $colaboradorIds  si se da, restringe el resultado a estas fichas

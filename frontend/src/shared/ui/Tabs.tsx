@@ -16,13 +16,15 @@ interface TabsProps {
   children: ReactNode
   /** Prefijo para los ids de pestañas y paneles (único por pantalla). */
   idBase?: string
+  /** Con muchas pestañas o rótulos largos, la lista se desplaza dentro de su propio contenedor en lugar de ensanchar la página. */
+  scrollable?: boolean
 }
 
 /**
  * Pestañas accesibles (design/DESIGN.md §4): `tablist` con botones `tab` de 44px, flechas para moverse entre ellas
  * y un único `tabpanel` asociado a la activa.
  */
-export function Tabs({ label, tabs, active, onChange, children, idBase = 'tabs' }: TabsProps) {
+export function Tabs({ label, tabs, active, onChange, children, idBase = 'tabs', scrollable = false }: TabsProps) {
   const refs = useRef<Record<string, HTMLButtonElement | null>>({})
 
   const moverA = (indice: number) => {
@@ -49,7 +51,7 @@ export function Tabs({ label, tabs, active, onChange, children, idBase = 'tabs' 
 
   return (
     <div>
-      <div role="tablist" aria-label={label} className="flex gap-1 border-b border-border">
+      <div role="tablist" aria-label={label} className={`flex gap-1 border-b border-border ${scrollable ? 'overflow-x-auto overflow-y-hidden pb-px' : ''}`}>
         {tabs.map((tab, indice) => {
           const seleccionada = tab.id === active
           return (
@@ -66,7 +68,7 @@ export function Tabs({ label, tabs, active, onChange, children, idBase = 'tabs' 
               tabIndex={seleccionada ? 0 : -1}
               onClick={() => onChange(tab.id)}
               onKeyDown={(e) => alTeclear(e, indice)}
-              className={`-mb-px inline-flex h-11 items-center border-b-[3px] px-4 text-[15px] font-semibold transition-colors ${
+              className={`-mb-px inline-flex h-11 items-center border-b-[3px] px-4 text-[15px] font-semibold transition-colors ${scrollable ? 'shrink-0 whitespace-nowrap ' : ''}${
                 seleccionada ? 'border-accent text-accent' : 'border-transparent text-muted hover:text-text'
               }`}
             >
