@@ -70,6 +70,7 @@ function Reproduccion({ micro }: { micro: Micro }) {
           duracionSegundos={micro.duracion_minutos * 60}
           posicionInicial={micro.progreso?.posicion_segundos ?? 0}
           modo="real"
+          url={micro.url}
           completado={completado}
           onPosicion={(segundos) => avance.mutate(segundos)}
         />
@@ -143,7 +144,6 @@ function Reproduccion({ micro }: { micro: Micro }) {
         </div>
       )}
 
-      <AvisoConocimientos detalle />
     </div>
   )
 }

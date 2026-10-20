@@ -127,15 +127,6 @@ export function PanelIndicadores({ dashboard }: PanelIndicadoresProps) {
           />
         </div>
       </div>
-
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <p role="note" className="m-0 rounded-lg border border-border bg-soft px-3.5 py-3 text-[13px]">
-          {reportesText.admin.sinComparacion}
-        </p>
-        <p role="note" className="m-0 rounded-lg border border-border bg-surface px-3.5 py-3 text-[13px] text-muted">
-          {reportesText.admin.niveles}
-        </p>
-      </div>
     </section>
   )
 }

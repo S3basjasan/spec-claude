@@ -90,7 +90,6 @@ export function VistaAdministrador() {
     <div className="mx-auto flex max-w-300 flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="m-0 mb-1 text-sm font-semibold text-accent">{t.eyebrow}</p>
           <h1 className="m-0 text-[28px] font-bold leading-tight tracking-tight">{t.title}</h1>
           <p className="mt-1.5 text-base text-muted">{t.subtitle(fecha(filtros.desde), fecha(filtros.hasta))}</p>
         </div>
