@@ -4,6 +4,8 @@ import { AuthenticatedLayout } from './modules/auth/login/components/Authenticat
 import { RedirectIfAuthenticated } from './modules/auth/login/components/RedirectIfAuthenticated'
 import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
+import { categoriasReconocimientoNav } from './modules/compensaciones/categorias/nav'
+import { CategoriasReconocimientoPage } from './modules/compensaciones/categorias/pages/CategoriasReconocimientoPage'
 import { RequireRole as RequireRoleActividades } from './modules/desarrollo/actividades/components/RequireRole'
 import { actividadesNav } from './modules/desarrollo/actividades/nav'
 
@@ -69,7 +71,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -136,6 +138,7 @@ function App() {
               <Route path="puestos/nuevo" element={<PuestoFormPage />} />
               <Route path="puestos/:puestoId/editar" element={<PuestoFormPage />} />
             </Route>
+            <Route path="compensaciones/categorias" element={<CategoriasReconocimientoPage />} />
             <Route path="unidades" element={<UnidadesPage />} />
             <Route path="posiciones" element={<PosicionesPage />} />
             <Route path="organigrama" element={<OrganigramaPage />} />
