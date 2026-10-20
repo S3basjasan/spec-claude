@@ -39,7 +39,7 @@ function Contenido({ micro }: { micro: Micro }) {
         <p className="text-sm text-muted">{t.player.details(competencia, formatearMinutos(micro.duracion_minutos))}</p>
       </div>
 
-      {micro.tipo === 'Video' && <ReproductorVideo titulo={micro.titulo} duracionSegundos={micro.duracion_minutos * 60} posicionInicial={0} modo="previa" />}
+      {micro.tipo === 'Video' && <ReproductorVideo titulo={micro.titulo} duracionSegundos={micro.duracion_minutos * 60} posicionInicial={0} modo="previa" url={micro.url} />}
       {(micro.tipo === 'PDF' || micro.tipo === 'Articulo') && (
         <VisorDocumento tipo={micro.tipo} titulo={micro.titulo} url={micro.url} duracionMinutos={micro.duracion_minutos} />
       )}
@@ -54,8 +54,6 @@ function Contenido({ micro }: { micro: Micro }) {
           }}
         />
       )}
-
-      <AvisoConocimientos />
       <p className="text-[13px] text-muted">{t.preview.notice}</p>
     </div>
   )

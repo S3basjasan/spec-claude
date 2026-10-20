@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { IconPlayerPause, IconPlayerPlay, IconVideo } from '../../../../shared/ui/icons'
 import { microText } from '../text'
 import { formatearSegundos } from '../tiempo'
+import { resolverFuenteVideo } from '../videoUrl'
 
 interface ReproductorVideoProps {
   titulo: string
@@ -18,10 +19,64 @@ interface ReproductorVideoProps {
 const INTERVALO_GUARDADO_MS = 10_000
 
 /**
+ * Reproduce el video real cuando la URL es de YouTube, Vimeo o un archivo de video; en otro caso (o sin URL) usa el
+ * marcador de posición. Los videos incrustados no informan su posición: el colaborador usa «Marcar como completado».
+ */
+export function ReproductorVideo(props: ReproductorVideoProps & { url?: string | null }) {
+  const { url, ...resto } = props
+  const fuente = resolverFuenteVideo(url)
+
+  if (fuente?.tipo === 'incrustado') {
+    return (
+      <iframe
+        title={resto.titulo}
+        src={fuente.src}
+        className="aspect-video w-full rounded-xl border border-border bg-black"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
+    )
+  }
+  if (fuente?.tipo === 'archivo') {
+    return <ReproductorArchivo {...resto} src={fuente.src} />
+  }
+
+  return <ReproductorSimulado {...resto} />
+}
+
+function ReproductorArchivo({ titulo, posicionInicial, modo, completado = false, onPosicion, src }: ReproductorVideoProps & { src: string }) {
+  const ultimoGuardado = useRef(posicionInicial)
+  const guardar = (segundos: number) => {
+    if (modo !== 'real' || completado || Math.abs(segundos - ultimoGuardado.current) < 1) return
+    ultimoGuardado.current = segundos
+    onPosicion?.(segundos)
+  }
+
+  return (
+    <video
+      controls
+      preload="metadata"
+      src={src}
+      aria-label={titulo}
+      className="aspect-video w-full rounded-xl border border-border bg-black"
+      onLoadedMetadata={(evento) => {
+        if (posicionInicial > 0) evento.currentTarget.currentTime = posicionInicial
+      }}
+      onPause={(evento) => guardar(Math.floor(evento.currentTarget.currentTime))}
+      onTimeUpdate={(evento) => {
+        const segundos = Math.floor(evento.currentTarget.currentTime)
+        if (segundos - ultimoGuardado.current >= 10) guardar(segundos)
+      }}
+    />
+  )
+}
+
+/**
  * Marcador de posición del reproductor de video (spec 4.7): simula la reproducción (avanza un segundo por segundo),
  * reanuda desde la última posición guardada y la guarda sin reintentos. No hospeda ni transmite el video.
  */
-export function ReproductorVideo({ titulo, duracionSegundos, posicionInicial, modo, completado = false, onPosicion }: ReproductorVideoProps) {
+function ReproductorSimulado({ titulo, duracionSegundos, posicionInicial, modo, completado = false, onPosicion }: ReproductorVideoProps) {
   const t = microText.player
   const [posicion, setPosicion] = useState(Math.min(Math.max(0, posicionInicial), duracionSegundos))
   const [reproduciendo, setReproduciendo] = useState(false)

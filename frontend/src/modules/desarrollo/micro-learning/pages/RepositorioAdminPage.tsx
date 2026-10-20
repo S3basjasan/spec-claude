@@ -112,14 +112,11 @@ export function RepositorioAdminPage() {
     <div className="mx-auto flex max-w-300 flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-muted">{microText.breadcrumb}</p>
           <h1 className="text-[28px] font-bold leading-tight tracking-tight">{text.title}</h1>
           <p className="mt-1.5 text-base text-muted">{text.subtitle}</p>
         </div>
         <Button onClick={() => setFormulario({ id: null })}>{text.newContent}</Button>
       </div>
-
-      <AvisoConocimientos detalle />
 
       {aviso && (aviso.tono === 'error' ? <Alert>{aviso.texto}</Alert> : <Alert tone="neutral">{aviso.texto}</Alert>)}
 

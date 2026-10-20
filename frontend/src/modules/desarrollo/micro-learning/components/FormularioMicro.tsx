@@ -168,7 +168,6 @@ function Campos({ inicial, opciones, onCerrar }: CamposProps) {
             {microText.card.missing} {faltantes.map((f) => microText.card.missingItems[f] ?? f).join(', ')}.
           </Alert>
         )}
-        <AvisoConocimientos />
 
         {inicial && (
           <p className="text-sm text-muted">
