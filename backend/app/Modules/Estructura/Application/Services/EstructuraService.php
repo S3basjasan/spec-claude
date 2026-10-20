@@ -3,6 +3,7 @@
 namespace App\Modules\Estructura\Application\Services;
 
 use App\Modules\Estructura\Domain\Entities\Competencia;
+use App\Modules\Estructura\Domain\Entities\Posicion;
 use App\Modules\Estructura\Domain\Entities\Puesto;
 use App\Modules\Estructura\Domain\Entities\RegistroComportamientos;
 use App\Modules\Estructura\Domain\Entities\RegistroPreguntas;
@@ -17,6 +18,7 @@ use App\Modules\Estructura\Domain\Repositories\TipoUnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\ValueObjects\CompetenciaDePuesto;
 use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\NodoDePosicion;
 use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
 
 /**
@@ -405,9 +407,9 @@ class EstructuraService
      *
      * @return array<string, mixed>|null
      */
-    public function getPosicion(int $id): ?array
+    public function getPosicionDeGestion(int $id): ?array
     {
-        return $this->posiciones->datosDe($id);
+        return $this->posiciones->obtener($id);
     }
 
     /**
@@ -416,7 +418,7 @@ class EstructuraService
      * @param  array<int, int>  $ids
      * @return array<int, array<string, mixed>> Indexado por id.
      */
-    public function getPosicionesPorIds(array $ids): array
+    public function getPosicionesDeGestionPorIds(array $ids): array
     {
         return $this->posiciones->datosPorIds(array_values(array_unique($ids)));
     }

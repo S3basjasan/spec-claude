@@ -16,7 +16,8 @@ it('siembra cinco planes, uno por estado, con los seis tipos, una acción cancel
     expect($planes->pluck('estado')->all())->toBe(['Borrador', 'Revision', 'Aprobado', 'Ejecutando', 'Cerrado'])
         ->and($planes->pluck('codigo')->all())->toBe(['PLAN-0001', 'PLAN-0002', 'PLAN-0003', 'PLAN-0004', 'PLAN-0005']);
 
-    $acciones = PlanAccionModel::query()->get();
+    // Las acciones «[Act]» las añade ActividadesSeeder (feature 017) y las «[Rep]», ReportesSeeder (feature 018); no son del seeder del plan.
+    $acciones = PlanAccionModel::query()->where('nombre', 'not like', '[Act]%')->where('nombre', 'not like', '[Rep]%')->get();
     expect($acciones->pluck('tipo')->filter()->unique()->sort()->values()->all())->toBe(['Codesarrollo', 'ELearning', 'Mentoring', 'OJT', 'Presencial', 'Virtual'])
         ->and($acciones->where('cancelada', true))->toHaveCount(1);
 

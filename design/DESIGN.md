@@ -73,6 +73,34 @@ Todos los colores se usan como variables CSS (`var(--accent)`), nunca como hex s
 
 Estados: Borrador `Badge` de advertencia (`--warning`/`--warningsoft`); Publicado `Badge` por defecto (`--accent`/`--soft`); Archivado `Badge` neutro (`--muted` sobre `--border`).
 
+**Colores por estado de actividad y asistencia** *(feature 017, Actividades formativas; sin tokens nuevos)*. El color nunca es la única señal: siempre va con el nombre del estado.
+
+| Elemento | Texto / fondo | Tokens |
+|---|---|---|
+| Actividad Programada | `--info` / `--infosoft` | igual que la acción |
+| Actividad En curso | `--accent` / `--soft` | |
+| Actividad Finalizada | `--neutral` / `--neutralsoft` | |
+| Actividad Cancelada | `--danger` / `--dangersoft` | |
+| Asistencia Pendiente | `--neutral` / `--neutralsoft` | sin registro |
+| Asistencia Presente | `--accent` / `--soft` | |
+| Asistencia Ausente | `--danger` / `--dangersoft` | |
+| Asistencia Justificado | `--warning` / `--warningsoft` | |
+| Badge «Asistencia pendiente» | `--warning` / `--warningsoft` | actividad Finalizada con inscritos sin registro |
+
+Los tipos de actividad usan los mismos colores que el tipo de la acción del plan.
+
+**Colores de los reportes** *(feature 018, Reportes de evaluación; sin tokens nuevos)*. El color nunca es la única señal: la variación lleva siempre su signo y la alerta su texto.
+
+| Elemento | Texto / fondo | Tokens |
+|---|---|---|
+| Variación positiva respecto del período anterior | `--accent` | con signo «+» |
+| Variación negativa | `--danger` | con signo «−» |
+| Variación nula o sin comparación | `--muted` | |
+| Badge «Alerta de reingreso» | `--danger` / `--dangersoft` | también la franja `role="alert"` de la sección |
+| Badge «Con evaluación» | `--accent` / `--soft` | |
+| Badge «Sin evaluación» | `--neutral` / `--neutralsoft` | |
+| Series de los gráficos | Presencial `--accent`, Virtual `--info`, E-learning `--violet`, OJT `--warning`, Codesarrollo `--rose`, Mentoring `--danger`, Micro-learning `--neutral` | cada gráfico lleva una tabla de datos equivalente |
+
 **Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
@@ -229,6 +257,28 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Tarjeta de aprendizaje** | Como la de micro-contenido para el colaborador: estado (Sin iniciar, En progreso, Completado), motivo de asignación, posición de retoma, último puntaje «N de M» y botones Iniciar/Continuar/Ver y «Descargar certificado». |
 | **Resumen de aprendizaje** | Cuatro `StatCard` en `dl` (`minmax(180px, 1fr)`): completados, en progreso, horas acumuladas y certificados. |
 
+**Componentes de Actividades formativas** *(feature 017; referencias `ActividadesAdmin.dc.html`, `ActividadesAsistencia.dc.html`, `ActividadesCalificaciones.dc.html` y `ActividadesColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Control de asistencia** | Grupo (`role="group"`, `aria-label` con el nombre del participante) de tres botones de 40px «Presente», «Ausente» y «Justificado» con `aria-pressed`; la opción elegida lleva el color de su asistencia con borde (`--accent`, `--danger`, `--warning`). Pulsar de nuevo la elegida vuelve a Pendiente. Deshabilitado si la actividad no admite registro. |
+| **Campo de calificación** | `input type="number"` de 40px de alto y 80px de ancho, mín. 1, máx. 5, paso 1, con etiqueta accesible por participante; deshabilitado salvo con Presente; el error aparece debajo con `role="alert"`. |
+| **Resumen de asistencia** | Lista de chips (píldoras 13px 700): Presentes, Ausentes, Justificados y Sin registrar, cada uno con su cantidad. |
+| **Tarjeta de actividad** | `article` de `--surface` con borde `--border` y radio 12px: título (h3), `Etiqueta de tipo` y badge de estado, aviso de proximidad («Es hoy», «Empieza mañana», «Empieza en N días», «Está en curso») y lista de datos (fecha, lugar o enlace, formador, asistencia y calificación). Nunca muestra observaciones. |
+| **Resumen del colaborador** | Cuatro tarjetas (`minmax(180px, 1fr)`): actividades inscritas, finalizadas, % de asistencia y calificación promedio; «—» cuando no hay datos. |
+
+**Componentes de Reportes** *(feature 018; referencias `ReportesAdmin.dc.html` y `ReportesColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Tarjeta de indicador con comparación** | `article` de `--surface` con borde `--border` y radio 12px: título en mayúsculas 13px (`--muted`), valor de 32px (26px en los de gestión), nota de 13px y, abajo y separada por un borde, «Período anterior: …» con la diferencia y la variación coloreadas y con signo. Sin período anterior: «Sin datos del período anterior.». Indicador sin datos: guion y nota que explica por qué. Fuente caída: «No disponible». |
+| **Fila de indicadores de gestión** | Tres tarjetas pequeñas bajo las cinco principales, con el mismo componente. |
+| **Gráfico de barras, línea y pastel** | `figure` con `figcaption` (título y descripción), el gráfico con `role="img"` y `aria-label`, leyenda y una tabla `sr-only` equivalente. Barras: horas por departamento (actividades `--accent`, micro-learning `--info`); línea: dos series (activas y cerradas) sin meta; pastel: `conic-gradient` con los siete tipos. Sin librería de gráficos. |
+| **Celda de hito 30-60-90** | Texto «Aplicación N» / «Apoyo N» y «N resp. · P %»; «Sin respuestas» si no hay. Cada celda lleva `aria-label` con los cuatro datos. |
+| **Escala de 1 a 5** | `fieldset` con cinco radios de 44px (`label` con el número); el elegido va en `--accent`; el foco es visible y el error aparece debajo con `role="alert"`. |
+| **Formulario de encuesta y de seguimiento** | Modal de 640px: escala(s) de 1 a 5, comentario opcional con contador (máx. 1 000) y, antes de enviar, `ConfirmDialog` de tono primario («Una vez enviada no podrás modificarla»). |
+| **Tarjetas de «Mi progreso»** | Cuatro tarjetas (`minmax(180px, 1fr)`): formaciones completadas, competencias adquiridas, horas acumuladas y certificados. |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -326,6 +376,19 @@ Referencia: `ColaboradorIngreso.dc.html` (patrón Formulario). Para registrar el
 4. Rechazos (posición ocupada, vínculo superpuesto, contrato no habilitado, Estructura no verificable) usan el **Alert de rechazo con motivo**; el formulario conserva lo escrito y no hay cambio optimista del estado.
 5. Acciones: «Confirmar ingreso» (primario, bloqueado mientras confirma) y «Cancelar» (vuelve a la ficha sin crear nada).
 
+### Organigrama (árbol de tarjetas)
+Referencia: `Organigrama.dc.html`. Para mostrar una estructura de reporte jerárquica como árbol gráfico de solo lectura.
+
+1. **Encabezado**: h1 «Organigrama», subtítulo y, a la derecha, un enlace secundario «Ver listado de posiciones». Sin botones de gestión para ningún rol.
+2. **Barra de herramientas**: búsqueda («Buscar», marcador «Código, puesto, unidad u ocupante»), selector «Unidad organizacional» con «Todas las unidades» y las unidades con sangría, «Expandir todo», «Contraer todo» y «Limpiar filtros» (solo con búsqueda o unidad).
+3. **Resumen y leyenda**: el resumen en una región `aria-live` («N posiciones vigentes · N ocupadas · N vacantes» o «N posiciones coinciden de M vigentes»); la leyenda muestra los dos estilos de tarjeta y «Las posiciones suprimidas no se muestran.»
+4. **Árbol**: listas anidadas `ul/li` de arriba abajo, con líneas de conexión de 2px en `--border`, recursivo y sin límite de profundidad. Hermanas por código.
+5. **Tarjeta** (188px de ancho, es un botón con `aria-pressed`): unidad en mayúsculas con `--accent`, código, puesto en negrita, ocupante («Sin ocupante» atenuado y en cursiva) y `Badge` de estado. Ocupada: borde sólido `--border` y fondo `--surface`. **Vacante**: borde discontinuo `--warning` y fondo `--warningsoft`. Seleccionada: anillo `--accent`. Coincidencia: anillo `--warning`. No coincidente (solo con filtros): opacidad 0,35.
+6. **Botón de rama** bajo la tarjeta: «− Contraer» abierta y «+ N posiciones» (o «+ 1 posición») contraída; `aria-expanded` y nombre «Contraer POS-0201» / «Expandir POS-0201». Deshabilitado en las ramas con coincidencias mientras hay filtros.
+7. **Área del árbol**: 640px de alto con desplazamiento, arrastrable con el puntero (no sobre botones) y con foco para desplazarla con el teclado (`role="region"`, nombre «Árbol del organigrama»). Arriba a la derecha, el grupo de zoom: Alejar, porcentaje (restablece 100 %) y Acercar, de 50 % a 150 % en pasos de 10 %. Bajo el área, la ayuda «Arrastra para desplazarte. Haz clic en una tarjeta para ver su detalle.»
+8. **Panel de detalle** (`aside` con nombre «Detalle de la posición»): desde 1024px a la derecha del árbol; por debajo, una capa superpuesta a todo el ancho con el patrón Modal. Muestra código, puesto, estado y modalidad; ocupante; supervisor y subordinadas como botones que seleccionan esa posición; puesto con descripción; unidad con tipo y estado. Sin auditoría. «Cerrar detalle» lo cierra.
+9. Estados cargando, vacío («Aún no hay posiciones vigentes para mostrar el organigrama.») y error con «Reintentar» según el patrón Estados.
+
 ### Estados
 Referencia: `Estados.dc.html`. Toda vista que carga datos debe cubrir los cuatro.
 
@@ -361,6 +424,28 @@ Referencias: `MicroAdmin.dc.html` (repositorio, formulario, vista previa), `Micr
 4. **Mi aprendizaje**: resumen, `Tabs` «Asignado (n)» y «Completado (n)» (en la URL) y cuadrícula de tarjetas de aprendizaje; mensaje por pestaña vacía.
 5. **Reproducción y quiz**: ancho máximo 900px; reproductor o visor, botón «Marcar como completado» (oculto si ya completado), quiz de una pregunta a la vez con «Pregunta N de M» y resultado «N de M» con «Reintentar quiz».
 6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; archivar y eliminar usan `ConfirmDialog`.
+
+---
+
+### Actividades formativas *(feature 017)*
+Referencias: `ActividadesAdmin.dc.html` (lista y formulario en modal), `ActividadesAsistencia.dc.html` (registro de asistencia), `ActividadesCalificaciones.dc.html` (calificaciones) y `ActividadesColaborador.dc.html` (Mis actividades). Se omiten los controles de prototipo («Ver como colaborador», menú con Empleados/Ajustes) y el panel «Fundamento de cada tipo».
+
+1. **Lista (Administrador)**: encabezado con «+ Nueva Actividad», pestañas «Actividades» y «Calificaciones» (en la URL), búsqueda por nombre, filtros (tipo, estado, departamento, competencia, plan, rango de fechas —año actual por defecto— y «Limpiar filtros») y tabla con código, nombre, tipo, fechas, lugar o enlace, formador, departamento, capacidad, inscritos, estado y las acciones «Asistencia» y «Editar». No hay botón de eliminar ni de cancelar.
+2. **Formulario (Modal de 860px)**: selector de la acción del plan (con filtro por plan), datos heredados en solo lectura y solo lugar o enlace y departamento editables; al editar, la acción es fija.
+3. **Registro de asistencia**: encabezado con datos y estado de la actividad, resumen de asistencia, «Marcar todos presentes», tabla de inscritos (control de asistencia, calificación 1–5 y observaciones), «Guardar» con confirmación si cambia un registro previo y acceso al historial. Con la actividad Programada, Cancelada o el plan Cerrado la vista queda deshabilitada con su explicación.
+4. **Calificaciones**: sub-pestañas «Por actividad» y «Por participante», filtros de fechas, tipo, departamento y plan, y detalle por actividad de un participante.
+5. **Mis actividades (Colaborador)**: resumen, «Próximas actividades» e «Historial» con tarjetas; mensaje informativo si no hay actividades.
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito.
+
+### Reportes de evaluación de resultados *(feature 018)*
+Referencias: `ReportesAdmin.dc.html` (administrador) y `ReportesColaborador.dc.html` («Mi progreso»). Se omiten «Ver como colaborador», las metas y la comparación con 2025.
+
+1. **Dashboard con pestañas (Administrador)**: encabezado con «Exportar Excel» y «Exportar PDF», barra de filtros (desde, hasta, departamento, tipo con «Micro-learning», plan y «Limpiar filtros»; año actual por defecto y todo en la URL), pestañas «Indicadores», «Detalle», «Impacto 30-60-90» y «Evaluación de impacto». Indicadores: cinco tarjetas con su comparación, fila de gestión y tres gráficos.
+2. **Detalle**: búsqueda, tabla paginada (código, nombre, tipo, fechas, departamento, asistentes/inscritos, horas-persona, costo, calificación y satisfacción) y «Ver comentarios» por fila, que abre un modal con los comentarios anónimos.
+3. **Impacto 30-60-90**: una fila por actividad Finalizada, una celda por hito, badge «Alerta de reingreso» y franja de alerta.
+4. **Evaluación de impacto con modal**: lista de acciones Finalizadas con «Con evaluación» / «Sin evaluación», filtros por plan y por evaluación, «Registrar impacto» / «Editar impacto» y un modal con los seis campos y el ROI calculado (o «No aplica» con costo cero).
+5. **Mi progreso (Colaborador)**: tarjetas, evolución de competencias, certificados descargables, «Mi plan de desarrollo» y «Pendientes por responder» con sus formularios. Sin datos: mensaje informativo.
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; las fuentes caídas se avisan con un `Alert` neutro.
 
 ---
 
@@ -476,6 +561,7 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `PlanAnualColaborador.dc.html` no muestra acciones canceladas | La spec aclarada (FR-022) las muestra con estado «Cancelada» y su motivo, fuera del progreso y de las próximas actividades |
 | `PlanAnualAdmin.dc.html` y `PlanAnualColaborador.dc.html` traen «Ver como colaborador/administrador», «Empleados», «Ajustes» y «Mi perfil» | Controles de prototipo o de otras features: no se implementan (un solo rol por persona) |
 | `GP-03_Desarrollo-profesional.html` muestra el estado de la formación con insignias de color propias (`b-info`, `b-ok`, `b-off`), fechas como «Inicio no registrado · Fin no registrado», «Sin observaciones» y el bloque «Trayectoria interna» dentro de la pestaña Desarrollo, y edita en un diálogo con `form` propio | La pestaña usa el `Badge` del sistema (normal para En curso y Completada, neutro para Incompleta y movilidad no disponible o no informada), fechas como «Inicio: … · Fin: No registrado», «No registrado» en observaciones ausentes y los diálogos dentro de `Modal`. La trayectoria interna sigue en GP-01/GP-02 y no se duplica en esta pestaña; el estado vacío dice «Formación académica no registrada» y «Experiencia anterior no registrada» |
+| `Organigrama.dc.html` dibuja hasta cuatro niveles con bloques repetidos, su marcador de búsqueda dice «Código, puesto u ocupante» y la Vacante usa los hex #C98A2E y #FFFBF4 | El árbol es recursivo (la cadena de unidades tiene cinco niveles), el marcador es «Código, puesto, unidad u ocupante», el área del árbol recibe foco, hay estados de carga, vacío y error, y los colores salen de los tokens (`--warning`, `--warningsoft`) |
 | `GP-05_Documentos-del-colaborador.html` (pantalla Categorías documentales) muestra la columna «Documentos», el botón «Editar nombre», Desactivar sin explicación y Reactivar sin confirmación, y no pagina | El catálogo no consulta documentos, así que no hay columna «Documentos»; el botón es «Editar»; Desactivar confirma con «Sus documentos se conservarán» y Reactivar confirma con «No se reactivan documentos archivados»; el listado se pagina (20 por página) y conserva búsqueda, estado y página en la URL; los diálogos usan `Modal` y `ConfirmDialog` |
 | `GP-05_Documentos-del-colaborador.html` (pestaña Documentos) muestra la vista previa embebida del PDF, y el Colaborador solo accede desde Mi ficha | «Abrir» muestra el PDF en una pestaña con un blob local obtenido con el cliente HTTP autenticado (no hay URL permanente ni vista previa embebida) y «Descargar» fuerza el nombre `Documento_{id}.pdf`; el Colaborador dispone de la página `/mis-documentos` porque el permiso documental es independiente del de ficha (la pestaña de Mi ficha se mantiene); la vista de archivados es un conmutador Disponibles/Archivados solo para el Administrador, sin acciones de escritura; el cambio de visibilidad y el archivo no se actualizan hasta la respuesta del servidor |
 | `GP-01_Fichas-de-colaboradores.html` (acción de exportación) permite exportar desde la ficha y desde Mi ficha | «Exportar ficha» aparece en el detalle administrativo y, para el Colaborador, en `/exportar-mi-ficha` (y en Mi ficha si puede consultarla) porque el permiso de exportación es independiente; obtiene el PDF como blob con el cliente autenticado, muestra «Generando PDF…», deshabilita el botón mientras dura la petición, no descarga respuestas que no sean PDF, ofrece Reintentar ante 503 y oculta la acción ante 403; el PDF no se agrega a Documentos |
@@ -486,3 +572,16 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `MicroAdmin.dc.html` trae «Ver como colaborador», tarjetas KPI y un bloque largo «Úsalo para conocimientos» con una cita | Cada persona tiene un solo rol: sin «Ver como…»; sin KPI; la nota de alcance es un `Alert` neutro breve |
 | `MicroAdmin.dc.html` ofrece «Archivar en su lugar» en el diálogo de eliminar, incluso con completaciones | Con progreso de colaboradores el botón Eliminar no se ofrece; el diálogo de eliminar solo aparece en contenidos sin progreso |
 | `MicroColaborador.dc.html` muestra un porcentaje de avance en la tarjeta | La tarjeta muestra el estado, la duración, la posición de retoma de un Video y el último puntaje «N de M» de un Quiz |
+| `ActividadesAdmin.dc.html` crea la actividad con nombre, tipo, competencia, fechas, horas, formador, capacidad y campos de codesarrollo, mentoring y OJT | La actividad nace de una acción del plan: el modal elige la acción (datos heredados en solo lectura) y solo edita lugar o enlace y departamento |
+| `ActividadesAdmin.dc.html` ofrece «Cancelar» por fila y «Ver como colaborador» | La actividad no se cancela aquí (se cancela la acción en el plan) y cada persona tiene un solo rol |
+| `ActividadesAdmin.dc.html` filtra por tipo sin E-learning y sin código, competencia, plan ni rango de fechas | Se agregan el tipo E-learning, la columna Código y los filtros de competencia, plan y fechas (año actual por defecto), además del badge «Asistencia pendiente» |
+| `ActividadesAsistencia.dc.html` admite calificaciones con pasos de 0,5 | La calificación es un entero de 1 a 5, solo con asistencia Presente; las observaciones solo con asistencia registrada |
+| `ActividadesColaborador.dc.html` muestra las observaciones del formador en la tarjeta | Las observaciones son de uso interno y nunca se muestran al colaborador |
+| `ReportesAdmin.dc.html` compara cada indicador con una meta y con 2025, y oculta la comparación con filtros activos | Se compara con el período anterior equivalente (igual duración) con los mismos filtros, también con filtros activos |
+| `ReportesAdmin.dc.html` ofrece «Ver como colaborador» | Cada persona tiene un solo rol |
+| `ReportesAdmin.dc.html` filtra sin plan y sin «Micro-learning» | Se agregan el filtro de plan y el tipo «Micro-learning» |
+| `ReportesAdmin.dc.html` grafica brechas cerradas acumuladas frente a una meta anual | Se grafican por mes las brechas activas al cierre y las cerradas en el mes, sin meta |
+| `ReportesAdmin.dc.html` muestra Brechas cerradas, ROI y Estado por acción, sin paginación ni comentarios | La tabla trae las columnas de la spec, paginación y «Ver comentarios»; el ROI por acción está en «Evaluación de impacto» |
+| `ReportesAdmin.dc.html` mide el impacto con «Brecha antes → después» y riesgo alto, medio o bajo | Por hito: tasa de respuesta, promedio de aplicación y de apoyo; alerta de reingreso binaria (caída de 1 punto con 3 respuestas) |
+| `ReportesAdmin.dc.html` no tiene evaluación de impacto ni formulario | Se agrega la pestaña «Evaluación de impacto» con su modal |
+| `ReportesColaborador.dc.html` no tiene «Pendientes por responder» y compara «enero frente a hoy» | Se agregan los pendientes; la evolución compara la primera DNF con la más reciente |

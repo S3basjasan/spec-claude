@@ -21,6 +21,14 @@ interface PosicionRepositoryInterface
     /** Página de posiciones ordenadas por código (numéricamente), con `subordinadasVigentes` de cada una. */
     public function listar(FiltroDePosiciones $filtro): PaginaDePosiciones;
 
+    /**
+     * Posiciones vigentes (Ocupadas y Vacantes) del tenant, por código, con puesto, unidad, supervisor y ocupante. Las
+     * Suprimidas nunca se incluyen. Para el organigrama.
+     *
+     * @return array<int, Posicion>
+     */
+    public function vigentes(int $tenantId): array;
+
     /** Detalle de una posición (con subordinadas y datos de auditoría), en cualquier estado, o null si no existe. */
     public function obtener(int $id): ?Posicion;
 

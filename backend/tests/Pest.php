@@ -32,6 +32,8 @@ require_once __DIR__.'/CompensacionesHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/DnfHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/PlanHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/MicroHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/ActividadHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/ReportesHelpers.php';
 
 /*
 |--------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 namespace App\Modules\Desarrollo\Domain\Repositories;
 
 use App\Modules\Desarrollo\Domain\Entities\Plan;
+use App\Modules\Desarrollo\Domain\ValueObjects\AccionDeActividad;
 use App\Modules\Desarrollo\Domain\ValueObjects\EstadoPlan;
 use App\Modules\Desarrollo\Domain\ValueObjects\FiltroAcciones;
 use App\Modules\Desarrollo\Domain\ValueObjects\FiltroPlanes;
@@ -87,10 +88,41 @@ interface PlanRepositoryInterface
     public function accionesDePlanesEjecutando(int $tenantId): array;
 
     /**
-     * Planes con sus acciones para Reportes.
+     * Planes con sus acciones para Reportes. Cada plan incluye `nombre`; cada acción, además de horas, costo y fechas,
+     * incluye `nombre`, `competencia_ids` y `participante_ids`.
      *
      * @param  array{anio?: int, estado?: string, plan_id?: int}  $filtros
      * @return list<array<string, mixed>>
      */
     public function planesConAcciones(int $tenantId, array $filtros): array;
+
+    /**
+     * Acciones con los datos de su plan, incluidas las canceladas y de planes en cualquier estado (para Actividades).
+     *
+     * @param  list<int>  $ids
+     * @return array<int, AccionDeActividad> accion_id => acción
+     */
+    public function accionesPorIds(int $tenantId, array $ids): array;
+
+    /**
+     * Acciones no canceladas de planes Ejecutando fuera de `$idsConActividad`, con búsqueda por nombre y filtro por plan.
+     *
+     * @param  list<int>  $idsConActividad
+     * @return array{items: list<AccionDeActividad>, total: int}
+     */
+    public function accionesElegiblesParaActividad(int $tenantId, array $idsConActividad, ?int $planId, ?string $q, int $pagina, int $porPagina): array;
+
+    /**
+     * Ids de las acciones en las que el colaborador está inscrito, de planes Ejecutando o Cerrado.
+     *
+     * @return list<int>
+     */
+    public function idsDeAccionesDeColaboradorEnEjecucion(int $tenantId, int $colaboradorId): array;
+
+    /**
+     * Planes Ejecutando o Cerrado del tenant (los que pueden tener actividades), del año más reciente al más antiguo.
+     *
+     * @return list<array{id: int, codigo: string, nombre: string, anio: int, estado: string}>
+     */
+    public function planesParaActividades(int $tenantId): array;
 }

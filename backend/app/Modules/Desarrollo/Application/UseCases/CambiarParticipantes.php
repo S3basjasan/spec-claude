@@ -2,6 +2,7 @@
 
 namespace App\Modules\Desarrollo\Application\UseCases;
 
+use App\Modules\Desarrollo\Application\Ports\AsistenciaRegistradaInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresVigentesInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeReferenciaInterface;
 use App\Modules\Desarrollo\Application\Ports\RelojInterface;
@@ -10,6 +11,7 @@ use App\Modules\Desarrollo\Domain\Exceptions\AccionCancelada;
 use App\Modules\Desarrollo\Domain\Exceptions\AccionNoEncontrada;
 use App\Modules\Desarrollo\Domain\Exceptions\ColaboradorInvalido;
 use App\Modules\Desarrollo\Domain\Exceptions\CupoExcedido;
+use App\Modules\Desarrollo\Domain\Exceptions\ParticipanteConAsistencia;
 use App\Modules\Desarrollo\Domain\Exceptions\ParticipantesRepetidos;
 use App\Modules\Desarrollo\Domain\Exceptions\PlanNoEditable;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
@@ -33,6 +35,7 @@ final class CambiarParticipantes
         private readonly NombresDeReferenciaInterface $referencias,
         private readonly RelojInterface $reloj,
         private readonly ArmadorDePlanes $armador,
+        private readonly AsistenciaRegistradaInterface $asistencias,
     ) {}
 
     /**
@@ -45,6 +48,7 @@ final class CambiarParticipantes
      * @throws ParticipantesRepetidos
      * @throws CupoExcedido
      * @throws ColaboradorInvalido
+     * @throws ParticipanteConAsistencia
      */
     public function ejecutar(int $tenantId, int $usuarioId, int $accionId, array $colaboradorIds): array
     {
@@ -67,6 +71,11 @@ final class CambiarParticipantes
         }
         $agregados = array_values(array_diff($nuevos, $accion->colaboradorIds));
         $quitados = array_values(array_diff($accion->colaboradorIds, $nuevos));
+        foreach ($quitados as $quitado) {
+            if ($this->asistencias->tieneAsistencia($tenantId, $accionId, $quitado)) {
+                throw new ParticipanteConAsistencia;
+            }
+        }
         if ($agregados !== [] && count($this->vigentes->vigentesPorIds($tenantId, $agregados, $this->reloj->hoy($usuarioId)->format('Y-m-d'))) !== count($agregados)) {
             throw new ColaboradorInvalido;
         }

@@ -29,7 +29,10 @@ class DatabaseSeeder extends Seeder
         $this->call(DnfSeeder::class);
         $this->call(PlanFormacionSeeder::class);
         $this->call(CategoriasReconocimientoSeeder::class);
+        $this->call(ActividadesSeeder::class);
         // Progresos e intentos de ejemplo: necesitan las fichas de Personal, que se siembran después de los contenidos.
         $this->call(MicroLearningSeeder::class);
+        // Reportes: encuestas, seguimientos, evaluaciones de impacto y una segunda DNF sobre las actividades sembradas.
+        $this->call(ReportesSeeder::class);
     }
 }

@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Actividades formativas — Calificaciones</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.tabbtn:focus-visible,.pill:focus-visible,.cchip:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.tabbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.tabbtn:hover{color:var(--text)}
+.tabbtn[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;font-weight:600}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.cchip{display:block;width:100%;box-sizing:border-box;text-align:left;border:0;padding:3px 6px;border-radius:4px;font:inherit;font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400;box-sizing:border-box;width:100%}
+textarea.fi{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+</style>
+</helmet>
+<div style="min-height: 1500px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="CatalogoAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="DNFAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="PlanAnualAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Plan anual</a>
+      <a class="nav" href="MicroAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9.5l5 2.5-5 2.5z"></path></svg>Micro-learning</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>Actividades</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div>
+            <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Actividades formativas</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Ejecución de las actividades del plan: creación, asistencia y calificaciones.</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <a class="btn" href="ActividadesColaborador.dc.html">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador
+            </a>
+            <button class="btn btn-primary" onClick="{{abrirNueva}}">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nueva actividad
+            </button>
+          </div>
+        </div>
+
+        <sc-if value="{{hayAviso}}" hint-placeholder-val="{{false}}">
+          <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600">
+            <span>{{aviso}}</span>
+            <button class="btn" onClick="{{cerrarAviso}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{v.tabsVisibles}}" hint-placeholder-val="{{true}}">
+          <div role="tablist" aria-label="Sección" style="display: flex; border-bottom: 1px solid var(--border)">
+            <button class="tabbtn" role="tab" id="tab-lis" aria-selected="{{v.lista}}" onClick="{{verLista}}">Actividades</button>
+            <button class="tabbtn" role="tab" id="tab-cal" aria-selected="{{v.calif}}" onClick="{{verCalif}}">Calificaciones</button>
+          </div>
+        </sc-if>
+
+        <!-- ================= LISTA ================= -->
+        <sc-if value="{{v.lista}}" hint-placeholder-val="{{true}}">
+          <section aria-label="Actividades" style="display: flex; flex-direction: column; gap: 16px">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+              <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px">
+                  <div style="font-size: 13px; color: var(--muted)">{{k.label}}</div>
+                  <div style="margin-top: 4px; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{k.valor}}</div>
+                  <div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{k.nota}}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+              <div class="fl" style="flex: 1 1 220px"><label for="f-q">Buscar</label><input id="f-q" class="fi" type="search" value="{{f.buscar}}" onChange="{{f.setBuscar}}" placeholder="Nombre o formador"></div>
+              <div class="fl" style="flex: 0 1 170px"><label for="f-tip">Tipo</label>
+                <select id="f-tip" class="fi" value="{{f.tipo}}" onChange="{{f.setTipo}}"><option value="todos">Todos</option><option value="Presencial">Presencial</option><option value="Virtual">Virtual</option><option value="Codesarrollo">Codesarrollo</option><option value="Mentoring">Mentoring</option><option value="OJT">OJT</option></select></div>
+              <div class="fl" style="flex: 0 1 170px"><label for="f-est">Estado</label>
+                <select id="f-est" class="fi" value="{{f.estado}}" onChange="{{f.setEstado}}"><option value="todos">Todos</option><option value="Programada">Programada</option><option value="En curso">En curso</option><option value="Finalizada">Finalizada</option><option value="Cancelada">Cancelada</option></select></div>
+              <div class="fl" style="flex: 0 1 190px"><label for="f-dep">Departamento</label>
+                <select id="f-dep" class="fi" value="{{f.depto}}" onChange="{{f.setDepto}}"><option value="todos">Todos</option><option value="Tecnología">Tecnología</option><option value="Talento Humano">Talento Humano</option><option value="Comercial">Comercial</option><option value="Finanzas">Finanzas</option><option value="Operaciones">Operaciones</option><option value="Todos los departamentos">Todos los departamentos</option></select></div>
+              <sc-if value="{{f.hay}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{f.limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button></sc-if>
+            </div>
+            <p role="status" aria-live="polite" style="margin: 0; font-size: 14px; color: var(--muted)">{{resumen}}</p>
+
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+              <table style="width: 100%; min-width: 1320px; border-collapse: collapse; font-size: 14px">
+                <thead>
+                  <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                    <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Nombre</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Tipo</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Fechas</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Lugar / Enlace</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Formador</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Departamento</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Capacidad</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Inscritos</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Estado</th>
+                    <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{filas}}" as="r" hint-placeholder-count="10">
+                    <tr class="row" style="border-top: 1px solid var(--border)">
+                      <td style="padding: 12px 12px 12px 20px; font-weight: 600; max-width: 240px">{{r.nombre}}</td>
+                      <td style="padding: 12px"><span style="{{r.tipoStyle}}">{{r.tipo}}</span></td>
+                      <td style="padding: 12px; white-space: nowrap">{{r.fechas}}</td>
+                      <td style="padding: 12px; max-width: 200px; overflow-wrap: anywhere">{{r.lugar}}</td>
+                      <td style="padding: 12px">{{r.formador}}</td>
+                      <td style="padding: 12px">{{r.depto}}</td>
+                      <td style="padding: 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.cap}}</td>
+                      <td style="padding: 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600">{{r.insc}}</td>
+                      <td style="padding: 12px"><span style="{{r.estadoStyle}}">{{r.estado}}</span></td>
+                      <td style="padding: 12px 20px 12px 12px; white-space: nowrap">
+                        <button class="btn" onClick="{{r.asistencia}}" disabled="{{r.noAsis}}" aria-label="Registrar asistencia de {{r.nombre}}" style="height: 36px; padding: 0 12px; font-size: 13px">Asistencia</button>
+                        <button class="btn" onClick="{{r.cancelar}}" disabled="{{r.noCancel}}" aria-label="Cancelar {{r.nombre}}" style="height: 36px; padding: 0 12px; font-size: 13px; color: var(--danger)">Cancelar</button>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+              <sc-if value="{{sinFilas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted); border-top: 1px solid var(--border)">Ninguna actividad coincide con los filtros.</p></sc-if>
+            </div>
+
+            <div style="padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface)">
+              <h2 style="margin: 0 0 8px; font-size: 15px">Fundamento de cada tipo (Alles)</h2>
+              <ul style="margin: 0; padding-left: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 6px 24px; font-size: 13px; line-height: 1.5; color: var(--muted)">
+                <li><b style="color: var(--text)">Presencial:</b> Capacitación, H.7, p. 89–90.</li>
+                <li><b style="color: var(--text)">Codesarrollo:</b> H.9A/9B/9C, p. 100–106. Ciclo taller, seguimiento, segundo taller.</li>
+                <li><b style="color: var(--text)">Mentoring:</b> H.36A, p. 189–190. Programa estructurado de varios años.</li>
+                <li><b style="color: var(--text)">OJT:</b> Guías OJT, H.30A/30B, p. 161–164.</li>
+                <li><b style="color: var(--text)">Fuera del trabajo:</b> H.31A/31B, p. 167–170. Se programan como actividad Virtual o Presencial.</li>
+              </ul>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ================= ASISTENCIA ================= -->
+        <sc-if value="{{v.asis}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="as-t" style="display: flex; flex-direction: column; gap: 18px">
+            <div><button class="btn" onClick="{{verLista}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Actividades</button></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+                <h2 id="as-t" style="margin: 0; font-size: 20px">{{as.nombre}}</h2>
+                <span style="{{as.tipoStyle}}">{{as.tipo}}</span>
+                <span style="{{as.estadoStyle}}">{{as.estado}}</span>
+              </div>
+              <p style="margin: 0; font-size: 14px; color: var(--muted)">{{as.meta}}</p>
+            </div>
+
+            <sc-if value="{{as.bloqueada}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 0; padding: 16px 20px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted)">{{as.motivo}}</p>
+            </sc-if>
+
+            <sc-if value="{{as.habilitada}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 16px">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+                  <ul aria-label="Resumen de asistencia" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+                    <sc-for list="{{as.resumen}}" as="x" hint-placeholder-count="4">
+                      <li style="{{x.style}}">{{x.label}}: <b style="font-variant-numeric: tabular-nums">{{x.n}}</b></li>
+                    </sc-for>
+                  </ul>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                    <button class="btn" onClick="{{as.todos}}">Marcar todos presentes</button>
+                    <button class="btn btn-primary" onClick="{{as.guardar}}">Guardar registro</button>
+                  </div>
+                </div>
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                  <table style="width: 100%; min-width: 880px; border-collapse: collapse; font-size: 14px">
+                    <thead>
+                      <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                        <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600; width: 40px">#</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600">Participante</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600">Asistencia</th>
+                        <th scope="col" style="padding: 14px 12px; font-weight: 600; width: 130px">Calificación (1–5)</th>
+                        <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600; min-width: 220px">Observaciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <sc-for list="{{as.filas}}" as="p" hint-placeholder-count="12">
+                        <tr class="row" style="border-top: 1px solid var(--border)">
+                          <td style="padding: 8px 12px 8px 20px; color: var(--muted)">{{p.n}}</td>
+                          <td style="padding: 8px 12px; font-weight: 600">{{p.nombre}}</td>
+                          <td style="padding: 8px 12px">
+                            <div role="group" aria-label="Asistencia de {{p.nombre}}" style="display: inline-flex; gap: 6px">
+                              <button style="{{p.sPresente}}" aria-pressed="{{p.esPresente}}" onClick="{{p.setPresente}}">Presente</button>
+                              <button style="{{p.sAusente}}" aria-pressed="{{p.esAusente}}" onClick="{{p.setAusente}}">Ausente</button>
+                              <button style="{{p.sJust}}" aria-pressed="{{p.esJust}}" onClick="{{p.setJust}}">Justificado</button>
+                            </div>
+                          </td>
+                          <td style="padding: 8px 12px"><input class="fi" type="number" min="1" max="5" step="0.5" value="{{p.nota}}" onChange="{{p.hNota}}" disabled="{{p.sinNota}}" aria-label="Calificación de {{p.nombre}}" style="width: 100px"></td>
+                          <td style="padding: 8px 20px 8px 12px"><input class="fi" type="text" value="{{p.obs}}" onChange="{{p.hObs}}" aria-label="Observaciones de {{p.nombre}}"></td>
+                        </tr>
+                      </sc-for>
+                    </tbody>
+                  </table>
+                </div>
+                <p style="margin: 0; font-size: 13px; color: var(--muted)">La calificación solo se registra si el participante estuvo presente. Escala de 1 a 5, con pasos de 0,5.</p>
+              </div>
+            </sc-if>
+          </section>
+        </sc-if>
+
+        <!-- ================= CALIFICACIONES ================= -->
+        <sc-if value="{{v.calif}}" hint-placeholder-val="{{false}}">
+          <section aria-label="Calificaciones" style="display: flex; flex-direction: column; gap: 24px">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+              <sc-for list="{{cal.kpis}}" as="k" hint-placeholder-count="4">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px">
+                  <div style="font-size: 13px; color: var(--muted)">{{k.label}}</div>
+                  <div style="margin-top: 4px; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{k.valor}}</div>
+                  <div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{k.nota}}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <h2 style="margin: 0; font-size: 18px">Promedio por actividad</h2>
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                <table style="width: 100%; min-width: 760px; border-collapse: collapse; font-size: 14px">
+                  <thead><tr style="text-align: left; color: var(--muted); font-size: 13px">
+                    <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Actividad</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600">Tipo</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Calificados</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Asistencia</th>
+                    <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600; min-width: 220px">Promedio (1–5)</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{cal.porActividad}}" as="a" hint-placeholder-count="6">
+                      <tr class="row" style="border-top: 1px solid var(--border)">
+                        <td style="padding: 10px 12px 10px 20px; font-weight: 600">{{a.nombre}}</td>
+                        <td style="padding: 10px 12px"><span style="{{a.tipoStyle}}">{{a.tipo}}</span></td>
+                        <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{a.calificados}}</td>
+                        <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{a.asistencia}}</td>
+                        <td style="padding: 10px 20px 10px 12px">
+                          <div style="display: flex; align-items: center; gap: 10px">
+                            <div aria-hidden="true" style="flex: 1; height: 8px; border-radius: 999px; background: var(--border); overflow: hidden"><div style="{{a.bar}}"></div></div>
+                            <span style="min-width: 36px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right">{{a.promedio}}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+                <h2 style="margin: 0; font-size: 18px">Promedio por participante</h2>
+                <div class="fl" style="flex: 0 1 320px"><label for="c-act">Actividad</label>
+                  <select id="c-act" class="fi" value="{{cal.filtro}}" onChange="{{cal.setFiltro}}">
+                    <option value="todas">Todas las actividades</option>
+                    <option value="AC01">Liderazgo situacional</option><option value="AC02">Comunicación asertiva en el trabajo</option><option value="AC03">Estadística aplicada a la decisión</option><option value="AC04">Mentoring con líderes senior</option><option value="AC05">Visualización de datos con tableros</option>
+                  </select>
+                </div>
+              </div>
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                <table style="width: 100%; min-width: 640px; border-collapse: collapse; font-size: 14px">
+                  <thead><tr style="text-align: left; color: var(--muted); font-size: 13px">
+                    <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Participante</th>
+                    <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Actividades calificadas</th>
+                    <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600; min-width: 220px">Promedio (1–5)</th>
+                  </tr></thead>
+                  <tbody>
+                    <sc-for list="{{cal.porPersona}}" as="p" hint-placeholder-count="8">
+                      <tr class="row" style="border-top: 1px solid var(--border)">
+                        <td style="padding: 10px 12px 10px 20px; font-weight: 600">{{p.nombre}}</td>
+                        <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{p.n}}</td>
+                        <td style="padding: 10px 20px 10px 12px">
+                          <div style="display: flex; align-items: center; gap: 10px">
+                            <div aria-hidden="true" style="flex: 1; height: 8px; border-radius: 999px; background: var(--border); overflow: hidden"><div style="{{p.bar}}"></div></div>
+                            <span style="min-width: 36px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right">{{p.promedio}}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+                <sc-if value="{{cal.sinPersonas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 20px; color: var(--muted); border-top: 1px solid var(--border)">Aún no hay calificaciones registradas para este filtro.</p></sc-if>
+              </div>
+            </div>
+          </section>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+
+  <!-- ================= NUEVA ACTIVIDAD ================= -->
+  <sc-if value="{{nv.abierto}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; background: rgba(8, 12, 16, 0.55)">
+      <div role="dialog" aria-modal="true" aria-labelledby="nv-t" style="width: min(860px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3); overflow: hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border)">
+          <h2 id="nv-t" style="margin: 0; font-size: 20px">Nueva actividad formativa</h2>
+          <button class="ibtn" onClick="{{nv.cerrar}}" aria-label="Cancelar y cerrar"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+          <sc-if value="{{nv.hayErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">{{nv.err}}</p></sc-if>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+            <div class="fl" style="grid-column: 1 / -1"><label for="n-nom">Nombre de la actividad</label><input id="n-nom" class="fi" type="text" value="{{nv.nombre}}" onChange="{{nv.hNombre}}"></div>
+            <div class="fl"><label for="n-tip">Tipo</label>
+              <select id="n-tip" class="fi" value="{{nv.tipo}}" onChange="{{nv.hTipo}}"><option value="Presencial">Presencial</option><option value="Virtual">Virtual</option><option value="Codesarrollo">Codesarrollo</option><option value="Mentoring">Mentoring</option><option value="OJT">OJT</option></select>
+              <span style="font-size: 12px; font-weight: 400; color: var(--muted); line-height: 1.4">{{nv.fundamento}}</span></div>
+            <div class="fl"><label for="n-com">Competencia objetivo</label>
+              <select id="n-com" class="fi" value="{{nv.comp}}" onChange="{{nv.hComp}}"><option value="Trabajo en equipo">Trabajo en equipo</option><option value="Liderazgo">Liderazgo</option><option value="Análisis de datos">Análisis de datos</option><option value="Comunicación efectiva">Comunicación efectiva</option><option value="Gestión del tiempo">Gestión del tiempo</option><option value="Gestión del cambio">Gestión del cambio</option><option value="Pensamiento analítico">Pensamiento analítico</option><option value="Negociación">Negociación</option></select></div>
+            <div class="fl"><label for="n-ini">Fecha de inicio</label><input id="n-ini" class="fi" type="date" value="{{nv.ini}}" onChange="{{nv.hIni}}"></div>
+            <div class="fl"><label for="n-fin">Fecha de fin</label><input id="n-fin" class="fi" type="date" value="{{nv.fin}}" onChange="{{nv.hFin}}"></div>
+            <div class="fl"><label for="n-hi">Hora de inicio</label><input id="n-hi" class="fi" type="time" value="{{nv.hi}}" onChange="{{nv.hHi}}"></div>
+            <div class="fl"><label for="n-hf">Hora de fin</label><input id="n-hf" class="fi" type="time" value="{{nv.hf}}" onChange="{{nv.hHf}}"></div>
+            <div class="fl" style="grid-column: 1 / -1"><label for="n-lug">{{nv.lugarLabel}}</label><input id="n-lug" class="fi" type="text" value="{{nv.lugar}}" onChange="{{nv.hLugar}}"></div>
+            <div class="fl"><label for="n-for">Formador</label><input id="n-for" class="fi" type="text" value="{{nv.formador}}" onChange="{{nv.hFormador}}"></div>
+            <div class="fl"><label for="n-dep">Departamento</label>
+              <select id="n-dep" class="fi" value="{{nv.depto}}" onChange="{{nv.hDepto}}"><option value="Todos los departamentos">Todos los departamentos</option><option value="Tecnología">Tecnología</option><option value="Talento Humano">Talento Humano</option><option value="Comercial">Comercial</option><option value="Finanzas">Finanzas</option><option value="Operaciones">Operaciones</option></select></div>
+            <div class="fl"><label for="n-cap">Capacidad máxima</label><input id="n-cap" class="fi" type="number" min="1" value="{{nv.cap}}" onChange="{{nv.hCap}}"></div>
+          </div>
+
+          <sc-if value="{{nv.esCodes}}" hint-placeholder-val="{{false}}">
+            <div style="padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); display: flex; flex-direction: column; gap: 12px">
+              <h3 style="margin: 0; font-size: 15px">Ciclo de codesarrollo</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+                <div class="fl"><label for="n-seg">Fecha de seguimiento</label><input id="n-seg" class="fi" type="date" value="{{nv.seg}}" onChange="{{nv.hSeg}}"></div>
+                <div class="fl"><label for="n-t2">Fecha del segundo taller</label><input id="n-t2" class="fi" type="date" value="{{nv.t2}}" onChange="{{nv.hT2}}"></div>
+              </div>
+              <p style="margin: 0; font-size: 12px; color: var(--muted)">El primer taller usa las fechas de inicio y fin de arriba.</p>
+            </div>
+          </sc-if>
+          <sc-if value="{{nv.esMentor}}" hint-placeholder-val="{{false}}">
+            <div style="padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); display: flex; flex-direction: column; gap: 12px">
+              <h3 style="margin: 0; font-size: 15px">Programa de mentoring</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+                <div class="fl"><label for="n-mes">Duración del programa (meses)</label><input id="n-mes" class="fi" type="number" min="1" value="{{nv.meses}}" onChange="{{nv.hMeses}}"></div>
+                <div class="fl"><label for="n-frec">Frecuencia de reuniones</label>
+                  <select id="n-frec" class="fi" value="{{nv.frec}}" onChange="{{nv.hFrec}}"><option value="Semanal">Semanal</option><option value="Quincenal">Quincenal</option><option value="Mensual">Mensual</option></select></div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{nv.esOjt}}" hint-placeholder-val="{{false}}">
+            <div style="padding: 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); display: flex; flex-direction: column; gap: 12px">
+              <h3 style="margin: 0; font-size: 15px">Guía en el puesto de trabajo</h3>
+              <div class="fl"><label for="n-tut">Tutor en el puesto</label><input id="n-tut" class="fi" type="text" value="{{nv.tutor}}" onChange="{{nv.hTutor}}"></div>
+            </div>
+          </sc-if>
+
+          <div class="fl"><label for="n-obj">Objetivo y contenidos</label><textarea id="n-obj" class="fi" rows="3" onChange="{{nv.hObj}}">{{nv.obj}}</textarea></div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border)">
+          <button class="btn" onClick="{{nv.cerrar}}" style="border-color: transparent">Cancelar</button>
+          <button class="btn btn-primary" onClick="{{nv.crear}}">Crear actividad</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = Object.assign({
+      dark: null, view: 'lista', selId: 'AC05', aviso: '',
+      fBuscar: '', fTipo: 'todos', fEstado: 'todos', fDepto: 'todos', calFiltro: 'todas',
+      acts: d.acts, reg: d.reg,
+      nOpen: false, nErr: '', nNombre: '', nTipo: 'Presencial', nComp: 'Comunicación efectiva', nIni: '', nFin: '', nHi: '09:00', nHf: '13:00',
+      nLugar: '', nFormador: '', nDepto: 'Todos los departamentos', nCap: '20', nSeg: '', nT2: '', nMeses: '12', nFrec: 'Mensual', nTutor: '', nObj: ''
+    }, { view: 'calif' });
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    const tipoLight = { 'Presencial': ['#E3F2F0', '#0B5A55'], 'Virtual': ['#E4EDFB', '#1F4E9C'], 'Codesarrollo': ['#F0E7FA', '#5B2E91'], 'Mentoring': ['#FBE6EC', '#9C2250'], 'OJT': ['#ECEEF1', '#3B4654'] };
+    const tipoDark = { 'Presencial': ['#12302D', '#7FE0D6'], 'Virtual': ['#172A4A', '#9DBEF5'], 'Codesarrollo': ['#2C1D44', '#CDA9F2'], 'Mentoring': ['#40182A', '#F2A6C0'], 'OJT': ['#232B34', '#B8C2CD'] };
+    const pool = ['Diego Paredes', 'Lucía Andrade', 'Mateo Cárdenas', 'Valentina Ortiz', 'Sebastián Mora', 'Camila Játiva', 'Andrés Villacís', 'Paola Cevallos', 'Javier Salazar', 'Daniela Proaño', 'Esteban Naranjo', 'Carolina Quishpe', 'Fernando Tipán', 'Gabriela Almeida', 'Ricardo Chávez', 'Mónica Lasso', 'Pablo Guerrero', 'Natalia Vásconez', 'Santiago Herrera', 'Elena Montalvo', 'Bryan Toapanta', 'Karla Espinoza', 'Hugo Benítez', 'Ivonne Tapia'];
+    const A = (id, nombre, tipo, ini, fin, lugar, formador, depto, cap, insc, estado, diego) => ({ id, nombre, tipo, ini, fin, lugar, formador, depto, cap, insc, estado, diego: !!diego });
+    const acts = [
+      A('AC01', 'Liderazgo situacional', 'Presencial', '2026-03-10', '2026-03-12', 'Sala Magna, piso 3', 'Dr. Esteban Rivas', 'Todos los departamentos', 20, 20, 'Finalizada'),
+      A('AC02', 'Comunicación asertiva en el trabajo', 'Presencial', '2026-04-14', '2026-04-15', 'Sala de capacitación, piso 3', 'Ps. Marco Salazar', 'Comercial', 25, 22, 'Finalizada', true),
+      A('AC03', 'Estadística aplicada a la decisión', 'Virtual', '2026-06-08', '2026-06-26', 'meet.ejemplo.edu.ec/estadistica', 'Dra. Paula Ortiz', 'Tecnología', 20, 14, 'Finalizada', true),
+      A('AC04', 'Mentoring con líderes senior', 'Mentoring', '2026-07-06', '2026-10-30', 'Oficina del mentor, piso 5', 'Ing. Carolina Lara', 'Talento Humano', 8, 6, 'En curso'),
+      A('AC05', 'Visualización de datos con tableros', 'Virtual', '2026-10-05', '2026-10-23', 'meet.ejemplo.edu.ec/tableros', 'Mg. Andrés Molina', 'Tecnología', 20, 16, 'En curso', true),
+      A('AC06', 'Presentaciones que convencen: data storytelling', 'Presencial', '2026-10-20', '2026-10-21', 'Sala de capacitación, piso 3', 'Mg. Daniela Cruz', 'Comercial', 25, 12, 'Programada', true),
+      A('AC07', 'Codesarrollo: casos reales de equipo', 'Codesarrollo', '2026-10-27', '2026-11-10', 'Sala de colaboración, piso 2', 'Ps. Marco Salazar', 'Operaciones', 12, 10, 'Programada', true),
+      A('AC08', 'Pensamiento crítico y análisis de problemas', 'Presencial', '2026-11-03', '2026-11-04', 'Aula 2, edificio B', 'Dra. Paula Ortiz', 'Todos los departamentos', 20, 9, 'Programada', true),
+      A('AC09', 'Gestión del tiempo en la práctica', 'OJT', '2026-11-02', '2026-11-27', 'Puesto de trabajo (Finanzas)', 'Ing. Julián Torres (tutor)', 'Finanzas', 10, 5, 'Programada'),
+      A('AC10', 'Negociación efectiva', 'Presencial', '2026-11-17', '2026-11-19', 'Sala Magna, piso 3', 'Dr. Esteban Rivas', 'Comercial', 15, 8, 'Programada'),
+      A('AC11', 'Conducción de procesos de cambio', 'Virtual', '2026-12-01', '2026-12-03', 'Enlace por definir', 'Por definir', 'Todos los departamentos', 20, 0, 'Programada'),
+      A('AC12', 'Taller de resiliencia', 'Presencial', '2026-09-09', '2026-09-09', 'Aula 1, edificio A', 'Ps. Marco Salazar', 'Talento Humano', 15, 0, 'Cancelada')
+    ];
+    // rosters + registros iniciales
+    const grades = [4, 4.5, 5, 4, 3.5, 4.5, 5, 3];
+    const reg = {};
+    acts.forEach((a, ai) => {
+      const names = a.diego ? ['Diego Paredes'].concat(pool.slice(1, a.insc)) : pool.slice(1, a.insc + 1);
+      const r = {};
+      names.slice(0, a.insc).forEach((nm, i) => {
+        let e = { a: '', n: '', o: '' };
+        if (a.estado === 'Finalizada') {
+          if (i % 7 === 5) e = { a: 'Ausente', n: '', o: '' };
+          else if (i % 9 === 8) e = { a: 'Justificado', n: '', o: 'Presentó certificado médico.' };
+          else e = { a: 'Presente', n: String(grades[(i + ai) % 8]), o: '' };
+        } else if (a.estado === 'En curso' && i < 7) {
+          e = { a: i === 4 ? 'Justificado' : 'Presente', n: '', o: i === 4 ? 'Viaje de trabajo.' : '' };
+        }
+        r[nm] = e;
+      });
+      if (a.id === 'AC02') r['Diego Paredes'] = { a: 'Presente', n: '4', o: '' };
+      if (a.id === 'AC03') r['Diego Paredes'] = { a: 'Presente', n: '4.5', o: 'Entregó todos los ejercicios.' };
+      reg[a.id] = r;
+    });
+    return { light, dark, tipoLight, tipoDark, acts, reg, mesesC: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'] };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const M = d.mesesC;
+    const rango = (a, b) => {
+      const A = a.split('-').map(Number), B = b.split('-').map(Number);
+      if (a === b) return A[2] + ' ' + M[A[1] - 1] + ' ' + A[0];
+      if (A[1] === B[1] && A[0] === B[0]) return A[2] + ' – ' + B[2] + ' ' + M[B[1] - 1] + ' ' + B[0];
+      if (A[0] === B[0]) return A[2] + ' ' + M[A[1] - 1] + ' – ' + B[2] + ' ' + M[B[1] - 1] + ' ' + B[0];
+      return A[2] + ' ' + M[A[1] - 1] + ' ' + A[0] + ' – ' + B[2] + ' ' + M[B[1] - 1] + ' ' + B[0];
+    };
+    const chip = (bg, fg, extra) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;box-sizing:border-box;background:' + bg + ';color:' + fg + ';' + (extra || '');
+    const tipoChip = (t) => chip(tp[t][0], tp[t][1], 'font-weight:600;');
+    const EST = { 'Programada': chip('var(--infosoft)', 'var(--info)'), 'En curso': chip('var(--accent)', 'var(--onaccent)'), 'Finalizada': chip('var(--neutralsoft)', 'var(--neutral)'), 'Cancelada': chip('var(--dangersoft)', 'var(--danger)') };
+    const fmt = (n) => (Math.round(n * 10) / 10).toFixed(1).replace('.', ',');
+    const bar = (v) => 'height:100%;width:' + Math.round((v / 5) * 100) + '%;background:var(--accent);';
+    const flash = (t) => this.setState({ aviso: t });
+    const num = (x) => (x === '' || x === undefined ? NaN : parseFloat(x));
+
+    // ---------- lista
+    const q = s.fBuscar.trim().toLowerCase();
+    const vis = s.acts.filter((a) => (s.fTipo === 'todos' || a.tipo === s.fTipo) && (s.fEstado === 'todos' || a.estado === s.fEstado) && (s.fDepto === 'todos' || a.depto === s.fDepto) && (!q || a.nombre.toLowerCase().indexOf(q) !== -1 || a.formador.toLowerCase().indexOf(q) !== -1)).sort((x, y) => x.ini.localeCompare(y.ini));
+    const count = (e) => s.acts.filter((a) => a.estado === e).length;
+    const cupos = s.acts.filter((a) => a.estado !== 'Cancelada').reduce((t, a) => t + a.cap, 0);
+    const inscT = s.acts.filter((a) => a.estado !== 'Cancelada').reduce((t, a) => t + a.insc, 0);
+    const kpis = [
+      { label: 'Actividades', valor: String(s.acts.length), nota: count('Cancelada') + ' cancelada' + (count('Cancelada') === 1 ? '' : 's') },
+      { label: 'En curso', valor: String(count('En curso')), nota: 'Con asistencia por registrar' },
+      { label: 'Programadas', valor: String(count('Programada')), nota: 'Aún sin iniciar' },
+      { label: 'Ocupación de cupos', valor: cupos ? Math.round((inscT * 100) / cupos) + ' %' : '—', nota: inscT + ' inscritos de ' + cupos }
+    ];
+    const f = {
+      buscar: s.fBuscar, tipo: s.fTipo, estado: s.fEstado, depto: s.fDepto,
+      hay: s.fBuscar !== '' || s.fTipo !== 'todos' || s.fEstado !== 'todos' || s.fDepto !== 'todos',
+      setBuscar: (e) => this.setState({ fBuscar: e.target.value }), setTipo: (e) => this.setState({ fTipo: e.target.value }),
+      setEstado: (e) => this.setState({ fEstado: e.target.value }), setDepto: (e) => this.setState({ fDepto: e.target.value }),
+      limpiar: () => this.setState({ fBuscar: '', fTipo: 'todos', fEstado: 'todos', fDepto: 'todos' })
+    };
+    const filas = vis.map((a) => ({
+      nombre: a.nombre, tipo: a.tipo, tipoStyle: tipoChip(a.tipo), fechas: rango(a.ini, a.fin), lugar: a.lugar, formador: a.formador, depto: a.depto,
+      cap: a.cap, insc: a.insc, estado: a.estado, estadoStyle: EST[a.estado],
+      noAsis: a.estado === 'Cancelada', noCancel: a.estado === 'Finalizada' || a.estado === 'Cancelada',
+      asistencia: () => this.setState({ view: 'asis', selId: a.id }),
+      cancelar: () => this.setState({ acts: s.acts.map((x) => (x.id === a.id ? Object.assign({}, x, { estado: 'Cancelada' }) : x)), aviso: '«' + a.nombre + '» fue cancelada.' })
+    }));
+
+    // ---------- asistencia
+    const act = s.acts.find((a) => a.id === s.selId) || s.acts[0];
+    const rosterObj = s.reg[act.id] || {};
+    const names = Object.keys(rosterObj);
+    const setRow = (nm, patch) => this.setState({ reg: Object.assign({}, this.state.reg, { [act.id]: Object.assign({}, this.state.reg[act.id], { [nm]: Object.assign({}, this.state.reg[act.id][nm], patch) }) }) });
+    const btn = (on, bg, fg) => 'min-height:44px;padding:0 12px;border-radius:8px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid ' + (on ? fg : 'var(--border)') + ';background:' + (on ? bg : 'var(--surface)') + ';color:' + (on ? fg : 'var(--muted)') + ';';
+    const filasAs = names.map((nm, i) => {
+      const r = rosterObj[nm];
+      const pres = r.a === 'Presente';
+      const fijar = (v) => () => setRow(nm, v === 'Presente' ? { a: v } : { a: v, n: '' });
+      return {
+        n: i + 1, nombre: nm, nota: r.n, obs: r.o, sinNota: !pres,
+        esPresente: pres, esAusente: r.a === 'Ausente', esJust: r.a === 'Justificado',
+        sPresente: btn(pres, 'var(--soft)', 'var(--accent)'), sAusente: btn(r.a === 'Ausente', 'var(--dangersoft)', 'var(--danger)'), sJust: btn(r.a === 'Justificado', 'var(--warnsoft)', 'var(--warn)'),
+        setPresente: fijar('Presente'), setAusente: fijar('Ausente'), setJust: fijar('Justificado'),
+        hNota: (e) => {
+          let v = parseFloat(e.target.value);
+          if (isNaN(v)) { setRow(nm, { n: '' }); return; }
+          v = Math.min(5, Math.max(1, Math.round(v * 2) / 2));
+          setRow(nm, { n: String(v) });
+        },
+        hObs: (e) => setRow(nm, { o: e.target.value })
+      };
+    });
+    const cnt = (a) => names.filter((nm) => rosterObj[nm].a === a).length;
+    const sinReg = names.filter((nm) => rosterObj[nm].a === '').length;
+    const rs = (bg, fg) => 'padding:6px 12px;border-radius:999px;font-size:13px;background:' + bg + ';color:' + fg + ';';
+    const empezo = act.estado === 'En curso' || act.estado === 'Finalizada';
+    const as = {
+      nombre: act.nombre, tipo: act.tipo, tipoStyle: tipoChip(act.tipo), estado: act.estado, estadoStyle: EST[act.estado],
+      meta: rango(act.ini, act.fin) + ' · ' + act.lugar + ' · ' + act.formador + ' · ' + act.depto,
+      habilitada: empezo && names.length > 0, bloqueada: !(empezo && names.length > 0),
+      motivo: act.estado === 'Cancelada' ? 'La actividad está cancelada; no admite registro de asistencia.' : (names.length === 0 ? 'Esta actividad aún no tiene inscritos.' : 'La actividad inicia el ' + rango(act.ini, act.ini) + '. El registro de asistencia se habilita desde esa fecha.'),
+      resumen: [
+        { label: 'Presentes', n: cnt('Presente'), style: rs('var(--soft)', 'var(--accent)') }, { label: 'Ausentes', n: cnt('Ausente'), style: rs('var(--dangersoft)', 'var(--danger)') },
+        { label: 'Justificados', n: cnt('Justificado'), style: rs('var(--warnsoft)', 'var(--warn)') }, { label: 'Sin registrar', n: sinReg, style: rs('var(--neutralsoft)', 'var(--neutral)') }
+      ],
+      filas: filasAs,
+      todos: () => {
+        const nuevo = {};
+        Object.keys(this.state.reg[act.id]).forEach((nm) => { nuevo[nm] = Object.assign({}, this.state.reg[act.id][nm], { a: 'Presente' }); });
+        this.setState({ reg: Object.assign({}, this.state.reg, { [act.id]: nuevo }), aviso: 'Todos los inscritos fueron marcados como presentes.' });
+      },
+      guardar: () => flash('Registro guardado: ' + cnt('Presente') + ' presentes, ' + cnt('Ausente') + ' ausentes, ' + cnt('Justificado') + ' justificados' + (sinReg ? ' y ' + sinReg + ' sin registrar.' : '.'))
+    };
+
+    // ---------- calificaciones
+    const stat = (a) => {
+      const r = s.reg[a.id] || {}; const nm = Object.keys(r);
+      const notas = nm.map((k) => num(r[k].n)).filter((x) => !isNaN(x));
+      const pres = nm.filter((k) => r[k].a === 'Presente').length;
+      const reg = nm.filter((k) => r[k].a !== '').length;
+      return { notas, prom: notas.length ? notas.reduce((t, x) => t + x, 0) / notas.length : null, asis: reg ? Math.round((pres * 100) / reg) : null };
+    };
+    const conNotas = s.acts.filter((a) => stat(a).notas.length > 0);
+    const porActividad = conNotas.map((a) => { const st = stat(a); return { nombre: a.nombre, tipo: a.tipo, tipoStyle: tipoChip(a.tipo), calificados: st.notas.length, asistencia: st.asis === null ? '—' : st.asis + ' %', promedio: fmt(st.prom), bar: bar(st.prom) }; });
+    const fa = s.calFiltro === 'todas' ? conNotas : conNotas.filter((a) => a.id === s.calFiltro);
+    const pp = {};
+    fa.forEach((a) => { const r = s.reg[a.id]; Object.keys(r).forEach((nm) => { const v = num(r[nm].n); if (!isNaN(v)) { (pp[nm] = pp[nm] || []).push(v); } }); });
+    const porPersona = Object.keys(pp).map((nm) => { const p = pp[nm].reduce((t, x) => t + x, 0) / pp[nm].length; return { nombre: nm, n: pp[nm].length, prom: p }; }).sort((x, y) => y.prom - x.prom || x.nombre.localeCompare(y.nombre)).map((x) => ({ nombre: x.nombre, n: x.n, promedio: fmt(x.prom), bar: bar(x.prom) }));
+    const todasNotas = conNotas.reduce((t, a) => t.concat(stat(a).notas), []);
+    const allReg = s.acts.reduce((t, a) => { const r = s.reg[a.id] || {}; Object.keys(r).forEach((k) => { if (r[k].a) t.push(r[k].a); }); return t; }, []);
+    const globalPres = allReg.length ? Math.round((allReg.filter((x) => x === 'Presente').length * 100) / allReg.length) : 0;
+    const distintos = {}; conNotas.forEach((a) => Object.keys(s.reg[a.id]).forEach((k) => { if (!isNaN(num(s.reg[a.id][k].n))) distintos[k] = 1; }));
+    const cal = {
+      kpis: [
+        { label: 'Promedio general', valor: todasNotas.length ? fmt(todasNotas.reduce((t, x) => t + x, 0) / todasNotas.length) : '—', nota: 'Sobre 5' },
+        { label: 'Actividades calificadas', valor: String(conNotas.length), nota: 'De ' + s.acts.length + ' actividades' },
+        { label: 'Participantes calificados', valor: String(Object.keys(distintos).length), nota: todasNotas.length + ' calificaciones' },
+        { label: 'Asistencia global', valor: globalPres + ' %', nota: 'Sobre asistencias registradas' }
+      ],
+      porActividad, porPersona, sinPersonas: porPersona.length === 0, filtro: s.calFiltro,
+      setFiltro: (e) => this.setState({ calFiltro: e.target.value })
+    };
+
+    // ---------- nueva actividad
+    const T = s.nTipo;
+    const FUND = { 'Presencial': 'Capacitación presencial. Alles, H.7, p. 89–90.', 'Virtual': 'Capacitación a distancia con horario fijo. Alles, H.7, p. 89–90.', 'Codesarrollo': 'Ciclo taller, seguimiento, segundo taller. Alles, H.9A/9B/9C, p. 100–106.', 'Mentoring': 'Programa estructurado de varios años. Alles, H.36A, p. 189–190.', 'OJT': 'Guía en el puesto de trabajo. Alles, H.30A/30B, p. 161–164.' };
+    const upd = (patch) => this.setState(Object.assign({ nErr: '' }, patch));
+    const on = (k) => (e) => upd({ [k]: e.target.value });
+    const fail = (t) => this.setState({ nErr: t });
+    const nv = {
+      abierto: s.nOpen, hayErr: s.nErr !== '', err: s.nErr,
+      nombre: s.nNombre, tipo: T, comp: s.nComp, ini: s.nIni, fin: s.nFin, hi: s.nHi, hf: s.nHf, lugar: s.nLugar, formador: s.nFormador, depto: s.nDepto, cap: s.nCap,
+      seg: s.nSeg, t2: s.nT2, meses: s.nMeses, frec: s.nFrec, tutor: s.nTutor, obj: s.nObj,
+      esCodes: T === 'Codesarrollo', esMentor: T === 'Mentoring', esOjt: T === 'OJT', fundamento: FUND[T],
+      lugarLabel: T === 'Virtual' ? 'Enlace de la reunión' : (T === 'OJT' ? 'Puesto o área de trabajo' : 'Lugar'),
+      hNombre: on('nNombre'), hTipo: on('nTipo'), hComp: on('nComp'), hIni: on('nIni'), hFin: on('nFin'), hHi: on('nHi'), hHf: on('nHf'), hLugar: on('nLugar'), hFormador: on('nFormador'), hDepto: on('nDepto'), hCap: on('nCap'),
+      hSeg: on('nSeg'), hT2: on('nT2'), hMeses: on('nMeses'), hFrec: on('nFrec'), hTutor: on('nTutor'), hObj: on('nObj'),
+      cerrar: () => this.setState({ nOpen: false, nErr: '' }),
+      crear: () => {
+        if (!s.nNombre.trim()) return fail('Escribe el nombre de la actividad.');
+        if (!s.nIni || !s.nFin) return fail('Indica las fechas de inicio y fin.');
+        if (s.nFin < s.nIni) return fail('La fecha de fin no puede ser anterior a la de inicio.');
+        if (s.nHf && s.nHi && s.nHf <= s.nHi && s.nIni === s.nFin) return fail('La hora de fin debe ser posterior a la de inicio.');
+        if (!s.nLugar.trim()) return fail(T === 'Virtual' ? 'Indica el enlace de la reunión.' : 'Indica el lugar.');
+        if (!s.nFormador.trim()) return fail('Indica el formador.');
+        if (!(parseInt(s.nCap, 10) > 0)) return fail('La capacidad debe ser mayor que cero.');
+        if (T === 'Codesarrollo') {
+          if (!s.nSeg || !s.nT2) return fail('Indica las fechas de seguimiento y del segundo taller.');
+          if (!(s.nIni <= s.nFin && s.nFin <= s.nSeg && s.nSeg <= s.nT2)) return fail('Las fechas del ciclo deben seguir el orden: taller, seguimiento, segundo taller.');
+        }
+        if (T === 'Mentoring' && !(parseInt(s.nMeses, 10) > 0)) return fail('Indica la duración del programa en meses.');
+        if (T === 'OJT' && !s.nTutor.trim()) return fail('Indica el tutor en el puesto.');
+        const id = 'AC' + (13 + s.acts.length - 12 + 0);
+        const fin = T === 'Codesarrollo' ? s.nT2 : s.nFin;
+        const nueva = { id: 'N' + s.acts.length, nombre: s.nNombre.trim(), tipo: T, ini: s.nIni, fin, lugar: s.nLugar.trim(), formador: s.nFormador.trim(), depto: s.nDepto, cap: parseInt(s.nCap, 10), insc: 0, estado: 'Programada', diego: false };
+        this.setState({
+          acts: s.acts.concat([nueva]), reg: Object.assign({}, s.reg, { [nueva.id]: {} }), nOpen: false, nErr: '', view: 'lista',
+          fBuscar: '', fTipo: 'todos', fEstado: 'todos', fDepto: 'todos',
+          nNombre: '', nTipo: 'Presencial', nIni: '', nFin: '', nLugar: '', nFormador: '', nCap: '20', nSeg: '', nT2: '', nTutor: '', nObj: '',
+          aviso: '«' + nueva.nombre + '» se creó en estado Programada.'
+        });
+      }
+    };
+
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      hayAviso: s.aviso !== '', aviso: s.aviso, cerrarAviso: () => this.setState({ aviso: '' }),
+      abrirNueva: () => this.setState({ nOpen: true, nErr: '' }),
+      v: { lista: s.view === 'lista', asis: s.view === 'asis', calif: s.view === 'calif', tabsVisibles: s.view !== 'asis' },
+      verLista: () => this.setState({ view: 'lista' }), verCalif: () => this.setState({ view: 'calif' }),
+      kpis, f, filas, sinFilas: vis.length === 0, resumen: 'Mostrando ' + vis.length + ' de ' + s.acts.length + ' actividades',
+      as, cal, nv
+    };
+  }
+}
+</script>
+</body>
+</html>

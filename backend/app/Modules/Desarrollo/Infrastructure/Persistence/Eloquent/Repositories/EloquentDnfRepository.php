@@ -124,6 +124,30 @@ final class EloquentDnfRepository implements DnfRepositoryInterface
         return $id === null ? null : $this->obtener($tenantId, (int) $id, $colaboradorId);
     }
 
+    public function evaluacionesDeCompetencias(int $tenantId, array $filtros): array
+    {
+        $colaboradorIds = $filtros['colaborador_ids'] ?? (isset($filtros['colaborador_id']) ? [(int) $filtros['colaborador_id']] : null);
+
+        return DB::table('dnf_detalles as dd')
+            ->join('dnf_colaboradores as dc', 'dc.id', '=', 'dd.dnf_colaborador_id')
+            ->join('dnf as d', 'd.id', '=', 'dc.dnf_id')
+            ->where('d.tenant_id', $tenantId)
+            ->when(isset($filtros['fecha_desde']), fn ($q) => $q->whereDate('d.created_at', '>=', $filtros['fecha_desde']))
+            ->when(isset($filtros['fecha_hasta']), fn ($q) => $q->whereDate('d.created_at', '<=', $filtros['fecha_hasta']))
+            ->when($colaboradorIds !== null, fn ($q) => $q->whereIn('dc.colaborador_id', $colaboradorIds))
+            ->orderBy('d.created_at')->orderBy('d.id')->orderBy('dd.id')
+            ->get(['d.id as dnf_id', 'd.created_at as fecha', 'dc.colaborador_id', 'dd.competencia_id', 'dd.estado', 'dd.nivel_requerido', 'dd.nivel_actual'])
+            ->map(fn (object $f) => [
+                'dnf_id' => (int) $f->dnf_id,
+                'fecha' => substr((string) $f->fecha, 0, 10),
+                'colaborador_id' => (int) $f->colaborador_id,
+                'competencia_id' => (int) $f->competencia_id,
+                'estado' => (string) $f->estado,
+                'nivel_requerido' => (string) $f->nivel_requerido,
+                'nivel_actual' => $f->nivel_actual === null ? null : (string) $f->nivel_actual,
+            ])->all();
+    }
+
     public function asignarPlan(int $tenantId, int $dnfId, int $planId, int $actorId, DateTimeImmutable $momento): bool
     {
         $afectadas = DnfModel::query()

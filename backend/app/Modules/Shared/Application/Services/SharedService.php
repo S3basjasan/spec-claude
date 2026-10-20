@@ -3,6 +3,7 @@
 namespace App\Modules\Shared\Application\Services;
 
 use App\Modules\Shared\Application\UseCases\ObtenerNombresDeUsuarios;
+use App\Modules\Shared\Domain\Repositories\UsuarioRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -13,7 +14,10 @@ use Illuminate\Support\Facades\DB;
  */
 class SharedService
 {
-    public function __construct(private readonly ObtenerNombresDeUsuarios $nombresDeUsuarios) {}
+    public function __construct(
+        private readonly ObtenerNombresDeUsuarios $nombresDeUsuarios,
+        private readonly UsuarioRepositoryInterface $usuarios,
+    ) {}
 
     /**
      * Resumen mínimo para verificar el cableado Facade -> Servicio.

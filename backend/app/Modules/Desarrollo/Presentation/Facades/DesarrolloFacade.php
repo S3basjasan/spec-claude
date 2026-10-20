@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getMicrocontenidosPublicadosPorCompetencia(int $competenciaId) Micro-contenidos Publicados de la competencia: [{id, codigo, titulo, tipo, duracion_minutos, miniatura_url, url_destino}].
  * @method static array getResumenAprendizaje(int $tenantId, int $colaboradorId) Resumen del colaborador: {completados, en_progreso, horas_acumuladas, certificados}.
  * @method static array getCompletaciones(int $tenantId, array $filtros = []) Completaciones de micro-contenidos del tenant (filtros: colaborador_id, microcontenido_id, desde, hasta).
+ * @method static array getAsistenciaDeColaborador(int $tenantId, int $colaboradorId, array $accionIds) Asistencia y calificación del colaborador en las actividades de esas acciones: [{accion_id, actividad_id, estado, asistencia, calificacion}] (Pendiente si no hay registro; sin observaciones).
+ * @method static bool tieneAsistenciaRegistrada(int $tenantId, int $accionId, int $colaboradorId) Indica si el colaborador ya tiene asistencia registrada en la actividad de la acción.
+ * @method static array getActividades(int $tenantId, array $filtros = []) Actividades formativas con estado calculado, horas, inscritos y promedio (filtros: anio, plan_id, tipo, estado, departamento_id, competencia_id, fecha_desde, fecha_hasta).
+ * @method static array getAsistencias(int $tenantId, array $filtros = []) Registros de asistencia y calificación sin observaciones (filtros de getActividades más colaborador_id y actividad_id).
  *
  * @see DesarrolloService
  */
