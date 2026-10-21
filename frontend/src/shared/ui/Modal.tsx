@@ -9,7 +9,7 @@ interface ModalProps {
   /** Botones de acción, alineados a la derecha. */
   footer?: ReactNode
   /** Ancho máximo del contenido (480 a 640 px, design/DESIGN.md §4). */
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
   /** Operación en curso: bloquea el cierre. */
   busy?: boolean
   /** Rótulo del botón de cierre de la cabecera. */
@@ -75,7 +75,7 @@ export function Modal({ open, title, onClose, children, footer, size = 'md', bus
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         className={`flex max-h-full w-full flex-col gap-4 overflow-y-auto rounded-[14px] border border-border bg-surface p-6 shadow-[0_16px_48px_rgba(0,0,0,0.25)] ${
-          size === 'lg' ? 'max-w-160' : 'max-w-130'
+          size === 'xl' ? 'max-w-180' : size === 'lg' ? 'max-w-160' : 'max-w-130'
         }`}
       >
         <div className="flex items-start justify-between gap-3">

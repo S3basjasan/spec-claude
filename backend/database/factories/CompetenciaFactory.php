@@ -2,11 +2,21 @@
 
 namespace Database\Factories;
 
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CategoriaModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaGradoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\ComportamientoModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PreguntaModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\TipoGradoModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\TipoGradoValorModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 
 /**
+ * Crea competencias completas (4 grados, 16 comportamientos y 4 preguntas) en la escala Letras, como las que
+ * produce el diccionario. Los estados `incompleta`, `sinPreguntas`, `sinComportamientos`, `conEscala` y
+ * `conCategorias` ajustan el contenido después de crearla.
+ *
  * @extends Factory<CompetenciaModel>
  */
 class CompetenciaFactory extends Factory
@@ -42,8 +52,63 @@ class CompetenciaFactory extends Factory
         return $this->state(fn () => ['estado' => 'Inactivo']);
     }
 
+    /** Sin comportamientos ni preguntas (competencia heredada incompleta). */
+    public function incompleta(): static
+    {
+        return $this->sinComportamientos()->sinPreguntas();
+    }
+
+    public function sinPreguntas(): static
+    {
+        return $this->afterCreating(function (CompetenciaModel $competencia) {
+            PreguntaModel::query()->where('competencia_id', $competencia->id)->delete();
+        });
+    }
+
+    public function sinComportamientos(): static
+    {
+        return $this->afterCreating(function (CompetenciaModel $competencia) {
+            ComportamientoModel::query()
+                ->whereIn('competencia_grado_id', CompetenciaGradoModel::query()->where('competencia_id', $competencia->id)->pluck('id'))
+                ->delete();
+        });
+    }
+
+    /** Pasa los grados a otra escala del catálogo (`Números` o `Categorías`). */
+    public function conEscala(string $nombre): static
+    {
+        return $this->afterCreating(function (CompetenciaModel $competencia) use ($nombre) {
+            $tipo = TipoGradoModel::query()->where('nombre', $nombre)->firstOrFail();
+            $valores = TipoGradoValorModel::query()->where('tipo_grado_id', $tipo->id)->orderBy('orden')->pluck('id')->values();
+            $grados = CompetenciaGradoModel::query()->where('competencia_id', $competencia->id)->orderBy('id')->get();
+
+            foreach ($grados as $indice => $grado) {
+                $grado->forceFill(['tipo_grado_valor_id' => $valores[$indice]])->save();
+            }
+        });
+    }
+
     /**
-     * Asigna el código COMP-NNNN y los cuatro grados, igual que el repositorio.
+     * Pasa a la escala Categorías con nombres propios.
+     *
+     * @param  array<int, string>  $nombres  Cuatro nombres.
+     */
+    public function conCategorias(array $nombres = ['Maestría', 'Avanzado', 'Competente', 'Inicial']): static
+    {
+        return $this->conEscala('Categorías')->afterCreating(function (CompetenciaModel $competencia) use ($nombres) {
+            foreach (array_values($nombres) as $indice => $nombre) {
+                CategoriaModel::query()->create([
+                    'competencia_id' => $competencia->id,
+                    'orden' => $indice + 1,
+                    'nombre' => $nombre,
+                    'nombre_clave' => CompetenciaModel::claveDeNombre($nombre),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Asigna el código COMP-NNNN y crea el contenido completo, igual que el repositorio.
      */
     public function configure(): static
     {
@@ -52,13 +117,32 @@ class CompetenciaFactory extends Factory
         })->afterCreating(function (CompetenciaModel $competencia) {
             $competencia->forceFill(['codigo' => sprintf('COMP-%04d', $competencia->id)])->save();
 
-            foreach (['A', 'B', 'C', 'D'] as $letra) {
-                CompetenciaGradoModel::query()->create([
+            $letras = DB::table('tipo_grados')->where('nombre', 'Letras')->value('id');
+            $valores = DB::table('tipo_grado_valores')->where('tipo_grado_id', $letras)->orderBy('orden')->pluck('id', 'orden');
+
+            $comportamientos = [];
+            foreach ([1, 2, 3, 4] as $orden) {
+                $gradoId = DB::table('competencia_grados')->insertGetId([
                     'competencia_id' => $competencia->id,
-                    'grado' => $letra,
-                    'descripcion' => "Descripción del grado $letra de {$competencia->nombre}.",
+                    'tipo_grado_valor_id' => $valores[$orden],
+                    'descripcion' => 'Descripción del grado '.chr(64 + $orden)." de {$competencia->nombre}.",
                 ]);
+
+                foreach ([1, 2, 3, 4] as $numero) {
+                    $comportamientos[] = [
+                        'competencia_grado_id' => $gradoId,
+                        'orden' => $numero,
+                        'descripcion' => "Comportamiento $numero del grado ".chr(64 + $orden).'.',
+                    ];
+                }
             }
+            DB::table('competencia_comportamientos')->insert($comportamientos);
+
+            DB::table('competencia_preguntas')->insert(array_map(fn (int $orden) => [
+                'competencia_id' => $competencia->id,
+                'orden' => $orden,
+                'pregunta' => "Pregunta $orden sobre {$competencia->nombre}.",
+            ], [1, 2, 3, 4]));
         });
     }
 }

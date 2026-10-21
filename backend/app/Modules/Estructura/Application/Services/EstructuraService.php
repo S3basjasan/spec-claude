@@ -3,16 +3,11 @@
 namespace App\Modules\Estructura\Application\Services;
 
 use App\Modules\Estructura\Domain\Entities\Competencia;
-use App\Modules\Estructura\Domain\Entities\Posicion;
 use App\Modules\Estructura\Domain\Entities\Puesto;
-use App\Modules\Estructura\Domain\Entities\RegistroComportamientos;
-use App\Modules\Estructura\Domain\Entities\RegistroPreguntas;
 use App\Modules\Estructura\Domain\Entities\TipoUnidad;
 use App\Modules\Estructura\Domain\Entities\Unidad;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
-use App\Modules\Estructura\Domain\Repositories\ComportamientoRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PosicionRepositoryInterface;
-use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\PuestoRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\TipoUnidadRepositoryInterface;
 use App\Modules\Estructura\Domain\Repositories\UnidadRepositoryInterface;
@@ -32,8 +27,6 @@ class EstructuraService
 {
     public function __construct(
         private readonly CompetenciaRepositoryInterface $competencias,
-        private readonly ComportamientoRepositoryInterface $comportamientos,
-        private readonly PreguntaRepositoryInterface $preguntas,
         private readonly PuestoRepositoryInterface $puestos,
         private readonly UnidadRepositoryInterface $unidades,
         private readonly TipoUnidadRepositoryInterface $tipos,
@@ -116,19 +109,19 @@ class EstructuraService
     }
 
     /**
-     * Registro de comportamientos de una competencia (activa o inactiva, para registros históricos), o null si no tiene.
+     * Comportamientos de una competencia (activa o inactiva, para registros históricos), o null si no tiene ninguno.
      *
      * @return array<string, mixed>|null
      */
     public function getComportamientos(int $competenciaId): ?array
     {
-        $registro = $this->comportamientos->obtener($competenciaId);
+        $competencia = $this->competencias->obtener($competenciaId);
 
-        return $registro === null ? null : $this->registroAArreglo($registro);
+        return $competencia === null || ! $this->tieneComportamientos($competencia) ? null : $this->comportamientosAArreglo($competencia);
     }
 
     /**
-     * Registros de las competencias indicadas que tienen comportamientos, incluidas las inactivas.
+     * Comportamientos de las competencias indicadas que tienen alguno, incluidas las inactivas.
      *
      * @param  array<int, int>  $competenciaIds
      * @return array<int, array<string, mixed>>
@@ -139,39 +132,51 @@ class EstructuraService
             return [];
         }
 
-        return array_map($this->registroAArreglo(...), $this->comportamientos->obtenerPorCompetencias(array_values(array_unique($competenciaIds))));
+        $resultado = [];
+        foreach ($this->competencias->obtenerPorIds(array_values(array_unique($competenciaIds))) as $competencia) {
+            if ($this->tieneComportamientos($competencia)) {
+                $resultado[] = $this->comportamientosAArreglo($competencia);
+            }
+        }
+
+        return $resultado;
     }
 
-    /** Solo los comportamientos de competencias activas pueden asignarse en nuevos registros. */
+    /** Solo los comportamientos de competencias activas y completas pueden asignarse en nuevos registros. */
     public function tieneComportamientosActivos(int $competenciaId): bool
     {
-        return $this->comportamientos->obtener($competenciaId)?->competenciaActiva() ?? false;
+        $competencia = $this->competencias->obtener($competenciaId);
+
+        return $competencia !== null && $competencia->estaActiva() && $competencia->estaCompleta();
     }
 
     /**
-     * Registros de competencias activas ordenados por nombre, para nuevas asignaciones.
+     * Comportamientos de competencias activas y completas ordenados por nombre, para nuevas asignaciones.
      *
      * @return array<int, array<string, mixed>>
      */
     public function getComportamientosActivos(): array
     {
-        return array_map($this->registroAArreglo(...), $this->comportamientos->obtenerActivos());
+        return array_map(
+            $this->comportamientosAArreglo(...),
+            array_values(array_filter($this->competencias->obtenerActivas(), fn (Competencia $c) => $c->estaCompleta())),
+        );
     }
 
     /**
-     * Registro de preguntas de una competencia (activa o inactiva, para registros históricos), o null si no tiene.
+     * Preguntas de una competencia (activa o inactiva, para registros históricos), o null si no tiene ninguna.
      *
      * @return array<string, mixed>|null
      */
     public function getPreguntas(int $competenciaId): ?array
     {
-        $registro = $this->preguntas->obtener($competenciaId);
+        $competencia = $this->competencias->obtener($competenciaId);
 
-        return $registro === null ? null : $this->preguntasAArreglo($registro);
+        return $competencia === null || $competencia->preguntas === [] ? null : $this->preguntasAArreglo($competencia);
     }
 
     /**
-     * Registros de preguntas de las competencias indicadas que tienen registro, incluidas las inactivas.
+     * Preguntas de las competencias indicadas que tienen alguna, incluidas las inactivas.
      *
      * @param  array<int, int>  $competenciaIds
      * @return array<int, array<string, mixed>>
@@ -182,23 +187,35 @@ class EstructuraService
             return [];
         }
 
-        return array_map($this->preguntasAArreglo(...), $this->preguntas->obtenerPorCompetencias(array_values(array_unique($competenciaIds))));
+        $resultado = [];
+        foreach ($this->competencias->obtenerPorIds(array_values(array_unique($competenciaIds))) as $competencia) {
+            if ($competencia->preguntas !== []) {
+                $resultado[] = $this->preguntasAArreglo($competencia);
+            }
+        }
+
+        return $resultado;
     }
 
-    /** Solo las preguntas de competencias activas pueden asignarse en nuevos registros. */
+    /** Solo las preguntas de competencias activas y completas pueden asignarse en nuevos registros. */
     public function tienePreguntasActivas(int $competenciaId): bool
     {
-        return $this->preguntas->obtener($competenciaId)?->competenciaActiva() ?? false;
+        $competencia = $this->competencias->obtener($competenciaId);
+
+        return $competencia !== null && $competencia->estaActiva() && $competencia->estaCompleta();
     }
 
     /**
-     * Registros de preguntas de competencias activas ordenados por nombre, para nuevas asignaciones.
+     * Preguntas de competencias activas y completas ordenadas por nombre, para nuevas asignaciones.
      *
      * @return array<int, array<string, mixed>>
      */
     public function getPreguntasActivas(): array
     {
-        return array_map($this->preguntasAArreglo(...), $this->preguntas->obtenerActivos());
+        return array_map(
+            $this->preguntasAArreglo(...),
+            array_values(array_filter($this->competencias->obtenerActivas(), fn (Competencia $c) => $c->estaCompleta())),
+        );
     }
 
     /**
@@ -488,12 +505,43 @@ class EstructuraService
         ];
     }
 
+    private function tieneComportamientos(Competencia $competencia): bool
+    {
+        foreach ($competencia->gradosDetalle as $grado) {
+            if ($grado->comportamientos !== []) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return array<string, mixed>
      */
-    private function preguntasAArreglo(RegistroPreguntas $registro): array
+    private function preguntasAArreglo(Competencia $competencia): array
     {
-        $competencia = $registro->competencia;
+        return [
+            'competencia_id' => $competencia->id,
+            'codigo' => $competencia->codigo,
+            'nombre' => $competencia->nombre,
+            'descripcion' => $competencia->descripcion,
+            'tipo' => $competencia->tipo->value,
+            'estado' => $competencia->estado->value,
+            'completa' => $competencia->estaCompleta(),
+            'preguntas' => $competencia->preguntas,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function comportamientosAArreglo(Competencia $competencia): array
+    {
+        $porGrado = [];
+        foreach ($competencia->gradosDetalle as $grado) {
+            $porGrado[$grado->clave] = $grado->comportamientos;
+        }
 
         return [
             'competencia_id' => $competencia->id,
@@ -502,29 +550,15 @@ class EstructuraService
             'descripcion' => $competencia->descripcion,
             'tipo' => $competencia->tipo->value,
             'estado' => $competencia->estado->value,
-            'preguntas' => $registro->preguntas,
+            'completa' => $competencia->estaCompleta(),
+            'comportamientos' => $porGrado,
         ];
     }
 
     /**
-     * @return array<string, mixed>
-     */
-    private function registroAArreglo(RegistroComportamientos $registro): array
-    {
-        $competencia = $registro->competencia;
-
-        return [
-            'competencia_id' => $competencia->id,
-            'codigo' => $competencia->codigo,
-            'nombre' => $competencia->nombre,
-            'descripcion' => $competencia->descripcion,
-            'tipo' => $competencia->tipo->value,
-            'estado' => $competencia->estado->value,
-            'comportamientos' => $registro->comportamientos,
-        ];
-    }
-
-    /**
+     * `grados` conserva el mapa por clave posicional (A–D) que usan los demás módulos; `escala`,
+     * `grados_detalle` y `completa` son las claves nuevas del diccionario unificado.
+     *
      * @return array<string, mixed>
      */
     private function aArreglo(Competencia $competencia): array
@@ -537,6 +571,16 @@ class EstructuraService
             'tipo' => $competencia->tipo->value,
             'estado' => $competencia->estado->value,
             'grados' => $competencia->grados,
+            'escala' => $competencia->escala === null ? null : ['tipo_grado_id' => $competencia->escala->id, 'nombre' => $competencia->escala->nombre],
+            'grados_detalle' => array_map(fn ($g) => [
+                'id' => $g->id,
+                'orden' => $g->orden,
+                'clave' => $g->clave,
+                'etiqueta' => $g->etiqueta,
+                'descripcion' => $g->descripcion,
+                'comportamientos' => $g->comportamientos,
+            ], $competencia->gradosDetalle),
+            'completa' => $competencia->estaCompleta(),
         ];
     }
 }

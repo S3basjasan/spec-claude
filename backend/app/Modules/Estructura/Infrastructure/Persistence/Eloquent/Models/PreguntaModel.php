@@ -9,10 +9,10 @@ class PreguntaModel extends Model
 {
     protected $table = 'competencia_preguntas';
 
-    protected $fillable = ['registro_id', 'orden', 'pregunta', 'created_by', 'updated_by'];
+    protected $fillable = ['competencia_id', 'orden', 'pregunta', 'created_by', 'updated_by'];
 
-    public function registro(): BelongsTo
+    public function competencia(): BelongsTo
     {
-        return $this->belongsTo(RegistroPreguntasModel::class, 'registro_id');
+        return $this->belongsTo(CompetenciaModel::class, 'competencia_id');
     }
 }

@@ -10,13 +10,17 @@ class CompetenciaGradoModel extends Model
 {
     protected $table = 'competencia_grados';
 
-    public $timestamps = false;
-
-    protected $fillable = ['competencia_id', 'grado', 'descripcion'];
+    protected $fillable = ['competencia_id', 'tipo_grado_valor_id', 'descripcion', 'created_by', 'updated_by'];
 
     public function competencia(): BelongsTo
     {
         return $this->belongsTo(CompetenciaModel::class, 'competencia_id');
+    }
+
+    /** Posición del grado en la escala (orden 1 = el más alto). */
+    public function valor(): BelongsTo
+    {
+        return $this->belongsTo(TipoGradoValorModel::class, 'tipo_grado_valor_id');
     }
 
     public function comportamientos(): HasMany

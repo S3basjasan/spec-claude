@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Estructura\Application\DTO\FiltroCompetenciasDTO;
+use App\Modules\Estructura\Application\UseCases\CrearCompetencia;
 use App\Modules\Estructura\Application\UseCases\ListarCompetencias;
 use App\Modules\Estructura\Application\UseCases\ObtenerCompetencia;
 use App\Modules\Estructura\Domain\Exceptions\CompetenciaNoEncontrada;
@@ -8,61 +9,43 @@ use App\Modules\Estructura\Domain\ValueObjects\EstadoCompetencia;
 use App\Modules\Estructura\Domain\ValueObjects\TipoCompetencia;
 use Tests\Unit\Estructura\Competencias\RepositorioEnMemoria;
 
-function grados4(): array
-{
-    return ['A' => 'a', 'B' => 'b', 'C' => 'c', 'D' => 'd'];
-}
+require_once __DIR__.'/Ayudas.php';
 
-it('lista con el filtro recortado, el tipo y el estado convertidos y la paginación pedida', function () {
+it('lista con el total, la página y los filtros normalizados', function () {
     $repo = new RepositorioEnMemoria;
-    foreach (['Uno', 'Dos', 'Tres'] as $nombre) {
-        $repo->crear($nombre, 'Descripción.', TipoCompetencia::Cardinal, grados4(), null);
+    $crear = new CrearCompetencia($repo, validadorUnitario(), auditoriaUnitaria());
+    foreach (['Alfa', 'Beta', 'Gamma'] as $nombre) {
+        $crear->ejecutar(datosUnitarios($nombre));
     }
 
-    $listado = (new ListarCompetencias($repo))->ejecutar(new FiltroCompetenciasDTO('  uno ', 'Cardinal', 'Inactivo', 2, 2));
+    $listado = (new ListarCompetencias($repo))->ejecutar(new FiltroCompetenciasDTO('  lider ', 'Especifica', 'Activo', 1, 2));
 
-    expect($repo->ultimoQ)->toBe('uno')
-        ->and($repo->ultimoTipo)->toBe(TipoCompetencia::Cardinal)
-        ->and($repo->ultimoEstado)->toBe(EstadoCompetencia::Inactivo)
+    expect($listado->items)->toHaveCount(2)
         ->and($listado->total)->toBe(3)
-        ->and($listado->items)->toHaveCount(1)
-        ->and($listado->pagina)->toBe(2)
-        ->and($listado->items[0]->estado)->toBe('Activo');
+        ->and($listado->pagina)->toBe(1)
+        ->and($listado->porPagina)->toBe(2)
+        ->and($repo->ultimoQ)->toBe('lider')
+        ->and($repo->ultimoTipo)->toBe(TipoCompetencia::Especifica)
+        ->and($repo->ultimoEstado)->toBe(EstadoCompetencia::Activo);
 });
 
-it('un estado nulo significa todas las competencias', function () {
+it('sin estado en el filtro lista activas e inactivas', function () {
     $repo = new RepositorioEnMemoria;
-
     (new ListarCompetencias($repo))->ejecutar(new FiltroCompetenciasDTO);
 
     expect($repo->ultimoEstado)->toBeNull();
 });
 
-it('ignora un tipo desconocido', function () {
+it('obtiene el detalle con la auditoría solo para el administrador', function () {
     $repo = new RepositorioEnMemoria;
+    $id = (new CrearCompetencia($repo, validadorUnitario(), auditoriaUnitaria()))->ejecutar(datosUnitarios(), 7)->id;
+    $obtener = new ObtenerCompetencia($repo, auditoriaUnitaria());
 
-    (new ListarCompetencias($repo))->ejecutar(new FiltroCompetenciasDTO(null, 'otro'));
-
-    expect($repo->ultimoTipo)->toBeNull();
-});
-
-it('obtiene una competencia con su estado y sus grados', function () {
-    $repo = new RepositorioEnMemoria;
-    $creada = $repo->crear('Liderazgo', 'Guiar.', TipoCompetencia::Cardinal, grados4(), null);
-
-    $dto = (new ObtenerCompetencia($repo))->ejecutar($creada->id);
-
-    expect($dto->codigo)->toBe('COMP-0001')->and($dto->tipo)->toBe('Cardinal')->and($dto->estado)->toBe('Activo')->and($dto->grados)->toBe(grados4());
-});
-
-it('obtiene también una competencia inactiva', function () {
-    $repo = new RepositorioEnMemoria;
-    $creada = $repo->crear('Retirada', 'Guiar.', TipoCompetencia::Cardinal, grados4(), null);
-    $repo->cambiarEstado($creada->id, EstadoCompetencia::Inactivo, null);
-
-    expect((new ObtenerCompetencia($repo))->ejecutar($creada->id)->estado)->toBe('Inactivo');
+    expect($obtener->ejecutar($id, true)->auditoria['created_by'])->toBe('Usuario 7')
+        ->and($obtener->ejecutar($id, false)->auditoria)->toBeNull()
+        ->and($obtener->ejecutar($id)->auditoria)->toBeNull();
 });
 
 it('lanza CompetenciaNoEncontrada si no existe', function () {
-    (new ObtenerCompetencia(new RepositorioEnMemoria))->ejecutar(5);
+    (new ObtenerCompetencia(new RepositorioEnMemoria, auditoriaUnitaria()))->ejecutar(99);
 })->throws(CompetenciaNoEncontrada::class);

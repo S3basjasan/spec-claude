@@ -1,10 +1,12 @@
 import { expect, test, type Page } from '@playwright/test'
 
-// Datos sembrados en backend/.env.e2e: siete competencias (COMP-0001…COMP-0007, la última inactiva) y los usuarios de prueba.
+// Datos sembrados en backend/.env.e2e: siete competencias completas (COMP-0001…COMP-0007: Orientación a resultados,
+// Trabajo en equipo [Números], Comunicación efectiva [Categorías], Liderazgo, Pensamiento analítico, Gestión de
+// proyectos y Adaptabilidad, la última inactiva) y los usuarios de prueba.
 const PASSWORD = 'password-de-prueba'
 const API = 'http://127.0.0.1:8001'
-const ADMIN = { email: 'admin@hrms.test', name: 'Administrador de prueba' }
-const USUARIO = { email: 'usuario@hrms.test', name: 'Usuario de prueba' }
+const ADMIN = { email: 'admin@hrms.test' }
+const USUARIO = { email: 'usuario@hrms.test' }
 
 async function iniciarSesion(page: Page, email: string) {
   await page.goto('/login')
@@ -17,278 +19,268 @@ async function iniciarSesion(page: Page, email: string) {
 async function abrirCompetencias(page: Page) {
   await page.getByRole('link', { name: 'Competencias' }).click()
   await expect(page.getByRole('heading', { name: 'Competencias', level: 1 })).toBeVisible()
-}
-
-async function llenarFormulario(page: Page, nombre: string, tipo: 'Cardinal' | 'Específica') {
-  await page.getByLabel('Nombre', { exact: true }).fill(nombre)
-  await page.getByLabel('Descripción', { exact: true }).fill(`Descripción de ${nombre}.`)
-  await page.getByLabel('Tipo', { exact: true }).selectOption({ label: tipo })
-  for (const letra of ['A', 'B', 'C', 'D']) {
-    await page.getByLabel(`Grado ${letra}`, { exact: true }).fill(`Grado ${letra} de ${nombre}.`)
-  }
+  await expect(page.getByRole('article').first()).toBeVisible()
 }
 
 async function token(page: Page): Promise<string | null> {
   return page.evaluate(() => localStorage.getItem('hrms.token'))
 }
 
+function tarjeta(page: Page, nombre: string) {
+  return page.getByRole('article').filter({ hasText: nombre })
+}
+
+async function abrirTarjeta(page: Page, nombre: string) {
+  await page.getByRole('button', { name: `Ver información adicional de ${nombre}` }).click()
+  await expect(tarjeta(page, nombre).getByRole('tablist')).toBeVisible()
+}
+
+async function aceptarAviso(page: Page, mensaje: string) {
+  const aviso = page.getByRole('alertdialog', { name: mensaje })
+  await expect(aviso).toBeVisible()
+  await aviso.getByRole('button', { name: 'Aceptar' }).click()
+  await expect(aviso).toHaveCount(0)
+}
+
 test.describe.configure({ mode: 'serial' })
 
-test('Usuario: consulta solo las activas con código y estado, busca, filtra y despliega los grados sin acciones de gestión', async ({ page }) => {
+test('Usuario: consulta solo las activas, busca, filtra y recorre las tres pestañas sin acciones de gestión', async ({ page }) => {
   await iniciarSesion(page, USUARIO.email)
   await abrirCompetencias(page)
 
-  await expect(page.getByRole('row')).toHaveCount(7) // encabezado + 6 activas
-  await expect(page.getByRole('row').nth(1)).toContainText('COMP-0003') // Comunicación efectiva (orden alfabético)
-  await expect(page.getByRole('row').nth(1)).toContainText('Activo')
-  await expect(page.getByText('Adaptabilidad')).toHaveCount(0) // inactiva: oculta al Usuario
-  await expect(page.getByLabel('Filtrar por estado')).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Nueva competencia' })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: /^Editar/ })).toHaveCount(0)
+  await expect(page.getByRole('article')).toHaveCount(6) // 6 activas; Adaptabilidad (inactiva) no se muestra
+  await expect(page.getByRole('article').first()).toContainText('COMP-0001')
+  await expect(page.getByText('Adaptabilidad')).toHaveCount(0)
+  await expect(page.getByText('6 competencias')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Nueva competencia' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: /^(Activar|Desactivar)/ })).toHaveCount(0)
 
-  await page.getByLabel('Buscar competencia por nombre').fill('trab')
-  await expect(page).toHaveURL(/q=trab/)
-  await expect(page.getByRole('row')).toHaveCount(2)
-  await expect(page.getByRole('row').nth(1)).toContainText('Trabajo en equipo')
+  await page.getByRole('searchbox', { name: 'Buscar competencia' }).fill('lidér')
+  await expect(page).toHaveURL(/q=lid/)
+  await expect(page.getByRole('article')).toHaveCount(1)
+  await expect(page.getByText('1 competencia', { exact: true })).toBeVisible()
 
   await page.reload()
-  await expect(page.getByLabel('Buscar competencia por nombre')).toHaveValue('trab')
-  await expect(page.getByRole('row')).toHaveCount(2)
-
-  await page.getByLabel('Buscar competencia por nombre').fill('')
-  await page.getByLabel('Filtrar por tipo').selectOption('Especifica')
+  await expect(page.getByRole('searchbox', { name: 'Buscar competencia' })).toHaveValue('lidér')
+  await page.getByRole('searchbox', { name: 'Buscar competencia' }).fill('')
+  await page.getByLabel('Tipo', { exact: true }).selectOption('Especifica')
   await expect(page).toHaveURL(/tipo=Especifica/)
-  await expect(page.getByRole('row')).toHaveCount(3) // Gestión de proyectos y Pensamiento analítico
-  await expect(page.getByRole('row').nth(1)).toContainText('Gestión de proyectos')
+  await expect(page.getByRole('article')).toHaveCount(2) // Pensamiento analítico y Gestión de proyectos
 
-  await page.getByRole('button', { name: /Visualizar grados.*Gestión de proyectos/ }).click()
-  await expect(page.getByText('Grado A', { exact: true })).toBeVisible()
-  await expect(page.getByText('Grado D', { exact: true })).toBeVisible()
-  await expect(page.getByRole('region', { name: 'Detalle de Gestión de proyectos' })).toContainText('COMP-0006')
-  await page.getByRole('button', { name: /Ocultar grados/ }).click()
-  await expect(page.getByText('Grado A', { exact: true })).toHaveCount(0)
+  await abrirTarjeta(page, 'Gestión de proyectos')
+  const detalle = tarjeta(page, 'Gestión de proyectos')
+  await expect(detalle.getByText('Planificar, ejecutar y controlar proyectos')).toBeVisible()
+  await expect(detalle.getByText('Grado A', { exact: true })).toBeVisible()
+  await expect(detalle.getByRole('button', { name: /^Editar/ })).toHaveCount(0)
+
+  await detalle.getByRole('tab', { name: 'Comportamientos' }).click()
+  await expect(detalle.getByText('Dirige portafolios de proyectos.')).toBeVisible()
+  await detalle.getByRole('tab', { name: 'Preguntas' }).click()
+  await expect(detalle.getByText('¿Cómo identificas y gestionas los riesgos de un proyecto?')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Ocultar información adicional de Gestión de proyectos' }).click()
+  await expect(page.getByRole('tablist')).toHaveCount(0)
 })
 
-test('Usuario: una búsqueda sin coincidencias muestra el estado vacío y permite limpiar', async ({ page }) => {
+test('Usuario: una búsqueda sin coincidencias muestra el mensaje y permite limpiar los filtros', async ({ page }) => {
   await iniciarSesion(page, USUARIO.email)
   await abrirCompetencias(page)
 
-  await page.getByLabel('Buscar competencia por nombre').fill('zzzz')
-  await expect(page.getByRole('heading', { name: 'No hay resultados' })).toBeVisible()
-  await page.getByRole('button', { name: 'Limpiar filtros' }).click()
-  await expect(page.getByRole('row')).toHaveCount(7)
+  await page.getByRole('searchbox', { name: 'Buscar competencia' }).fill('zzzz')
+  await expect(page.getByText('Ninguna competencia coincide con los filtros.')).toBeVisible()
+  await page.getByRole('button', { name: 'Limpiar filtros' }).first().click()
+  await expect(page.getByRole('article')).toHaveCount(6)
 })
 
-test('Usuario: no puede escribir por la API, no ve inactivas aunque lo pida, pero sí consulta una por su identificador', async ({ page }) => {
+test('Usuario: la vista previa de la escala cambia los nombres solo en pantalla y no ofrece aplicarla', async ({ page }) => {
+  await iniciarSesion(page, USUARIO.email)
+  await abrirCompetencias(page)
+  await abrirTarjeta(page, 'Liderazgo')
+  const detalle = tarjeta(page, 'Liderazgo')
+
+  await detalle.getByRole('button', { name: 'Números' }).click()
+  await expect(detalle.getByText('Grados de desarrollo · Números (vista previa)')).toBeVisible()
+  await expect(detalle.getByText('Nivel 1', { exact: true })).toBeVisible()
+  await expect(detalle.getByRole('button', { name: 'Aplicar esta escala' })).toHaveCount(0)
+
+  await detalle.getByRole('button', { name: 'Descartar' }).click()
+  await expect(detalle.getByText('Grado A', { exact: true })).toBeVisible()
+})
+
+test('Usuario: no puede escribir por la API ni ver inactivas, pero sí consulta una por su identificador', async ({ page }) => {
   await iniciarSesion(page, USUARIO.email)
   const cabeceras = { Authorization: `Bearer ${await token(page)}`, Accept: 'application/json' }
 
-  await page.goto('/competencias/nueva')
-  await expect(page.getByRole('heading', { name: 'No tienes permisos para esta acción' })).toBeVisible()
-
   expect((await page.request.patch(`${API}/api/competencias/1/estado`, { headers: cabeceras, data: { estado: 'Inactivo' } })).status()).toBe(403)
+  expect((await page.request.put(`${API}/api/competencias/1/preguntas`, { headers: cabeceras, data: { version: 1, preguntas: ['a', 'b', 'c', 'd'] } })).status()).toBe(403)
   expect([404, 405]).toContain((await page.request.delete(`${API}/api/competencias/1`, { headers: cabeceras })).status())
+  expect((await page.request.get(`${API}/api/comportamientos`, { headers: cabeceras })).status()).toBe(404)
 
   const lista = await page.request.get(`${API}/api/competencias?estado=Todos`, { headers: cabeceras })
   expect((await lista.json()).meta.total).toBe(6)
 
   const inactiva = await page.request.get(`${API}/api/competencias/7`, { headers: cabeceras })
   expect(inactiva.status()).toBe(200)
-  expect((await inactiva.json()).data).toMatchObject({ codigo: 'COMP-0007', estado: 'Inactivo' })
+  const cuerpo = (await inactiva.json()).data
+  expect(cuerpo).toMatchObject({ codigo: 'COMP-0007', estado: 'Inactivo' })
+  expect(cuerpo.auditoria).toBeUndefined()
 })
 
-test('Administrador: alterna el filtro de estado entre activas, inactivas y todas y lo conserva en la URL', async ({ page }) => {
+test('Administrador: ve activas e inactivas sin filtro de estado y con las acciones de gestión', async ({ page }) => {
   await iniciarSesion(page, ADMIN.email)
   await abrirCompetencias(page)
 
-  await expect(page.getByLabel('Filtrar por estado')).toHaveValue('Activo')
-  await expect(page.getByRole('row')).toHaveCount(7)
-  await expect(page.getByText('Adaptabilidad')).toHaveCount(0)
+  await expect(page.getByRole('article')).toHaveCount(7)
+  await expect(page.getByText('7 competencias')).toBeVisible()
+  await expect(page.getByLabel(/estado/i)).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Nueva competencia' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Activar Adaptabilidad' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Desactivar Liderazgo' })).toBeVisible()
+})
 
-  await page.getByLabel('Filtrar por estado').selectOption('Inactivo')
-  await expect(page).toHaveURL(/estado=Inactivo/)
-  await expect(page.getByRole('row')).toHaveCount(2)
-  const fila = page.getByRole('row', { name: /Adaptabilidad/ })
-  await expect(fila).toContainText('COMP-0007')
-  await expect(fila).toContainText('Inactivo')
-  await expect(fila.getByRole('button', { name: 'Activar Adaptabilidad' })).toBeVisible()
+test('Administrador: crea una competencia completa con la escala Categorías y nombres propios', async ({ page }) => {
+  await iniciarSesion(page, ADMIN.email)
+  await abrirCompetencias(page)
+
+  await page.getByRole('button', { name: 'Nueva competencia' }).click()
+  const dialogo = page.getByRole('dialog', { name: 'Nueva competencia' })
+  await expect(dialogo.getByLabel('Nombre *')).toBeVisible()
+
+  // Sin completar nada no se guarda y los errores aparecen junto a los campos.
+  await dialogo.getByRole('button', { name: 'Guardar competencia' }).click()
+  await expect(dialogo.getByText('Ingresa el nombre.')).toBeVisible()
+  await expect(dialogo.getByText('Completa los cuatro grados.')).toBeVisible()
+
+  await dialogo.getByLabel('Nombre *').fill('Pensamiento estratégico')
+  await dialogo.getByLabel('Tipo *').selectOption({ label: 'Específica' })
+  await dialogo.getByLabel('Descripción *').fill('Anticipar escenarios y decidir con visión de largo plazo.')
+
+  await dialogo.getByRole('radio', { name: /Categorías/ }).click()
+  const nombres = ['Maestría', 'Avanzado', 'Competente', 'Inicial']
+  for (const [indice, nombre] of nombres.entries()) await dialogo.getByLabel(`Categoría ${indice + 1}`).fill(nombre)
+
+  for (const [grado, nombre] of nombres.entries()) {
+    await dialogo.getByLabel(nombre, { exact: true }).fill(`Descripción del nivel ${nombre}.`)
+    for (const numero of [1, 2, 3, 4]) {
+      await dialogo.getByLabel(`${nombre} · Comportamiento ${numero}`).fill(`${nombre}: comportamiento ${numero}.`)
+    }
+    void grado
+  }
+  for (const numero of [1, 2, 3, 4]) await dialogo.getByLabel(`Pregunta ${numero}`, { exact: true }).fill(`Pregunta estratégica ${numero}.`)
+
+  await dialogo.getByRole('button', { name: 'Guardar competencia' }).click()
+  await aceptarAviso(page, 'Competencia creada correctamente.')
+
+  await expect(page.getByText('COMP-0008')).toBeVisible()
+  await expect(page.getByText('8 competencias')).toBeVisible()
+  await abrirTarjeta(page, 'Pensamiento estratégico')
+  const detalle = tarjeta(page, 'Pensamiento estratégico')
+  await expect(detalle.getByText('Maestría', { exact: true })).toBeVisible()
+  await detalle.getByRole('tab', { name: 'Preguntas' }).click()
+  await expect(detalle.getByText('Pregunta estratégica 4.')).toBeVisible()
+})
+
+test('Administrador: edita por separado los comportamientos, las preguntas y la competencia', async ({ page }) => {
+  await iniciarSesion(page, ADMIN.email)
+  await abrirCompetencias(page)
+  await abrirTarjeta(page, 'Liderazgo')
+  const detalle = tarjeta(page, 'Liderazgo')
+
+  await detalle.getByRole('tab', { name: 'Comportamientos' }).click()
+  await detalle.getByRole('button', { name: 'Editar comportamientos de Liderazgo' }).click()
+  const editarComportamientos = page.getByRole('dialog', { name: 'Editar comportamientos' })
+  await editarComportamientos.getByLabel('Grado A · Comportamiento 1').fill('Inspira con el ejemplo.')
+  await editarComportamientos.getByRole('button', { name: 'Guardar cambios' }).click()
+  await aceptarAviso(page, 'Comportamientos actualizados correctamente.')
+  await expect(detalle.getByText('Inspira con el ejemplo.')).toBeVisible()
+
+  await detalle.getByRole('tab', { name: 'Preguntas' }).click()
+  await detalle.getByRole('button', { name: 'Editar preguntas de Liderazgo' }).click()
+  const editarPreguntas = page.getByRole('dialog', { name: 'Editar preguntas' })
+  await editarPreguntas.getByLabel('Pregunta 1', { exact: true }).fill('¿Cómo inspiras a tu equipo?')
+  await editarPreguntas.getByRole('button', { name: 'Guardar cambios' }).click()
+  await aceptarAviso(page, 'Preguntas actualizadas correctamente.')
+  await expect(detalle.getByText('¿Cómo inspiras a tu equipo?')).toBeVisible()
+
+  await detalle.getByRole('tab', { name: 'Competencia' }).click()
+  await detalle.getByRole('button', { name: 'Editar grados de desarrollo de Liderazgo' }).click()
+  const editarCompetencia = page.getByRole('dialog', { name: 'Editar competencia' })
+  await editarCompetencia.getByLabel('Nombre *').fill('Liderazgo estratégico')
+  await editarCompetencia.getByRole('button', { name: 'Guardar cambios' }).click()
+  await aceptarAviso(page, 'Competencia actualizada correctamente.')
+  await expect(page.getByRole('button', { name: /Liderazgo estratégico/ }).first()).toBeVisible()
+})
+
+test('Administrador: aplica otra escala y el cambio persiste sin alterar los textos', async ({ page }) => {
+  await iniciarSesion(page, ADMIN.email)
+  await abrirCompetencias(page)
+  await abrirTarjeta(page, 'Orientación a resultados')
+  const detalle = tarjeta(page, 'Orientación a resultados')
+
+  await detalle.getByRole('button', { name: 'Números' }).click()
+  await detalle.getByRole('button', { name: 'Aplicar esta escala' }).click()
+  await aceptarAviso(page, 'Escala de grados actualizada correctamente.')
+  await expect(detalle.getByText('Grados de desarrollo · Números')).toBeVisible()
+  await expect(detalle.getByText('Nivel 1', { exact: true })).toBeVisible()
 
   await page.reload()
-  await expect(page.getByLabel('Filtrar por estado')).toHaveValue('Inactivo')
-  await expect(page.getByRole('row')).toHaveCount(2)
-
-  await page.getByLabel('Filtrar por estado').selectOption('Todos')
-  await expect(page.getByRole('row')).toHaveCount(8)
-
-  await page.getByLabel('Filtrar por estado').selectOption('Activo')
-  await expect(page).not.toHaveURL(/estado=/)
+  await abrirTarjeta(page, 'Orientación a resultados')
+  await expect(tarjeta(page, 'Orientación a resultados').getByText('Grados de desarrollo · Números')).toBeVisible()
+  await expect(tarjeta(page, 'Orientación a resultados').getByText('Define metas desafiantes para su área')).toBeVisible()
 })
 
-test('Administrador: crea una competencia con validación y la ve activa en el listado', async ({ page }) => {
+test('Administrador: desactiva con confirmación, el Usuario deja de verla y vuelve al reactivarla', async ({ browser, page }) => {
   await iniciarSesion(page, ADMIN.email)
   await abrirCompetencias(page)
 
-  await page.getByRole('link', { name: 'Nueva competencia' }).click()
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-  await expect(page.getByText('Revisa los campos marcados antes de guardar.')).toBeVisible()
-  await expect(page.getByText('Ingresa el nombre de la competencia.')).toBeVisible()
-  await expect(page.getByText('Ingresa la descripción del grado D.')).toBeVisible()
+  await page.getByRole('button', { name: 'Desactivar Gestión de proyectos' }).click()
+  const confirmacion = page.getByRole('alertdialog', { name: '¿Desactivar «Gestión de proyectos»?' })
+  await expect(confirmacion).toContainText('no podrá asignarse en registros nuevos')
+  await confirmacion.getByRole('button', { name: 'Cancelar' }).click()
+  await expect(page.getByRole('button', { name: 'Desactivar Gestión de proyectos' })).toBeVisible()
 
-  await llenarFormulario(page, 'Gestión del tiempo', 'Específica')
-  await page.getByLabel('Nombre', { exact: true }).fill('Liderazgo')
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-  await expect(page.getByText('Ya existe una competencia con ese nombre.')).toBeVisible()
-  await expect(page.getByLabel('Grado B', { exact: true })).toHaveValue('Grado B de Gestión del tiempo.')
+  await page.getByRole('button', { name: 'Desactivar Gestión de proyectos' }).click()
+  await page.getByRole('alertdialog', { name: '¿Desactivar «Gestión de proyectos»?' }).getByRole('button', { name: 'Desactivar' }).click()
+  await aceptarAviso(page, 'Competencia desactivada.')
+  await expect(page.getByRole('button', { name: 'Activar Gestión de proyectos' })).toBeVisible()
 
-  // También colisiona con una competencia inactiva (sin distinguir mayúsculas).
-  await page.getByLabel('Nombre', { exact: true }).fill('ADAPTABILIDAD')
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-  await expect(page.getByText('Ya existe una competencia con ese nombre.')).toBeVisible()
+  const otro = await browser.newContext({ baseURL: 'http://127.0.0.1:5174', locale: 'es-EC' })
+  const paginaUsuario = await otro.newPage()
+  await iniciarSesion(paginaUsuario, USUARIO.email)
+  await abrirCompetencias(paginaUsuario)
+  await expect(paginaUsuario.getByText('Gestión de proyectos')).toHaveCount(0)
 
-  await page.getByLabel('Nombre', { exact: true }).fill('Gestión del tiempo')
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-
-  await expect(page).toHaveURL(/\/competencias$/)
-  await expect(page.getByRole('status')).toHaveText('Competencia creada.')
-  await page.getByLabel('Buscar competencia por nombre').fill('tiempo')
-  await expect(page.getByRole('row')).toHaveCount(2)
-  await expect(page.getByRole('row').nth(1)).toContainText('Activo')
-  await page.getByRole('button', { name: /Visualizar grados/ }).click()
-  await expect(page.getByText('COMP-0008').last()).toBeVisible()
+  await page.getByRole('button', { name: 'Activar Gestión de proyectos' }).click()
+  await aceptarAviso(page, 'Competencia activada.')
+  await paginaUsuario.reload()
+  await expect(paginaUsuario.getByRole('article').filter({ hasText: 'Gestión de proyectos' })).toBeVisible()
+  await otro.close()
 })
 
-test('Administrador: edita una competencia conservando el código y detecta una edición concurrente', async ({ page }) => {
+test('Administrador: si otra persona cambió la competencia mientras la editaba, el guardado se rechaza con el aviso de recargar', async ({ page }) => {
   await iniciarSesion(page, ADMIN.email)
   await abrirCompetencias(page)
-  await page.getByLabel('Buscar competencia por nombre').fill('tiempo')
-  await expect(page.getByRole('row')).toHaveCount(2)
-  await page.getByRole('link', { name: 'Editar Gestión del tiempo' }).click()
+  await abrirTarjeta(page, 'Adaptabilidad')
+  const detalle = tarjeta(page, 'Adaptabilidad')
+  await detalle.getByRole('tab', { name: 'Preguntas' }).click()
+  await detalle.getByRole('button', { name: 'Editar preguntas de Adaptabilidad' }).click()
+  const dialogo = page.getByRole('dialog', { name: 'Editar preguntas' })
+  await expect(dialogo.getByLabel('Pregunta 1', { exact: true })).toBeVisible()
 
-  await expect(page.getByLabel('Código', { exact: true })).toHaveValue('COMP-0008')
-  await expect(page.getByLabel('Código', { exact: true })).toHaveAttribute('readonly', '')
-  await page.getByLabel('Nombre', { exact: true }).fill('Gestión del tiempo y prioridades')
-  await page.getByLabel('Grado A', { exact: true }).fill('Grado A editado.')
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-  await expect(page.getByRole('status')).toHaveText('Competencia actualizada.')
-
-  await page.getByLabel('Buscar competencia por nombre').fill('prioridades')
-  await expect(page.getByRole('row')).toHaveCount(2)
-  await page.getByRole('button', { name: /Visualizar grados/ }).click()
-  await expect(page.getByText('COMP-0008').last()).toBeVisible()
-  await expect(page.getByText('Grado A editado.')).toBeVisible()
-
-  // Edición concurrente: otra persona guarda mientras este formulario está abierto.
-  await page.getByRole('link', { name: /Editar Gestión del tiempo y prioridades/ }).click()
-  await expect(page.getByLabel('Código', { exact: true })).toHaveValue('COMP-0008')
-  const otra = await page.request.put(`${API}/api/competencias/8`, {
-    headers: { Authorization: `Bearer ${await token(page)}`, Accept: 'application/json' },
-    data: {
-      nombre: 'Gestión del tiempo y prioridades',
-      descripcion: 'Cambiada por otra persona.',
-      tipo: 'Especifica',
-      grados: { A: 'a', B: 'b', C: 'c', D: 'd' },
-      version: 2,
-    },
+  // Otra persona guarda primero: sube la versión de la competencia.
+  const cabeceras = { Authorization: `Bearer ${await token(page)}`, Accept: 'application/json' }
+  const actual = await page.request.get(`${API}/api/competencias/7`, { headers: cabeceras })
+  const version = (await actual.json()).data.version
+  const otra = await page.request.put(`${API}/api/competencias/7/preguntas`, {
+    headers: cabeceras,
+    data: { version, preguntas: ['Otra 1', 'Otra 2', 'Otra 3', 'Otra 4'] },
   })
   expect(otra.status()).toBe(200)
 
-  await page.getByLabel('Nombre', { exact: true }).fill('Gestión del tiempo (conflicto)')
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-  await expect(page.getByRole('alert').filter({ hasText: 'La competencia cambió' })).toBeVisible()
+  await dialogo.getByLabel('Pregunta 1', { exact: true }).fill('Mi cambio tardío')
+  await dialogo.getByRole('button', { name: 'Guardar cambios' }).click()
+  await expect(dialogo.getByText('Esta competencia cambió mientras la editabas. Recarga para ver la versión actual.')).toBeVisible()
 
-  await page.getByRole('button', { name: 'Recargar competencia' }).click()
-  await expect(page.getByLabel('Descripción', { exact: true })).toHaveValue('Cambiada por otra persona.')
-})
-
-test('Administrador: edita una competencia inactiva y sigue inactiva', async ({ page }) => {
-  await iniciarSesion(page, ADMIN.email)
-  await abrirCompetencias(page)
-  await page.getByLabel('Filtrar por estado').selectOption('Inactivo')
-  await expect(page.getByRole('row')).toHaveCount(2)
-
-  await page.getByRole('link', { name: 'Editar Adaptabilidad' }).click()
-  await expect(page.getByLabel('Código', { exact: true })).toHaveValue('COMP-0007')
-  await page.getByLabel('Descripción', { exact: true }).fill('Adaptación a los cambios (revisada).')
-  await page.getByRole('button', { name: 'Guardar competencia' }).click()
-  await expect(page.getByRole('status')).toHaveText('Competencia actualizada.')
-
-  await page.getByLabel('Filtrar por estado').selectOption('Inactivo')
-  const fila = page.getByRole('row', { name: /Adaptabilidad/ })
-  await expect(fila).toContainText('Adaptación a los cambios (revisada).')
-  await expect(fila).toContainText('Inactivo')
-})
-
-test('Administrador: desactiva con confirmación y activa sin confirmación; el Usuario deja de verla', async ({ page }) => {
-  await iniciarSesion(page, ADMIN.email)
-  await abrirCompetencias(page)
-  await page.getByLabel('Buscar competencia por nombre').fill('prioridades')
-  await expect(page.getByRole('row')).toHaveCount(2)
-
-  await page.getByRole('button', { name: 'Desactivar Gestión del tiempo y prioridades' }).click()
-  const dialogo = page.getByRole('alertdialog')
-  await expect(dialogo).toContainText('¿Desactivar la competencia «Gestión del tiempo y prioridades»?')
-  await expect(dialogo).toContainText('no podrá asignarse en nuevos registros')
-  await page.keyboard.press('Escape')
-  await expect(dialogo).toHaveCount(0)
-  await expect(page.getByRole('row')).toHaveCount(2)
-
-  await page.getByRole('button', { name: 'Desactivar Gestión del tiempo y prioridades' }).click()
-  await page.getByRole('button', { name: 'Cancelar' }).click()
-  await expect(page.getByRole('row')).toHaveCount(2)
-
-  await page.getByRole('button', { name: 'Desactivar Gestión del tiempo y prioridades' }).click()
-  await page.getByRole('button', { name: 'Desactivar competencia' }).click()
-  await expect(page.getByRole('status')).toHaveText('Competencia desactivada.')
-  await expect(page.getByRole('heading', { name: 'No hay resultados' })).toBeVisible() // ya no está entre las activas
-
-  // El Usuario no la ve en su listado, pero sí puede consultarla por su identificador.
-  const login = await page.request.post(`${API}/api/auth/login`, {
-    headers: { Accept: 'application/json' },
-    data: { email: USUARIO.email, password: PASSWORD },
-  })
-  const cabecerasUsuario = { Authorization: `Bearer ${(await login.json()).data.token}`, Accept: 'application/json' }
-  const listaUsuario = await page.request.get(`${API}/api/competencias?q=prioridades&estado=Todos`, { headers: cabecerasUsuario })
-  expect((await listaUsuario.json()).meta.total).toBe(0)
-  const detalleUsuario = await page.request.get(`${API}/api/competencias/8`, { headers: cabecerasUsuario })
-  expect((await detalleUsuario.json()).data.estado).toBe('Inactivo')
-
-  // Activar actúa de inmediato, sin diálogo.
-  await page.getByLabel('Filtrar por estado').selectOption('Inactivo')
-  await expect(page.getByRole('row')).toHaveCount(2)
-  await expect(page.getByRole('row').nth(1)).toContainText('Inactivo')
-  await page.getByRole('button', { name: 'Activar Gestión del tiempo y prioridades' }).click()
-  await expect(page.getByRole('status')).toHaveText('Competencia activada.')
-  await expect(page.getByRole('alertdialog')).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: 'No hay resultados' })).toBeVisible() // ya no está entre las inactivas
-})
-
-test('foco visible, tema oscuro y sin scroll horizontal en el listado, el formulario y el diálogo', async ({ page }) => {
-  await iniciarSesion(page, ADMIN.email)
-  await abrirCompetencias(page)
-
-  await page.getByLabel('Buscar competencia por nombre').focus()
-  expect(await page.getByLabel('Buscar competencia por nombre').evaluate((el) => getComputedStyle(el).outlineWidth)).toBe('2px')
-
-  await page.getByRole('button', { name: 'Cambiar a tema oscuro' }).click()
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-
-  for (const ancho of [320, 1440]) {
-    await page.setViewportSize({ width: ancho, height: 800 })
-    await page.getByLabel('Filtrar por estado').selectOption('Todos')
-    await expect(page.getByRole('row')).toHaveCount(9) // encabezado + 8 competencias
-    await page.getByRole('button', { name: /Visualizar grados/ }).first().click()
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-    await page.getByRole('button', { name: /^Desactivar/ }).first().click()
-    const dialogo = page.getByRole('alertdialog')
-    await expect(dialogo).toBeVisible()
-    const caja = await dialogo.boundingBox()
-    expect(caja && caja.x >= 0 && caja.x + caja.width <= ancho).toBe(true)
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-    await page.keyboard.press('Escape')
-    await page.goto('/competencias/nueva')
-    await expect(page.getByRole('heading', { name: 'Nueva competencia' })).toBeVisible()
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-    await page.goto('/competencias')
-  }
+  await dialogo.getByRole('button', { name: 'Recargar competencia' }).click()
+  await expect(dialogo.getByLabel('Pregunta 1', { exact: true })).toHaveValue('Otra 1')
 })

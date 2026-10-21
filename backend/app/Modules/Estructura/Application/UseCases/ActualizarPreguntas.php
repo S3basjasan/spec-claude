@@ -2,27 +2,32 @@
 
 namespace App\Modules\Estructura\Application\UseCases;
 
-use App\Modules\Estructura\Application\DTO\RegistroPreguntasDTO;
-use App\Modules\Estructura\Domain\Exceptions\PreguntasNoEncontradas;
-use App\Modules\Estructura\Domain\Exceptions\RegistroModificado;
-use App\Modules\Estructura\Domain\Repositories\PreguntaRepositoryInterface;
+use App\Modules\Estructura\Application\DTO\CompetenciaDTO;
+use App\Modules\Estructura\Application\Services\AuditoriaDeCompetencia;
+use App\Modules\Estructura\Domain\Exceptions\CompetenciaNoEncontrada;
+use App\Modules\Estructura\Domain\Exceptions\ConflictoDeVersion;
+use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
 
 final class ActualizarPreguntas
 {
-    public function __construct(private readonly PreguntaRepositoryInterface $registros) {}
+    public function __construct(
+        private readonly CompetenciaRepositoryInterface $competencias,
+        private readonly AuditoriaDeCompetencia $auditoria,
+    ) {}
 
     /**
-     * Sin cambios reales el registro queda igual (misma versión y auditoría). Permitido con la competencia inactiva.
+     * Actualiza las cuatro preguntas; también completa una competencia incompleta.
+     * Permitido aunque la competencia esté inactiva.
      *
-     * @param  array<int, string>  $preguntas  Exactamente cuatro textos; el orden es la posición.
+     * @param  array<int, string>  $preguntas  4 textos.
      *
-     * @throws PreguntasNoEncontradas
-     * @throws RegistroModificado
+     * @throws CompetenciaNoEncontrada
+     * @throws ConflictoDeVersion
      */
-    public function ejecutar(int $competenciaId, int $versionEsperada, array $preguntas, ?int $actorId = null): RegistroPreguntasDTO
+    public function ejecutar(int $id, int $versionEsperada, array $preguntas, ?int $actorId = null): CompetenciaDTO
     {
-        $recortadas = array_map(fn (string $texto) => trim($texto), array_values($preguntas));
+        $competencia = $this->competencias->actualizarPreguntas($id, $versionEsperada, array_map('trim', array_values($preguntas)), $actorId);
 
-        return RegistroPreguntasDTO::desde($this->registros->actualizar($competenciaId, $versionEsperada, $recortadas, $actorId));
+        return CompetenciaDTO::desde($competencia, $this->auditoria->para($competencia));
     }
 }

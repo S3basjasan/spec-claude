@@ -8,6 +8,6 @@ final class NombreDuplicado extends RuntimeException
 {
     public function __construct()
     {
-        parent::__construct('Ya existe una competencia con ese nombre.');
+        parent::__construct('Ya existe una competencia con este nombre.');
     }
 }

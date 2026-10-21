@@ -8,6 +8,6 @@ final class ConflictoDeVersion extends RuntimeException
 {
     public function __construct()
     {
-        parent::__construct('La competencia cambió desde que la abriste. Recarga para ver la versión actual.');
+        parent::__construct('Esta competencia cambió mientras la editabas. Recarga para ver la versión actual.');
     }
 }

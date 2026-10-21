@@ -30,18 +30,8 @@ import { AccionesPage } from './modules/desarrollo/plan-formacion/pages/Acciones
 import { AsistentePlanPage } from './modules/desarrollo/plan-formacion/pages/AsistentePlanPage'
 import { PlanDetallePage } from './modules/desarrollo/plan-formacion/pages/PlanDetallePage'
 import { PlanFormacionPage } from './modules/desarrollo/plan-formacion/pages/PlanFormacionPage'
-import { RequireAdmin } from './modules/estructura/competencias/components/RequireAdmin'
 import { competenciasNav } from './modules/estructura/competencias/nav'
-import { CompetenciaFormPage } from './modules/estructura/competencias/pages/CompetenciaFormPage'
 import { CompetenciasPage } from './modules/estructura/competencias/pages/CompetenciasPage'
-import { RequireAdmin as RequireAdminComportamientos } from './modules/estructura/comportamientos/components/RequireAdmin'
-import { comportamientosNav } from './modules/estructura/comportamientos/nav'
-import { ComportamientosFormPage } from './modules/estructura/comportamientos/pages/ComportamientosFormPage'
-import { ComportamientosPage } from './modules/estructura/comportamientos/pages/ComportamientosPage'
-import { RequireAdmin as RequireAdminPreguntas } from './modules/estructura/preguntas/components/RequireAdmin'
-import { preguntasNav } from './modules/estructura/preguntas/nav'
-import { PreguntasFormPage } from './modules/estructura/preguntas/pages/PreguntasFormPage'
-import { PreguntasPage } from './modules/estructura/preguntas/pages/PreguntasPage'
 import { RequireAdmin as RequireAdminPuestos } from './modules/estructura/puestos/components/RequireAdmin'
 import { puestosNav } from './modules/estructura/puestos/nav'
 import { PuestoFormPage } from './modules/estructura/puestos/pages/PuestoFormPage'
@@ -71,7 +61,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -101,20 +91,6 @@ function App() {
           <Route element={<AuthenticatedLayout navItems={navItems} />}>
             <Route index element={<InicioPage />} />
             <Route path="competencias" element={<CompetenciasPage />} />
-            <Route element={<RequireAdmin />}>
-              <Route path="competencias/nueva" element={<CompetenciaFormPage />} />
-              <Route path="competencias/:id/editar" element={<CompetenciaFormPage />} />
-            </Route>
-            <Route path="comportamientos" element={<ComportamientosPage />} />
-            <Route element={<RequireAdminComportamientos />}>
-              <Route path="comportamientos/nuevo" element={<ComportamientosFormPage />} />
-              <Route path="comportamientos/:competenciaId/editar" element={<ComportamientosFormPage />} />
-            </Route>
-            <Route path="preguntas" element={<PreguntasPage />} />
-            <Route element={<RequireAdminPreguntas />}>
-              <Route path="preguntas/nuevo" element={<PreguntasFormPage />} />
-              <Route path="preguntas/:competenciaId/editar" element={<PreguntasFormPage />} />
-            </Route>
             <Route path="formacion" element={<CatalogoPage />} />
             <Route path="dnf" element={<DnfPage />} />
             <Route element={<RequireAdminDnf />}>
