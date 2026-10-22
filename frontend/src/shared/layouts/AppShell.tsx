@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTheme } from '../lib/theme'
 import { IconChevronDown, IconMoon, IconSun } from '../ui/icons'
 import { shellText } from './text'
@@ -18,11 +18,20 @@ export interface ShellNavItem {
   roles?: ShellUser['role'][]
 }
 
+export interface ShellNavGroup {
+  label: string
+  items: ShellNavItem[]
+}
+
 interface AppShellProps {
   user: ShellUser
-  navItems: ShellNavItem[]
+  navGroups: ShellNavGroup[]
   onLogout: () => void
   isLoggingOut: boolean
+}
+
+function isActivePath(pathname: string, item: ShellNavItem): boolean {
+  return item.end ? pathname === item.to : pathname === item.to || pathname.startsWith(`${item.to}/`)
 }
 
 function initials(name: string): string {
@@ -38,7 +47,7 @@ function initials(name: string): string {
  * Marco de toda pantalla autenticada (design/DESIGN.md §3). Es presentacional:
  * recibe usuario y acciones por props y no depende de ningún módulo de negocio.
  */
-export function AppShell({ user, navItems, onLogout, isLoggingOut }: AppShellProps) {
+export function AppShell({ user, navGroups, onLogout, isLoggingOut }: AppShellProps) {
   const { theme, toggleTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -60,6 +69,27 @@ export function AppShell({ user, navItems, onLogout, isLoggingOut }: AppShellPro
   }, [menuOpen])
 
   const roleLabel = shellText.roles[user.role]
+  const visibleGroups = navGroups
+    .map((group) => ({ ...group, items: group.items.filter((item) => !item.roles || item.roles.includes(user.role)) }))
+    .filter((group) => group.items.length > 0)
+
+  const { pathname } = useLocation()
+  const activeGroup = visibleGroups.find((group) => group.items.some((item) => isActivePath(pathname, item)))?.label
+  const [openGroups, setOpenGroups] = useState<Set<string>>(
+    () => new Set(activeGroup ? [activeGroup] : visibleGroups.slice(0, 1).map((group) => group.label)),
+  )
+
+  // Al navegar a un ítem, su grupo se abre para que la ubicación actual siempre sea visible.
+  useEffect(() => {
+    if (activeGroup) setOpenGroups((current) => (current.has(activeGroup) ? current : new Set(current).add(activeGroup)))
+  }, [activeGroup])
+
+  const toggleGroup = (label: string) =>
+    setOpenGroups((current) => {
+      const next = new Set(current)
+      if (!next.delete(label)) next.add(label)
+      return next
+    })
 
   return (
     <div className="flex min-h-screen flex-col bg-bg text-text">
@@ -134,24 +164,48 @@ export function AppShell({ user, navItems, onLogout, isLoggingOut }: AppShellPro
           aria-label={shellText.mainNavigation}
           className="border-b border-border bg-surface p-3 md:w-62 md:shrink-0 md:border-b-0 md:border-r"
         >
-          <ul className="flex flex-wrap gap-1 md:flex-col">
-            {navItems.filter((item) => !item.roles || item.roles.includes(user.role)).map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-[15px] ${
-                      isActive ? 'bg-soft font-semibold text-accent' : 'text-text hover:bg-soft'
-                    }`
-                  }
-                >
-                  {item.icon}
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-col gap-1">
+            {visibleGroups.map((group, index) => {
+              const open = openGroups.has(group.label)
+              const panelId = `nav-panel-${index}`
+              return (
+                <section key={group.label}>
+                  <h2>
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(group.label)}
+                      aria-expanded={open}
+                      aria-controls={panelId}
+                      className="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-[13px] font-semibold uppercase tracking-wide text-muted hover:bg-soft"
+                    >
+                      {group.label}
+                      <span className={`transition-transform ${open ? '' : '-rotate-90'}`} aria-hidden="true">
+                        <IconChevronDown size={18} />
+                      </span>
+                    </button>
+                  </h2>
+                  <ul id={panelId} hidden={!open} className="flex flex-wrap gap-1 pb-2 md:flex-col">
+                    {group.items.map((item) => (
+                      <li key={item.to}>
+                        <NavLink
+                          to={item.to}
+                          end={item.end}
+                          className={({ isActive }) =>
+                            `flex min-h-11 items-center gap-3 rounded-lg px-3 text-[15px] ${
+                              isActive ? 'bg-soft font-semibold text-accent' : 'text-text hover:bg-soft'
+                            }`
+                          }
+                        >
+                          {item.icon}
+                          {item.label}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )
+            })}
+          </div>
         </nav>
 
         <main id="contenido" className="min-w-0 flex-1 p-4 sm:p-8">

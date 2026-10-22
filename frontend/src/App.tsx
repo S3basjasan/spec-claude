@@ -55,13 +55,20 @@ import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDe
 import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
 import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
 import { RegistrarIngresoPage } from './modules/gestionPersonal/fichas/pages/RegistrarIngresoPage'
-import { inicioNav } from './modules/inicio/nav'
-import { InicioPage } from './modules/inicio/pages/InicioPage'
+// import { inicioNav } from './modules/inicio/nav'
+// import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
+import type { ShellNavGroup } from './shared/layouts/AppShell'
 import { queryClient } from './shared/lib/queryClient'
 
-/** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+/** Menú lateral: cada módulo aporta su ítem; aquí se agrupan por área funcional del HRMS. */
+const navGroups: ShellNavGroup[] = [
+  { label: 'Mi espacio', items: [miFichaNav, misDocumentosNav, exportarMiFichaNav] },
+  { label: 'Organización', items: [organigramaNav, unidadesNav, puestosNav, posicionesNav] },
+  { label: 'Personas', items: [colaboradoresNav, categoriasNav, categoriasReconocimientoNav] },
+  { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, microLearningNav] },
+  { label: 'Analítica', items: [reportesNav] },
+]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -88,9 +95,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
         </Route>
         <Route element={<RequireAuth />}>
-          <Route element={<AuthenticatedLayout navItems={navItems} />}>
-            <Route index element={<InicioPage />} />
-            <Route path="competencias" element={<CompetenciasPage />} />
+          <Route element={<AuthenticatedLayout navGroups={navGroups} />}>
+            <Route index element={<CompetenciasPage />} />
+            {/* <Route path="competencias" element={<CompetenciasPage />} /> */}
             <Route path="formacion" element={<CatalogoPage />} />
             <Route path="dnf" element={<DnfPage />} />
             <Route element={<RequireAdminDnf />}>
