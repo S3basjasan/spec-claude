@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Rutas de carrera — Participantes</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.tabbtn:focus-visible,.pill:focus-visible,.cchip:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.tabbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.tabbtn:hover{color:var(--text)}
+.tabbtn[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;font-weight:600}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.cchip{display:block;width:100%;box-sizing:border-box;text-align:left;border:0;padding:3px 6px;border-radius:4px;font:inherit;font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400;box-sizing:border-box;width:100%}
+textarea.fi{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+</style>
+</helmet>
+<div style="min-height: 1500px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="CatalogoAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="DNFAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Plan anual</a>
+      <a class="nav" href="MicroAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9.5l5 2.5-5 2.5z"></path></svg>Micro-learning</a>
+      <a class="nav" href="ActividadesAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>Actividades</a>
+      <a class="nav" href="ReportesAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Reportes</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h5v-5h5v-5h5V5h3"></path></svg>Rutas de carrera</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+
+        <!-- ================= LISTA ================= -->
+        <sc-if value="{{v.lista}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 24px">
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+              <div>
+                <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+                <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Rutas de carrera</h1>
+                <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Caminos posibles de crecimiento: niveles, puestos vinculados y requisitos.</p>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                <a class="btn" href="RutasColaborador.dc.html"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador</a>
+                <button class="btn btn-primary" onClick="{{abrirNueva}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nueva ruta</button>
+              </div>
+            </div>
+
+            <div role="note" style="{{avisoStyle}}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg><p style="margin: 0; font-size: 14px; line-height: 1.55"><b>{{aviso}}</b></p></div>
+
+            <sc-if value="{{hayMsg}}" hint-placeholder-val="{{false}}">
+              <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600"><span>{{msg}}</span><button class="btn" onClick="{{cerrarMsg}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button></div>
+            </sc-if>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+              <sc-for list="{{kpis}}" as="k" hint-placeholder-count="3">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px">
+                  <div style="font-size: 13px; color: var(--muted)">{{k.label}}</div>
+                  <div style="margin-top: 4px; font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{k.valor}}</div>
+                  <div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{k.nota}}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+              <div class="fl" style="flex: 1 1 220px"><label for="f-q">Buscar</label><input id="f-q" class="fi" type="search" value="{{f.buscar}}" onChange="{{f.setBuscar}}" placeholder="Nombre de la ruta"></div>
+              <div class="fl" style="flex: 0 1 220px"><label for="f-tip">Tipo</label>
+                <select id="f-tip" class="fi" value="{{f.tipo}}" onChange="{{f.setTipo}}"><option value="todos">Todos</option><option value="Especialista">Especialista</option><option value="Gerencial">Gerencial</option><option value="Interáreas">Interáreas</option><option value="Jóvenes profesionales">Jóvenes profesionales</option></select></div>
+              <div class="fl" style="flex: 0 1 220px"><label for="f-area">Área</label>
+                <select id="f-area" class="fi" value="{{f.area}}" onChange="{{f.setArea}}"><option value="todas">Todas</option><option value="Tecnología">Tecnología</option><option value="Comercial">Comercial</option><option value="Operaciones">Operaciones</option><option value="Finanzas">Finanzas</option><option value="Talento Humano">Talento Humano</option><option value="Todas las áreas">Todas las áreas</option></select></div>
+              <div class="fl" style="flex: 0 1 170px"><label for="f-est">Estado</label>
+                <select id="f-est" class="fi" value="{{f.estado}}" onChange="{{f.setEstado}}"><option value="todos">Todos</option><option value="Borrador">Borrador</option><option value="Vigente">Vigente</option><option value="Archivada">Archivada</option></select></div>
+              <sc-if value="{{f.hay}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{f.limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button></sc-if>
+            </div>
+            <p role="status" aria-live="polite" style="margin: 0; font-size: 14px; color: var(--muted)">{{resumen}}</p>
+
+            <sc-for list="{{grupos}}" as="g" hint-placeholder-count="4">
+              <section aria-label="{{g.tipo}}" style="display: flex; flex-direction: column; gap: 12px">
+                <div style="display: flex; align-items: center; gap: 10px"><span style="{{g.tipoStyle}}">{{g.tipo}}</span><span style="font-size: 14px; color: var(--muted)">{{g.cuenta}}</span></div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px">
+                  <sc-for list="{{g.cards}}" as="c" hint-placeholder-count="2">
+                    <article style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+                      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+                        <h3 style="margin: 0; font-size: 17px; line-height: 1.3">{{c.nombre}}</h3>
+                        <span style="{{c.estadoStyle}}">{{c.estado}}</span>
+                      </div>
+                      <div style="font-size: 14px; color: var(--muted)">{{c.area}}{{c.durTxt}}</div>
+                      <p style="margin: 0; font-size: 14px; line-height: 1.5">{{c.desc}}</p>
+                      <div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 4px; height: 36px"><sc-for list="{{c.peldanos}}" as="p" hint-placeholder-count="4"><span style="{{p.style}}"></span></sc-for></div>
+                      <div style="font-size: 13px; color: var(--muted)">{{c.recorrido}}</div>
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border)">
+                        <div style="font-size: 14px; font-variant-numeric: tabular-nums"><b>{{c.niveles}}</b> niveles · <b>{{c.part}}</b> participantes</div>
+                        <button class="btn" onClick="{{c.abrir}}" aria-label="Abrir ruta {{c.nombre}}" style="height: 36px; padding: 0 14px; font-size: 14px">Abrir</button>
+                      </div>
+                    </article>
+                  </sc-for>
+                </div>
+              </section>
+            </sc-for>
+            <sc-if value="{{sinRutas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 24px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted)">Ninguna ruta coincide con los filtros.</p></sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ================= EDITOR ================= -->
+        <sc-if value="{{v.editor}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div><button class="btn" onClick="{{irLista}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Rutas de carrera</button></div>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+              <div style="min-width: 0">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><h1 style="margin: 0; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em">{{ruta.nombre}}</h1><span style="{{ruta.tipoStyle}}">{{ruta.tipo}}</span><span style="{{ruta.estadoStyle}}">{{ruta.estado}}</span></div>
+                <p style="margin: 6px 0 0; color: var(--muted); font-size: 15px">{{ruta.meta}}</p>
+              </div>
+              <div class="fl" style="flex: 0 1 200px"><label for="e-est">Estado de la ruta</label>
+                <select id="e-est" class="fi" value="{{ruta.estado}}" onChange="{{ruta.setEstado}}"><option value="Borrador">Borrador</option><option value="Vigente">Vigente</option><option value="Archivada">Archivada</option></select></div>
+            </div>
+
+            <div role="note" style="{{avisoStyle}}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg><p style="margin: 0; font-size: 14px; line-height: 1.55"><b>{{aviso}}</b></p></div>
+
+            <sc-if value="{{hayMsg}}" hint-placeholder-val="{{false}}">
+              <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600"><span>{{msg}}</span><button class="btn" onClick="{{cerrarMsg}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button></div>
+            </sc-if>
+            <sc-if value="{{hayErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">{{err}}</p></sc-if>
+
+            <div role="tablist" aria-label="Sección de la ruta" style="display: flex; border-bottom: 1px solid var(--border)">
+              <button class="tabbtn" role="tab" id="tab-esc" aria-selected="{{v.escalera}}" onClick="{{verEscalera}}">Escalera de niveles</button>
+              <button class="tabbtn" role="tab" id="tab-par" aria-selected="{{v.participantes}}" onClick="{{verParticipantes}}">Participantes ({{ruta.nPart}})</button>
+            </div>
+
+            <!-- ---- escalera ---- -->
+            <sc-if value="{{v.escalera}}" hint-placeholder-val="{{true}}">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; align-items: start">
+                <section aria-labelledby="es-t" style="display: flex; flex-direction: column; gap: 12px">
+                  <h2 id="es-t" style="margin: 0; font-size: 18px">Niveles de la ruta</h2>
+                  <p style="margin: 0; font-size: 13px; color: var(--muted)">El nivel más alto está arriba. Cada nivel apunta a un puesto del Descriptivo de puestos.</p>
+                  <sc-if value="{{sinNiveles}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 18px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted); font-size: 14px">Esta ruta aún no tiene niveles. Agrega el primero con el puesto de entrada.</p></sc-if>
+                  <ol aria-label="Escalera de niveles" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+                    <sc-for list="{{escalera}}" as="l" hint-placeholder-count="5">
+                      <li style="{{l.liStyle}}">
+                        <div style="{{l.cardStyle}}">
+                          <button onClick="{{l.elegir}}" aria-pressed="{{l.sel}}" aria-label="Ver nivel {{l.n}}: {{l.puesto}}" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; text-align: left; border: 0; background: transparent; color: var(--text); font: inherit; padding: 12px 14px; cursor: pointer; min-height: 44px">
+                            <span style="font-size: 12px; font-weight: 700; color: var(--accent)">Nivel {{l.n}}</span>
+                            <span style="font-size: 15px; font-weight: 600; line-height: 1.3">{{l.puesto}}</span>
+                            <span style="font-size: 12px; color: var(--muted)">{{l.codigo}} · {{l.personas}}</span>
+                          </button>
+                          <div style="display: flex; flex-direction: column; border-left: 1px solid var(--border)">
+                            <button class="ibtn" onClick="{{l.subir}}" disabled="{{l.noSubir}}" aria-label="Subir {{l.puesto}} al nivel superior" style="width: 40px; height: 40px; border: 0; border-radius: 0; background: transparent"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"></path></svg></button>
+                            <button class="ibtn" onClick="{{l.bajar}}" disabled="{{l.noBajar}}" aria-label="Bajar {{l.puesto}} al nivel inferior" style="width: 40px; height: 40px; border: 0; border-radius: 0; background: transparent; border-top: 1px solid var(--border)"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+                          </div>
+                          <button class="ibtn" onClick="{{l.quitar}}" aria-label="Quitar {{l.puesto}} de la ruta" style="width: 44px; height: auto; border: 0; border-left: 1px solid var(--border); border-radius: 0; background: transparent; color: var(--danger)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"></path></svg></button>
+                        </div>
+                      </li>
+                    </sc-for>
+                  </ol>
+                  <div style="padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); display: flex; flex-direction: column; gap: 10px">
+                    <div class="fl"><label for="a-pu">Agregar nivel (puesto del Descriptivo de puestos)</label>
+                      <select id="a-pu" class="fi" value="{{nuevoPuesto}}" onChange="{{hNuevoPuesto}}"><option value="PU-002">Trainee (PU-002)</option><option value="PU-008">Asistente profesional (PU-008)</option><option value="PU-011">Analista de datos Jr (PU-011)</option><option value="PU-014">Analista de datos (PU-014)</option><option value="PU-018">Analista de datos Senior (PU-018)</option><option value="PU-023">Especialista en datos (PU-023)</option><option value="PU-027">Especialista principal en datos (PU-027)</option><option value="PU-031">Líder de equipo de TI (PU-031)</option><option value="PU-036">Jefe de área de TI (PU-036)</option><option value="PU-041">Gerente de TI (PU-041)</option><option value="PU-045">Director de Tecnología (PU-045)</option><option value="PU-052">Ejecutivo comercial (PU-052)</option><option value="PU-056">Coordinador de cuentas (PU-056)</option><option value="PU-061">Analista de procesos (PU-061)</option><option value="PU-066">Jefe de operaciones comerciales (PU-066)</option><option value="PU-071">Asistente de Talento Humano (PU-071)</option><option value="PU-074">Analista de Talento Humano (PU-074)</option><option value="PU-078">Especialista en desarrollo organizacional (PU-078)</option><option value="PU-081">Analista financiero (PU-081)</option><option value="PU-085">Jefe de contabilidad (PU-085)</option><option value="PU-089">Gerente financiero (PU-089)</option><option value="PU-093">Director financiero (PU-093)</option></select></div>
+                    <div><button class="btn" onClick="{{agregarNivel}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Agregar nivel arriba</button></div>
+                  </div>
+                </section>
+
+                <section aria-labelledby="dn-t" style="display: flex; flex-direction: column; gap: 14px">
+                  <sc-if value="{{hayDetalle}}" hint-placeholder-val="{{true}}">
+                    <div style="display: flex; flex-direction: column; gap: 14px">
+                      <div>
+                        <h2 id="dn-t" style="margin: 0; font-size: 18px">Nivel {{det.n}}: {{det.puesto}}</h2>
+                        <p style="margin: 4px 0 0; font-size: 13px; color: var(--muted)">{{det.codigo}} · {{det.area}}. Requisitos tomados del puesto; en gris, el diferencial frente al {{det.vs}}.</p>
+                      </div>
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px">
+                        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px">
+                          <h3 style="margin: 0 0 10px; font-size: 14px; color: var(--accent)">Conocimientos</h3>
+                          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+                            <sc-for list="{{det.k}}" as="x" hint-placeholder-count="4"><li><div style="display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600"><span>{{x.n}}</span><span style="{{x.gStyle}}">{{x.g}}</span></div><div style="font-size: 12px; color: var(--muted)">{{x.d}}</div></li></sc-for>
+                          </ul>
+                        </div>
+                        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px">
+                          <h3 style="margin: 0 0 10px; font-size: 14px; color: var(--accent)">Competencias</h3>
+                          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+                            <sc-for list="{{det.c}}" as="x" hint-placeholder-count="4"><li><div style="display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600"><span>{{x.n}}</span><span style="{{x.gStyle}}">{{x.g}}</span></div><div style="font-size: 12px; color: var(--muted)">{{x.d}}</div></li></sc-for>
+                          </ul>
+                        </div>
+                        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px">
+                          <h3 style="margin: 0 0 10px; font-size: 14px; color: var(--accent)">Experiencia</h3>
+                          <div style="font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums">{{det.aniosTxt}}</div>
+                          <div style="margin-top: 2px; font-size: 12px; color: var(--muted)">{{det.aniosDif}}</div>
+                          <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5">{{det.exp}}</p>
+                        </div>
+                      </div>
+                      <p style="margin: 0; font-size: 12px; color: var(--muted)">Escala de grados: A (más alto) a D (más bajo). El diferencial se calcula a partir de los puestos; no se guarda como dato aparte.</p>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{sinDetalle}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 24px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted)">Selecciona un nivel para ver sus requisitos.</p></sc-if>
+                </section>
+              </div>
+            </sc-if>
+
+            <!-- ---- participantes ---- -->
+            <sc-if value="{{v.participantes}}" hint-placeholder-val="{{false}}">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; align-items: start">
+                <section aria-labelledby="pa-t" style="display: flex; flex-direction: column; gap: 14px">
+                  <h2 id="pa-t" style="margin: 0; font-size: 18px">Participantes inscritos</h2>
+                  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+                    <table style="width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14px">
+                      <thead><tr style="text-align: left; color: var(--muted); font-size: 13px">
+                        <th scope="col" style="padding: 12px 12px 12px 18px; font-weight: 600">Colaborador</th>
+                        <th scope="col" style="padding: 12px; font-weight: 600">Nivel actual</th>
+                        <th scope="col" style="padding: 12px 18px 12px 12px; font-weight: 600; text-align: right">Acciones</th>
+                      </tr></thead>
+                      <tbody>
+                        <sc-for list="{{participantes}}" as="p" hint-placeholder-count="9">
+                          <tr class="row" style="border-top: 1px solid var(--border)">
+                            <td style="padding: 8px 12px 8px 18px"><div style="font-weight: 600">{{p.nombre}}</div><div style="font-size: 12px; color: var(--muted)">{{p.depto}}</div></td>
+                            <td style="padding: 8px 12px">
+                              <div style="display: flex; align-items: center; gap: 6px">
+                                <button class="ibtn" onClick="{{p.bajar}}" disabled="{{p.noBajar}}" aria-label="Bajar el nivel de {{p.nombre}}" style="width: 36px; height: 36px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12"></path></svg></button>
+                                <div style="min-width: 150px; text-align: center"><div style="font-size: 12px; font-weight: 700; color: var(--accent)">Nivel {{p.n}}</div><div style="font-size: 14px; font-weight: 600">{{p.puesto}}</div></div>
+                                <button class="ibtn" onClick="{{p.subir}}" disabled="{{p.noSubir}}" aria-label="Subir el nivel de {{p.nombre}}" style="width: 36px; height: 36px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></button>
+                              </div>
+                            </td>
+                            <td style="padding: 8px 18px 8px 12px; text-align: right"><button class="btn" onClick="{{p.retirar}}" aria-label="Retirar a {{p.nombre}} de la ruta" style="height: 36px; padding: 0 12px; font-size: 13px; color: var(--danger)">Retirar</button></td>
+                          </tr>
+                        </sc-for>
+                      </tbody>
+                    </table>
+                    <sc-if value="{{sinPart}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 20px; color: var(--muted); border-top: 1px solid var(--border)">Esta ruta no tiene participantes. Inscribe al primero con el formulario.</p></sc-if>
+                  </div>
+                </section>
+
+                <div style="display: flex; flex-direction: column; gap: 20px">
+                  <section aria-labelledby="ca-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+                    <div><h2 id="ca-t" style="margin: 0; font-size: 18px">Cantera</h2><p style="margin: 2px 0 0; font-size: 13px; color: var(--muted)">Personas por nivel de la ruta (Alles, H.42A, p. 229–230).</p></div>
+                    <div role="img" aria-label="{{canteraAria}}" style="display: flex; flex-direction: column; gap: 10px">
+                      <sc-for list="{{cantera}}" as="c" hint-placeholder-count="5">
+                        <div style="display: grid; grid-template-columns: 1fr 100px 30px; gap: 10px; align-items: center; font-size: 13px">
+                          <span><b>Nivel {{c.n}}</b> · {{c.puesto}}</span>
+                          <div style="height: 12px; background: var(--bg); border-radius: 3px"><div style="{{c.bar}}"></div></div>
+                          <span style="text-align: right; font-weight: 700; font-variant-numeric: tabular-nums">{{c.cuenta}}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{hayVacios}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 13px; color: var(--warn)">{{vaciosTxt}}</p></sc-if>
+                  </section>
+
+                  <section aria-labelledby="in-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+                    <h2 id="in-t" style="margin: 0; font-size: 18px">Inscribir colaborador</h2>
+                    <div class="fl"><label for="i-col">Colaborador</label>
+                      <select id="i-col" class="fi" value="{{insc.col}}" onChange="{{insc.hCol}}"><option value="">Selecciona un colaborador</option><option value="Diego Paredes">Diego Paredes · Tecnología</option><option value="Lucía Andrade">Lucía Andrade · Tecnología</option><option value="Mateo Cárdenas">Mateo Cárdenas · Tecnología</option><option value="Valentina Ortiz">Valentina Ortiz · Tecnología</option><option value="Sebastián Mora">Sebastián Mora · Tecnología</option><option value="Camila Játiva">Camila Játiva · Tecnología</option><option value="Andrés Villacís">Andrés Villacís · Tecnología</option><option value="Paola Cevallos">Paola Cevallos · Tecnología</option><option value="Javier Salazar">Javier Salazar · Tecnología</option><option value="Daniela Proaño">Daniela Proaño · Tecnología</option><option value="Esteban Naranjo">Esteban Naranjo · Tecnología</option><option value="Carolina Quishpe">Carolina Quishpe · Tecnología</option><option value="Fernando Tipán">Fernando Tipán · Tecnología</option><option value="Gabriela Almeida">Gabriela Almeida · Tecnología</option><option value="Ricardo Chávez">Ricardo Chávez · Comercial</option><option value="Mónica Lasso">Mónica Lasso · Comercial</option><option value="Pablo Guerrero">Pablo Guerrero · Operaciones</option><option value="Natalia Vásconez">Natalia Vásconez · Finanzas</option><option value="Santiago Herrera">Santiago Herrera · Operaciones</option><option value="Elena Montalvo">Elena Montalvo · Talento Humano</option><option value="Bryan Toapanta">Bryan Toapanta · Comercial</option><option value="Karla Espinoza">Karla Espinoza · Finanzas</option><option value="Hugo Benítez">Hugo Benítez · Tecnología</option><option value="Ivonne Tapia">Ivonne Tapia · Finanzas</option><option value="Kevin Mera">Kevin Mera · Finanzas</option><option value="Marcos Zambrano">Marcos Zambrano · Comercial</option><option value="Rosa Pazmiño">Rosa Pazmiño · Talento Humano</option><option value="Iván Cuenca">Iván Cuenca · Operaciones</option><option value="Teresa Loor">Teresa Loor · Operaciones</option><option value="Julio Ayala">Julio Ayala · Comercial</option></select></div>
+                    <p style="margin: 0; font-size: 13px; color: var(--muted)">Ingresa en el nivel {{insc.nivel}} ({{insc.puesto}}). Luego puedes ajustar su nivel actual.</p>
+                    <div><button class="btn btn-primary" onClick="{{insc.inscribir}}">Inscribir en la ruta</button></div>
+                  </section>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+
+  <!-- ================= NUEVA RUTA ================= -->
+  <sc-if value="{{nv.abierto}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; background: rgba(8, 12, 16, 0.55)">
+      <div role="dialog" aria-modal="true" aria-labelledby="nv-t" style="width: min(640px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3); overflow: hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border)">
+          <h2 id="nv-t" style="margin: 0; font-size: 20px">Nueva ruta de carrera</h2>
+          <button class="ibtn" onClick="{{nv.cerrar}}" aria-label="Cancelar y cerrar"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+          <sc-if value="{{nv.hayErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">{{nv.err}}</p></sc-if>
+          <div class="fl"><label for="n-nom">Nombre de la ruta</label><input id="n-nom" class="fi" type="text" value="{{nv.nombre}}" onChange="{{nv.hNombre}}"></div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+            <div class="fl"><label for="n-tip">Tipo de ruta</label>
+              <select id="n-tip" class="fi" value="{{nv.tipo}}" onChange="{{nv.hTipo}}"><option value="Especialista">Especialista</option><option value="Gerencial">Gerencial</option><option value="Interáreas">Interáreas</option><option value="Jóvenes profesionales">Jóvenes profesionales</option></select>
+              <span style="font-size: 12px; font-weight: 400; color: var(--muted); line-height: 1.4">{{nv.tipoAyuda}}</span></div>
+            <div class="fl"><label for="n-area">Área</label>
+              <select id="n-area" class="fi" value="{{nv.area}}" onChange="{{nv.hArea}}"><option value="Tecnología">Tecnología</option><option value="Comercial">Comercial</option><option value="Operaciones">Operaciones</option><option value="Finanzas">Finanzas</option><option value="Talento Humano">Talento Humano</option><option value="Todas las áreas">Todas las áreas</option></select></div>
+          </div>
+          <sc-if value="{{nv.esJp}}" hint-placeholder-val="{{false}}"><div class="fl" style="max-width: 260px"><label for="n-dur">Duración de la ruta (meses)</label><input id="n-dur" class="fi" type="number" min="6" value="{{nv.dur}}" onChange="{{nv.hDur}}"></div></sc-if>
+          <div class="fl"><label for="n-des">Descripción</label><textarea id="n-des" class="fi" rows="3" onChange="{{nv.hDesc}}">{{nv.desc}}</textarea></div>
+          <p style="margin: 0; font-size: 13px; color: var(--muted)">La ruta se crea en estado Borrador. Los niveles se agregan en el editor.</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--border)">
+          <button class="btn" onClick="{{nv.cerrar}}" style="border-color: transparent">Cancelar</button>
+          <button class="btn btn-primary" onClick="{{nv.crear}}">Crear ruta</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = Object.assign({
+      dark: null, view: 'lista', tab: 'escalera', rutaId: 'R1', selPu: 'PU-018', msg: '', err: '',
+      fBuscar: '', fTipo: 'todos', fArea: 'todas', fEstado: 'todos',
+      rutas: d.rutas, nuevoPuesto: 'PU-027', inscCol: '',
+      nOpen: false, nErr: '', nNombre: '', nTipo: 'Especialista', nArea: 'Tecnología', nDur: '24', nDesc: ''
+    }, { view: 'editor', tab: 'participantes', rutaId: 'R1' });
+  }
+
+  getData() {
+    const kv = (s) => s.split(';').map((x) => { const p = x.split(':'); return [p[0].trim(), p[1].trim()]; });
+    const P = (id, nombre, area, k, c, anios, exp) => ({ id, nombre, area, k: kv(k), c: kv(c), anios, exp });
+    const puestos = [
+      P('PU-002', 'Trainee', 'Todas las áreas', 'Herramientas ofimáticas:C;Cultura organizacional:D', 'Aprendizaje continuo:C;Trabajo en equipo:D', 0, 'Sin experiencia previa; recién egresado.'),
+      P('PU-008', 'Asistente profesional', 'Todas las áreas', 'Herramientas ofimáticas:B;Cultura organizacional:C;Gestión documental:D', 'Aprendizaje continuo:B;Trabajo en equipo:C;Comunicación efectiva:D', 1, 'Hasta 1 año de práctica en el área.'),
+      P('PU-011', 'Analista de datos Jr', 'Tecnología', 'SQL:D;Hojas de cálculo:C;Estadística descriptiva:D', 'Análisis de datos:D;Trabajo en equipo:C;Comunicación efectiva:D', 0, 'Práctica profesional o proyectos académicos con datos.'),
+      P('PU-014', 'Analista de datos', 'Tecnología', 'SQL:C;Hojas de cálculo:B;Estadística descriptiva:C;Visualización de datos:D', 'Análisis de datos:C;Trabajo en equipo:C;Comunicación efectiva:C;Orientación a resultados:C', 1, 'Un año produciendo reportes y análisis propios.'),
+      P('PU-018', 'Analista de datos Senior', 'Tecnología', 'SQL:B;Hojas de cálculo:B;Estadística descriptiva:C;Estadística inferencial:C;Visualización de datos:C;Python para datos:D', 'Análisis de datos:B;Pensamiento analítico:C;Comunicación efectiva:B;Orientación a resultados:B', 3, 'Tres años, con al menos un proyecto analítico completo a su cargo.'),
+      P('PU-023', 'Especialista en datos', 'Tecnología', 'SQL:A;Estadística inferencial:B;Visualización de datos:B;Python para datos:C;Modelado predictivo:D', 'Análisis de datos:A;Pensamiento analítico:B;Comunicación efectiva:B;Aprendizaje continuo:B', 5, 'Cinco años, dos de ellos guiando proyectos de otros analistas.'),
+      P('PU-027', 'Especialista principal en datos', 'Tecnología', 'SQL:A;Estadística inferencial:A;Visualización de datos:B;Python para datos:B;Modelado predictivo:B;Arquitectura de datos:C', 'Análisis de datos:A;Pensamiento analítico:A;Comunicación efectiva:A;Aprendizaje continuo:A', 8, 'Ocho años, con referencia técnica reconocida en la organización.'),
+      P('PU-031', 'Líder de equipo de TI', 'Tecnología', 'Gestión de proyectos:C;Metodologías ágiles:C', 'Liderazgo:C;Comunicación efectiva:B;Trabajo en equipo:B', 3, 'Tres años en tecnología; ha coordinado tareas de otros.'),
+      P('PU-036', 'Jefe de área de TI', 'Tecnología', 'Gestión de proyectos:B;Metodologías ágiles:C;Presupuestos:C;Gestión de riesgos:C', 'Liderazgo:B;Negociación:C;Orientación a resultados:B', 5, 'Cinco años, dos liderando un equipo.'),
+      P('PU-041', 'Gerente de TI', 'Tecnología', 'Gestión de proyectos:A;Presupuestos:B;Gestión de riesgos:B;Gobierno de TI:C', 'Liderazgo:A;Negociación:B;Pensamiento estratégico:B;Orientación a resultados:A', 8, 'Ocho años, tres a cargo de un área con presupuesto propio.'),
+      P('PU-045', 'Director de Tecnología', 'Tecnología', 'Gobierno de TI:B;Planificación estratégica:B;Presupuestos:A;Finanzas para no financieros:C', 'Liderazgo:A;Pensamiento estratégico:A;Negociación:A;Orientación a resultados:A', 12, 'Doce años, con experiencia directiva comprobable.'),
+      P('PU-052', 'Ejecutivo comercial', 'Comercial', 'Productos y servicios:C;Técnicas de venta:C', 'Orientación al cliente:C;Comunicación efectiva:C', 1, 'Un año en ventas o atención a clientes.'),
+      P('PU-056', 'Coordinador de cuentas', 'Comercial', 'Productos y servicios:B;Técnicas de venta:B;Gestión de cuentas:C', 'Orientación al cliente:B;Comunicación efectiva:B;Negociación:C', 3, 'Tres años, con cartera de clientes propia.'),
+      P('PU-061', 'Analista de procesos', 'Operaciones', 'Mapeo de procesos:C;Indicadores de gestión:C;Gestión de cuentas:C', 'Pensamiento analítico:B;Orientación a resultados:B;Gestión del cambio:C;Negociación:C', 4, 'Cuatro años, al menos uno en Operaciones.'),
+      P('PU-066', 'Jefe de operaciones comerciales', 'Operaciones', 'Mapeo de procesos:B;Indicadores de gestión:B;Gestión de cuentas:B;Gestión de proyectos:C', 'Liderazgo:B;Gestión del cambio:B;Negociación:B;Orientación a resultados:B', 6, 'Seis años entre Comercial y Operaciones, dos liderando un equipo.'),
+      P('PU-071', 'Asistente de Talento Humano', 'Talento Humano', 'Administración de personal:C;Normativa laboral:D', 'Orientación al cliente:C;Comunicación efectiva:C', 1, 'Un año en gestión administrativa.'),
+      P('PU-074', 'Analista de Talento Humano', 'Talento Humano', 'Administración de personal:B;Normativa laboral:C;Gestión por competencias:C', 'Comunicación efectiva:B;Análisis de datos:C;Orientación al cliente:B', 3, 'Tres años en procesos de talento humano.'),
+      P('PU-078', 'Especialista en desarrollo organizacional', 'Talento Humano', 'Gestión por competencias:A;Diseño de capacitación:B;Evaluación del desempeño:B', 'Pensamiento analítico:B;Comunicación efectiva:A;Gestión del cambio:B', 6, 'Seis años, con diseño de planes de formación.'),
+      P('PU-081', 'Analista financiero', 'Finanzas', 'Contabilidad general:C;Análisis financiero:C', 'Pensamiento analítico:C;Orientación a resultados:C', 2, 'Dos años en contabilidad o finanzas.'),
+      P('PU-085', 'Jefe de contabilidad', 'Finanzas', 'Contabilidad general:B;Análisis financiero:B;Normativa tributaria:C', 'Liderazgo:B;Pensamiento analítico:B;Integridad:A', 5, 'Cinco años, dos coordinando un equipo.'),
+      P('PU-089', 'Gerente financiero', 'Finanzas', 'Análisis financiero:A;Normativa tributaria:B;Presupuestos:A', 'Liderazgo:A;Pensamiento estratégico:B;Integridad:A', 9, 'Nueve años, con responsabilidad sobre presupuesto institucional.'),
+      P('PU-093', 'Director financiero', 'Finanzas', 'Análisis financiero:A;Planificación estratégica:B;Gobierno corporativo:C', 'Liderazgo:A;Pensamiento estratégico:A;Negociación:A', 12, 'Doce años, con experiencia directiva.')
+    ];
+    const pById = {}; puestos.forEach((p) => { pById[p.id] = p; });
+    const R = (id, nombre, tipo, area, estado, desc, niveles, part, dur) => ({ id, nombre, tipo, area, estado, desc, niveles, part, dur: dur || 0 });
+    const Pt = (n, puesto) => ({ n, puesto });
+    const rutas = [
+      R('R1', 'Especialista en análisis de datos', 'Especialista', 'Tecnología', 'Vigente', 'Profundiza en el puesto técnico de datos sin pasar a gestión.', ['PU-011', 'PU-014', 'PU-018', 'PU-023', 'PU-027'],
+        [Pt('Lucía Andrade', 'PU-011'), Pt('Mateo Cárdenas', 'PU-011'), Pt('Diego Paredes', 'PU-014'), Pt('Valentina Ortiz', 'PU-014'), Pt('Sebastián Mora', 'PU-014'), Pt('Camila Játiva', 'PU-018'), Pt('Andrés Villacís', 'PU-018'), Pt('Paola Cevallos', 'PU-023'), Pt('Javier Salazar', 'PU-027')]),
+      R('R2', 'Gerencial de Tecnología', 'Gerencial', 'Tecnología', 'Vigente', 'Asciende desde la coordinación de un equipo hasta la dirección del área.', ['PU-031', 'PU-036', 'PU-041', 'PU-045'],
+        [Pt('Daniela Proaño', 'PU-031'), Pt('Esteban Naranjo', 'PU-031'), Pt('Carolina Quishpe', 'PU-036'), Pt('Fernando Tipán', 'PU-036'), Pt('Gabriela Almeida', 'PU-041')]),
+      R('R3', 'Comercial a Operaciones', 'Interáreas', 'Comercial y Operaciones', 'Vigente', 'Conecta la experiencia comercial con la gestión de operaciones.', ['PU-052', 'PU-056', 'PU-061', 'PU-066'],
+        [Pt('Ricardo Chávez', 'PU-052'), Pt('Mónica Lasso', 'PU-056'), Pt('Pablo Guerrero', 'PU-061')]),
+      R('R4', 'Jóvenes profesionales 2026', 'Jóvenes profesionales', 'Todas las áreas', 'Vigente', 'Ruta de 24 meses para recién egresados.', ['PU-002', 'PU-008', 'PU-011'],
+        [Pt('Natalia Vásconez', 'PU-002'), Pt('Santiago Herrera', 'PU-002'), Pt('Elena Montalvo', 'PU-002'), Pt('Bryan Toapanta', 'PU-008'), Pt('Karla Espinoza', 'PU-008'), Pt('Hugo Benítez', 'PU-011')], 24),
+      R('R5', 'Especialista en Talento Humano', 'Especialista', 'Talento Humano', 'Borrador', 'Camino técnico en desarrollo organizacional.', ['PU-071', 'PU-074', 'PU-078'], []),
+      R('R6', 'Gerencial Financiera', 'Gerencial', 'Finanzas', 'Archivada', 'Ruta reemplazada por el nuevo esquema financiero.', ['PU-081', 'PU-085', 'PU-089', 'PU-093'],
+        [Pt('Ivonne Tapia', 'PU-085'), Pt('Kevin Mera', 'PU-081')])
+    ];
+    const directorio = [['Diego Paredes', 'Tecnología'], ['Lucía Andrade', 'Tecnología'], ['Mateo Cárdenas', 'Tecnología'], ['Valentina Ortiz', 'Tecnología'], ['Sebastián Mora', 'Tecnología'], ['Camila Játiva', 'Tecnología'], ['Andrés Villacís', 'Tecnología'], ['Paola Cevallos', 'Tecnología'], ['Javier Salazar', 'Tecnología'], ['Daniela Proaño', 'Tecnología'], ['Esteban Naranjo', 'Tecnología'], ['Carolina Quishpe', 'Tecnología'], ['Fernando Tipán', 'Tecnología'], ['Gabriela Almeida', 'Tecnología'], ['Ricardo Chávez', 'Comercial'], ['Mónica Lasso', 'Comercial'], ['Pablo Guerrero', 'Operaciones'], ['Natalia Vásconez', 'Finanzas'], ['Santiago Herrera', 'Operaciones'], ['Elena Montalvo', 'Talento Humano'], ['Bryan Toapanta', 'Comercial'], ['Karla Espinoza', 'Finanzas'], ['Hugo Benítez', 'Tecnología'], ['Ivonne Tapia', 'Finanzas'], ['Kevin Mera', 'Finanzas'], ['Marcos Zambrano', 'Comercial'], ['Rosa Pazmiño', 'Talento Humano'], ['Iván Cuenca', 'Operaciones'], ['Teresa Loor', 'Operaciones'], ['Julio Ayala', 'Comercial']];
+    const AVISO = 'Esta ruta es una guía de desarrollo; no implica la promesa de un puesto.';
+    const GR = { D: 1, C: 2, B: 3, A: 4 };
+
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    const tipoLight = { 'Especialista': ['#E3F2F0', '#0B5A55'], 'Gerencial': ['#E4EDFB', '#1F4E9C'], 'Interáreas': ['#F0E7FA', '#5B2E91'], 'Jóvenes profesionales': ['#FDEFD9', '#8A4B0B'] };
+    const tipoDark = { 'Especialista': ['#12302D', '#7FE0D6'], 'Gerencial': ['#172A4A', '#9DBEF5'], 'Interáreas': ['#2C1D44', '#CDA9F2'], 'Jóvenes profesionales': ['#3A2A12', '#F2C27A'] };
+    const estLight = { 'Borrador': ['#ECEEF1', '#3B4654'], 'Vigente': ['#E3F2F0', '#0B5A55'], 'Archivada': ['#FDEFD9', '#8A4B0B'] };
+    const estDark = { 'Borrador': ['#232B34', '#B8C2CD'], 'Vigente': ['#12302D', '#7FE0D6'], 'Archivada': ['#3A2A12', '#F2C27A'] };
+    const ayudaTipo = {
+      'Especialista': 'Profundiza en un puesto técnico dentro de una misma área.',
+      'Gerencial': 'Asciende hacia puestos con responsabilidad sobre personas y presupuesto.',
+      'Interáreas': 'Recorre puestos de más de un área para ampliar la experiencia.',
+      'Jóvenes profesionales': 'Duración limitada, pensada para recién egresados.'
+    };
+    return { puestos, pById, rutas, directorio, AVISO, GR, light, dark, tipoLight, tipoDark, estLight, estDark, ayudaTipo };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const tp = dark ? d.tipoDark : d.tipoLight;
+    const es = dark ? d.estDark : d.estLight;
+    const pill = (c) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:' + c[0] + ';color:' + c[1] + ';';
+    const tipoStyle = (t) => pill(tp[t]);
+    const estadoStyle = (e) => pill(es[e]);
+    const set = (o) => this.setState(o);
+    const upd = (id, fn) => set({ rutas: s.rutas.map((r) => (r.id === id ? fn(r) : r)) });
+    const ruta = s.rutas.find((r) => r.id === s.rutaId) || s.rutas[0];
+    const pn = (id) => d.pById[id];
+    const nivelDe = (r, pid) => r.niveles.indexOf(pid) + 1;
+    const gTxt = { 1: 'D', 2: 'C', 3: 'B', 4: 'A' };
+    const gStyle = (g, extra) => 'flex:none;min-width:28px;text-align:center;padding:1px 8px;border-radius:6px;font-size:13px;font-weight:700;background:' + (extra ? 'var(--neutralsoft)' : 'var(--soft)') + ';color:' + (extra ? 'var(--neutral)' : 'var(--accent)') + ';';
+
+    const avisoStyle = 'display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:10px;background:var(--infosoft);color:var(--info);border:1px solid var(--border);';
+
+    // ---- lista ----
+    const f = {
+      buscar: s.fBuscar, tipo: s.fTipo, area: s.fArea, estado: s.fEstado,
+      setBuscar: (e) => set({ fBuscar: e.target.value }), setTipo: (e) => set({ fTipo: e.target.value }),
+      setArea: (e) => set({ fArea: e.target.value }), setEstado: (e) => set({ fEstado: e.target.value }),
+      hay: s.fBuscar !== '' || s.fTipo !== 'todos' || s.fArea !== 'todas' || s.fEstado !== 'todos',
+      limpiar: () => set({ fBuscar: '', fTipo: 'todos', fArea: 'todas', fEstado: 'todos' })
+    };
+    const q = s.fBuscar.trim().toLowerCase();
+    const okArea = (r) => s.fArea === 'todas' || r.area === s.fArea || (r.area.indexOf(s.fArea) >= 0);
+    const filtradas = s.rutas.filter((r) => (s.fTipo === 'todos' || r.tipo === s.fTipo) && okArea(r) && (s.fEstado === 'todos' || r.estado === s.fEstado) && (q === '' || r.nombre.toLowerCase().indexOf(q) >= 0));
+    const tipos = ['Especialista', 'Gerencial', 'Interáreas', 'Jóvenes profesionales'];
+    const grupos = tipos.map((t) => {
+      const rs = filtradas.filter((r) => r.tipo === t);
+      return {
+        tipo: t, tipoStyle: tipoStyle(t), cuenta: rs.length + (rs.length === 1 ? ' ruta' : ' rutas'), n: rs.length,
+        cards: rs.map((r) => {
+          const mx = Math.max(1, r.niveles.length);
+          const pel = r.niveles.map((pid, i) => ({ style: 'flex:1;border-radius:3px 3px 0 0;background:' + (r.estado === 'Archivada' ? 'var(--border)' : 'var(--accent)') + ';opacity:' + (0.35 + 0.65 * (i + 1) / mx).toFixed(2) + ';height:' + Math.round(8 + 28 * (i + 1) / mx) + 'px;' }));
+          const prim = r.niveles.length ? pn(r.niveles[0]).nombre : '';
+          const ult = r.niveles.length ? pn(r.niveles[r.niveles.length - 1]).nombre : '';
+          return {
+            nombre: r.nombre, estado: r.estado, estadoStyle: estadoStyle(r.estado), area: r.area, durTxt: r.dur ? ' · ' + r.dur + ' meses' : '',
+            desc: r.desc || 'Sin descripción.', peldanos: pel, niveles: r.niveles.length, part: r.part.length,
+            recorrido: r.niveles.length ? prim + ' → ' + ult : 'Sin niveles definidos',
+            abrir: () => set({ view: 'editor', tab: 'escalera', rutaId: r.id, selPu: r.niveles.length ? r.niveles[0] : '', err: '', msg: '' })
+          };
+        })
+      };
+    }).filter((g) => g.n > 0);
+    const vigentes = s.rutas.filter((r) => r.estado === 'Vigente');
+    const kpis = [
+      { label: 'Rutas vigentes', valor: String(vigentes.length), nota: s.rutas.length + ' rutas en total' },
+      { label: 'Participantes activos', valor: String(vigentes.reduce((a, r) => a + r.part.length, 0)), nota: 'Inscritos en rutas vigentes' },
+      { label: 'Puestos vinculados', valor: String(new Set([].concat.apply([], s.rutas.map((r) => r.niveles))).size), nota: 'Del Descriptivo de puestos' }
+    ];
+
+    // ---- editor ----
+    const sel = ruta.niveles.indexOf(s.selPu) >= 0 ? s.selPu : (ruta.niveles[0] || '');
+    const cuentaEn = (pid) => ruta.part.filter((p) => p.puesto === pid).length;
+    const mover = (i, dir) => {
+      const nv = ruta.niveles.slice(); const j = i + dir; const t = nv[i]; nv[i] = nv[j]; nv[j] = t;
+      upd(ruta.id, (r) => Object.assign({}, r, { niveles: nv })); set({ msg: 'Orden de niveles actualizado.', err: '' });
+    };
+    const escalera = ruta.niveles.map((pid, i) => ({ pid, i })).reverse().map((o) => {
+      const p = pn(o.pid); const esSel = o.pid === sel; const c = cuentaEn(o.pid);
+      return {
+        n: o.i + 1, puesto: p.nombre, codigo: p.id, personas: c + (c === 1 ? ' persona' : ' personas'), sel: esSel,
+        liStyle: 'margin-left:' + Math.min(o.i, 6) * 14 + 'px;',
+        cardStyle: 'display:flex;align-items:stretch;background:var(--surface);border-radius:12px;overflow:hidden;border:2px solid ' + (esSel ? 'var(--accent)' : 'var(--border)') + ';',
+        elegir: () => set({ selPu: o.pid }),
+        subir: () => mover(o.i, 1), noSubir: o.i === ruta.niveles.length - 1,
+        bajar: () => mover(o.i, -1), noBajar: o.i === 0,
+        quitar: () => {
+          const nv = ruta.niveles.filter((x) => x !== o.pid);
+          const hay = ruta.part.filter((x) => x.puesto === o.pid).length;
+          const fb = nv[Math.max(0, o.i - 1)] || '';
+          upd(ruta.id, (r) => Object.assign({}, r, { niveles: nv, part: r.part.map((x) => (x.puesto === o.pid && fb ? Object.assign({}, x, { puesto: fb }) : x)).filter((x) => nv.indexOf(x.puesto) >= 0) }));
+          set({ msg: 'Nivel «' + p.nombre + '» quitado de la ruta.' + (hay ? ' ' + hay + ' participante(s) pasaron al nivel inferior.' : ''), err: '' });
+        }
+      };
+    });
+    const mkReq = (items, prev, tipo) => items.map((it) => {
+      const pg = prev ? prev.find((x) => x[0] === it[0]) : null;
+      const g = d.GR[it[1]]; let dif;
+      if (!prev) dif = 'Primer nivel de la ruta';
+      else if (!pg) dif = 'Nuevo requisito';
+      else if (g > d.GR[pg[1]]) dif = '+' + (g - d.GR[pg[1]]) + ' (antes ' + pg[1] + ')';
+      else dif = 'Sin cambio';
+      return { n: it[0], g: it[1], gStyle: gStyle(it[1], false), d: dif };
+    });
+    let det = null;
+    if (sel) {
+      const i = ruta.niveles.indexOf(sel); const p = pn(sel); const prevP = i > 0 ? pn(ruta.niveles[i - 1]) : null;
+      det = {
+        n: i + 1, puesto: p.nombre, codigo: p.id, area: p.area, vs: prevP ? 'nivel ' + i + ' (' + prevP.nombre + ')' : 'punto de partida',
+        k: mkReq(p.k, prevP ? prevP.k : null), c: mkReq(p.c, prevP ? prevP.c : null),
+        aniosTxt: p.anios === 0 ? 'Sin experiencia' : p.anios + (p.anios === 1 ? ' año' : ' años'),
+        aniosDif: prevP ? (p.anios > prevP.anios ? '+' + (p.anios - prevP.anios) + ' (antes ' + prevP.anios + ')' : 'Sin cambio') : 'Primer nivel de la ruta', exp: p.exp
+      };
+    }
+    const meta = ruta.area + (ruta.dur ? ' · ' + ruta.dur + ' meses' : '') + ' · ' + ruta.niveles.length + ' niveles · ' + ruta.part.length + ' participantes';
+    const rutaV = {
+      nombre: ruta.nombre, tipo: ruta.tipo, tipoStyle: tipoStyle(ruta.tipo), estado: ruta.estado, estadoStyle: estadoStyle(ruta.estado), meta, nPart: ruta.part.length,
+      setEstado: (e) => { const v = e.target.value; upd(ruta.id, (r) => Object.assign({}, r, { estado: v })); set({ msg: 'Estado de la ruta: ' + v + '.', err: '' }); }
+    };
+    const disponibles = d.puestos.filter((p) => ruta.niveles.indexOf(p.id) < 0);
+    const agregarNivel = () => {
+      const pid = s.nuevoPuesto;
+      if (ruta.niveles.indexOf(pid) >= 0) { set({ err: 'Ese puesto ya es un nivel de esta ruta.', msg: '' }); return; }
+      upd(ruta.id, (r) => Object.assign({}, r, { niveles: r.niveles.concat([pid]) }));
+      set({ selPu: pid, msg: 'Nivel agregado: ' + pn(pid).nombre + ' (nivel ' + (ruta.niveles.length + 1) + ').', err: '' });
+    };
+
+    // ---- participantes ----
+    const participantes = ruta.part.map((p, idx) => {
+      const n = nivelDe(ruta, p.puesto);
+      const dep = (d.directorio.find((x) => x[0] === p.n) || ['', ''])[1];
+      const mv = (dir) => { const np = ruta.niveles[n - 1 + dir]; upd(ruta.id, (r) => Object.assign({}, r, { part: r.part.map((x, k) => (k === idx ? Object.assign({}, x, { puesto: np }) : x)) })); set({ msg: p.n + ' ahora está en el nivel ' + (n + dir) + ' (' + pn(np).nombre + ').', err: '' }); };
+      return {
+        nombre: p.n, depto: dep, n, puesto: pn(p.puesto).nombre,
+        subir: () => mv(1), noSubir: n >= ruta.niveles.length, bajar: () => mv(-1), noBajar: n <= 1,
+        retirar: () => { upd(ruta.id, (r) => Object.assign({}, r, { part: r.part.filter((x, k) => k !== idx) })); set({ msg: p.n + ' salió de la ruta.', err: '' }); }
+      };
+    });
+    const maxC = Math.max(1, ...ruta.niveles.map(cuentaEn));
+    const cantera = ruta.niveles.map((pid, i) => { const c = cuentaEn(pid); return { n: i + 1, puesto: pn(pid).nombre, cuenta: c, bar: 'height:100%;border-radius:3px;background:var(--s1);width:' + (c / maxC * 100) + '%;' }; });
+    const vacios = ruta.niveles.map((pid, i) => ({ i, c: cuentaEn(pid) })).filter((x) => x.c === 0 && x.i > 0);
+    const inscritos = ruta.part.map((p) => p.n);
+    const colSel = s.inscCol;
+    const inscribir = () => {
+      if (!ruta.niveles.length) { set({ err: 'Agrega al menos un nivel antes de inscribir participantes.', msg: '' }); return; }
+      if (!colSel) { set({ err: 'Selecciona un colaborador.', msg: '' }); return; }
+      if (inscritos.indexOf(colSel) >= 0) { set({ err: colSel + ' ya participa en esta ruta.', msg: '' }); return; }
+      upd(ruta.id, (r) => Object.assign({}, r, { part: r.part.concat([{ n: colSel, puesto: r.niveles[0] }]) }));
+      set({ inscCol: '', msg: colSel + ' fue inscrito en el nivel 1.', err: '' });
+    };
+    const insc = { col: colSel, hCol: (e) => set({ inscCol: e.target.value }), nivel: 1, puesto: ruta.niveles.length ? pn(ruta.niveles[0]).nombre : 'sin niveles', inscribir };
+
+    // ---- nueva ruta ----
+    const esJp = s.nTipo === 'Jóvenes profesionales';
+    const nv = {
+      abierto: s.nOpen, cerrar: () => set({ nOpen: false, nErr: '' }), hayErr: s.nErr !== '', err: s.nErr,
+      nombre: s.nNombre, hNombre: (e) => set({ nNombre: e.target.value }), tipo: s.nTipo, hTipo: (e) => set({ nTipo: e.target.value }), tipoAyuda: d.ayudaTipo[s.nTipo],
+      area: s.nArea, hArea: (e) => set({ nArea: e.target.value }), esJp, dur: s.nDur, hDur: (e) => set({ nDur: e.target.value }),
+      desc: s.nDesc, hDesc: (e) => set({ nDesc: e.target.value }),
+      crear: () => {
+        if (s.nNombre.trim() === '') { set({ nErr: 'Escribe el nombre de la ruta.' }); return; }
+        if (s.rutas.some((r) => r.nombre.toLowerCase() === s.nNombre.trim().toLowerCase())) { set({ nErr: 'Ya existe una ruta con ese nombre.' }); return; }
+        const dur = esJp ? parseInt(s.nDur, 10) : 0;
+        if (esJp && !(dur >= 6)) { set({ nErr: 'La duración debe ser de al menos 6 meses.' }); return; }
+        const id = 'R' + (s.rutas.length + 1);
+        const nueva = { id, nombre: s.nNombre.trim(), tipo: s.nTipo, area: s.nArea, estado: 'Borrador', desc: s.nDesc.trim(), niveles: [], part: [], dur };
+        set({ rutas: s.rutas.concat([nueva]), nOpen: false, nErr: '', nNombre: '', nDesc: '', view: 'editor', tab: 'escalera', rutaId: id, selPu: '', msg: 'Ruta creada en estado Borrador. Agrega los niveles.', err: '' });
+      }
+    };
+
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';') + ';--s1:' + (dark ? '#3987e5' : '#2a78d6') + ';',
+      toggleTheme: () => set({ dark: !dark }),
+      v: { lista: s.view === 'lista', editor: s.view === 'editor', escalera: s.tab === 'escalera', participantes: s.tab === 'participantes' },
+      avisoStyle, aviso: d.AVISO, hayMsg: s.msg !== '', msg: s.msg, cerrarMsg: () => set({ msg: '' }), hayErr: s.err !== '', err: s.err,
+      abrirNueva: () => set({ nOpen: true, nErr: '' }), irLista: () => set({ view: 'lista', msg: '', err: '' }),
+      kpis, f, resumen: 'Mostrando ' + filtradas.length + ' de ' + s.rutas.length + ' rutas', grupos, sinRutas: filtradas.length === 0,
+      ruta: rutaV, verEscalera: () => set({ tab: 'escalera' }), verParticipantes: () => set({ tab: 'participantes' }),
+      sinNiveles: ruta.niveles.length === 0, escalera, nuevoPuesto: s.nuevoPuesto, hNuevoPuesto: (e) => set({ nuevoPuesto: e.target.value }), agregarNivel,
+      hayDetalle: det !== null, sinDetalle: det === null, det: det || { k: [], c: [] },
+      participantes, sinPart: ruta.part.length === 0, cantera, canteraAria: 'Personas por nivel: ' + ruta.niveles.map((pid, i) => 'nivel ' + (i + 1) + ', ' + cuentaEn(pid)).join('; '),
+      hayVacios: vacios.length > 0, vaciosTxt: vacios.length ? 'Sin cantera en ' + vacios.map((x) => 'nivel ' + (x.i + 1)).join(', ') + '.' : '',
+      insc, nv
+    };
+  }
+}
+</script>
+</body>
+</html>

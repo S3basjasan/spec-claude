@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Desarrollo\Presentation\Middleware\EnsurePermiso;
 use App\Modules\Shared\Presentation\Middleware\EnsureAdmin;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => EnsureAdmin::class,
+            'permiso' => EnsurePermiso::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

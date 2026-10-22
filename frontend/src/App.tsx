@@ -18,6 +18,10 @@ import { microLearningNav } from './modules/desarrollo/micro-learning/nav'
 import { MicroLearningPage } from './modules/desarrollo/micro-learning/pages/MicroLearningPage'
 import { reportesNav } from './modules/desarrollo/reportes/nav'
 import { ReportesPage } from './modules/desarrollo/reportes/pages/ReportesPage'
+import { RequireRole as RequireRoleRutas } from './modules/desarrollo/rutas/components/RequireRole'
+import { rutasNav } from './modules/desarrollo/rutas/nav'
+import { RutaEditorPage } from './modules/desarrollo/rutas/pages/RutaEditorPage'
+import { RutasPage } from './modules/desarrollo/rutas/pages/RutasPage'
 import { ReproduccionPage } from './modules/desarrollo/micro-learning/pages/ReproduccionPage'
 import { RequireAdmin as RequireAdminDnf } from './modules/desarrollo/dnf/components/RequireAdmin'
 import { dnfNav } from './modules/desarrollo/dnf/nav'
@@ -61,14 +65,8 @@ import { onSessionExpired } from './shared/api/httpClient'
 import type { ShellNavGroup } from './shared/layouts/AppShell'
 import { queryClient } from './shared/lib/queryClient'
 
-/** Menú lateral: cada módulo aporta su ítem; aquí se agrupan por área funcional del HRMS. */
-const navGroups: ShellNavGroup[] = [
-  { label: 'Mi espacio', items: [miFichaNav, misDocumentosNav, exportarMiFichaNav] },
-  { label: 'Organización', items: [organigramaNav, unidadesNav, puestosNav, posicionesNav] },
-  { label: 'Personas', items: [colaboradoresNav, categoriasNav, categoriasReconocimientoNav] },
-  { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, microLearningNav] },
-  { label: 'Analítica', items: [reportesNav] },
-]
+/** Menú lateral: cada módulo aporta su ítem. */
+const navItems = [inicioNav, competenciasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -114,6 +112,8 @@ function App() {
             <Route path="actividades" element={<ActividadesPage />} />
             <Route path="actividades/:id/asistencia" element={<RequireRoleActividades admin={<AsistenciaPage />} />} />
             <Route path="reportes" element={<ReportesPage />} />
+            <Route path="rutas" element={<RutasPage />} />
+            <Route path="rutas/:id" element={<RequireRoleRutas admin={<RutaEditorPage />} />} />
             <Route path="micro-learning" element={<MicroLearningPage />} />
             <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />

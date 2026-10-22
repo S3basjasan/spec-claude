@@ -31,6 +31,7 @@ require_once __DIR__.'/Support/Desarrollo/PlanHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/MicroHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/ActividadHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/ReportesHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/RutasHelpers.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -321,6 +322,7 @@ function posicionesDeUnidad(UnidadModel|int $unidad, string $estado, int $cantid
 
 /**
  * Cuerpo valido para crear o actualizar una unidad (por defecto, bajo la unidad padre indicada).
+ * El tipo de unidad no se envía: lo calcula el sistema a partir de la unidad padre (`GuardarUnidadRequest` lo prohíbe).
  *
  * @param  array<string, mixed>  $cambios
  * @return array<string, mixed>
@@ -329,13 +331,13 @@ function datosUnidad(?int $unidadPadreId, array $cambios = []): array
 {
     return array_replace([
         'nombre' => 'Reclutamiento',
-        'tipo_unidad_id' => tipoDeUnidad('Seccion')->id,
         'unidad_padre_id' => $unidadPadreId,
     ], $cambios);
 }
 
 /**
  * Cuerpo de un PUT con el contenido actual de la unidad (más los cambios indicados).
+ * El tipo de unidad no se envía: lo calcula el sistema a partir de la unidad padre (`GuardarUnidadRequest` lo prohíbe).
  *
  * @param  array<string, mixed>  $cambios
  * @return array<string, mixed>
@@ -346,7 +348,6 @@ function cuerpoDeUnidad(UnidadModel $unidad, array $cambios = []): array
 
     return array_replace([
         'nombre' => $unidad->nombre,
-        'tipo_unidad_id' => $unidad->tipo_unidad_id,
         'unidad_padre_id' => $unidad->unidad_padre_id,
         'version' => $unidad->version,
     ], $cambios);

@@ -428,3 +428,19 @@ export function IconZoomOut(props: IconProps) {
     </Icon>
   )
 }
+
+export function IconStairs(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 20h5v-5h5v-5h5V5h3" />
+    </Icon>
+  )
+}
+
+export function IconArrowLeft(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M15 6l-6 6 6 6" />
+    </Icon>
+  )
+}
