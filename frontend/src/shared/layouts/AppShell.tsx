@@ -184,7 +184,7 @@ export function AppShell({ user, navGroups, onLogout, isLoggingOut }: AppShellPr
                       </span>
                     </button>
                   </h2>
-                  <ul id={panelId} hidden={!open} className="flex flex-wrap gap-1 pb-2 md:flex-col">
+                  <ul id={panelId} hidden={!open} className="flex flex-col gap-1 pb-2">
                     {group.items.map((item) => (
                       <li key={item.to}>
                         <NavLink
