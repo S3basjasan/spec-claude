@@ -27,6 +27,7 @@ use App\Modules\Desarrollo\Application\Ports\NombresDeReferenciaInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeUsuarioInterface;
 use App\Modules\Desarrollo\Application\Ports\PerfilesDePuestoInterface;
 use App\Modules\Desarrollo\Application\Ports\PlanDeFormacionInterface;
+use App\Modules\Desarrollo\Application\Ports\PuestosParaRutasInterface;
 use App\Modules\Desarrollo\Application\Ports\RelojInterface;
 use App\Modules\Desarrollo\Application\Services\DesarrolloService;
 use App\Modules\Desarrollo\Domain\Repositories\ActividadRepositoryInterface;
@@ -36,6 +37,7 @@ use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\ReportesRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\RutasRepositoryInterface;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AccionesDesdePlan;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ActividadesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AprobadoresDesdeShared;
@@ -63,8 +65,10 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\PlanesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresEvaluablesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresVigentesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\NivelesActualesDePrueba;
+use App\Modules\Desarrollo\Infrastructure\Adapters\PuestosParaRutasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\RelojDelSistema;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ReportePdfDompdf;
+use App\Modules\Desarrollo\Infrastructure\Console\ConciliarBajasRutasCommand;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentActividadRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentCatalogoFormativoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentDnfRepository;
@@ -72,6 +76,7 @@ use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\Eloq
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentPlanRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentProgresoMicroRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentReportesRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentRutasRepository;
 use Illuminate\Support\ServiceProvider;
 
 class DesarrolloServiceProvider extends ServiceProvider
@@ -113,6 +118,10 @@ class DesarrolloServiceProvider extends ServiceProvider
         $this->app->bind(GeneradorDeExcelInterface::class, ExcelConZip::class);
         $this->app->bind(GeneradorDeReportePdfInterface::class, ReportePdfDompdf::class);
 
+        // Rutas de carrera (019): puestos desde Estructura; los colaboradores usan los puertos ya enlazados arriba.
+        $this->app->bind(RutasRepositoryInterface::class, EloquentRutasRepository::class);
+        $this->app->bind(PuestosParaRutasInterface::class, PuestosParaRutasDesdeEstructura::class);
+
         $this->app->bind(CompetenciasInterface::class, CompetenciasDesdeEstructura::class);
         $this->app->bind(PerfilesDePuestoInterface::class, PerfilesDePuestoDesdeEstructura::class);
         $this->app->bind(CuentaColaboradorInterface::class, CuentaColaboradorDesdePersonal::class);
@@ -141,6 +150,10 @@ class DesarrolloServiceProvider extends ServiceProvider
         $routes = dirname(__DIR__, 2).'/Routes/api.php';
         if (file_exists($routes)) {
             $this->loadRoutesFrom($routes);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([ConciliarBajasRutasCommand::class]);
         }
     }
 }
