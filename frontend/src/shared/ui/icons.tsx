@@ -332,3 +332,115 @@ export function IconDownload(props: IconProps) {
     </Icon>
   )
 }
+
+export function IconEye(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+    </Icon>
+  )
+}
+
+export function IconArchive(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+      <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+      <path d="M10 12l4 0" />
+    </Icon>
+  )
+}
+
+export function IconCheck(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 12l5 5l10 -10" />
+    </Icon>
+  )
+}
+
+export function IconPlayerPlay(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M7 4v16l13 -8z" />
+    </Icon>
+  )
+}
+
+export function IconPlayerPause(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M6 5m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+      <path d="M14 5m0 1a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v12a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1z" />
+    </Icon>
+  )
+}
+
+export function IconVideo(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" />
+      <path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
+    </Icon>
+  )
+}
+
+export function IconBook(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+      <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+      <path d="M3 6l0 13" />
+      <path d="M12 6l0 13" />
+      <path d="M21 6l0 13" />
+    </Icon>
+  )
+}
+
+export function IconExternalLink(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
+      <path d="M11 13l9 -9" />
+      <path d="M15 4h5v5" />
+    </Icon>
+  )
+}
+
+export function IconZoomIn(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+      <path d="M7 10l6 0" />
+      <path d="M10 7l0 6" />
+      <path d="M21 21l-6 -6" />
+    </Icon>
+  )
+}
+
+export function IconZoomOut(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+      <path d="M7 10l6 0" />
+      <path d="M21 21l-6 -6" />
+    </Icon>
+  )
+}
+
+export function IconStairs(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 20h5v-5h5v-5h5V5h3" />
+    </Icon>
+  )
+}
+
+export function IconArrowLeft(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M15 6l-6 6 6 6" />
+    </Icon>
+  )
+}

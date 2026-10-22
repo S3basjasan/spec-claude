@@ -7,6 +7,7 @@
   "boards": {
     "Main.dc.html": { "x": 0, "y": 0, "w": 1440, "h": 900, "title": "Inicio (shell + dashboard)", "expand": "fill" },
     "Competencias.dc.html": { "x": 1520, "y": 0, "w": 1440, "h": 900, "title": "Listado (tabla de datos)", "expand": "fill" },
+    "Diccionario.dc.html": { "x": 1520, "y": 980, "w": 1440, "h": 900, "title": "Competencias: tarjetas con pestañas", "expand": "fill", "is_interactive": true },
     "Formulario.dc.html": { "x": 3040, "y": 0, "w": 1440, "h": 1100, "title": "Formulario crear/editar", "expand": "fill", "is_interactive": true },
     "Puestos.dc.html": { "x": 4560, "y": 0, "w": 1440, "h": 1560, "title": "Puestos", "expand": "fill", "is_interactive": true },
     "PuestosFormulario.dc.html": { "x": 4560, "y": 1640, "w": 1440, "h": 1700, "title": "Puestos: formulario crear/editar", "expand": "fill", "is_interactive": true },
@@ -24,6 +25,7 @@
   "order": [
     "Main.dc.html",
     "Competencias.dc.html",
+    "Diccionario.dc.html",
     "Formulario.dc.html",
     "Puestos.dc.html",
     "PuestosFormulario.dc.html",

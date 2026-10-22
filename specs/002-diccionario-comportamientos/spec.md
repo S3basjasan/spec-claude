@@ -1,5 +1,7 @@
 # Feature Specification: Diccionario de comportamientos
 
+> **Reemplazada por la feature 019** ([diccionario de competencias unificado](../019-diccionario-competencias-unificado/spec.md)): competencias, comportamientos y preguntas se gestionan ahora en un solo módulo. Este documento se conserva como histórico.
+
 **Feature Branch**: `002-diccionario-comportamientos`
 
 **Created**: 2026-10-11

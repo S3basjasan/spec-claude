@@ -3,17 +3,17 @@ import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { httpError } from '../../../../test/apiErrors'
-import { competencia, detalle, pagina } from '../../../../test/competenciasFixtures'
+import { competencia, detalle, escalas, pagina } from '../../../../test/competenciasFixtures'
 import { renderRoutes } from '../../../../test/renderRoutes'
 import { useCurrentUser } from '../../../auth/login'
-import { listarCompetencias, obtenerCompetencia } from '../api'
+import { listarCompetencias, listarEscalas, obtenerCompetencia } from '../api'
 import { CompetenciasPage } from './CompetenciasPage'
 
 vi.mock('../api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../api')>()),
   listarCompetencias: vi.fn(),
   obtenerCompetencia: vi.fn(),
+  listarEscalas: vi.fn(),
   cambiarEstadoCompetencia: vi.fn(),
 }))
 vi.mock('../../../auth/login', () => ({ useCurrentUser: vi.fn() }))
@@ -28,12 +28,14 @@ function renderPage(entrada = '/competencias') {
 
 const items = [
   competencia({ id: 1, nombre: 'Liderazgo', tipo: 'Cardinal' }),
-  competencia({ id: 2, codigo: 'COMP-0002', nombre: 'Gestión de proyectos', tipo: 'Especifica', descripcion: 'Planificar proyectos.' }),
+  competencia({ id: 2, codigo: 'COMP-0002', nombre: 'Gestión de proyectos', tipo: 'Especifica' }),
+  competencia({ id: 3, codigo: 'COMP-0003', nombre: 'Adaptabilidad', tipo: 'Cardinal', estado: 'Inactivo' }),
 ]
 
 beforeEach(() => {
   vi.mocked(listarCompetencias).mockReset().mockResolvedValue(pagina(items))
   vi.mocked(obtenerCompetencia).mockReset().mockResolvedValue(detalle())
+  vi.mocked(listarEscalas).mockReset().mockResolvedValue(escalas())
   comoRol('user')
 })
 
@@ -45,167 +47,168 @@ describe('CompetenciasPage (consulta)', () => {
     expect(screen.getByRole('status', { name: 'Cargando competencias…' })).toBeInTheDocument()
   })
 
-  it('lista código, nombre, descripción, tipo y estado sin mostrar grados', async () => {
+  it('muestra el título, el subtítulo y las tarjetas con código, nombre y tipo, sin descripción ni badge de estado', async () => {
     renderPage()
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Competencias' })).toBeInTheDocument()
+    expect(screen.getByText('Competencias con sus comportamientos y preguntas.')).toBeInTheDocument()
+    expect(await screen.findByText('COMP-0001')).toBeInTheDocument()
+    expect(screen.getByText('Liderazgo')).toBeInTheDocument()
+    const tarjetas = screen.getAllByRole('article')
+    expect(within(tarjetas[0]).getByText('Cardinal')).toBeInTheDocument()
+    expect(within(tarjetas[1]).getByText('Específica')).toBeInTheDocument()
+    expect(screen.queryByText('Guiar e inspirar a otras personas.')).not.toBeInTheDocument()
+    expect(screen.queryByText('Activo')).not.toBeInTheDocument()
+    expect(screen.queryByText('Inactivo')).not.toBeInTheDocument()
+  })
+
+  it('atenúa el nombre de una competencia inactiva', async () => {
+    renderPage()
+
+    expect(await screen.findByText('Adaptabilidad')).toHaveClass('text-muted')
+    expect(screen.getByText('Liderazgo')).not.toHaveClass('text-muted')
+  })
+
+  it('indica cuántas competencias se encontraron', async () => {
+    renderPage()
+    expect(await screen.findByText('3 competencias')).toBeInTheDocument()
+
+    vi.mocked(listarCompetencias).mockResolvedValue(pagina([items[0]]))
+    renderPage('/competencias?q=lider')
+    expect(await screen.findByText('1 competencia')).toBeInTheDocument()
+  })
+
+  it('no ofrece filtro de estado, ni acciones de gestión al usuario sin rol de administrador', async () => {
+    renderPage()
+    await screen.findByText('Liderazgo')
+
+    expect(screen.queryByLabelText(/estado/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Nueva competencia' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Desactivar|^Activar/ })).not.toBeInTheDocument()
+  })
+
+  it('el administrador ve Nueva competencia y Activar / Desactivar con el nombre de la competencia', async () => {
+    comoRol('admin')
+    renderPage()
+    await screen.findByText('Liderazgo')
+
+    expect(screen.getByRole('button', { name: 'Nueva competencia' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Desactivar Liderazgo' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Activar Adaptabilidad' })).toBeInTheDocument()
+  })
+
+  it('pide al servidor la búsqueda, el tipo y la página de la URL, con 12 por página', async () => {
+    renderPage('/competencias?q=lider&tipo=Cardinal&page=2')
+
+    await waitFor(() =>
+      expect(listarCompetencias).toHaveBeenCalledWith({ q: 'lider', tipo: 'Cardinal', page: 2, per_page: 12 }),
+    )
+  })
+
+  it('filtra mientras se escribe y guarda la búsqueda en la URL', async () => {
+    const usuario = userEvent.setup()
+    const { getByTestId } = renderPage()
+    await screen.findByText('Liderazgo')
+
+    await usuario.type(screen.getByRole('searchbox', { name: 'Buscar competencia' }), 'lidér')
+
+    await waitFor(() => expect(getByTestId('ubicacion')).toHaveTextContent('/competencias?q=lid%C3%A9r'))
+    expect(screen.getByRole('searchbox', { name: 'Buscar competencia' })).toHaveAttribute('placeholder', 'Buscar por nombre')
+  })
+
+  it('muestra "Limpiar filtros" solo cuando hay un filtro aplicado y lo quita al pulsarlo', async () => {
+    const usuario = userEvent.setup()
+    const { getByTestId } = renderPage()
+    await screen.findByText('Liderazgo')
+    expect(screen.queryByRole('button', { name: 'Limpiar filtros' })).not.toBeInTheDocument()
+
+    await usuario.selectOptions(screen.getByLabelText('Tipo'), 'Especifica')
+    await waitFor(() => expect(getByTestId('ubicacion')).toHaveTextContent('tipo=Especifica'))
+
+    await usuario.click(await screen.findByRole('button', { name: 'Limpiar filtros' }))
+    await waitFor(() => expect(getByTestId('ubicacion')).toHaveTextContent(/^\/competencias$/))
+    expect(screen.queryByRole('button', { name: 'Limpiar filtros' })).not.toBeInTheDocument()
+  })
+
+  it('con la búsqueda sin resultados muestra el mensaje y "Limpiar filtros"', async () => {
+    vi.mocked(listarCompetencias).mockResolvedValue(pagina([]))
+    renderPage('/competencias?q=zzz')
+
+    expect(await screen.findByText(/Ninguna competencia coincide con los filtros\./)).toBeInTheDocument()
+    // Uno en la barra de filtros (hay un filtro aplicado) y otro junto al mensaje.
+    expect(screen.getAllByRole('button', { name: 'Limpiar filtros' })).toHaveLength(2)
+  })
+
+  it('sin competencias y sin filtros muestra el estado vacío', async () => {
+    vi.mocked(listarCompetencias).mockResolvedValue(pagina([]))
+    renderPage()
+
+    expect(await screen.findByText('Aún no hay competencias')).toBeInTheDocument()
+  })
+
+  it('muestra el error con "Reintentar" y vuelve a pedir el listado', async () => {
+    const usuario = userEvent.setup()
+    vi.mocked(listarCompetencias).mockRejectedValueOnce(new Error('falló'))
+    renderPage()
+
+    expect(await screen.findByText('No se pudieron cargar las competencias')).toBeInTheDocument()
+    await usuario.click(screen.getByRole('button', { name: 'Reintentar' }))
 
     expect(await screen.findByText('Liderazgo')).toBeInTheDocument()
-    const tabla = within(screen.getByRole('table', { name: 'Listado de competencias' }))
-    expect(tabla.getByText('COMP-0001')).toBeInTheDocument()
-    expect(tabla.getByText('Planificar proyectos.')).toBeInTheDocument()
-    expect(tabla.getByText('Cardinal')).toBeInTheDocument()
-    expect(tabla.getByText('Específica')).toBeInTheDocument()
-    expect(tabla.getAllByText('Activo')).toHaveLength(2)
-    expect(screen.queryByText('Grado A')).not.toBeInTheDocument()
-    expect(screen.getByText('Mostrando 1–2 de 2')).toBeInTheDocument()
   })
 
-  it('muestra el estado Inactivo como etiqueta', async () => {
-    vi.mocked(listarCompetencias).mockResolvedValue(pagina([competencia({ id: 3, nombre: 'Retirada', estado: 'Inactivo' })]))
-    comoRol('admin')
-    renderPage('/competencias?estado=Inactivo')
+  it('pagina cuando hay más de una página', async () => {
+    const usuario = userEvent.setup()
+    vi.mocked(listarCompetencias).mockResolvedValue(pagina(items, { total: 14, last_page: 2, to: 12 }))
+    const { getByTestId } = renderPage()
 
-    expect(await screen.findByText('Retirada')).toBeInTheDocument()
-    expect(within(screen.getByRole('table')).getByText('Inactivo')).toBeInTheDocument()
-  })
-
-  it('al Usuario no le ofrece crear, editar, activar ni desactivar ni el filtro de estado', async () => {
-    renderPage()
     await screen.findByText('Liderazgo')
+    expect(screen.getByText('14 competencias')).toBeInTheDocument()
+    await usuario.click(screen.getByRole('button', { name: 'Siguiente' }))
 
-    expect(screen.queryByRole('link', { name: 'Nueva competencia' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /^Editar/ })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /^(Activar|Desactivar)/ })).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Filtrar por estado')).not.toBeInTheDocument()
+    await waitFor(() => expect(getByTestId('ubicacion')).toHaveTextContent('page=2'))
   })
+})
 
-  it('al Usuario no le envía el estado ni siquiera si la URL lo trae', async () => {
-    renderPage('/competencias?estado=Todos')
-    await screen.findByText('Liderazgo')
-
-    expect(listarCompetencias).toHaveBeenCalledWith({ q: '', tipo: undefined, estado: undefined, page: 1 })
-  })
-
-  it('al Administrador le ofrece crear, editar, desactivar y el filtro de estado', async () => {
-    comoRol('admin')
-    renderPage()
-    await screen.findByText('Liderazgo')
-
-    expect(screen.getByRole('link', { name: 'Nueva competencia' })).toHaveAttribute('href', '/competencias/nueva')
-    expect(screen.getByRole('link', { name: 'Editar Liderazgo' })).toHaveAttribute('href', '/competencias/1/editar')
-    expect(screen.getByRole('button', { name: 'Desactivar Gestión de proyectos' })).toHaveTextContent('Desactivar')
-    expect(screen.getByLabelText('Filtrar por estado')).toHaveValue('Activo')
-  })
-
-  it('el botón dice Activar en una competencia inactiva', async () => {
-    vi.mocked(listarCompetencias).mockResolvedValue(pagina([competencia({ id: 3, nombre: 'Retirada', estado: 'Inactivo' })]))
-    comoRol('admin')
-    renderPage('/competencias?estado=Inactivo')
-
-    expect(await screen.findByRole('button', { name: 'Activar Retirada' })).toHaveTextContent('Activar')
-  })
-
-  it('el Administrador envía el estado y lo guarda en la URL (Activo no se escribe)', async () => {
-    comoRol('admin')
-    renderPage()
-    await screen.findByText('Liderazgo')
-    expect(listarCompetencias).toHaveBeenLastCalledWith({ q: '', tipo: undefined, estado: 'Activo', page: 1 })
-
-    await userEvent.setup().selectOptions(screen.getByLabelText('Filtrar por estado'), 'Todos')
-
-    await waitFor(() => expect(screen.getByTestId('ubicacion')).toHaveTextContent('estado=Todos'))
-    await waitFor(() => expect(listarCompetencias).toHaveBeenLastCalledWith({ q: '', tipo: undefined, estado: 'Todos', page: 1 }))
-
-    await userEvent.setup().selectOptions(screen.getByLabelText('Filtrar por estado'), 'Activo')
-    await waitFor(() => expect(screen.getByTestId('ubicacion')).toHaveTextContent(/^\/competencias$/))
-  })
-
-  it('muestra el estado vacío sin filtros', async () => {
-    vi.mocked(listarCompetencias).mockResolvedValue(pagina([]))
+describe('CompetenciasPage (detalle desplegable)', () => {
+  it('despliega la tarjeta en la pestaña Competencia con la descripción y los grados', async () => {
+    const usuario = userEvent.setup()
     renderPage()
 
-    expect(await screen.findByRole('heading', { name: 'Aún no hay competencias' })).toBeInTheDocument()
-  })
+    const abrir = await screen.findByRole('button', { name: 'Ver información adicional de Liderazgo' })
+    expect(abrir).toHaveAttribute('aria-expanded', 'false')
+    await usuario.click(abrir)
 
-  it('al Administrador sin competencias activas le indica que puede ver las inactivas', async () => {
-    vi.mocked(listarCompetencias).mockResolvedValue(pagina([]))
-    comoRol('admin')
-    renderPage()
-
-    expect(await screen.findByRole('heading', { name: 'No hay competencias activas' })).toBeInTheDocument()
-    expect(screen.getByText(/Cambia el filtro de estado/)).toBeInTheDocument()
-  })
-
-  it('muestra "No hay resultados" con filtros y permite limpiarlos', async () => {
-    vi.mocked(listarCompetencias).mockResolvedValue(pagina([]))
-    renderPage('/competencias?q=zzz&tipo=Cardinal')
-
-    expect(await screen.findByRole('heading', { name: 'No hay resultados' })).toBeInTheDocument()
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Limpiar filtros' }))
-
-    await waitFor(() => expect(screen.getByTestId('ubicacion')).toHaveTextContent(/^\/competencias$/))
-    expect(screen.getByLabelText('Buscar competencia por nombre')).toHaveValue('')
-  })
-
-  it('muestra el error con "Reintentar" y vuelve a cargar', async () => {
-    vi.mocked(listarCompetencias).mockRejectedValueOnce(httpError(500)).mockResolvedValueOnce(pagina(items))
-    renderPage()
-
-    expect(await screen.findByText('No se pudo cargar las competencias')).toBeInTheDocument()
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Reintentar' }))
-
-    expect(await screen.findByText('Liderazgo')).toBeInTheDocument()
-  })
-
-  it('lee búsqueda, filtro y página de la URL', async () => {
-    renderPage('/competencias?q=lid&tipo=Cardinal&page=2')
-    await screen.findByText('Liderazgo')
-
-    expect(listarCompetencias).toHaveBeenCalledWith({ q: 'lid', tipo: 'Cardinal', estado: undefined, page: 2 })
-    expect(screen.getByLabelText('Buscar competencia por nombre')).toHaveValue('lid')
-    expect(screen.getByLabelText('Filtrar por tipo')).toHaveValue('Cardinal')
-  })
-
-  it('aplica la búsqueda a la URL tras una breve pausa y vuelve a la página 1', async () => {
-    renderPage('/competencias?page=3')
-    await screen.findByText('Liderazgo')
-
-    await userEvent.setup().type(screen.getByLabelText('Buscar competencia por nombre'), 'trab')
-
-    await waitFor(() => expect(screen.getByTestId('ubicacion')).toHaveTextContent('/competencias?q=trab'))
-    await waitFor(() => expect(listarCompetencias).toHaveBeenLastCalledWith({ q: 'trab', tipo: undefined, estado: undefined, page: 1 }))
-  })
-
-  it('aplica el filtro por tipo a la URL', async () => {
-    renderPage()
-    await screen.findByText('Liderazgo')
-
-    await userEvent.setup().selectOptions(screen.getByLabelText('Filtrar por tipo'), 'Especifica')
-
-    await waitFor(() => expect(screen.getByTestId('ubicacion')).toHaveTextContent('tipo=Especifica'))
-  })
-
-  it('pagina y conserva la página en la URL', async () => {
-    vi.mocked(listarCompetencias).mockResolvedValue(pagina(items, { total: 12, last_page: 2, to: 10 }))
-    renderPage()
-    await screen.findByText('Liderazgo')
-
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Siguiente' }))
-
-    await waitFor(() => expect(screen.getByTestId('ubicacion')).toHaveTextContent('page=2'))
-  })
-
-  it('despliega y oculta los cuatro grados con "Visualizar grados"', async () => {
-    renderPage()
-    await screen.findByText('Liderazgo')
-    const user = userEvent.setup()
-
-    await user.click(screen.getByRole('button', { name: /Visualizar grados.*Liderazgo/ }))
-
-    expect(await screen.findByText('Descripción del grado A.')).toBeInTheDocument()
-    expect(screen.getByText('Descripción del grado D.')).toBeInTheDocument()
+    expect(await screen.findByText('Guiar e inspirar a otras personas.')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Competencia', selected: true })).toBeInTheDocument()
+    expect(screen.getByText('Descripción del grado A.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Ocultar información adicional de Liderazgo' })).toHaveAttribute('aria-expanded', 'true')
     expect(obtenerCompetencia).toHaveBeenCalledWith(1)
+  })
 
-    await user.click(screen.getByRole('button', { name: /Ocultar grados.*Liderazgo/ }))
-    expect(screen.queryByText('Descripción del grado A.')).not.toBeInTheDocument()
+  it('permite tener varias tarjetas abiertas, cada una con su pestaña', async () => {
+    const usuario = userEvent.setup()
+    renderPage()
+
+    await usuario.click(await screen.findByRole('button', { name: 'Ver información adicional de Liderazgo' }))
+    await usuario.click(await screen.findByRole('button', { name: 'Ver información adicional de Gestión de proyectos' }))
+    await waitFor(() => expect(screen.getAllByRole('tablist')).toHaveLength(2))
+
+    const primera = within(screen.getByRole('tablist', { name: 'Información de Liderazgo' }))
+    await usuario.click(primera.getByRole('tab', { name: 'Preguntas' }))
+
+    expect(primera.getByRole('tab', { name: 'Preguntas', selected: true })).toBeInTheDocument()
+    expect(within(screen.getByRole('tablist', { name: 'Información de Gestión de proyectos' })).getByRole('tab', { name: 'Competencia', selected: true })).toBeInTheDocument()
+  })
+
+  it('oculta el detalle al volver a pulsar la tarjeta', async () => {
+    const usuario = userEvent.setup()
+    renderPage()
+
+    await usuario.click(await screen.findByRole('button', { name: 'Ver información adicional de Liderazgo' }))
+    await screen.findByRole('tablist')
+    await usuario.click(screen.getByRole('button', { name: 'Ocultar información adicional de Liderazgo' }))
+
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
   })
 })

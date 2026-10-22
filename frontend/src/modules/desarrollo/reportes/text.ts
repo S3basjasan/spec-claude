@@ -1,0 +1,361 @@
+import type { EstadoActividad, Hito, NivelCompetencia, TipoFormacion } from './api'
+import { numero } from './formato'
+
+const nombresDeTipo: Record<TipoFormacion, string> = {
+  Presencial: 'Presencial',
+  Virtual: 'Virtual',
+  ELearning: 'E-learning',
+  OJT: 'OJT',
+  Codesarrollo: 'Codesarrollo',
+  Mentoring: 'Mentoring',
+  Microlearning: 'Micro-learning',
+}
+
+const nombresDeEstado: Record<EstadoActividad, string> = {
+  Programada: 'Programada',
+  EnCurso: 'En curso',
+  Finalizada: 'Finalizada',
+  Cancelada: 'Cancelada',
+}
+
+const nombresDeFuente: Record<string, string> = {
+  plan: 'Plan de Formación',
+  actividades: 'Actividades formativas',
+  microlearning: 'Micro-learning',
+  dnf: 'Detección de necesidades formativas',
+  personal: 'Gestión de Personal',
+}
+
+const nombresDeNivel: Record<NivelCompetencia, string> = { A: 'A', B: 'B', C: 'C', D: 'D' }
+
+/** Mensajes por código de error de negocio del backend. */
+const erroresPorCodigo: Record<string, string> = {
+  periodo_invalido: 'El rango de fechas no es válido: la fecha inicial no puede ser posterior a la final.',
+  actividad_no_encontrada: 'La actividad no existe.',
+  accion_no_encontrada: 'La acción no existe.',
+  actividad_no_finalizada: 'Solo se puede responder cuando la actividad ha finalizado.',
+  sin_asistencia: 'Solo quienes asistieron a la actividad pueden responder.',
+  ventana_cerrada: 'El plazo para responder ya terminó.',
+  ya_respondida: 'Ya respondiste esto: las respuestas no se pueden modificar.',
+  hito_invalido: 'El hito debe ser 30, 60 o 90 días.',
+  hito_no_vencido: 'Este seguimiento todavía no está disponible.',
+  accion_no_finalizada: 'La evaluación de impacto solo se puede registrar para una acción finalizada.',
+  formato_invalido: 'El formato de exportación no es válido.',
+  exportacion_no_disponible: 'No fue posible generar el archivo. Inténtalo de nuevo más tarde.',
+}
+
+/** Textos de los Reportes de evaluación de resultados (todo texto visible va aquí, en español). */
+export const reportesText = {
+  navLabel: 'Reportes',
+  loading: 'Cargando reportes',
+  sinDato: '—',
+  noDisponible: 'No disponible',
+  nombreDeTipo: (tipo: TipoFormacion | null): string => (tipo === null ? '—' : nombresDeTipo[tipo]),
+  nombreDeEstado: (estado: EstadoActividad): string => nombresDeEstado[estado],
+  nombreDeFuente: (fuente: string): string => nombresDeFuente[fuente] ?? fuente,
+  nivel: (nivel: NivelCompetencia): string => nombresDeNivel[nivel],
+  mensajeDeError: (codigo: string | undefined, porDefecto: string): string => (codigo !== undefined ? (erroresPorCodigo[codigo] ?? porDefecto) : porDefecto),
+  noPermission: {
+    title: 'No tienes permisos para ver esta pantalla',
+    description: 'Si crees que es un error, contacta a tu administrador.',
+    back: 'Volver al inicio',
+  },
+  error: {
+    title: 'No se pudieron cargar los datos',
+    description: 'Revisa tu conexión e inténtalo de nuevo.',
+    retry: 'Reintentar',
+  },
+  fuentesCaidas: {
+    titulo: (fuentes: string[]) => `Algunos datos no están disponibles: ${fuentes.map((f) => nombresDeFuente[f] ?? f).join(', ')}.`,
+    descripcion: 'Los indicadores que dependen de ellos se muestran como «No disponible»; el resto se calcula con normalidad.',
+  },
+
+  admin: {
+    eyebrow: 'Desarrollo y Formación',
+    title: 'Reportes de evaluación de resultados',
+    subtitle: (desde: string, hasta: string) => `Validación e impacto de la formación · período del ${desde} al ${hasta}`,
+    vistas: 'Vistas de los reportes',
+    pestanas: {
+      indicadores: 'Indicadores',
+      detalle: 'Detalle',
+      seguimiento: 'Impacto 30-60-90',
+      impactos: 'Evaluación de impacto',
+    },
+    exportarExcel: 'Exportar Excel',
+    exportarPdf: 'Exportar PDF',
+    exportando: 'Preparando el archivo…',
+    exportado: (nombre: string) => `Se descargó ${nombre}.`,
+    exportError: 'No se pudo exportar el archivo. Inténtalo de nuevo.',
+    cerrarAviso: 'Cerrar aviso',
+    sinComparacion:
+      'Un indicador sin comparación es solo un dato. Cada valor se compara con el período anterior equivalente (igual duración, inmediatamente previo), con los mismos filtros (Alles, H.32, p. 171–172).',
+    niveles:
+      'Validación: cumplimiento de objetivos de aprendizaje y satisfacción, subjetiva y de corto plazo (Navarro, Paso 8). Impacto: brechas cerradas, aplicación a 30-60-90 días y retorno de la inversión (Bassett-Jones, cap. 10).',
+  },
+
+  filtros: {
+    label: 'Filtros de los reportes',
+    desde: 'Desde',
+    hasta: 'Hasta',
+    departamento: 'Departamento',
+    tipo: 'Tipo de formación',
+    plan: 'Plan',
+    todos: 'Todos',
+    todas: 'Todos los planes',
+    limpiar: 'Limpiar filtros',
+    rangoInvalido: 'La fecha inicial no puede ser posterior a la final.',
+  },
+
+  indicadores: {
+    titulo: 'Indicadores del período',
+    gestionTitulo: 'Indicadores de gestión',
+    porDefectoSinDatos: 'Sin datos en el período.',
+    sinComparacion: 'Sin datos del período anterior.',
+    anterior: (valor: string) => `Período anterior: ${valor}`,
+    variacion: (diferencia: string, pct: string) => `${diferencia} (${pct})`,
+    nombres: {
+      plan_cumplido: '% Plan cumplido',
+      total_horas: 'Total horas',
+      satisfaccion: 'Satisfacción promedio',
+      brechas_cerradas: 'Brechas cerradas',
+      roi_estimado: 'ROI estimado',
+      inversion_por_colaborador: 'Inversión por colaborador formado',
+      horas_por_colaborador: 'Horas por colaborador formado',
+      costo_por_hora: 'Costo por hora',
+    },
+    notas: {
+      planCumplido: (finalizadas: number, validas: number) => `${finalizadas} de ${validas} acciones finalizadas`,
+      sinPlan: 'Sin acciones de planes en ejecución o cerrados en el período.',
+      totalHoras: (actividades: string, micro: string) => `${actividades} en actividades · ${micro} en micro-learning`,
+      sinHoras: 'Sin horas registradas en el período.',
+      satisfaccion: (respuestas: number) => `${respuestas} ${respuestas === 1 ? 'respuesta' : 'respuestas'} (escala de 1 a 5)`,
+      sinSatisfaccion: 'Sin encuestas respondidas.',
+      brechas: (cerradas: number, detectadas: number) => `${cerradas} cerradas · ${detectadas} detectadas en el período`,
+      sinBrechas: 'Sin diagnósticos registrados.',
+      roi: (acciones: number) => `Basado en ${acciones} ${acciones === 1 ? 'acción evaluada' : 'acciones evaluadas'}`,
+      sinRoi: 'Sin evaluaciones de impacto registradas.',
+      gestion: 'Calculado con las acciones finalizadas.',
+      sinGestion: 'Sin acciones finalizadas con asistentes.',
+    },
+  },
+
+  graficos: {
+    titulo: 'Gráficos',
+    horasDepartamento: { titulo: 'Horas de formación por departamento', descripcion: 'Horas-persona de actividades y de micro-learning', vacio: 'Sin horas con estos filtros.', actividades: 'Actividades', micro: 'Micro-learning', unidad: 'h' },
+    distribucion: { titulo: 'Distribución por tipo de formación', descripcion: 'Porcentaje de las horas del período', vacio: 'Sin horas con estos filtros.', tipo: 'Tipo', horas: 'Horas', pct: '%' },
+    brechas: { titulo: 'Evolución de brechas', descripcion: 'Brechas activas al cierre de cada mes y brechas cerradas en el mes', activas: 'Activas', cerradas: 'Cerradas en el mes', vacio: 'Sin diagnósticos en el período.', mes: 'Mes' },
+    aria: {
+      barras: (n: number) => `Gráfico de barras con las horas de ${n} departamentos`,
+      pastel: 'Gráfico circular con la distribución de horas por tipo de formación',
+      linea: (n: number) => `Gráfico de líneas con ${n} meses de brechas activas y cerradas`,
+    },
+    noDisponible: 'Este gráfico depende de datos que no están disponibles ahora.',
+  },
+
+  detalle: {
+    titulo: 'Detalle por actividad',
+    buscar: 'Buscar por nombre o código',
+    tableLabel: 'Detalle de actividades formativas del período',
+    resumen: (mostradas: number, total: number) => `${mostradas} de ${total} actividades`,
+    vacio: { titulo: 'Ninguna actividad coincide', descripcion: 'No hay actividades En curso o Finalizadas en el período con estos filtros.' },
+    columnas: {
+      codigo: 'Código',
+      nombre: 'Actividad',
+      tipo: 'Tipo',
+      fechas: 'Fechas',
+      departamento: 'Departamento',
+      asistentes: 'Asistentes / inscritos',
+      horas: 'Horas-persona',
+      costo: 'Costo',
+      calificacion: 'Calificación',
+      satisfaccion: 'Satisfacción',
+      acciones: 'Comentarios',
+    },
+    verComentarios: 'Ver comentarios',
+    verComentariosDe: (nombre: string) => `Ver comentarios de satisfacción de ${nombre}`,
+    nota: 'Con un departamento elegido, asistentes, horas y satisfacción se recalculan con sus participantes y el costo se prorratea por su proporción de asistentes.',
+  },
+
+  comentarios: {
+    titulo: (nombre: string) => `Comentarios de satisfacción: ${nombre}`,
+    descripcion: 'Los comentarios son anónimos: no se muestra el nombre de quien los escribió.',
+    promedio: 'Promedio',
+    respuestas: (n: number) => `${n} ${n === 1 ? 'respuesta' : 'respuestas'}`,
+    calificacion: (n: number) => `${n} de 5`,
+    vacio: 'Aún no hay comentarios para esta actividad.',
+    vacioDescripcion: 'Cuando los participantes respondan la encuesta con un comentario, aparecerá aquí sin su nombre.',
+    cerrar: 'Cerrar',
+  },
+
+  seguimiento: {
+    titulo: 'Impacto a 30, 60 y 90 días',
+    descripcion:
+      'Mide si lo aprendido se aplica en el trabajo y si el entorno lo apoya, para detectar el problema de reingreso: quien vuelve motivado puede perder esa motivación en un equipo que no la comparte (Bassett-Jones, cap. 10).',
+    tableLabel: 'Seguimiento a 30, 60 y 90 días por actividad',
+    vacio: { titulo: 'Sin seguimientos', descripcion: 'No hay actividades finalizadas en el período con estos filtros.' },
+    columnas: { actividad: 'Actividad', elegibles: 'Elegibles', hito: (h: Hito) => `${h} días`, reingreso: 'Reingreso' },
+    celda: { respuestas: 'Respuestas', aplicacion: 'Aplicación', apoyo: 'Apoyo', tasa: 'Tasa' },
+    celdaAria: (h: Hito, respuestas: number, tasa: string, aplicacion: string, apoyo: string) =>
+      `A ${h} días: ${respuestas} respuestas, tasa de respuesta ${tasa}, aplicación ${aplicacion}, apoyo ${apoyo}`,
+    sinRespuestas: 'Sin respuestas',
+    alerta: 'Alerta de reingreso',
+    sinAlerta: 'Sin alerta',
+    alertaTitulo: (n: number) => (n === 1 ? 'Hay 1 actividad con alerta de reingreso.' : `Hay ${n} actividades con alerta de reingreso.`),
+    alertaTexto: 'El promedio de aplicación cae al menos 1 punto respecto del hito anterior, con al menos 3 respuestas en ambos hitos.',
+    nota: 'Cada hito se responde desde su vencimiento y durante 15 días. La mejor mitigación es capacitar a equipos completos en la misma experiencia.',
+  },
+
+  impactos: {
+    titulo: 'Evaluación de impacto por acción',
+    descripcion: 'Registra el indicador de negocio medido antes y después, y el beneficio estimado en dólares (USD), para calcular el ROI de cada acción finalizada.',
+    tableLabel: 'Acciones finalizadas y su evaluación de impacto',
+    filtros: { plan: 'Plan', evaluado: 'Evaluación', todas: 'Todas', con: 'Con evaluación', sin: 'Sin evaluación', todosLosPlanes: 'Todos los planes' },
+    vacio: { titulo: 'Sin acciones finalizadas', descripcion: 'No hay acciones finalizadas con estos filtros.' },
+    columnas: { plan: 'Plan', accion: 'Acción', tipo: 'Tipo', fin: 'Fin', costo: 'Costo', estado: 'Evaluación', roi: 'ROI', acciones: 'Acciones' },
+    conEvaluacion: 'Con evaluación',
+    sinEvaluacion: 'Sin evaluación',
+    registrar: 'Registrar impacto',
+    editar: 'Editar impacto',
+    registrarDe: (nombre: string) => `Registrar impacto de ${nombre}`,
+    editarDe: (nombre: string) => `Editar impacto de ${nombre}`,
+    roiNoAplica: 'No aplica',
+    guardado: 'Se guardó la evaluación de impacto.',
+  },
+
+  formularioImpacto: {
+    titulo: (nombre: string) => `Evaluación de impacto: ${nombre}`,
+    descripcion: 'Todos los campos son obligatorios. El beneficio estimado es una estimación del responsable del área, en dólares (USD).',
+    campos: {
+      indicador: 'Indicador de negocio',
+      unidad: 'Unidad',
+      valorAntes: 'Valor antes',
+      valorDespues: 'Valor después',
+      beneficio: 'Beneficio estimado (USD)',
+      justificacion: 'Justificación',
+    },
+    hints: { indicador: 'Por ejemplo: tiempo de cierre contable', unidad: 'Por ejemplo: días', justificacion: 'Explica cómo la formación contribuyó al cambio.' },
+    roi: 'ROI calculado de la acción',
+    roiDetalle: (beneficio: string, costo: string) => `(${beneficio} − ${costo}) / ${costo} × 100`,
+    costoDeLaAccion: (costo: string) => `Costo de la acción: ${costo}`,
+    auditoria: (creado: string, modificado: string) => `Creada por ${creado} · última modificación de ${modificado}`,
+    guardar: 'Guardar',
+    cancelar: 'Cancelar',
+    cerrar: 'Cerrar',
+    errorGeneral: 'No se pudo guardar la evaluación. Inténtalo de nuevo.',
+    errores: {
+      indicadorRequerido: 'El indicador de negocio es obligatorio.',
+      indicadorLargo: 'El indicador no puede superar los 150 caracteres.',
+      unidadRequerida: 'La unidad es obligatoria.',
+      unidadLarga: 'La unidad no puede superar los 50 caracteres.',
+      numeroInvalido: 'Ingresa un número válido.',
+      beneficioNegativo: 'El beneficio estimado no puede ser negativo.',
+      justificacionRequerida: 'La justificación es obligatoria.',
+      justificacionLarga: 'La justificación no puede superar los 2 000 caracteres.',
+    },
+  },
+
+  exportar: { grupo: 'Exportación' },
+
+  colaborador: {
+    eyebrow: 'Desarrollo y Formación',
+    title: 'Mi progreso',
+    subtitle: 'Lo que has aprendido y lo que sigue en tu plan de desarrollo.',
+    tarjetas: {
+      formaciones: { etiqueta: 'Formaciones completadas', nota: 'Actividades a las que asististe y micro-contenidos completados' },
+      competencias: { etiqueta: 'Competencias adquiridas', nota: 'Brechas que ya cerraste' },
+      horas: { etiqueta: 'Horas acumuladas', nota: 'Actividades con asistencia y micro-contenidos' },
+      certificados: { etiqueta: 'Certificados', nota: 'De micro-contenidos completados' },
+    },
+    evolucion: {
+      titulo: 'Evolución de mis competencias',
+      descripcion: 'Nivel en tu primera evaluación frente a tu nivel más reciente. La marca es el nivel que pide tu puesto.',
+      primera: 'Primera evaluación',
+      actual: 'Más reciente',
+      requerido: 'Nivel requerido',
+      soloActual: 'Solo tienes una evaluación de esta competencia',
+      vacio: 'Aún no tienes diagnósticos para mostrar tu evolución.',
+      texto: (primera: NivelCompetencia | null, actual: NivelCompetencia, requerido: NivelCompetencia) =>
+        primera === null ? `Nivel actual ${actual} · requerido ${requerido}` : `${primera} → ${actual} · requerido ${requerido}`,
+      aria: (n: number) => `Gráfico de barras con la evolución de ${n} competencias`,
+    },
+    certificados: {
+      titulo: 'Mis certificados',
+      vacio: 'Aún no tienes certificados. Completa un micro-contenido para obtener el primero.',
+      descargar: 'Descargar',
+      descargarDe: (titulo: string) => `Descargar certificado: ${titulo}`,
+      descargando: 'Descargando…',
+      error: 'No se pudo descargar el certificado. Inténtalo de nuevo.',
+      detalle: (fechaTexto: string) => `Completado el ${fechaTexto}`,
+    },
+    plan: {
+      titulo: 'Mi plan de desarrollo',
+      descripcion: 'Tus próximas acciones formativas, en orden de fecha.',
+      vacio: 'No tienes acciones próximas en tu plan.',
+      cierraBrecha: (competencias: string) => `Cierra brecha en: ${competencias}`,
+      sinCompetencias: 'Sin competencias asociadas',
+    },
+    pendientes: {
+      titulo: 'Pendientes por responder',
+      descripcion: 'Tu opinión y tu seguimiento ayudan a mejorar la formación. Cada respuesta se envía una sola vez y no se puede modificar.',
+      vacio: 'No tienes encuestas ni seguimientos pendientes.',
+      encuesta: 'Encuesta de satisfacción',
+      seguimiento: (h: Hito) => `Seguimiento a ${h} días`,
+      vence: (fechaTexto: string) => `Responde hasta el ${fechaTexto}`,
+      responder: 'Responder',
+      responderDe: (titulo: string, nombre: string) => `Responder ${titulo} de ${nombre}`,
+      enviada: 'Gracias: tu respuesta quedó registrada.',
+    },
+    vacio: {
+      titulo: 'Aún no hay datos para mostrar',
+      descripcion: 'Cuando asistas a actividades o completes micro-contenidos, aquí verás tu avance.',
+    },
+  },
+
+  formularioEncuesta: {
+    titulo: (nombre: string) => `Encuesta de satisfacción: ${nombre}`,
+    descripcion: 'Cuéntanos qué te pareció la actividad. Se responde una sola vez y no se puede modificar.',
+    calificacion: 'Calificación general',
+    calificacionHint: '1 es muy insatisfecho y 5 es muy satisfecho',
+    opcion: (n: number) => `${n} de 5`,
+    comentario: 'Comentario (opcional)',
+    comentarioHint: 'Tu comentario es anónimo para quien administra la formación.',
+    enviar: 'Enviar',
+    cancelar: 'Cancelar',
+    cerrar: 'Cerrar',
+    confirmar: {
+      titulo: '¿Enviar la encuesta?',
+      descripcion: 'Una vez enviada no podrás modificarla.',
+      confirmar: 'Sí, enviar',
+      volver: 'Volver',
+    },
+    errores: { calificacionRequerida: 'Elige una calificación de 1 a 5.', comentarioLargo: 'El comentario no puede superar los 1 000 caracteres.' },
+    errorGeneral: 'No se pudo enviar la encuesta. Inténtalo de nuevo.',
+  },
+
+  formularioSeguimiento: {
+    titulo: (nombre: string, h: Hito) => `Seguimiento a ${h} días: ${nombre}`,
+    descripcion: 'Dos preguntas breves sobre cómo aplicas lo aprendido. Se responde una sola vez y no se puede modificar.',
+    aplicacion: 'Aplicación de lo aprendido en el trabajo',
+    aplicacionHint: '1 es nada y 5 es totalmente',
+    apoyo: 'Apoyo del entorno para aplicarlo',
+    apoyoHint: '1 es sin apoyo y 5 es apoyo total',
+    comentario: 'Comentario (opcional)',
+    enviar: 'Enviar',
+    cancelar: 'Cancelar',
+    cerrar: 'Cerrar',
+    confirmar: {
+      titulo: '¿Enviar el seguimiento?',
+      descripcion: 'Una vez enviado no podrás modificarlo.',
+      confirmar: 'Sí, enviar',
+      volver: 'Volver',
+    },
+    errores: {
+      aplicacionRequerida: 'Elige una calificación de aplicación de 1 a 5.',
+      apoyoRequerido: 'Elige una calificación de apoyo de 1 a 5.',
+      comentarioLargo: 'El comentario no puede superar los 1 000 caracteres.',
+    },
+    errorGeneral: 'No se pudo enviar el seguimiento. Inténtalo de nuevo.',
+  },
+
+  numero,
+} as const

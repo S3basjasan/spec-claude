@@ -10,7 +10,10 @@ async function iniciarSesion(page: Page, email: string) {
   await page.getByLabel('Correo electrónico').fill(email)
   await page.getByLabel('Contraseña').fill(PASSWORD)
   await page.getByRole('button', { name: 'Ingresar' }).click()
-  await expect(page.getByRole('heading', { name: 'Inicio' })).toBeVisible()
+  await expect(page).toHaveURL(/\/$/)
+  if (email === 'admin@hrms.test') {
+    await page.getByRole('button', { name: 'Personas', exact: true }).click()
+  }
 }
 
 async function completarPublicacion(page: Page, motivo: string) {

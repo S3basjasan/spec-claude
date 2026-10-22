@@ -1,9 +1,9 @@
 <?php
 
 use App\Modules\Estructura\Presentation\Controllers\CompetenciaController;
-use App\Modules\Estructura\Presentation\Controllers\ComportamientoController;
+use App\Modules\Estructura\Presentation\Controllers\EscalaController;
+use App\Modules\Estructura\Presentation\Controllers\OrganigramaController;
 use App\Modules\Estructura\Presentation\Controllers\PosicionController;
-use App\Modules\Estructura\Presentation\Controllers\PreguntaController;
 use App\Modules\Estructura\Presentation\Controllers\PuestoController;
 use App\Modules\Estructura\Presentation\Controllers\TipoUnidadController;
 use App\Modules\Estructura\Presentation\Controllers\UnidadController;
@@ -15,7 +15,8 @@ Route::prefix('api/estructura')->middleware('api')->group(function () {
     // Route::get('/puestos', [\App\Modules\Estructura\Presentation\Controllers\ExampleController::class, 'index']);
 });
 
-// Diccionario de competencias (feature 001). Prefijo /api/competencias por contrato; ver specs/001-diccionario-competencias/plan.md.
+// Diccionario de competencias unificado (feature 019: competencias, comportamientos y preguntas).
+// Prefijo /api/competencias por contrato; ver specs/019-diccionario-competencias-unificado/plan.md.
 // No existe DELETE: las competencias nunca se eliminan, se activan y desactivan.
 Route::prefix('api/competencias')->middleware('api')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
@@ -26,50 +27,16 @@ Route::prefix('api/competencias')->middleware('api')->group(function () {
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::post('/', [CompetenciaController::class, 'store'])->name('competencias.store');
         Route::put('/{id}', [CompetenciaController::class, 'update'])->whereNumber('id')->name('competencias.update');
+        Route::put('/{id}/comportamientos', [CompetenciaController::class, 'actualizarComportamientos'])->whereNumber('id')->name('competencias.comportamientos');
+        Route::put('/{id}/preguntas', [CompetenciaController::class, 'actualizarPreguntas'])->whereNumber('id')->name('competencias.preguntas');
+        Route::patch('/{id}/escala', [CompetenciaController::class, 'aplicarEscala'])->whereNumber('id')->name('competencias.escala');
         Route::patch('/{id}/estado', [CompetenciaController::class, 'cambiarEstado'])->whereNumber('id')->name('competencias.estado');
     });
 });
 
-// Diccionario de comportamientos (feature 002). Sin DELETE ni cambio de estado: el estado es el de la competencia.
-Route::prefix('api/comportamientos')->middleware('api')->group(function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/', [ComportamientoController::class, 'index'])->name('comportamientos.index');
-    });
-
-    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-        // Antes de `/{competencia_id}` para que el texto no se interprete como identificador.
-        Route::get('/competencias-disponibles', [ComportamientoController::class, 'disponibles'])->name('comportamientos.disponibles');
-    });
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/{competenciaId}', [ComportamientoController::class, 'show'])->whereNumber('competenciaId')->name('comportamientos.show');
-    });
-
-    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-        Route::post('/', [ComportamientoController::class, 'store'])->name('comportamientos.store');
-        Route::put('/{competenciaId}', [ComportamientoController::class, 'update'])->whereNumber('competenciaId')->name('comportamientos.update');
-    });
-});
-
-// Diccionario de preguntas (feature 003). Sin DELETE ni cambio de estado: el estado es el de la competencia.
-Route::prefix('api/preguntas')->middleware('api')->group(function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/', [PreguntaController::class, 'index'])->name('preguntas.index');
-    });
-
-    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-        // Antes de `/{competenciaId}` para que el texto no se interprete como identificador.
-        Route::get('/competencias-disponibles', [PreguntaController::class, 'disponibles'])->name('preguntas.disponibles');
-    });
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/{competenciaId}', [PreguntaController::class, 'show'])->whereNumber('competenciaId')->name('preguntas.show');
-    });
-
-    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-        Route::post('/', [PreguntaController::class, 'store'])->name('preguntas.store');
-        Route::put('/{competenciaId}', [PreguntaController::class, 'update'])->whereNumber('competenciaId')->name('preguntas.update');
-    });
+// Escalas con las que se nombran los grados (Letras, Números y Categorías).
+Route::prefix('api/tipo-grados')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/', [EscalaController::class, 'index'])->name('tipo-grados.index');
 });
 
 // Catálogo de puestos (feature 004). Prefijo /api/puestos por contrato. No existe DELETE: los puestos nunca se
@@ -153,4 +120,10 @@ Route::prefix('api/posiciones')->middleware('api')->group(function () {
         Route::put('/{posicionId}', [PosicionController::class, 'update'])->whereNumber('posicionId')->name('posiciones.update');
         Route::post('/{posicionId}/suprimir', [PosicionController::class, 'suprimir'])->whereNumber('posicionId')->name('posiciones.suprimir');
     });
+});
+
+// Organigrama de posiciones (feature 007). Prefijo /api/organigrama por contrato. Solo lectura: no existen rutas de
+// escritura y cualquier persona autenticada ve lo mismo.
+Route::prefix('api/organigrama')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/', [OrganigramaController::class, 'show'])->name('organigrama.show');
 });

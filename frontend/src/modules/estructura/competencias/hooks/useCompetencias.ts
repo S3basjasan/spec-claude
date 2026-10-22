@@ -1,18 +1,21 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { listarCompetencias, obtenerCompetencia, type FiltroEstado, type TipoCompetencia } from '../api'
+import { listarCompetencias, obtenerCompetencia, type TipoCompetencia } from '../api'
 
 export const competenciasKey = ['competencias'] as const
 
-export function useCompetencias(filtros: { q: string; tipo?: TipoCompetencia; estado?: FiltroEstado; page: number }) {
+/** Competencias por página: múltiplo de dos para la cuadrícula de dos columnas. */
+export const COMPETENCIAS_POR_PAGINA = 12
+
+export function useCompetencias(filtros: { q: string; tipo?: TipoCompetencia; page: number }) {
   return useQuery({
     queryKey: [...competenciasKey, 'lista', filtros],
-    queryFn: () => listarCompetencias(filtros),
+    queryFn: () => listarCompetencias({ ...filtros, per_page: COMPETENCIAS_POR_PAGINA }),
     placeholderData: keepPreviousData,
   })
 }
 
 /**
- * Detalle con los cuatro grados; `enabled` permite pedirlo solo cuando hace falta.
+ * Detalle con grados, comportamientos y preguntas; `enabled` permite pedirlo solo cuando hace falta.
  * `siempreFresca` fuerza una lectura nueva al montar (la edición no debe partir de datos en caché).
  */
 export function useCompetencia(id: number, enabled = true, siempreFresca = false) {

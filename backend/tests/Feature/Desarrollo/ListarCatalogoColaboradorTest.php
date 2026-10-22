@@ -26,7 +26,7 @@ it('cuenta solo recursos disponibles y marca la competencia como cubierta', func
     $area = AreaFormativaModel::factory()->create(['nombre' => 'Habilidades']);
     $disponible = CursoModel::factory()->create();
     $archivado = CursoModel::factory()->archivado()->create();
-    $micro = MicrocontenidoModel::factory()->create();
+    $micro = MicrocontenidoModel::factory()->publicado()->create();
     configurarFormativa($competencia->id, $area->id, [$disponible->id, $archivado->id], [$micro->id]);
     actuarComoColaborador();
 

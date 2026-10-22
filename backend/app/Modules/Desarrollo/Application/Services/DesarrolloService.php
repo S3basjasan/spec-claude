@@ -2,11 +2,16 @@
 
 namespace App\Modules\Desarrollo\Application\Services;
 
+use App\Modules\Desarrollo\Application\UseCases\ConsultarActividadesParaOtrosModulos;
+use App\Modules\Desarrollo\Application\UseCases\ConsultarRutasParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Services\CalculadorDeResumen;
 use App\Modules\Desarrollo\Domain\ValueObjects\FiltroDnf;
 use App\Modules\Desarrollo\Domain\ValueObjects\PrioridadBrecha;
 use App\Modules\Desarrollo\Domain\ValueObjects\RecursoFormativo;
@@ -25,6 +30,11 @@ class DesarrolloService
         private readonly DnfRepositoryInterface $dnf,
         private readonly PlanRepositoryInterface $planes,
         private readonly CrearBorradorDesdeDnf $crearBorrador,
+        private readonly MicrocontenidoRepositoryInterface $microcontenidos,
+        private readonly ProgresoMicroRepositoryInterface $progresosMicro,
+        private readonly CalculadorDeResumen $calculadorDeResumen,
+        private readonly ConsultarActividadesParaOtrosModulos $actividades,
+        private readonly ConsultarRutasParaOtrosModulos $rutas,
     ) {}
 
     /**
@@ -139,5 +149,109 @@ class DesarrolloService
         } while ($pagina <= $resultado->ultimaPagina());
 
         return $registradas;
+    }
+
+    /**
+     * Micro-contenidos Publicados vinculados a la competencia (micro-learning). Solo lectura.
+     *
+     * @return list<array{id: int, codigo: string, titulo: string, tipo: string, duracion_minutos: int, miniatura_url: string|null, url_destino: string}>
+     */
+    public function getMicrocontenidosPublicadosPorCompetencia(int $competenciaId): array
+    {
+        return array_values(array_map(fn ($m) => [
+            'id' => $m->id,
+            'codigo' => $m->codigo,
+            'titulo' => $m->titulo,
+            'tipo' => $m->tipo->value,
+            'duracion_minutos' => $m->duracionMinutos,
+            'miniatura_url' => $m->miniaturaUrl,
+            'url_destino' => '/micro-learning/'.$m->id,
+        ], $this->microcontenidos->publicadosDeCompetencia($competenciaId)));
+    }
+
+    /**
+     * Resumen de aprendizaje de un colaborador para «Mi progreso» de Reportes. Solo lectura. Horas = suma de la duración
+     * de los micro-contenidos completados dividida entre 60, con un decimal.
+     *
+     * @return array{completados: int, en_progreso: int, horas_acumuladas: float, certificados: int}
+     */
+    public function getResumenAprendizaje(int $tenantId, int $colaboradorId): array
+    {
+        $r = $this->progresosMicro->resumenDe($tenantId, $colaboradorId);
+
+        return $this->calculadorDeResumen->resumir($r['completados'], $r['en_progreso'], $r['minutos']);
+    }
+
+    /**
+     * Completaciones de micro-contenidos del tenant para los indicadores de Reportes. Solo lectura. Filtros opcionales:
+     * colaborador_id, microcontenido_id, desde y hasta (AAAA-MM-DD, sobre la fecha de finalización).
+     *
+     * @param  array{colaborador_id?: int, microcontenido_id?: int, desde?: string, hasta?: string}  $filtros
+     * @return list<array{microcontenido_id: int, codigo: string, titulo: string, tipo: string, duracion_minutos: int, colaborador_id: int, fecha_inicio: string, fecha_completado: string}>
+     */
+    public function getCompletaciones(int $tenantId, array $filtros = []): array
+    {
+        return array_values($this->progresosMicro->completaciones($tenantId, $filtros));
+    }
+
+    /**
+     * Asistencia y calificación del colaborador en las actividades de las acciones indicadas (solo lectura; sin observaciones).
+     * La asistencia sin registro se reporta Pendiente.
+     *
+     * @param  list<int>  $accionIds
+     * @return list<array{accion_id: int, actividad_id: int, estado: string, asistencia: string, calificacion: int|null}>
+     */
+    public function getAsistenciaDeColaborador(int $tenantId, int $colaboradorId, array $accionIds): array
+    {
+        return $this->actividades->asistenciaDeColaborador($tenantId, $colaboradorId, $accionIds);
+    }
+
+    /** Indica si el colaborador ya tiene asistencia registrada en la actividad de la acción (para impedir quitarlo de la acción). */
+    public function tieneAsistenciaRegistrada(int $tenantId, int $accionId, int $colaboradorId): bool
+    {
+        return $this->actividades->tieneAsistenciaRegistrada($tenantId, $accionId, $colaboradorId);
+    }
+
+    /**
+     * Actividades formativas del tenant con su estado calculado, horas y promedio (para Reportes). Solo lectura.
+     *
+     * @param  array{anio?: int, plan_id?: int, tipo?: string, estado?: string, departamento_id?: int, competencia_id?: int, fecha_desde?: string, fecha_hasta?: string}  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function getActividades(int $tenantId, array $filtros = []): array
+    {
+        return $this->actividades->actividades($tenantId, $filtros);
+    }
+
+    /**
+     * Registros de asistencia y calificación (sin observaciones) de las actividades del tenant (para Reportes). Solo lectura.
+     *
+     * @param  array{anio?: int, plan_id?: int, tipo?: string, estado?: string, departamento_id?: int, competencia_id?: int, fecha_desde?: string, fecha_hasta?: string, colaborador_id?: int, actividad_id?: int}  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function getAsistencias(int $tenantId, array $filtros = []): array
+    {
+        return $this->actividades->asistencias($tenantId, $filtros);
+    }
+
+    /**
+     * Inscripciones Activas del colaborador a rutas de carrera, con sus niveles actual y objetivo (para Adecuación, el Plan de
+     * Desarrollo Individual y Reportes). Solo lectura; las de quien ya no tiene vínculo vigente se retiran y no se devuelven.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function inscripcionesActivas(int $tenantId, int $colaboradorId): array
+    {
+        return $this->rutas->inscripcionesActivas($tenantId, $colaboradorId);
+    }
+
+    /**
+     * Nivel de una ruta: ruta, orden, puesto y experiencia mínima (para Adecuación). Solo lectura.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function obtenerNivel(int $tenantId, int $nivelId): ?array
+    {
+        return $this->rutas->obtenerNivel($tenantId, $nivelId);
     }
 }

@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Facade;
  * @method static int crearBorradorDesdeDnf(int $tenantId, int $actorId, int $dnfId, array $brechas) Crea un plan en Borrador del año actual con una acción por competencia con brecha y los colaboradores con brecha como participantes; devuelve el id del plan.
  * @method static array getAccionesDePlanesEjecutando(int $tenantId) Acciones no canceladas de planes Ejecutando con sus participantes: [{accion_id, plan_id, nombre, tipo, fecha_inicio, fecha_fin, participantes}].
  * @method static array getPlanesYAcciones(int $tenantId, array $filtros = []) Planes con sus acciones, horas, costos y estados (filtros: anio, estado, plan_id).
+ * @method static array getMicrocontenidosPublicadosPorCompetencia(int $competenciaId) Micro-contenidos Publicados de la competencia: [{id, codigo, titulo, tipo, duracion_minutos, miniatura_url, url_destino}].
+ * @method static array getResumenAprendizaje(int $tenantId, int $colaboradorId) Resumen del colaborador: {completados, en_progreso, horas_acumuladas, certificados}.
+ * @method static array getCompletaciones(int $tenantId, array $filtros = []) Completaciones de micro-contenidos del tenant (filtros: colaborador_id, microcontenido_id, desde, hasta).
+ * @method static array getAsistenciaDeColaborador(int $tenantId, int $colaboradorId, array $accionIds) Asistencia y calificación del colaborador en las actividades de esas acciones: [{accion_id, actividad_id, estado, asistencia, calificacion}] (Pendiente si no hay registro; sin observaciones).
+ * @method static bool tieneAsistenciaRegistrada(int $tenantId, int $accionId, int $colaboradorId) Indica si el colaborador ya tiene asistencia registrada en la actividad de la acción.
+ * @method static array getActividades(int $tenantId, array $filtros = []) Actividades formativas con estado calculado, horas, inscritos y promedio (filtros: anio, plan_id, tipo, estado, departamento_id, competencia_id, fecha_desde, fecha_hasta).
+ * @method static array getAsistencias(int $tenantId, array $filtros = []) Registros de asistencia y calificación sin observaciones (filtros de getActividades más colaborador_id y actividad_id).
+ * @method static array inscripcionesActivas(int $tenantId, int $colaboradorId) Inscripciones Activas del colaborador a rutas de carrera: [{inscripcion_id, ruta_id, ruta_codigo, ruta_nombre, ruta_tipo, nivel_actual: {id, orden, puesto_id, nombre}|null, nivel_objetivo: {id, orden, puesto_id, nombre, experiencia_minima_anios}|null}]. Las de quien ya no tiene vínculo vigente se retiran y no se devuelven.
+ * @method static array|null obtenerNivel(int $tenantId, int $nivelId) Nivel de una ruta: {nivel_id, ruta_id, ruta_nombre, orden, puesto_id, nombre, experiencia_minima_anios}, o null.
  *
  * @see DesarrolloService
  */

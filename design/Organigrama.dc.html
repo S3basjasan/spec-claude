@@ -3,29 +3,66 @@
 <head>
 <meta charset="utf-8">
 <title>Organigrama</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
 .nav:hover{background:var(--soft);color:var(--text)}
 .nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
-.nav:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nav:focus-visible,a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
-.sbtn:hover{background:var(--soft)}
-.chip:hover{background:var(--soft)}
-.oc{position:absolute;box-sizing:border-box;padding:8px 12px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;line-height:20px;transition:opacity .15s ease,box-shadow .15s ease}
-.oc-root{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
-.oc-top{border-color:var(--accent);background:var(--soft)}
-.ln{position:absolute;overflow:visible;fill:none;stroke:#7B8696;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:opacity .15s ease}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:13px;font-weight:600;color:var(--muted)}
+.sel{height:44px;min-width:170px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px}
+.sel:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.clr{height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.clr:hover{background:var(--soft)}
+.row:hover{background:var(--soft)}
+.prow{width:100%;display:flex;align-items:center;gap:16px;min-height:64px;box-sizing:border-box;padding:12px 20px;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.prow:hover{background:var(--soft)}
+.prow[aria-expanded="true"]{background:var(--soft)}
+.chev{transition:transform .2s ease}
+.prow[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sec h3{margin:0 0 10px;font-size:15px}
+.tree ul{position:relative;display:flex;justify-content:center;margin:0;padding:24px 0 0;list-style:none}
+.tree>ul{padding-top:0}
+.tree li{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px 8px 0}
+.tree li::before,.tree li::after{content:'';position:absolute;top:0;right:50%;width:50%;height:24px;border-top:2px solid var(--line)}
+.tree li::after{right:auto;left:50%;border-left:2px solid var(--line)}
+.tree li:only-child{padding-top:0}
+.tree li:only-child::before,.tree li:only-child::after{display:none}
+.tree li:first-child::before,.tree li:last-child::after{border:0 none}
+.tree li:last-child::before{border-right:2px solid var(--line);border-radius:0 8px 0 0}
+.tree li:first-child::after{border-radius:8px 0 0 0}
+.tree ul ul::before{content:'';position:absolute;top:0;left:50%;width:0;height:24px;border-left:2px solid var(--line)}
+.nwrap{display:flex;flex-direction:column;align-items:center;transition:opacity .15s ease}
+.node{width:188px;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:10px;text-align:left;font:inherit;color:var(--text);cursor:pointer}
+.node:hover{box-shadow:0 2px 8px rgba(18,23,29,.12)}
+.node .uni{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);line-height:1.3}
+.node .cod{margin-top:4px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.node .pue{font-size:14px;font-weight:700;line-height:1.3}
+.tog{margin-top:-1px;display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border-radius:0 0 8px 8px;border:1.5px solid var(--border);border-top:0;background:var(--surface);color:var(--muted);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.tog:hover{background:var(--soft);color:var(--accent)}
+.zb{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 10px;border:0;background:transparent;color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.zb:hover{background:var(--soft)}
+.pan{cursor:grab;user-select:none}
+.pan:active{cursor:grabbing}
+.sub{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.sub:hover{background:var(--soft)}
+.dl{margin:0;display:flex;flex-direction:column;gap:14px}
+.dl dt{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.dl dd{margin:4px 0 0;font-size:15px;line-height:1.45}
 </style>
 </helmet>
-<div style="min-height: 1000px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+<div style="min-height: 1100px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
 
   <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
     <div style="display: flex; align-items: center; gap: 12px; width: 200px">
@@ -36,103 +73,198 @@ body{margin:0}
     <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
       <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
       <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
-      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
     </button>
   </header>
 
   <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
     <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
-      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Inicio</a>
-      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg>Competencias</a>
-      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>Puestos</a>
-      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="5" rx="1"/><rect x="2" y="16" width="8" height="5" rx="1"/><rect x="14" y="16" width="8" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg>Organigrama</a>
-      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"/></svg>Empleados</a>
-      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg>Vacantes</a>
-      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</a>
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Posiciones.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="11" r="2.5"></circle><path d="M5.5 17c.5-2 2-3 3.5-3s3 1 3.5 3M15 9h3M15 13h3"></path></svg>Posiciones</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="5" rx="1"></rect><rect x="2" y="16" width="8" height="5" rx="1"></rect><rect x="14" y="16" width="8" height="5" rx="1"></rect><path d="M12 8v4M6 16v-4h12v4"></path></svg>Organigrama</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"></path></svg>Vacantes</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
     </nav>
 
     <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
-      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
-        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
           <div>
             <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Organigrama</h1>
-            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Estructura de la organización: 13 puestos en 3 niveles.</p>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Estructura de reporte generada a partir de las posiciones vigentes.</p>
           </div>
-          <div style="display: flex; gap: 8px">
-            <button class="sbtn" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px; font-weight: 500; cursor: pointer">
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Exportar PDF
-            </button>
-            <button style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 8px; border: 0; background: var(--accent); color: var(--onaccent); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>Editar estructura
-            </button>
+          <a href="Posiciones.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none; font-weight: 500; font-size: 15px">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>Ver listado de posiciones
+          </a>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+          <div class="fld" style="flex: 1 1 260px; max-width: 340px">
+            <label for="qo">Buscar</label>
+            <div style="position: relative">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+              <input id="qo" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Código, puesto u ocupante" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+            </div>
+          </div>
+          <div class="fld">
+            <label for="uo">Unidad organizacional</label>
+            <select id="uo" class="sel" value="{{unidadSel}}" onChange="{{setUnidad}}" style="min-width: 260px">
+              <option value="">Todas las unidades</option>
+              <sc-for list="{{opcionesUnidad}}" as="o" hint-placeholder-count="6">
+                <option value="{{o.id}}">{{o.label}}</option>
+              </sc-for>
+            </select>
+          </div>
+          <button type="button" class="clr" onClick="{{expandirTodo}}">Expandir todo</button>
+          <button type="button" class="clr" onClick="{{contraerTodo}}">Contraer todo</button>
+          <sc-if value="{{hayFiltros}}" hint-placeholder-val="{{false}}">
+            <button type="button" class="clr" onClick="{{limpiar}}">Limpiar filtros</button>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
+          <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; font-size: 13px; color: var(--muted)">
+            <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 18px; height: 12px; border-radius: 3px; border: 1.5px solid var(--border); background: var(--surface)"></span>Ocupada</span>
+            <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 18px; height: 12px; border-radius: 3px; border: 1.5px dashed #C98A2E; background: #FFFBF4"></span>Vacante</span>
+            <span>Las posiciones suprimidas no se muestran.</span>
           </div>
         </div>
 
-        <section aria-label="Filtros" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
-          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
-            <div style="position: relative; flex: 0 1 300px; min-width: 220px">
-              <label for="qo" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar puesto</label>
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-              <input id="qo" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar puesto" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px">
+          <div style="flex: 999 1 560px; min-width: 0; position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+            <div style="position: absolute; top: 12px; right: 12px; z-index: 2; display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); overflow: hidden; box-shadow: 0 1px 3px rgba(18,23,29,.08)">
+              <button type="button" class="zb" onClick="{{alejar}}" aria-label="Alejar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <button type="button" class="zb" onClick="{{zoomReset}}" aria-label="Restablecer zoom" style="font-variant-numeric: tabular-nums; border-left: 1px solid var(--border); border-right: 1px solid var(--border)">{{zoomTexto}}</button>
+              <button type="button" class="zb" onClick="{{acercar}}" aria-label="Acercar"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
             </div>
-            <div role="group" aria-label="Filtrar por área" style="display: flex; flex-wrap: wrap; gap: 8px">
-              <sc-for list="{{chips}}" as="c" hint-placeholder-count="7">
-                <button class="chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
-              </sc-for>
+            <div class="pan" onPointerDown="{{panInicio}}" onPointerMove="{{panMover}}" onPointerUp="{{panFin}}" onPointerLeave="{{panFin}}" style="height: 640px; overflow: auto">
+              <div class="tree" style="width: max-content; min-width: 100%; box-sizing: border-box; padding: 72px 32px 40px; {{zoomStyle}}">
+                <ul>
+                  <sc-for list="{{arbol}}" as="a" hint-placeholder-count="1">
+                    <li>
+                      <div class="nwrap" style="{{a.wrapStyle}}">
+                        <button type="button" class="node" data-cod="{{a.codigo}}" style="{{a.cardStyle}}" onClick="{{a.ver}}" aria-pressed="{{a.sel}}">
+                          <span class="uni">{{a.unidad}}</span>
+                          <span class="cod">{{a.codigo}}</span>
+                          <span class="pue">{{a.puesto}}</span>
+                          <span style="{{a.ocupanteStyle}}">{{a.ocupante}}</span>
+                          <span style="{{a.badgeStyle}}">{{a.estado}}</span>
+                        </button>
+                        <sc-if value="{{a.tieneHijos}}" hint-placeholder-val="{{false}}">
+                          <button type="button" class="tog" onClick="{{a.alternar}}" aria-expanded="{{a.abierto}}" aria-label="{{a.togLabel}}">{{a.togText}}</button>
+                        </sc-if>
+                      </div>
+                      <sc-if value="{{a.abierto}}" hint-placeholder-val="{{false}}">
+                        <ul>
+                          <sc-for list="{{a.hijos}}" as="b" hint-placeholder-count="2">
+                      <li>
+                        <div class="nwrap" style="{{b.wrapStyle}}">
+                          <button type="button" class="node" data-cod="{{b.codigo}}" style="{{b.cardStyle}}" onClick="{{b.ver}}" aria-pressed="{{b.sel}}">
+                            <span class="uni">{{b.unidad}}</span>
+                            <span class="cod">{{b.codigo}}</span>
+                            <span class="pue">{{b.puesto}}</span>
+                            <span style="{{b.ocupanteStyle}}">{{b.ocupante}}</span>
+                            <span style="{{b.badgeStyle}}">{{b.estado}}</span>
+                          </button>
+                          <sc-if value="{{b.tieneHijos}}" hint-placeholder-val="{{false}}">
+                            <button type="button" class="tog" onClick="{{b.alternar}}" aria-expanded="{{b.abierto}}" aria-label="{{b.togLabel}}">{{b.togText}}</button>
+                          </sc-if>
+                        </div>
+                        <sc-if value="{{b.abierto}}" hint-placeholder-val="{{false}}">
+                          <ul>
+                            <sc-for list="{{b.hijos}}" as="c" hint-placeholder-count="2">
+                        <li>
+                          <div class="nwrap" style="{{c.wrapStyle}}">
+                            <button type="button" class="node" data-cod="{{c.codigo}}" style="{{c.cardStyle}}" onClick="{{c.ver}}" aria-pressed="{{c.sel}}">
+                              <span class="uni">{{c.unidad}}</span>
+                              <span class="cod">{{c.codigo}}</span>
+                              <span class="pue">{{c.puesto}}</span>
+                              <span style="{{c.ocupanteStyle}}">{{c.ocupante}}</span>
+                              <span style="{{c.badgeStyle}}">{{c.estado}}</span>
+                            </button>
+                            <sc-if value="{{c.tieneHijos}}" hint-placeholder-val="{{false}}">
+                              <button type="button" class="tog" onClick="{{c.alternar}}" aria-expanded="{{c.abierto}}" aria-label="{{c.togLabel}}">{{c.togText}}</button>
+                            </sc-if>
+                          </div>
+                          <sc-if value="{{c.abierto}}" hint-placeholder-val="{{false}}">
+                            <ul>
+                              <sc-for list="{{c.hijos}}" as="d" hint-placeholder-count="2">
+                          <li>
+                            <div class="nwrap" style="{{d.wrapStyle}}">
+                              <button type="button" class="node" data-cod="{{d.codigo}}" style="{{d.cardStyle}}" onClick="{{d.ver}}" aria-pressed="{{d.sel}}">
+                                <span class="uni">{{d.unidad}}</span>
+                                <span class="cod">{{d.codigo}}</span>
+                                <span class="pue">{{d.puesto}}</span>
+                                <span style="{{d.ocupanteStyle}}">{{d.ocupante}}</span>
+                                <span style="{{d.badgeStyle}}">{{d.estado}}</span>
+                              </button>
+                              <sc-if value="{{d.tieneHijos}}" hint-placeholder-val="{{false}}">
+                                <button type="button" class="tog" onClick="{{d.alternar}}" aria-expanded="{{d.abierto}}" aria-label="{{d.togLabel}}">{{d.togText}}</button>
+                              </sc-if>
+                            </div>
+                          </li>
+                              </sc-for>
+                            </ul>
+                          </sc-if>
+                        </li>
+                            </sc-for>
+                          </ul>
+                        </sc-if>
+                      </li>
+                          </sc-for>
+                        </ul>
+                      </sc-if>
+                    </li>
+                  </sc-for>
+                </ul>
+              </div>
             </div>
+            <p style="margin: 0; padding: 10px 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted)">Arrastra para desplazarte. Haz clic en una tarjeta para ver su detalle.</p>
           </div>
-          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px">
-            <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
-            <sc-if value="{{filtrando}}" hint-placeholder-val="{{false}}">
-              <button class="sbtn" onClick="{{limpiar}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer">
-                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Limpiar filtros
-              </button>
-            </sc-if>
-          </div>
-        </section>
 
-        <ul aria-label="Leyenda" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; color: var(--muted)">
-          <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 16px; height: 16px; border-radius: 4px; background: var(--accent)"></span>Dirección</li>
-          <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 16px; height: 16px; border-radius: 4px; background: var(--soft); border: 1px solid var(--accent); box-sizing: border-box"></span>Jefaturas y gerencias</li>
-          <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 16px; height: 16px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); box-sizing: border-box"></span>Puestos del equipo</li>
-        </ul>
-
-        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
-          <div style="position: relative; width: 1116px; height: 480px; margin: 0 auto">
-
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 554px; top: 128px; width: 8px; height: 32px; {{st.l0}}"><path d="M 4 0 L 4 32"></path></svg>
-            <svg class="ln" width="900" height="8" viewBox="0 0 900 8" preserveAspectRatio="none" style="left: 108px; top: 156px; width: 900px; height: 8px; {{st.lb}}"><path d="M 0 4 L 900 4"></path></svg>
-
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 104px; top: 160px; width: 8px; height: 32px; {{st.d1}}"><path d="M 4 0 L 4 32"></path></svg>
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 284px; top: 160px; width: 8px; height: 32px; {{st.d2}}"><path d="M 4 0 L 4 32"></path></svg>
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 464px; top: 160px; width: 8px; height: 32px; {{st.d3}}"><path d="M 4 0 L 4 32"></path></svg>
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 644px; top: 160px; width: 8px; height: 32px; {{st.d4}}"><path d="M 4 0 L 4 32"></path></svg>
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 824px; top: 160px; width: 8px; height: 32px; {{st.d5}}"><path d="M 4 0 L 4 32"></path></svg>
-            <svg class="ln" width="8" height="32" viewBox="0 0 8 32" preserveAspectRatio="none" style="left: 1004px; top: 160px; width: 8px; height: 32px; {{st.d6}}"><path d="M 4 0 L 4 32"></path></svg>
-
-            <svg class="ln" width="8" height="64" viewBox="0 0 8 64" preserveAspectRatio="none" style="left: 104px; top: 288px; width: 8px; height: 64px; {{st.k1}}"><path d="M 4 0 L 4 64"></path></svg>
-            <svg class="ln" width="8" height="64" viewBox="0 0 8 64" preserveAspectRatio="none" style="left: 284px; top: 288px; width: 8px; height: 64px; {{st.k2}}"><path d="M 4 0 L 4 64"></path></svg>
-            <svg class="ln" width="8" height="64" viewBox="0 0 8 64" preserveAspectRatio="none" style="left: 464px; top: 288px; width: 8px; height: 64px; {{st.k3}}"><path d="M 4 0 L 4 64"></path></svg>
-            <svg class="ln" width="8" height="64" viewBox="0 0 8 64" preserveAspectRatio="none" style="left: 644px; top: 288px; width: 8px; height: 64px; {{st.k4}}"><path d="M 4 0 L 4 64"></path></svg>
-            <svg class="ln" width="8" height="64" viewBox="0 0 8 64" preserveAspectRatio="none" style="left: 824px; top: 288px; width: 8px; height: 64px; {{st.k5}}"><path d="M 4 0 L 4 64"></path></svg>
-            <svg class="ln" width="8" height="64" viewBox="0 0 8 64" preserveAspectRatio="none" style="left: 1004px; top: 288px; width: 8px; height: 64px; {{st.k6}}"><path d="M 4 0 L 4 64"></path></svg>
-
-            <div class="oc oc-root" style="left: 482px; top: 32px; width: 152px; height: 96px; {{st.r}}"><span><b>Gerente general</b><br><span style="font-size: 13px">Dirección</span></span></div>
-
-            <div class="oc oc-top" style="left: 32px; top: 192px; width: 152px; height: 96px; {{st.a1}}"><span><b>Jefe de talento humano</b><br><span style="font-size: 13px; color: var(--muted)">Talento humano</span></span></div>
-            <div class="oc oc-top" style="left: 212px; top: 192px; width: 152px; height: 96px; {{st.a2}}"><span><b>Jefe de inteligencia de negocio</b><br><span style="font-size: 13px; color: var(--muted)">Tecnología</span></span></div>
-            <div class="oc oc-top" style="left: 392px; top: 192px; width: 152px; height: 96px; {{st.a3}}"><span><b>Líder de desarrollo</b><br><span style="font-size: 13px; color: var(--muted)">Tecnología</span></span></div>
-            <div class="oc oc-top" style="left: 572px; top: 192px; width: 152px; height: 96px; {{st.a4}}"><span><b>Contador general</b><br><span style="font-size: 13px; color: var(--muted)">Finanzas</span></span></div>
-            <div class="oc oc-top" style="left: 752px; top: 192px; width: 152px; height: 96px; {{st.a5}}"><span><b>Jefe comercial</b><br><span style="font-size: 13px; color: var(--muted)">Ventas</span></span></div>
-            <div class="oc oc-top" style="left: 932px; top: 192px; width: 152px; height: 96px; {{st.a6}}"><span><b>Gerente de operaciones</b><br><span style="font-size: 13px; color: var(--muted)">Operaciones</span></span></div>
-
-            <div class="oc" style="left: 32px; top: 352px; width: 152px; height: 96px; {{st.b1}}"><span><b>Analistas de talento humano</b><br><span style="font-size: 13px; color: var(--muted)">Talento humano</span></span></div>
-            <div class="oc" style="left: 212px; top: 352px; width: 152px; height: 96px; {{st.b2}}"><span><b>Analista de datos</b><br><span style="font-size: 13px; color: var(--muted)">Tecnología</span></span></div>
-            <div class="oc" style="left: 392px; top: 352px; width: 152px; height: 96px; {{st.b3}}"><span><b>Desarrollador de software</b><br><span style="font-size: 13px; color: var(--muted)">Tecnología</span></span></div>
-            <div class="oc" style="left: 572px; top: 352px; width: 152px; height: 96px; {{st.b4}}"><span><b>Asistente contable</b><br><span style="font-size: 13px; color: var(--muted)">Finanzas</span></span></div>
-            <div class="oc" style="left: 752px; top: 352px; width: 152px; height: 96px; {{st.b5}}"><span><b>Ejecutivo comercial</b><br><span style="font-size: 13px; color: var(--muted)">Ventas</span></span></div>
-            <div class="oc" style="left: 932px; top: 352px; width: 152px; height: 96px; {{st.b6}}"><span><b>Coordinador de operaciones</b><br><span style="font-size: 13px; color: var(--muted)">Operaciones</span></span></div>
-          </div>
+          <sc-if value="{{haySel}}" hint-placeholder-val="{{false}}">
+            <aside aria-label="Detalle de la posición" style="flex: 1 1 300px; max-width: 360px; min-width: 0; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 18px">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+                <div>
+                  <div style="font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums">{{d.codigo}}</div>
+                  <h2 style="margin: 2px 0 8px; font-size: 20px; line-height: 1.25; letter-spacing: -0.01em">{{d.puesto}}</h2>
+                  <span style="{{d.badgeStyle}}">{{d.estado}}</span>
+                  <span style="margin-left: 8px; font-size: 13px; color: var(--muted)">{{d.modalidad}}</span>
+                </div>
+                <button type="button" onClick="{{cerrar}}" aria-label="Cerrar detalle" style="flex: none; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              </div>
+              <dl class="dl">
+                <div><dt>Ocupante</dt><dd style="{{d.ocupanteStyle}}">{{d.ocupante}}</dd></div>
+                <div>
+                  <dt>Supervisor</dt>
+                  <sc-if value="{{d.tieneJefe}}" hint-placeholder-val="{{true}}">
+                    <dd><button type="button" class="sub" onClick="{{d.jefe.ver}}"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums">{{d.jefe.codigo}}</span><span style="font-weight: 600">{{d.jefe.puesto}}</span><span style="{{d.jefe.ocupanteStyle}}">{{d.jefe.ocupante}}</span></span></button></dd>
+                  </sc-if>
+                  <sc-if value="{{d.sinJefe}}" hint-placeholder-val="{{false}}">
+                    <dd>Máxima autoridad</dd>
+                  </sc-if>
+                </div>
+                <div>
+                  <dt>Supervisa a ({{d.numSubs}})</dt>
+                  <dd style="display: flex; flex-direction: column; gap: 6px">
+                    <sc-for list="{{d.subs}}" as="s" hint-placeholder-count="2">
+                      <button type="button" class="sub" onClick="{{s.ver}}"><span style="flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums">{{s.codigo}}</span><span style="font-weight: 600">{{s.puesto}}</span><span style="{{s.ocupanteStyle}}">{{s.ocupante}}</span></span><span style="{{s.badgeStyle}}">{{s.estado}}</span></button>
+                    </sc-for>
+                    <sc-if value="{{d.sinSubs}}" hint-placeholder-val="{{false}}">
+                      <span style="color: var(--muted)">Ninguna posición le reporta.</span>
+                    </sc-if>
+                  </dd>
+                </div>
+                <div><dt>Puesto</dt><dd><strong>{{d.puesto}}</strong><br><span style="color: var(--muted)">{{d.puestoDesc}}</span></dd></div>
+                <div><dt>Unidad organizacional</dt><dd><strong>{{d.unidad}}</strong><br><span style="color: var(--muted)">{{d.unidadTipo}} · {{d.unidadEstado}}</span></dd></div>
+              </dl>
+            </aside>
+          </sc-if>
         </div>
       </div>
     </main>
@@ -144,71 +276,184 @@ body{margin:0}
   </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { area: 'Todas', q: '' };
+    this.state = { q: '', unidad: '', sel: null, cerrados: [], zoom: 1 };
+    this.drag = null;
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const objetivo = this.state.q !== prevState.q ? this.primerCoincidencia : (this.state.sel !== prevState.sel && this.state.sel ? this.codigoSel : null);
+    if (objetivo) {
+      const el = document.querySelector('[data-cod="' + objetivo + '"]');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
   }
   renderVals() {
-    const t = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const t = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', line: '#B9C1CA' };
     const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
-    const nodos = [
-      { id: 'r', nombre: 'Gerente general', area: 'Dirección' },
-      { id: 'a1', nombre: 'Jefe de talento humano', area: 'Talento humano' },
-      { id: 'a2', nombre: 'Jefe de inteligencia de negocio', area: 'Tecnología' },
-      { id: 'a3', nombre: 'Líder de desarrollo', area: 'Tecnología' },
-      { id: 'a4', nombre: 'Contador general', area: 'Finanzas' },
-      { id: 'a5', nombre: 'Jefe comercial', area: 'Ventas' },
-      { id: 'a6', nombre: 'Gerente de operaciones', area: 'Operaciones' },
-      { id: 'b1', nombre: 'Analistas de talento humano', area: 'Talento humano' },
-      { id: 'b2', nombre: 'Analista de datos', area: 'Tecnología' },
-      { id: 'b3', nombre: 'Desarrollador de software', area: 'Tecnología' },
-      { id: 'b4', nombre: 'Asistente contable', area: 'Finanzas' },
-      { id: 'b5', nombre: 'Ejecutivo comercial', area: 'Ventas' },
-      { id: 'b6', nombre: 'Coordinador de operaciones', area: 'Operaciones' }
+    const set = (o) => this.setState(o);
+
+    // Mismos datos de ejemplo que la sección Posiciones (tabla posiciones)
+    const puestos = {
+      1: { nombre: 'Gerente general', desc: 'Dirige la organización y responde ante el directorio.' },
+      2: { nombre: 'Gerente de talento humano', desc: 'Lidera la gestión del personal, la selección y el desarrollo.' },
+      3: { nombre: 'Jefe de reclutamiento', desc: 'Planifica y supervisa los procesos de reclutamiento.' },
+      4: { nombre: 'Analista de selección', desc: 'Evalúa candidatos para perfiles técnicos.' },
+      5: { nombre: 'Coordinador de capacitación', desc: 'Organiza los planes de formación del personal.' },
+      6: { nombre: 'Gerente de tecnología', desc: 'Dirige la estrategia tecnológica y los equipos de TI.' },
+      7: { nombre: 'Jefe de aplicaciones', desc: 'Lidera el desarrollo y mantenimiento de aplicaciones.' },
+      8: { nombre: 'Desarrollador de software', desc: 'Construye y mantiene los sistemas internos.' },
+      9: { nombre: 'Técnico de soporte', desc: 'Atiende incidencias de usuarios y equipos.' },
+      10: { nombre: 'Analista de infraestructura', desc: 'Administra servidores, redes y servicios en la nube.' }
+    };
+    // Árbol de unidades (igual que Unidades organizacionales)
+    const unidadesArbol = [
+      { id: 'UO-001', nombre: 'Gerencia General', padre: null, tipo: 'Gerencia General', estado: 'Activa' },
+      { id: 'UO-002', nombre: 'Gerencia de Talento Humano', padre: 'UO-001', tipo: 'Gerencia', estado: 'Activa' },
+      { id: 'UO-004', nombre: 'Área de Selección y Desarrollo', padre: 'UO-002', tipo: 'Área', estado: 'Activa' },
+      { id: 'UO-007', nombre: 'Departamento de Reclutamiento', padre: 'UO-004', tipo: 'Departamento', estado: 'Activa' },
+      { id: 'UO-011', nombre: 'Sección de Selección Técnica', padre: 'UO-007', tipo: 'Sección', estado: 'Activa' },
+      { id: 'UO-003', nombre: 'Gerencia de Tecnología', padre: 'UO-001', tipo: 'Gerencia', estado: 'Activa' },
+      { id: 'UO-005', nombre: 'Área de Infraestructura', padre: 'UO-003', tipo: 'Área', estado: 'Activa' },
+      { id: 'UO-009', nombre: 'Departamento de Soporte', padre: 'UO-005', tipo: 'Departamento', estado: 'Activa' },
+      { id: 'UO-006', nombre: 'Área de Desarrollo de Software', padre: 'UO-003', tipo: 'Área', estado: 'Activa' },
+      { id: 'UO-010', nombre: 'Departamento de Aplicaciones', padre: 'UO-006', tipo: 'Departamento', estado: 'Activa' },
+      { id: 'UO-012', nombre: 'Sección de Desarrollo Web', padre: 'UO-010', tipo: 'Sección', estado: 'Activa' }
     ];
-    const { area, q } = this.state;
+    const uPorId = Object.fromEntries(unidadesArbol.map((u) => [u.id, u]));
+    const nivel = (id) => { let n = 0, u = uPorId[id]; while (u && u.padre) { n++; u = uPorId[u.padre]; } return n; };
+    const users = { 1: 'Roberto Andrade', 2: 'Marta Ríos', 3: 'Paola Vintimilla', 4: 'Jorge Cevallos', 5: 'Andrés Salazar', 6: 'Camila Torres', 7: 'Diego Paredes', 8: 'Lucía Mendoza' };
+
+    const lista = [
+      { id: 1,  codigo: 'POS-0101', puesto_id: 1,  unidad: 'UO-001', posicion_jefe_id: null, user_id: 1,    estado: 'Ocupada',   modalidad: 'Nombramiento' },
+      { id: 2,  codigo: 'POS-0201', puesto_id: 2,  unidad: 'UO-002', posicion_jefe_id: 1,    user_id: 2,    estado: 'Ocupada',   modalidad: 'Nombramiento' },
+      { id: 3,  codigo: 'POS-0202', puesto_id: 3,  unidad: 'UO-007', posicion_jefe_id: 2,    user_id: 3,    estado: 'Ocupada',   modalidad: 'Contrato' },
+      { id: 4,  codigo: 'POS-0203', puesto_id: 4,  unidad: 'UO-011', posicion_jefe_id: 3,    user_id: null, estado: 'Vacante',   modalidad: 'Contrato' },
+      { id: 5,  codigo: 'POS-0204', puesto_id: 5,  unidad: 'UO-004', posicion_jefe_id: 2,    user_id: 4,    estado: 'Ocupada',   modalidad: 'Encargo' },
+      { id: 6,  codigo: 'POS-0301', puesto_id: 6,  unidad: 'UO-003', posicion_jefe_id: 1,    user_id: 5,    estado: 'Ocupada',   modalidad: 'Nombramiento' },
+      { id: 7,  codigo: 'POS-0302', puesto_id: 7,  unidad: 'UO-010', posicion_jefe_id: 6,    user_id: 6,    estado: 'Ocupada',   modalidad: 'Subrogación' },
+      { id: 8,  codigo: 'POS-0303', puesto_id: 8,  unidad: 'UO-012', posicion_jefe_id: 7,    user_id: 7,    estado: 'Ocupada',   modalidad: 'Contrato' },
+      { id: 9,  codigo: 'POS-0304', puesto_id: 8,  unidad: 'UO-012', posicion_jefe_id: 7,    user_id: null, estado: 'Vacante',   modalidad: 'Contrato' },
+      { id: 10, codigo: 'POS-0305', puesto_id: 9,  unidad: 'UO-009', posicion_jefe_id: 6,    user_id: null, estado: 'Suprimida', modalidad: 'Contrato' },
+      { id: 11, codigo: 'POS-0306', puesto_id: 10, unidad: 'UO-005', posicion_jefe_id: 6,    user_id: 8,    estado: 'Ocupada',   modalidad: 'Contrato' }
+    ];
+
+    const { q, unidad, sel, cerrados, zoom } = this.state;
+    const vigentes = lista.filter((p) => p.estado !== 'Suprimida').sort((x, y) => x.codigo.localeCompare(y.codigo));
+    const porId = Object.fromEntries(vigentes.map((p) => [p.id, p]));
+    const hijosDe = (id) => vigentes.filter((h) => h.posicion_jefe_id === id);
+    const ancestros = (id) => { const r = []; let p = porId[id]; while (p && p.posicion_jefe_id) { r.push(p.posicion_jefe_id); p = porId[p.posicion_jefe_id]; } return r; };
+    const descendientes = (id) => hijosDe(id).reduce((acc, h) => acc + 1 + descendientes(h.id), 0);
+
+    // Unidad elegida y sus dependientes
+    const enUnidad = (uid) => { if (!unidad) return true; let u = uPorId[uid]; while (u) { if (u.id === unidad) return true; u = uPorId[u.padre]; } return false; };
     const nq = norm(q);
-    const filtrando = area !== 'Todas' || nq !== '';
-    const coincide = (n) => (area === 'Todas' || n.area === area) && (nq === '' || norm(n.nombre).includes(nq) || norm(n.area).includes(nq));
-    const ok = {};
-    nodos.forEach((n) => { ok[n.id] = coincide(n); });
-    const ring = 'box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent);';
-    const dim = 'opacity:.25;';
-    const st = {};
-    nodos.forEach((n) => { st[n.id] = !filtrando ? '' : (ok[n.id] ? ring : dim); });
-    for (let i = 1; i <= 6; i++) {
-      st['d' + i] = filtrando && !ok['a' + i] ? dim : '';
-      st['k' + i] = filtrando && !ok['b' + i] ? dim : '';
-    }
-    st.l0 = filtrando && !ok.r ? dim : '';
-    st.lb = filtrando && !nodos.some((n) => n.id[0] === 'a' && ok[n.id]) ? dim : '';
-    const total = nodos.length;
-    const n = nodos.filter((x) => ok[x.id]).length;
-    let resumen = 'Mostrando los ' + total + ' puestos';
-    if (filtrando) resumen = n === 0 ? 'Ningún puesto coincide con los filtros.' : 'Resaltando ' + n + ' de ' + total + ' puestos';
-    const areas = ['Todas', 'Dirección', 'Talento humano', 'Tecnología', 'Finanzas', 'Ventas', 'Operaciones'];
-    const base = 'height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;';
-    const chips = areas.map((a) => {
-      const cnt = a === 'Todas' ? total : nodos.filter((x) => x.area === a).length;
-      const on = area === a;
-      return {
-        label: a + ' · ' + cnt,
-        pressed: on ? 'true' : 'false',
-        style: base + (on ? 'border:1px solid var(--accent);background:var(--accent);color:var(--onaccent);' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);'),
-        pick: () => this.setState({ area: a })
-      };
+    const texto = (p) => [p.codigo, puestos[p.puesto_id].nombre, uPorId[p.unidad].nombre, p.user_id ? users[p.user_id] : 'Sin ocupante'].map(norm).join(' ');
+    const coincide = (p) => (nq === '' || texto(p).includes(nq)) && enUnidad(p.unidad);
+    const filtrando = nq !== '' || unidad !== '';
+    const coincidencias = vigentes.filter(coincide);
+    this.primerCoincidencia = nq !== '' && coincidencias.length ? coincidencias[0].codigo : null;
+
+    // Ramas abiertas: al filtrar o seleccionar se abren los ancestros de lo encontrado
+    const forzados = new Set();
+    if (filtrando) coincidencias.forEach((p) => ancestros(p.id).forEach((a) => forzados.add(a)));
+    if (sel) ancestros(sel).forEach((a) => forzados.add(a));
+    const abierto = (id) => forzados.has(id) || !cerrados.includes(id);
+
+    const pill = 'align-self:flex-start;margin-top:4px;display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;';
+    const badge = { 'Ocupada': 'background:#E3F2F0;color:#0F6F69;', 'Vacante': 'background:#FDF1E1;color:#8A4B00;' };
+    const card = { 'Ocupada': 'border:1.5px solid var(--border);background:var(--surface);', 'Vacante': 'border:1.5px dashed #C98A2E;background:#FFFBF4;' };
+    const ocStyle = (p) => p.user_id ? 'font-size:13px;font-weight:500' : 'font-size:13px;color:var(--muted);font-style:italic';
+    const ver = (id) => () => set({ sel: id });
+
+    const resumenPos = (p) => ({
+      codigo: p.codigo, puesto: puestos[p.puesto_id].nombre, estado: p.estado,
+      ocupante: p.user_id ? users[p.user_id] : 'Sin ocupante', ocupanteStyle: ocStyle(p),
+      badgeStyle: pill + badge[p.estado], ver: ver(p.id)
     });
+
+    const nodo = (p) => {
+      const hs = hijosDe(p.id);
+      const ab = abierto(p.id);
+      const esSel = sel === p.id;
+      const hit = filtrando && coincide(p);
+      let ring = '';
+      if (esSel) ring = 'box-shadow:0 0 0 3px var(--accent);';
+      else if (hit) ring = 'box-shadow:0 0 0 3px #F2C27A;';
+      const ocultos = descendientes(p.id);
+      return {
+        ...resumenPos(p),
+        unidad: uPorId[p.unidad].nombre,
+        cardStyle: card[p.estado] + ring,
+        wrapStyle: filtrando && !hit ? 'opacity:.35' : '',
+        sel: esSel ? 'true' : 'false',
+        hijos: ab ? hs.map(nodo) : [],
+        tieneHijos: hs.length > 0,
+        abierto: ab && hs.length > 0,
+        togText: ab ? '− Contraer' : '+ ' + ocultos + (ocultos === 1 ? ' posición' : ' posiciones'),
+        togLabel: (ab ? 'Contraer ' : 'Expandir ') + p.codigo,
+        alternar: () => set({ cerrados: cerrados.includes(p.id) ? cerrados.filter((x) => x !== p.id) : cerrados.concat(p.id) })
+      };
+    };
+    const arbol = vigentes.filter((p) => p.posicion_jefe_id === null).map(nodo);
+
+    // Detalle de la posición seleccionada
+    const ps = sel ? porId[sel] : null;
+    this.codigoSel = ps ? ps.codigo : null;
+    let d = {};
+    if (ps) {
+      const jefe = ps.posicion_jefe_id ? porId[ps.posicion_jefe_id] : null;
+      const subs = hijosDe(ps.id).map(resumenPos);
+      const u = uPorId[ps.unidad];
+      d = {
+        ...resumenPos(ps), modalidad: ps.modalidad,
+        ocupanteStyle: ps.user_id ? 'font-weight:500' : 'color:var(--muted);font-style:italic',
+        tieneJefe: !!jefe, sinJefe: !jefe, jefe: jefe ? resumenPos(jefe) : {},
+        subs, numSubs: subs.length, sinSubs: subs.length === 0,
+        puestoDesc: puestos[ps.puesto_id].desc,
+        unidad: u.nombre, unidadTipo: u.tipo, unidadEstado: u.estado
+      };
+    }
+
+    const ocupadas = vigentes.filter((p) => p.estado === 'Ocupada').length;
+    const vacantes = vigentes.length - ocupadas;
+    const z = (v) => Math.round(Math.min(1.5, Math.max(0.5, v)) * 10) / 10;
+
     return {
       themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
-      q,
-      setQ: (e) => this.setState({ q: e.target.value }),
-      chips,
-      filtrando,
-      resumen,
-      limpiar: () => this.setState({ area: 'Todas', q: '' }),
-      st
+      q, unidadSel: unidad,
+      setQ: (e) => set({ q: e.target.value }),
+      setUnidad: (e) => set({ unidad: e.target.value }),
+      opcionesUnidad: unidadesArbol.map((u) => ({ id: u.id, label: '   '.repeat(nivel(u.id)) + u.nombre })),
+      hayFiltros: filtrando,
+      limpiar: () => set({ q: '', unidad: '' }),
+      expandirTodo: () => set({ cerrados: [] }),
+      contraerTodo: () => set({ cerrados: vigentes.filter((p) => p.posicion_jefe_id === null).map((p) => p.id) }),
+      arbol,
+      resumen: filtrando
+        ? coincidencias.length + (coincidencias.length === 1 ? ' posición coincide' : ' posiciones coinciden') + ' de ' + vigentes.length + ' vigentes'
+        : vigentes.length + ' posiciones vigentes · ' + ocupadas + ' ocupadas · ' + vacantes + (vacantes === 1 ? ' vacante' : ' vacantes'),
+      zoomStyle: 'zoom:' + zoom,
+      zoomTexto: Math.round(zoom * 100) + '%',
+      acercar: () => set({ zoom: z(zoom + 0.1) }),
+      alejar: () => set({ zoom: z(zoom - 0.1) }),
+      zoomReset: () => set({ zoom: 1 }),
+      panInicio: (e) => {
+        if (e.target.closest('button,a,input,select')) return;
+        const el = e.currentTarget;
+        this.drag = { x: e.clientX, y: e.clientY, l: el.scrollLeft, t: el.scrollTop };
+      },
+      panMover: (e) => {
+        if (!this.drag) return;
+        const el = e.currentTarget;
+        el.scrollLeft = this.drag.l - (e.clientX - this.drag.x);
+        el.scrollTop = this.drag.t - (e.clientY - this.drag.y);
+      },
+      panFin: () => { this.drag = null; },
+      haySel: !!ps, d,
+      cerrar: () => set({ sel: null })
     };
   }
 }

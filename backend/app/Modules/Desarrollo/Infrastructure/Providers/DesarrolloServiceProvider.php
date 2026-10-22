@@ -2,44 +2,81 @@
 
 namespace App\Modules\Desarrollo\Infrastructure\Providers;
 
+use App\Modules\Desarrollo\Application\Ports\AccionesDePlanInterface;
 use App\Modules\Desarrollo\Application\Ports\AprobadoresInterface;
 use App\Modules\Desarrollo\Application\Ports\AsistenciaInterface;
+use App\Modules\Desarrollo\Application\Ports\AsistenciaRegistradaInterface;
 use App\Modules\Desarrollo\Application\Ports\BrechasActivasInterface;
+use App\Modules\Desarrollo\Application\Ports\CertificadoPdfInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresEvaluablesInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresVigentesInterface;
 use App\Modules\Desarrollo\Application\Ports\CompetenciasInterface;
 use App\Modules\Desarrollo\Application\Ports\CuentaColaboradorInterface;
+use App\Modules\Desarrollo\Application\Ports\DepartamentoDeColaboradorInterface;
+use App\Modules\Desarrollo\Application\Ports\DepartamentosInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDeActividadesInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDeDnfInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDeMicrolearningInterface;
+use App\Modules\Desarrollo\Application\Ports\FuenteDePlanesInterface;
+use App\Modules\Desarrollo\Application\Ports\GeneradorDeExcelInterface;
+use App\Modules\Desarrollo\Application\Ports\GeneradorDeReportePdfInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesActualesInterface;
 use App\Modules\Desarrollo\Application\Ports\NivelesDeColaboradorInterface;
+use App\Modules\Desarrollo\Application\Ports\NombreDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeReferenciaInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeUsuarioInterface;
 use App\Modules\Desarrollo\Application\Ports\PerfilesDePuestoInterface;
 use App\Modules\Desarrollo\Application\Ports\PlanDeFormacionInterface;
+use App\Modules\Desarrollo\Application\Ports\PuestosParaRutasInterface;
 use App\Modules\Desarrollo\Application\Ports\RelojInterface;
 use App\Modules\Desarrollo\Application\Services\DesarrolloService;
+use App\Modules\Desarrollo\Domain\Repositories\ActividadRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\ReportesRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\RutasRepositoryInterface;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AccionesDesdePlan;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ActividadesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AprobadoresDesdeShared;
-use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaSinDatos;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaDesdeActividades;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaRegistradaDesdeActividades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasActivasDesdeDnf;
+use App\Modules\Desarrollo\Infrastructure\Adapters\CertificadoPdfDompdf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresVigentesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CompetenciasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CuentaColaboradorDesdePersonal;
+use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentoDeColaboradorDesdePersonal;
+use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentosDesdeEstructura;
+use App\Modules\Desarrollo\Infrastructure\Adapters\DnfParaReportes;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ExcelConZip;
+use App\Modules\Desarrollo\Infrastructure\Adapters\MicrolearningParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesActualesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NivelesDeColaboradorSinDatos;
+use App\Modules\Desarrollo\Infrastructure\Adapters\NombreDeColaboradorDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombresDeReferenciaDesdeFacades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\NombresDeUsuarioDesdeShared;
 use App\Modules\Desarrollo\Infrastructure\Adapters\PerfilesDePuestoDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\PlanDeFormacionDesdePlanes;
+use App\Modules\Desarrollo\Infrastructure\Adapters\PlanesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresEvaluablesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\ColaboradoresVigentesDePrueba;
 use App\Modules\Desarrollo\Infrastructure\Adapters\Pruebas\NivelesActualesDePrueba;
+use App\Modules\Desarrollo\Infrastructure\Adapters\PuestosParaRutasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\RelojDelSistema;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ReportePdfDompdf;
+use App\Modules\Desarrollo\Infrastructure\Console\ConciliarBajasRutasCommand;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentActividadRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentCatalogoFormativoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentDnfRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentMicrocontenidoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentPlanRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentProgresoMicroRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentReportesRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentRutasRepository;
 use Illuminate\Support\ServiceProvider;
 
 class DesarrolloServiceProvider extends ServiceProvider
@@ -54,12 +91,36 @@ class DesarrolloServiceProvider extends ServiceProvider
         $this->app->bind(DnfRepositoryInterface::class, EloquentDnfRepository::class);
         $this->app->bind(PlanRepositoryInterface::class, EloquentPlanRepository::class);
 
+        // Micro-learning (016): contenidos y aprendizaje del colaborador; el nombre del certificado viene de Personal.
+        $this->app->bind(MicrocontenidoRepositoryInterface::class, EloquentMicrocontenidoRepository::class);
+        $this->app->bind(ProgresoMicroRepositoryInterface::class, EloquentProgresoMicroRepository::class);
+        $this->app->bind(NombreDeColaboradorInterface::class, NombreDeColaboradorDesdePersonal::class);
+        $this->app->bind(CertificadoPdfInterface::class, CertificadoPdfDompdf::class);
+
         // Plan de formación anual (013): datos de otros módulos por sus Facades, tras puertos propios.
         $this->app->bind(ColaboradoresVigentesInterface::class, ColaboradoresVigentesDesdePersonal::class);
         $this->app->bind(AprobadoresInterface::class, AprobadoresDesdeShared::class);
         $this->app->bind(RelojInterface::class, RelojDelSistema::class);
-        // PROVISIONAL: Actividades Formativas aún no existe, así que no hay asistencias.
-        $this->app->bind(AsistenciaInterface::class, AsistenciaSinDatos::class);
+        // Actividades formativas (017): la asistencia real alimenta el progreso del plan y bloquea quitar participantes con registro.
+        $this->app->bind(ActividadRepositoryInterface::class, EloquentActividadRepository::class);
+        $this->app->bind(AccionesDePlanInterface::class, AccionesDesdePlan::class);
+        $this->app->bind(DepartamentosInterface::class, DepartamentosDesdeEstructura::class);
+        $this->app->bind(AsistenciaInterface::class, AsistenciaDesdeActividades::class);
+        $this->app->bind(AsistenciaRegistradaInterface::class, AsistenciaRegistradaDesdeActividades::class);
+
+        // Reportes de evaluación (018): lectura de las demás features por puertos propios; solo se persisten encuestas, seguimientos e impactos.
+        $this->app->bind(ReportesRepositoryInterface::class, EloquentReportesRepository::class);
+        $this->app->bind(FuenteDePlanesInterface::class, PlanesParaReportes::class);
+        $this->app->bind(FuenteDeActividadesInterface::class, ActividadesParaReportes::class);
+        $this->app->bind(FuenteDeMicrolearningInterface::class, MicrolearningParaReportes::class);
+        $this->app->bind(FuenteDeDnfInterface::class, DnfParaReportes::class);
+        $this->app->bind(DepartamentoDeColaboradorInterface::class, DepartamentoDeColaboradorDesdePersonal::class);
+        $this->app->bind(GeneradorDeExcelInterface::class, ExcelConZip::class);
+        $this->app->bind(GeneradorDeReportePdfInterface::class, ReportePdfDompdf::class);
+
+        // Rutas de carrera (019): puestos desde Estructura; los colaboradores usan los puertos ya enlazados arriba.
+        $this->app->bind(RutasRepositoryInterface::class, EloquentRutasRepository::class);
+        $this->app->bind(PuestosParaRutasInterface::class, PuestosParaRutasDesdeEstructura::class);
 
         $this->app->bind(CompetenciasInterface::class, CompetenciasDesdeEstructura::class);
         $this->app->bind(PerfilesDePuestoInterface::class, PerfilesDePuestoDesdeEstructura::class);
@@ -89,6 +150,10 @@ class DesarrolloServiceProvider extends ServiceProvider
         $routes = dirname(__DIR__, 2).'/Routes/api.php';
         if (file_exists($routes)) {
             $this->loadRoutesFrom($routes);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([ConciliarBajasRutasCommand::class]);
         }
     }
 }

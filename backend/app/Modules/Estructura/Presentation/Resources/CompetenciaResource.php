@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * Elemento del listado: sin grados, comportamientos ni preguntas.
+ *
  * @property CompetenciaDTO $resource
  */
 class CompetenciaResource extends JsonResource
@@ -20,9 +22,9 @@ class CompetenciaResource extends JsonResource
             'id' => $this->resource->id,
             'codigo' => $this->resource->codigo,
             'nombre' => $this->resource->nombre,
-            'descripcion' => $this->resource->descripcion,
             'tipo' => $this->resource->tipo,
             'estado' => $this->resource->estado,
+            'completa' => $this->resource->completa,
         ];
     }
 }

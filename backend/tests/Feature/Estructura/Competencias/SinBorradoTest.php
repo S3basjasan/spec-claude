@@ -1,33 +1,28 @@
 <?php
 
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
-it('no existe ningún endpoint DELETE para las competencias', function () {
+it('no existe ninguna ruta para eliminar una competencia', function () {
     $competencia = CompetenciaModel::factory()->create();
     actuarComoAdmin();
 
-    $respuesta = $this->deleteJson("/api/competencias/{$competencia->id}");
+    $this->deleteJson("/api/competencias/{$competencia->id}")->assertStatus(405);
 
-    expect($respuesta->getStatusCode())->toBeIn([404, 405])
-        ->and(CompetenciaModel::query()->count())->toBe(1);
+    expect(CompetenciaModel::query()->count())->toBe(1);
 });
 
-it('ninguna ruta de competencias admite DELETE', function () {
-    $metodos = collect(Route::getRoutes()->getRoutes())
-        ->filter(fn ($ruta) => str_starts_with($ruta->uri(), 'api/competencias'))
-        ->flatMap(fn ($ruta) => $ruta->methods())
-        ->unique()
-        ->values()
-        ->all();
+it('ya no existen las rutas separadas de comportamientos y preguntas', function () {
+    actuarComoAdmin();
 
-    expect($metodos)->not->toContain('DELETE')
-        ->and($metodos)->toContain('PATCH');
+    foreach (['/api/comportamientos', '/api/preguntas', '/api/comportamientos/competencias-disponibles', '/api/preguntas/competencias-disponibles'] as $ruta) {
+        $this->getJson($ruta)->assertNotFound();
+    }
 });
 
-it('el Usuario tampoco puede borrar y recibe el mismo resultado', function () {
+it('la base impide borrar una competencia que tiene contenido', function () {
     $competencia = CompetenciaModel::factory()->create();
-    actuarComoUsuario();
 
-    expect($this->deleteJson("/api/competencias/{$competencia->id}")->getStatusCode())->toBeIn([404, 405]);
+    expect(fn () => DB::table('competencias')->where('id', $competencia->id)->delete())->toThrow(QueryException::class);
 });

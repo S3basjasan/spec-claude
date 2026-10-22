@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Competencias</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.hrow:hover{background:var(--soft)}
+.hrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tabb:hover{background:var(--soft)}
+.tabb:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.esc:hover{background:var(--soft)}
+.esc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tbtn{min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:500;cursor:pointer}
+.tbtn:hover{background:var(--soft)}
+.sel{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px}
+.crow{display:grid;grid-template-columns:110px minmax(160px,1fr) 120px 150px;align-items:center;gap:16px;padding:12px 20px}
+.pg{min-width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
+.pg:hover{background:var(--soft)}
+.pg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sk{display:block;border-radius:6px;background:var(--border)}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="#" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"></path></svg>Vacantes</a>
+      <a class="nav" href="#"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <div>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Competencias</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Competencias con sus comportamientos y preguntas.</p>
+          </div>
+          <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+          <button type="button" onClick="{{abrirNueva}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 8px; border: 0; background: var(--accent); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nueva competencia
+          </button>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 12px">
+          <div style="flex: 1 1 280px; position: relative">
+            <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Buscar competencia</label>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.75" stroke-linecap="round" style="position: absolute; left: 12px; top: 13px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+            <input id="q" type="search" value="{{q}}" onChange="{{setQ}}" placeholder="Buscar por nombre" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px 0 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+          </div>
+          <div>
+            <label for="ct" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Tipo</label>
+            <select id="ct" class="sel" value="{{tipo}}" onChange="{{setTipo}}">
+              <option value="">Todos los tipos</option><option value="Cardinal">Cardinal</option><option value="Específica">Específica</option>
+            </select>
+          </div>
+          <sc-if value="{{hayFiltros}}" hint-placeholder-val="{{false}}">
+            <button type="button" class="tbtn" onClick="{{limpiar}}">Limpiar filtros</button>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{cargando}}" hint-placeholder-val="{{false}}">
+          <div role="status" aria-label="Cargando competencias" style="display: grid; grid-template-columns: 1fr; gap: 12px">
+            <sc-for list="{{esqueletos}}" as="s" hint-placeholder-count="4">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; min-height: 64px; box-sizing: border-box; padding: 12px 20px; display: flex; align-items: center; gap: 12px">
+                <span style="flex: 1; display: flex; flex-direction: column; gap: 8px"><span class="sk" style="width: 60px; height: 12px"></span><span class="sk" style="width: 55%; height: 16px"></span></span>
+                <span class="sk" style="width: 72px; height: 24px; border-radius: 999px"></span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{enError}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; background: var(--dangersoft); border: 1px solid var(--danger); border-radius: 12px; color: var(--text); font-size: 15px">
+            <span>No se pudieron cargar las competencias. Revisa tu conexión e inténtalo de nuevo.</span>
+            <button type="button" class="tbtn" onClick="{{reintentar}}">Reintentar</button>
+          </div>
+        </sc-if>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 12px; align-items: start">
+          <sc-for list="{{filas}}" as="r" hint-placeholder-count="4">
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+              <div class="hrow" role="button" tabindex="0" aria-expanded="{{r.ariaExp}}" aria-label="{{r.toggleTxt}} de {{r.nombre}}" onClick="{{r.alternar}}" onKeyDown="{{r.teclaFila}}" style="display: flex; align-items: center; gap: 12px; padding: 10px 8px 10px 20px; min-height: 64px; box-sizing: border-box; cursor: pointer">
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                  <span style="font-size: 13px; color: var(--muted)">{{r.codigo}}</span>
+                  <span style="font-size: 16px; {{r.nombreStyle}}">{{r.nombre}}</span>
+                                  </div>
+                <span style="display: inline-block; flex: none; padding: 3px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 13px; font-weight: 600">{{r.tipo}}</span>
+                <span style="display: flex; align-items: center; justify-content: flex-end; gap: 2px; flex: none">
+                    <span aria-hidden="true" style="display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; color: var(--muted); {{r.chevStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span>
+                    <sc-if value="{{esAdmin}}" hint-placeholder-val="{{true}}">
+                      <button type="button" class="ibtn" aria-label="{{r.accionTxt}} {{r.nombre}}" title="{{r.accionTxt}}" onClick="{{r.cambiarEstado}}" style="border-color: transparent; color: {{r.accionColor}}">
+                        <sc-if value="{{r.activo}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6a7.75 7.75 0 1 0 10 0"></path><path d="M12 4v8"></path></svg></sc-if>
+                        <sc-if value="{{r.inactivo}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg></sc-if>
+                      </button>
+                    </sc-if>
+                  </span>
+              </div>
+              <sc-if value="{{r.abierto}}" hint-placeholder-val="{{false}}">
+                <div style="background: var(--bg); border-top: 1px solid var(--border); padding: 0 20px 20px; font-size: 15px">
+                  <sc-if value="{{r.avisoIncompleta}}" hint-placeholder-val="{{false}}">
+                    <p role="status" style="margin: 16px 0 0; padding: 10px 12px; font-size: 14px; color: var(--text); background: var(--soft); border: 1px solid var(--border); border-radius: 8px">Contenido incompleto: completa los comportamientos y las preguntas para poder activar esta competencia.</p>
+                  </sc-if>
+                  <div role="tablist" aria-label="Información de {{r.nombre}}" onKeyDown="{{r.teclaTab}}" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px">
+                    <button type="button" class="tabb" role="tab" tabindex="{{r.ti0}}" aria-selected="{{r.sel0}}" onClick="{{r.irTab0}}" style="height: 44px; padding: 0 18px; border: 0; border-bottom: 3px solid {{r.bd0}}; background: transparent; color: {{r.cl0}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Competencia</button>
+                    <button type="button" class="tabb" role="tab" tabindex="{{r.ti1}}" aria-selected="{{r.sel1}}" onClick="{{r.irTab1}}" style="height: 44px; padding: 0 18px; border: 0; border-bottom: 3px solid {{r.bd1}}; background: transparent; color: {{r.cl1}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Comportamientos</button>
+                    <button type="button" class="tabb" role="tab" tabindex="{{r.ti2}}" aria-selected="{{r.sel2}}" onClick="{{r.irTab2}}" style="height: 44px; padding: 0 18px; border: 0; border-bottom: 3px solid {{r.bd2}}; background: transparent; color: {{r.cl2}}; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Preguntas</button>
+                  </div>
+                  <sc-if value="{{r.tab0}}" hint-placeholder-val="{{true}}">
+                    <p style="margin: 0 0 16px; line-height: 1.45">{{r.descripcion}}</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px">
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 600">Grados de desarrollo <span style="font-weight: 400; color: var(--muted)">· {{r.escalaTxt}}</span></span><button type="button" class="ibtn" onClick="{{r.editarSec}}" aria-label="{{r.editSecLabel}}" title="{{r.editSecLabel}}" style="border-color: transparent; flex: none; {{r.editStyle}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path></svg></button></div>
+                      <div role="group" aria-label="Vista previa de la escala de grados" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                        <span style="font-size: 13px; color: var(--muted)">Ver con escala:</span>
+                        <sc-for list="{{r.escPrev}}" as="o" hint-placeholder-count="3">
+                          <button type="button" class="esc" aria-pressed="{{o.sel}}" onClick="{{o.elegir}}" style="{{o.style}}">{{o.label}}</button>
+                        </sc-for>
+                        <sc-if value="{{r.hayPrev}}" hint-placeholder-val="{{false}}">
+                          <button type="button" class="tbtn" onClick="{{r.aplicarEsc}}" style="background: var(--accent); color: var(--onaccent); border-color: transparent; font-weight: 600; {{r.editStyle}}">Aplicar esta escala</button>
+                          <button type="button" class="tbtn" onClick="{{r.descartarEsc}}">Descartar</button>
+                        </sc-if>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 12px">
+                        <sc-for list="{{r.grados}}" as="g" hint-placeholder-count="4">
+                          <div style="display: flex; flex-direction: column; gap: 2px"><span style="align-self: flex-start; display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-weight: 600; font-size: 13px">{{g.nombre}}</span><span style="line-height: 1.45">{{g.texto}}</span></div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{r.tab1}}" hint-placeholder-val="{{false}}">
+                    <div style="display: flex; flex-direction: column; gap: 14px">
+                      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 600">Comportamientos por grado</span><button type="button" class="ibtn" onClick="{{r.editarSec}}" aria-label="{{r.editSecLabel}}" title="{{r.editSecLabel}}" style="border-color: transparent; flex: none; {{r.editStyle}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path></svg></button></div>
+                      <div role="group" aria-label="Vista previa de la escala de grados" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                        <span style="font-size: 13px; color: var(--muted)">Ver con escala:</span>
+                        <sc-for list="{{r.escPrev}}" as="o" hint-placeholder-count="3">
+                          <button type="button" class="esc" aria-pressed="{{o.sel}}" onClick="{{o.elegir}}" style="{{o.style}}">{{o.label}}</button>
+                        </sc-for>
+                        <sc-if value="{{r.hayPrev}}" hint-placeholder-val="{{false}}">
+                          <button type="button" class="tbtn" onClick="{{r.aplicarEsc}}" style="background: var(--accent); color: var(--onaccent); border-color: transparent; font-weight: 600; {{r.editStyle}}">Aplicar esta escala</button>
+                          <button type="button" class="tbtn" onClick="{{r.descartarEsc}}">Descartar</button>
+                        </sc-if>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 16px">
+                        <sc-for list="{{r.compGrados}}" as="g" hint-placeholder-count="4">
+                          <div>
+                            <div style="display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-weight: 600; font-size: 13px; margin-bottom: 6px">{{g.nombre}}</div>
+                            <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px">
+                              <sc-for list="{{g.items}}" as="it" hint-placeholder-count="4"><li>{{it.texto}}</li></sc-for>
+                            </ul>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{r.tab2}}" hint-placeholder-val="{{false}}">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px"><span style="font-weight: 600">Preguntas de la competencia</span><button type="button" class="ibtn" onClick="{{r.editarSec}}" aria-label="{{r.editSecLabel}}" title="{{r.editSecLabel}}" style="border-color: transparent; flex: none; {{r.editStyle}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path></svg></button></div>
+                    <ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px">
+                      <sc-for list="{{r.preguntas}}" as="p" hint-placeholder-count="4"><li>{{p.texto}}</li></sc-for>
+                    </ol>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{sinResultados}}" hint-placeholder-val="{{false}}">
+          <p style="margin: 0; padding: 24px 20px; font-size: 15px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 12px">Ninguna competencia coincide con los filtros. <button type="button" class="tbtn" onClick="{{limpiar}}" style="margin-left: 8px">Limpiar filtros</button></p>
+        </sc-if>
+        <sc-if value="{{hayPaginas}}" hint-placeholder-val="{{false}}">
+          <nav aria-label="Paginación" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{paginasLista}}" as="p" hint-placeholder-count="3">
+              <button type="button" class="pg" aria-current="{{p.cur}}" aria-label="{{p.label}}" onClick="{{p.ir}}" style="{{p.style}}">{{p.n}}</button>
+            </sc-for>
+          </nav>
+        </sc-if>
+        <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+      </div>
+    </main>
+  </div>
+
+  <sc-if value="{{abreForm}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 40; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="dialog" aria-modal="true" aria-labelledby="nc-t" onKeyDown="{{teclaForm}}" style="width: 100%; max-width: 720px; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,0.25)">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px">
+          <h2 id="nc-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">Nueva competencia</h2>
+          <button type="button" class="ibtn" aria-label="Cerrar" onClick="{{cerrarForm}}" style="margin: -8px -8px 0 0; border-color: transparent"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 6l-12 12M6 6l12 12"></path></svg></button>
+        </div>
+        <form onSubmit="{{guardar}}" novalidate="" style="display: flex; flex-direction: column; gap: 18px">
+          <p style="margin: 0; font-size: 13px; color: var(--muted)">Los campos con * son obligatorios. Se guarda como una competencia activa.</p>
+          <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="nc-n" style="font-size: 13px; font-weight: 600; color: var(--muted)">Nombre *</label>
+              <input id="nc-n" type="text" autoFocus="{{true}}" aria-invalid="{{ariaNombre}}" value="{{f.nombre}}" onChange="{{setNombre}}" placeholder="Ej. Pensamiento estratégico" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+              <sc-if value="{{eNombre}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">{{eNombreTxt}}</p></sc-if>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="nc-t2" style="font-size: 13px; font-weight: 600; color: var(--muted)">Tipo *</label>
+              <select id="nc-t2" value="{{f.tipo}}" onChange="{{setTipoForm}}" style="height: 44px; padding: 0 10px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+                <option value="">Selecciona</option><option value="Cardinal">Cardinal</option><option value="Específica">Específica</option>
+              </select>
+              <sc-if value="{{eTipo}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Selecciona el tipo.</p></sc-if>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="nc-d" style="font-size: 13px; font-weight: 600; color: var(--muted)">Descripción *</label>
+            <textarea id="nc-d" rows="2" value="{{f.descripcion}}" onChange="{{setDesc}}" placeholder="¿Qué describe esta competencia?" style="padding: 10px 12px; resize: vertical; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;"></textarea>
+            <sc-if value="{{eDesc}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Ingresa la descripción.</p></sc-if>
+          </div>
+          <div role="radiogroup" aria-labelledby="nc-esc-l" style="display: flex; flex-direction: column; gap: 8px">
+            <span id="nc-esc-l" style="font-size: 15px; font-weight: 600">Escala de los grados</span>
+            <span style="font-size: 13px; color: var(--muted)">Elige cómo se nombran los cuatro grados de esta competencia.</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px">
+              <sc-for list="{{escOpts}}" as="o" hint-placeholder-count="3">
+                <button type="button" class="esc" role="radio" aria-checked="{{o.sel}}" onClick="{{o.elegir}}" style="{{o.style}}">
+                  <span style="font-weight: 600">{{o.label}}</span>
+                  <span style="font-size: 13px; color: var(--muted)">{{o.ejemplo}}</span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{hayCats}}" hint-placeholder-val="{{false}}">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px">
+                <sc-for list="{{catCampos}}" as="c" hint-placeholder-count="4">
+                  <input type="text" aria-label="{{c.label}}" placeholder="{{c.label}}" value="{{c.texto}}" onChange="{{c.cambiar}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+                </sc-for>
+              </div>
+              <sc-if value="{{eCats}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Escribe las cuatro categorías, sin repetir nombres.</p></sc-if>
+            </sc-if>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-size: 15px; font-weight: 600">Grados de desarrollo</span>
+            <sc-for list="{{gradosForm}}" as="g" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="{{g.id}}" style="font-size: 13px; font-weight: 600; color: var(--muted)">{{g.nombre}}</label>
+                <textarea id="{{g.id}}" rows="2" value="{{g.texto}}" onChange="{{g.cambiar}}" placeholder="Describe el nivel de dominio de este grado" style="padding: 10px 12px; resize: vertical; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;"></textarea>
+              </div>
+            </sc-for>
+            <sc-if value="{{eGrados}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Completa los cuatro grados.</p></sc-if>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-size: 15px; font-weight: 600">Comportamientos por grado</span>
+            <sc-for list="{{compForm}}" as="g" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <span style="font-size: 13px; font-weight: 600; color: var(--muted)">{{g.nombre}}</span>
+                <sc-for list="{{g.campos}}" as="c" hint-placeholder-count="4">
+                  <input type="text" aria-label="{{c.label}}" placeholder="{{c.label}}" value="{{c.texto}}" onChange="{{c.cambiar}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{eComp}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Completa los cuatro comportamientos de cada grado.</p></sc-if>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 15px; font-weight: 600">Preguntas</span>
+            <sc-for list="{{pregForm}}" as="c" hint-placeholder-count="4">
+              <input type="text" aria-label="{{c.label}}" placeholder="{{c.label}}" value="{{c.texto}}" onChange="{{c.cambiar}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+            </sc-for>
+            <sc-if value="{{ePreg}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Completa las cuatro preguntas.</p></sc-if>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px">
+            <button type="button" onClick="{{cerrarForm}}" style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px; cursor: pointer">Cancelar</button>
+            <button type="submit" style="height: 44px; padding: 0 22px; border-radius: 8px; border: 0; background: var(--accent); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Guardar competencia</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{abreEdit}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 45; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="dialog" aria-modal="true" aria-labelledby="ed-t" onKeyDown="{{teclaEdit}}" style="width: 100%; max-width: 640px; max-height: 100%; overflow-y: auto; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,0.25)">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px">
+          <div><h2 id="ed-t" style="margin: 0; font-size: 20px; letter-spacing: -0.01em">{{edTitulo}}</h2><div style="margin-top: 4px; font-size: 14px; color: var(--muted)">{{edNombre}}</div></div>
+          <button type="button" class="ibtn" aria-label="Cerrar" onClick="{{cerrarEdit}}" style="margin: -8px -8px 0 0; border-color: transparent"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M18 6l-12 12M6 6l12 12"></path></svg></button>
+        </div>
+        <form onSubmit="{{guardarEdit}}" novalidate="" style="display: flex; flex-direction: column; gap: 16px">
+          <sc-if value="{{edGrados}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="ed-n" style="font-size: 13px; font-weight: 600; color: var(--muted)">Nombre</label>
+              <input id="ed-n" type="text" autoFocus="{{true}}" value="{{edNombreVal}}" onChange="{{setEdNombre}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+              <sc-if value="{{edNombreErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">{{edNombreTxt}}</p></sc-if>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="ed-d" style="font-size: 13px; font-weight: 600; color: var(--muted)">Descripción</label>
+              <textarea id="ed-d" rows="2" value="{{edDescVal}}" onChange="{{setEdDesc}}" style="padding: 10px 12px; resize: vertical; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px"></textarea>
+              <label for="ed-tp" style="font-size: 13px; font-weight: 600; color: var(--muted); margin-top: 6px">Tipo</label>
+              <select id="ed-tp" value="{{edTipoVal}}" onChange="{{setEdTipo}}" style="height: 44px; padding: 0 10px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+                <option value="Cardinal">Cardinal</option><option value="Específica">Específica</option>
+              </select>
+            </div>
+          <div role="radiogroup" aria-labelledby="ed-esc-l" style="display: flex; flex-direction: column; gap: 8px">
+            <span id="ed-esc-l" style="font-size: 15px; font-weight: 600">Escala de los grados</span>
+            <span style="font-size: 13px; color: var(--muted)">Elige cómo se nombran los cuatro grados de esta competencia.</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px">
+              <sc-for list="{{edEscOpts}}" as="o" hint-placeholder-count="3">
+                <button type="button" class="esc" role="radio" aria-checked="{{o.sel}}" onClick="{{o.elegir}}" style="{{o.style}}">
+                  <span style="font-weight: 600">{{o.label}}</span>
+                  <span style="font-size: 13px; color: var(--muted)">{{o.ejemplo}}</span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{edHayCats}}" hint-placeholder-val="{{false}}">
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px">
+                <sc-for list="{{edCatCampos}}" as="c" hint-placeholder-count="4">
+                  <input type="text" aria-label="{{c.label}}" placeholder="{{c.label}}" value="{{c.texto}}" onChange="{{c.cambiar}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px">
+                </sc-for>
+              </div>
+              <sc-if value="{{edCatsErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Escribe las cuatro categorías, sin repetir nombres.</p></sc-if>
+            </sc-if>
+          </div>
+            <sc-for list="{{edGradosCampos}}" as="g" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="{{g.id}}" style="font-size: 13px; font-weight: 600; color: var(--muted)">{{g.nombre}}</label>
+                <textarea id="{{g.id}}" rows="2" value="{{g.texto}}" onChange="{{g.cambiar}}" style="padding: 10px 12px; resize: vertical; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px"></textarea>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{edComp}}" hint-placeholder-val="{{false}}">
+            <sc-for list="{{edCompCampos}}" as="g" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <span style="font-size: 13px; font-weight: 600; color: var(--muted)">{{g.nombre}}</span>
+                <sc-for list="{{g.campos}}" as="c" hint-placeholder-count="4">
+                  <input type="text" aria-label="{{c.label}}" placeholder="{{c.label}}" value="{{c.texto}}" onChange="{{c.cambiar}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+                </sc-for>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{edPreg}}" hint-placeholder-val="{{false}}">
+            <sc-for list="{{edPregCampos}}" as="c" hint-placeholder-count="4">
+              <input type="text" aria-label="{{c.label}}" placeholder="{{c.label}}" value="{{c.texto}}" onChange="{{c.cambiar}}" style="height: 44px; padding: 0 12px; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px;">
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{edErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--danger)">Completa todos los campos.</p></sc-if>
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px">
+            <button type="button" onClick="{{cerrarEdit}}" style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px; cursor: pointer">Cancelar</button>
+            <button type="submit" style="height: 44px; padding: 0 22px; border-radius: 8px; border: 0; background: var(--accent); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Guardar cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{hayConfirmar}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 48; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="cf-t" aria-describedby="cf-d" onKeyDown="{{teclaConfirmar}}" style="width: 100%; max-width: 440px; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,0.25)">
+        <h2 id="cf-t" style="margin: 0; font-size: 18px">{{confTitulo}}</h2>
+        <p id="cf-d" style="margin: 8px 0 0; font-size: 15px; color: var(--muted); line-height: 1.45">La competencia, con sus grados, comportamientos y preguntas, no podrá asignarse en nuevos registros.</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 20px">
+          <button type="button" autoFocus="{{true}}" onClick="{{cancelarConfirmar}}" style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-size: 15px; cursor: pointer">Cancelar</button>
+          <button type="button" onClick="{{aceptarConfirmar}}" style="height: 44px; padding: 0 22px; border-radius: 8px; border: 0; background: var(--danger); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Desactivar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{hayAviso}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 50; background: rgba(18,23,29,0.5); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="av-t" onKeyDown="{{teclaAviso}}" style="width: 100%; max-width: 400px; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; box-shadow: 0 16px 48px rgba(0,0,0,0.25); text-align: center">
+        <span aria-hidden="true" style="width: 48px; height: 48px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>
+        <h2 id="av-t" style="margin: 0; font-size: 18px">{{aviso}}</h2>
+        <button type="button" autoFocus="{{true}}" onClick="{{cerrarAviso}}" style="margin-top: 20px; height: 44px; padding: 0 28px; border-radius: 8px; border: 0; background: var(--accent); color: var(--onaccent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Aceptar</button>
+      </div>
+    </div>
+  </sc-if>
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"admin":{"editor":"boolean","default":true},"vista":{"editor":"select","options":["normal","incompleta","cargando","error"],"default":"normal"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      q: '', tipo: '', estado: '', pag: 1, confirmar: null, abierto: {}, tabs: {}, prevEsc: {}, aviso: '', form: null, edit: null,
+      comps: [
+       {
+        "id": 1,
+        "nombre": "Trabajo en equipo",
+        "tipo": "Cardinal",
+        "estado": "Activo",
+        "descripcion": "Colabora con otros para lograr objetivos comunes, compartiendo información y apoyando a sus compañeros.",
+        "grados": [
+         "Fomenta la colaboración entre áreas y resuelve conflictos del equipo.",
+         "Coordina al equipo y facilita acuerdos para alcanzar metas compartidas.",
+         "Colabora activamente y comparte información con su equipo.",
+         "Participa en las tareas del equipo cuando se le solicita."
+        ],
+        "comportamientos": [
+         [
+          "Fomenta la colaboración entre áreas.",
+          "Resuelve conflictos del equipo.",
+          "Reconoce los aportes de los demás.",
+          "Promueve un clima de confianza."
+         ],
+         [
+          "Coordina al equipo hacia metas compartidas.",
+          "Facilita acuerdos entre los miembros.",
+          "Distribuye tareas según fortalezas.",
+          "Da seguimiento a los compromisos."
+         ],
+         [
+          "Colabora activamente con su equipo.",
+          "Comparte información de forma oportuna.",
+          "Ofrece ayuda a sus compañeros.",
+          "Cumple los acuerdos del grupo."
+         ],
+         [
+          "Participa en las tareas del equipo.",
+          "Acepta las indicaciones del grupo.",
+          "Pide ayuda cuando la necesita.",
+          "Respeta a sus compañeros."
+         ]
+        ],
+        "preguntas": [
+         "Describe una situación en la que lograste una meta gracias al trabajo en equipo.",
+         "¿Cómo manejas un desacuerdo con un compañero?",
+         "¿Qué haces cuando un miembro del equipo necesita ayuda?",
+         "¿Cómo compartes información con tu equipo?"
+        ]
+       },
+       {
+        "id": 2,
+        "escala": { "tipo": "numeros", "cats": ["Excelente", "Muy buena", "Buena", "Normal"] },
+        "nombre": "Orientación a resultados",
+        "tipo": "Cardinal",
+        "estado": "Activo",
+        "descripcion": "Cumple las metas con calidad y a tiempo, enfocándose en los resultados esperados.",
+        "grados": [
+         "Define metas desafiantes y asegura su cumplimiento en toda el área.",
+         "Supera de forma consistente las metas de su función.",
+         "Cumple sus metas con calidad y en los plazos acordados.",
+         "Cumple las tareas asignadas con supervisión cercana."
+        ],
+        "comportamientos": [
+         [
+          "Define metas desafiantes para el área.",
+          "Asegura su cumplimiento.",
+          "Corrige desvíos de forma anticipada.",
+          "Reconoce los logros del equipo."
+         ],
+         [
+          "Supera de forma consistente sus metas.",
+          "Propone mejoras a los procesos.",
+          "Mide el avance con indicadores.",
+          "Prioriza lo que genera más valor."
+         ],
+         [
+          "Cumple sus metas con calidad.",
+          "Respeta los plazos acordados.",
+          "Informa el avance a su jefe.",
+          "Corrige sus errores a tiempo."
+         ],
+         [
+          "Cumple las tareas asignadas.",
+          "Trabaja con supervisión cercana.",
+          "Entrega lo solicitado en el plazo.",
+          "Acepta la retroalimentación."
+         ]
+        ],
+        "preguntas": [
+         "Cuéntame de una meta exigente que lograste cumplir.",
+         "¿Cómo priorizas cuando tienes varias entregas?",
+         "¿Qué haces cuando ves que no llegarás a un plazo?",
+         "¿Cómo mides tu avance hacia un objetivo?"
+        ]
+       },
+       {
+        "id": 3,
+        "nombre": "Liderazgo",
+        "tipo": "Específica",
+        "estado": "Activo",
+        "descripcion": "Inspira y guía a otros hacia una visión, desarrollando el potencial de su equipo.",
+        "grados": [
+         "Inspira una visión organizacional y forma a otros líderes.",
+         "Dirige equipos y desarrolla a sus colaboradores.",
+         "Guía a su equipo en proyectos puntuales.",
+         "Apoya a otros en tareas específicas bajo orientación."
+        ],
+        "comportamientos": [
+         [
+          "Inspira una visión organizacional.",
+          "Forma a otros líderes.",
+          "Lidera procesos de cambio.",
+          "Es referente de los valores."
+         ],
+         [
+          "Dirige equipos.",
+          "Desarrolla a sus colaboradores.",
+          "Delega con claridad.",
+          "Da retroalimentación oportuna."
+         ],
+         [
+          "Guía a su equipo en proyectos puntuales.",
+          "Motiva a sus compañeros.",
+          "Asume la responsabilidad del resultado.",
+          "Toma decisiones de su ámbito."
+         ],
+         [
+          "Apoya a otros bajo orientación.",
+          "Sigue el ejemplo de sus líderes.",
+          "Asume tareas de coordinación sencillas.",
+          "Muestra iniciativa."
+         ]
+        ],
+        "preguntas": [
+         "Describe cómo has motivado a un equipo en un momento difícil.",
+         "¿Cómo delegas tareas?",
+         "¿Cómo das retroalimentación a un colaborador?",
+         "Cuéntame de una decisión difícil que tomaste como líder."
+        ]
+       },
+       {
+        "id": 4,
+        "nombre": "Análisis de datos",
+        "tipo": "Específica",
+        "estado": "Activo",
+        "descripcion": "Interpreta información cuantitativa y cualitativa para sustentar decisiones.",
+        "grados": [
+         "Define estrategias de análisis y modelos predictivos para la organización.",
+         "Diseña análisis complejos y comunica hallazgos a la dirección.",
+         "Analiza datos con herramientas estándar y elabora informes.",
+         "Recopila y ordena datos siguiendo instrucciones."
+        ],
+        "comportamientos": [
+         [
+          "Define estrategias de análisis.",
+          "Impulsa modelos predictivos.",
+          "Asesora a la dirección con datos.",
+          "Establece estándares de calidad de datos."
+         ],
+         [
+          "Diseña análisis complejos.",
+          "Comunica hallazgos a la dirección.",
+          "Construye tableros de control.",
+          "Valida la calidad de los datos."
+         ],
+         [
+          "Analiza datos con herramientas estándar.",
+          "Elabora informes.",
+          "Identifica tendencias básicas.",
+          "Documenta sus procedimientos."
+         ],
+         [
+          "Recopila y ordena datos según instrucciones.",
+          "Registra información con exactitud.",
+          "Usa plantillas definidas.",
+          "Consulta dudas a su jefe."
+         ]
+        ],
+        "preguntas": [
+         "Explica un análisis de datos que influyó en una decisión.",
+         "¿Cómo verificas la calidad de los datos?",
+         "¿Qué herramientas usas para analizar información?",
+         "¿Cómo comunicas tus hallazgos a quien no es técnico?"
+        ]
+       },
+       {
+        "id": 5,
+        "escala": { "tipo": "categorias", "cats": ["Excelente", "Muy buena", "Buena", "Normal"] },
+        "nombre": "Comunicación efectiva",
+        "tipo": "Cardinal",
+        "estado": "Activo",
+        "descripcion": "Transmite ideas con claridad y escucha activamente a sus interlocutores.",
+        "grados": [
+         "Comunica la visión institucional ante audiencias internas y externas.",
+         "Adapta su mensaje a distintas audiencias con impacto.",
+         "Expresa ideas con claridad de forma oral y escrita.",
+         "Transmite información básica de manera comprensible."
+        ],
+        "comportamientos": [
+         [
+          "Comunica la visión institucional.",
+          "Dialoga con audiencias internas y externas.",
+          "Maneja conversaciones difíciles.",
+          "Genera confianza al comunicar."
+         ],
+         [
+          "Adapta su mensaje a cada audiencia.",
+          "Presenta ideas con impacto.",
+          "Escucha activamente.",
+          "Da y recibe retroalimentación."
+         ],
+         [
+          "Expresa ideas con claridad, oral y escrita.",
+          "Escucha a sus interlocutores.",
+          "Resume la información clave.",
+          "Mantiene un trato cordial."
+         ],
+         [
+          "Transmite información básica de forma comprensible.",
+          "Usa los canales establecidos.",
+          "Pregunta cuando no entiende.",
+          "Responde a tiempo."
+         ]
+        ],
+        "preguntas": [
+         "¿Cómo adaptas tu mensaje a distintas audiencias?",
+         "Describe una conversación difícil que manejaste bien.",
+         "¿Cómo te aseguras de que te entendieron?",
+         "¿Cómo escuchas a quien piensa distinto?"
+        ]
+       },
+       {
+        "id": 6,
+        "nombre": "Gestión de proyectos",
+        "tipo": "Específica",
+        "estado": "Activo",
+        "descripcion": "Planificar, ejecutar y controlar proyectos en alcance, tiempo, costo y calidad.",
+        "grados": [
+         "Dirige portafolios de proyectos, define metodologías y gestiona riesgos a nivel organizacional.",
+         "Gestiona proyectos completos con planes, riesgos y seguimiento formales.",
+         "Planifica y da seguimiento a proyectos pequeños con apoyo metodológico.",
+         "Colabora en tareas de un proyecto bajo la guía de su responsable."
+        ],
+        "comportamientos": [
+         [
+          "Dirige portafolios de proyectos.",
+          "Define metodologías.",
+          "Gestiona riesgos a nivel organizacional.",
+          "Alinea los proyectos con la estrategia."
+         ],
+         [
+          "Gestiona proyectos completos con planes y seguimiento formales.",
+          "Administra presupuesto y recursos.",
+          "Coordina a los interesados.",
+          "Controla alcance, tiempo y costo."
+         ],
+         [
+          "Planifica proyectos pequeños.",
+          "Da seguimiento a tareas y plazos.",
+          "Registra riesgos y acuerdos.",
+          "Comunica el avance al responsable."
+         ],
+         [
+          "Colabora en tareas de un proyecto.",
+          "Sigue las indicaciones de su responsable.",
+          "Registra su avance.",
+          "Reporta los problemas que detecta."
+         ]
+        ],
+        "preguntas": [
+         "Explica cómo planificas un proyecto desde su inicio hasta su cierre.",
+         "¿Cómo identificas y gestionas los riesgos de un proyecto?",
+         "Describe un proyecto que se retrasó y las medidas que tomaste.",
+         "¿Cómo comunicas el avance a las personas interesadas?"
+        ]
+       },
+       {
+        "id": 7,
+        "nombre": "Gestión del tiempo",
+        "tipo": "Específica",
+        "estado": "Inactivo",
+        "descripcion": "Prioriza y organiza su trabajo para cumplir plazos.",
+        "grados": [
+         "Optimiza los tiempos de varias áreas.",
+         "Planifica cargas de trabajo de su equipo.",
+         "Prioriza y organiza su propio trabajo.",
+         "Cumple horarios y plazos con recordatorios."
+        ],
+        "comportamientos": [
+         [
+          "Optimiza los tiempos de varias áreas.",
+          "Elimina cuellos de botella.",
+          "Define prioridades del área.",
+          "Equilibra la carga de trabajo."
+         ],
+         [
+          "Planifica cargas de trabajo de su equipo.",
+          "Anticipa conflictos de agenda.",
+          "Ajusta prioridades ante cambios.",
+          "Cumple los hitos del equipo."
+         ],
+         [
+          "Prioriza y organiza su propio trabajo.",
+          "Cumple sus plazos.",
+          "Planifica su semana.",
+          "Avisa de los retrasos."
+         ],
+         [
+          "Cumple horarios y plazos con recordatorios.",
+          "Realiza una tarea a la vez.",
+          "Llega puntual.",
+          "Pide ayuda para organizarse."
+         ]
+        ],
+        "preguntas": [
+         "¿Cómo organizas tu semana de trabajo?",
+         "¿Qué haces cuando surge una urgencia inesperada?",
+         "¿Cómo decides qué tarea va primero?",
+         "Cuéntame cómo evitas los retrasos."
+        ]
+       }
+      ]
+    };
+  }
+  renderVals() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A' };
+    const t = this.props.dark ? dark : light;
+    const norm = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const CATS0 = ['Excelente', 'Muy buena', 'Buena', 'Normal'];
+    const LET = ['Grado A', 'Grado B', 'Grado C', 'Grado D'];
+    const NUM = ['Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4'];
+    const lab = (e) => (!e || e.tipo === 'letras' ? LET : e.tipo === 'numeros' ? NUM : e.cats.map((x, i) => x.trim() || 'Categoría ' + (i + 1)));
+    const escTxt = (e) => ({ letras: 'Letras', numeros: 'Niveles numéricos', categorias: 'Categorías' }[(e && e.tipo) || 'letras']);
+    const escNueva = () => ({ tipo: 'letras', cats: [...CATS0] });
+    const escDe = (e) => ({ tipo: (e && e.tipo) || 'letras', cats: e && e.cats ? [...e.cats] : [...CATS0] });
+    const catsMal = (e) => e.tipo === 'categorias' && (e.cats.some((x) => x.trim() === '' || x.trim().length > 20) || new Set(e.cats.map((x) => norm(x))).size < 4);
+    const optsEsc = (e, setE) => [['letras', 'Letras', 'Grado A, B, C, D'], ['numeros', 'Números', 'Nivel 1, 2, 3, 4'], ['categorias', 'Categorías', 'Excelente, Muy buena…']].map(([id, label, ejemplo]) => {
+      const on = e.tipo === id;
+      return { label, ejemplo, sel: on ? 'true' : 'false', elegir: () => setE({ escala: { ...e, tipo: id } }),
+        style: 'display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:56px;padding:10px 12px;border-radius:10px;font:inherit;text-align:left;cursor:pointer;color:var(--text);' + (on ? 'border:2px solid var(--accent);background:var(--soft);' : 'border:1px solid var(--border);background:var(--surface);') };
+    });
+    const camposCats = (e, setE) => e.cats.map((x, i) => ({ label: 'Categoría ' + (i + 1), texto: x, cambiar: (ev) => setE({ escala: { ...e, cats: e.cats.map((y, k) => (k === i ? ev.target.value : y)) } }) }));
+    const { q, tipo, estado, abierto, tabs, prevEsc, aviso, comps, form, edit, confirmar, pag } = this.state;
+    const esAdm = this.props.admin !== false;
+    const vista = this.props.vista || 'normal';
+    const TAM = 12;
+    const ed = edit;
+    const edNombreTxt = ed && ed.sec === 'grados' ? (ed.nombre.trim() === '' ? 'Ingresa el nombre.' : comps.some((c) => c.id !== ed.id && norm(c.nombre) === norm(ed.nombre)) ? 'Ya existe una competencia con ese nombre.' : '') : '';
+    const edVacio = ed ? (ed.sec === 'grados' ? (ed.grados.some((x) => x.trim() === '') || edNombreTxt !== '' || !ed.tipo || ed.descripcion.trim() === '' || catsMal(ed.escala)) : ed.sec === 'comp' ? ed.comps.some((g) => g.some((x) => x.trim() === '')) : ed.preguntas.some((x) => x.trim() === '')) : false;
+    const updE = (o) => this.setState({ edit: { ...ed, ...o } });
+    const arrE = (a, i, v) => a.map((x, k) => (k === i ? v : x));
+    const secNom = { grados: 'Editar competencia', comp: 'Editar comportamientos', preg: 'Editar preguntas' };
+    const edTarget = ed ? comps.find((c) => c.id === ed.id) : null;
+    const f = form || { nombre: '', tipo: '', descripcion: '', grados: ['', '', '', ''], comps: [['', '', '', ''], ['', '', '', ''], ['', '', '', ''], ['', '', '', '']], preguntas: ['', '', '', ''], escala: escNueva(), intento: false };
+    const lineas = (t) => t.split('\n').map((x) => x.trim()).filter(Boolean);
+    const dup = f.nombre.trim() !== '' && comps.some((c) => norm(c.nombre) === norm(f.nombre));
+    const eNombreTxt = f.nombre.trim() === '' ? 'Ingresa el nombre.' : dup ? 'Ya existe una competencia con ese nombre.' : '';
+    const err = { nombre: eNombreTxt !== '', tipo: !f.tipo, desc: f.descripcion.trim() === '', grados: f.grados.some((x) => x.trim() === ''), comp: f.comps.some((g) => g.some((x) => x.trim() === '')), preg: f.preguntas.some((x) => x.trim() === ''), cats: catsMal(f.escala) };
+    const hayErr = Object.values(err).some(Boolean);
+    const ver = !!(form && f.intento);
+    const upd = (o) => this.setState({ form: { ...f, ...o } });
+    const arr = (a, i, v) => a.map((x, k) => (k === i ? v : x));
+    const nq = norm(q);
+    const pill = 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;';
+    const badge = { 'Activo': 'background:#E3F2F0;color:#0F6F69;', 'Inactivo': 'background:#ECEEF1;color:#475260;' };
+    const filas = comps
+      .filter((c) => (esAdm || c.estado === 'Activo') && (!tipo || c.tipo === tipo) && (!estado || c.estado === estado) && (nq === '' || norm(c.nombre).includes(nq)))
+      .map((c) => {
+        const ab = !!abierto[c.id];
+        const activo = c.estado === 'Activo';
+        const escEf = prevEsc[c.id] ? { tipo: prevEsc[c.id], cats: escDe(c.escala).cats } : escDe(c.escala);
+        return {
+          codigo: 'COMP-' + String(c.id).padStart(4, '0'), nombre: c.nombre, tipo: c.tipo, estado: c.estado,
+          descripcion: c.descripcion,
+          corta: c.descripcion.length > 62 ? c.descripcion.slice(0, 60) + '…' : c.descripcion,
+          activo, inactivo: !activo, nombreStyle: 'font-weight:600;' + (activo ? '' : 'color:#5A6573;'),
+          accionColor: activo ? '#B42318' : '#0F6F69', chevStyle: ab ? 'transform:rotate(180deg)' : '',
+          abierto: ab, ariaExp: ab ? 'true' : 'false', toggleTxt: ab ? 'Ocultar información adicional' : 'Ver información adicional',
+          alternar: (e) => { if (e && e.target && e.target.closest && e.target.closest('button')) return; this.setState({ abierto: { ...abierto, [c.id]: !ab } }); },
+          ti0: (tabs[c.id] || 0) === 0 ? '0' : '-1', ti1: (tabs[c.id] || 0) === 1 ? '0' : '-1', ti2: (tabs[c.id] || 0) === 2 ? '0' : '-1',
+          teclaTab: (e) => {
+            const cur = tabs[c.id] || 0;
+            const nx = e.key === 'ArrowRight' ? (cur + 1) % 3 : e.key === 'ArrowLeft' ? (cur + 2) % 3 : e.key === 'Home' ? 0 : e.key === 'End' ? 2 : null;
+            if (nx === null) return;
+            e.preventDefault();
+            const lista = e.currentTarget;
+            this.setState({ tabs: { ...tabs, [c.id]: nx } }, () => { const els = lista.querySelectorAll('[role=tab]'); if (els[nx]) els[nx].focus(); });
+          },
+          teclaFila: (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) { e.preventDefault(); this.setState({ abierto: { ...abierto, [c.id]: !ab } }); } },
+          accionTxt: activo ? 'Desactivar' : 'Activar',
+          editStyle: esAdm ? '' : 'display:none',
+          avisoIncompleta: esAdm && vista === 'incompleta' && c.id === 7,
+          cambiarEstado: () => activo ? this.setState({ confirmar: c.id }) : this.setState({
+            comps: comps.map((x) => (x.id === c.id ? { ...x, estado: activo ? 'Inactivo' : 'Activo' } : x)),
+            aviso: activo ? 'Competencia desactivada.' : 'Competencia activada.'
+          }),
+          grados: c.grados.map((g, i) => ({ nombre: lab(escEf)[i], texto: g })),
+          escalaTxt: escTxt(escEf) + (prevEsc[c.id] && prevEsc[c.id] !== escDe(c.escala).tipo ? ' (vista previa)' : ''),
+          escPrev: [['letras', 'Letras'], ['numeros', 'Números'], ['categorias', 'Categorías']].map(([id, label]) => { const on = escEf.tipo === id; return { label, sel: on ? 'true' : 'false', elegir: () => this.setState({ prevEsc: { ...prevEsc, [c.id]: id } }), style: 'min-height:44px;padding:0 14px;border-radius:999px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;' + (on ? 'border:2px solid var(--accent);background:var(--soft);color:var(--accent);' : 'border:1px solid var(--border);background:var(--surface);color:var(--text);') }; }),
+          hayPrev: !!prevEsc[c.id] && prevEsc[c.id] !== escDe(c.escala).tipo,
+          descartarEsc: () => { const p = { ...prevEsc }; delete p[c.id]; this.setState({ prevEsc: p }); },
+          aplicarEsc: () => { const p = { ...prevEsc }; delete p[c.id]; this.setState({ prevEsc: p, comps: comps.map((x) => (x.id === c.id ? { ...x, escala: { tipo: prevEsc[c.id], cats: escDe(x.escala).cats } } : x)), aviso: 'Escala de grados actualizada correctamente.' }); },
+          compGrados: c.comportamientos.map((g, i) => ({ nombre: lab(escEf)[i], items: g.map((x) => ({ texto: x })) })),
+          preguntas: c.preguntas.map((x) => ({ texto: x })),
+          editSecLabel: ['Editar grados de desarrollo', 'Editar comportamientos', 'Editar preguntas'][tabs[c.id] || 0],
+          editarSec: () => { const n = tabs[c.id] || 0; this.setState({ edit: { id: c.id, nombre: c.nombre, tipo: c.tipo, descripcion: c.descripcion, escala: escDe(c.escala), sec: ['grados', 'comp', 'preg'][n], grados: [...c.grados], comps: c.comportamientos.map((g) => [...g]), preguntas: [...c.preguntas], intento: false } }); },
+          ...[0, 1, 2].reduce((o, n) => { const on = (tabs[c.id] || 0) === n; o['tab' + n] = on; o['sel' + n] = on ? 'true' : 'false'; o['bd' + n] = on ? 'var(--accent)' : 'transparent'; o['cl' + n] = on ? 'var(--accent)' : 'var(--muted)'; o['irTab' + n] = () => this.setState({ tabs: { ...tabs, [c.id]: n } }); return o; }, {})
+        };
+      });
+    return {
+      themeStyle: Object.keys(t).map((k) => '--' + k + ':' + t[k]).join(';'),
+      q, tipo, aviso, hayAviso: aviso !== '',
+      setQ: (e) => this.setState({ q: e.target.value, pag: 1 }),
+      setTipo: (e) => this.setState({ tipo: e.target.value, pag: 1 }),
+      esAdmin: esAdm,
+      cargando: vista === 'cargando', enError: vista === 'error', reintentar: () => this.setState({}),
+      esqueletos: [1, 2, 3, 4].map((n) => ({ n })),
+      hayConfirmar: confirmar !== null,
+      confTitulo: confirmar !== null ? '¿Desactivar «' + (comps.find((x) => x.id === confirmar) || {}).nombre + '»?' : '',
+      cancelarConfirmar: () => this.setState({ confirmar: null }),
+      teclaConfirmar: (e) => { if (e.key === 'Escape') this.setState({ confirmar: null }); },
+      aceptarConfirmar: () => this.setState({ comps: comps.map((x) => (x.id === confirmar ? { ...x, estado: 'Inactivo' } : x)), confirmar: null, aviso: 'Competencia desactivada.' }),
+      edTipoVal: ed ? ed.tipo : '', setEdTipo: (e) => updE({ tipo: e.target.value }),
+      abreEdit: !!ed, edTitulo: ed ? secNom[ed.sec] : '', edNombre: edTarget ? edTarget.nombre : '',
+      edGrados: !!ed && ed.sec === 'grados', edComp: !!ed && ed.sec === 'comp', edPreg: !!ed && ed.sec === 'preg',
+      edErr: !!ed && ed.intento && edVacio,
+      edNombreVal: ed ? ed.nombre : '', edDescVal: ed ? ed.descripcion : '',
+      edNombreErr: !!ed && ed.intento && edNombreTxt !== '', edNombreTxt,
+      setEdNombre: (e) => updE({ nombre: e.target.value }), setEdDesc: (e) => updE({ descripcion: e.target.value }),
+      edGradosCampos: ed ? ed.grados.map((x, i) => ({ id: 'ed-g' + i, nombre: lab(ed.escala)[i], texto: x, cambiar: (e) => updE({ grados: arrE(ed.grados, i, e.target.value) }) })) : [],
+      edCompCampos: ed ? ed.comps.map((g, gi) => ({ nombre: lab(ed.escala)[gi], campos: g.map((x, k) => ({ label: 'Comportamiento ' + (k + 1), texto: x, cambiar: (e) => updE({ comps: ed.comps.map((gg, a) => (a === gi ? arrE(gg, k, e.target.value) : gg)) }) })) })) : [],
+      edPregCampos: ed ? ed.preguntas.map((x, k) => ({ label: 'Pregunta ' + (k + 1), texto: x, cambiar: (e) => updE({ preguntas: arrE(ed.preguntas, k, e.target.value) }) })) : [],
+      cerrarEdit: () => this.setState({ edit: null }),
+      teclaEdit: (e) => { if (e.key === 'Escape') this.setState({ edit: null }); },
+      guardarEdit: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (edVacio) { this.setState({ edit: { ...ed, intento: true } }); return; }
+        const t = (v) => v.trim();
+        const msg = { grados: 'Competencia actualizada correctamente.', comp: 'Comportamientos actualizados correctamente.', preg: 'Preguntas actualizadas correctamente.' }[ed.sec];
+        this.setState({
+          comps: comps.map((c) => c.id !== ed.id ? c : ed.sec === 'grados' ? { ...c, nombre: t(ed.nombre), tipo: ed.tipo, descripcion: t(ed.descripcion), escala: { tipo: ed.escala.tipo, cats: ed.escala.cats.map(t) }, grados: ed.grados.map(t) } : ed.sec === 'comp' ? { ...c, comportamientos: ed.comps.map((g) => g.map(t)) } : { ...c, preguntas: ed.preguntas.map(t) }),
+          edit: null, aviso: msg
+        });
+      },
+      abreForm: !!form, f,
+      eNombre: ver && err.nombre, eNombreTxt, eTipo: ver && err.tipo, eDesc: ver && err.desc, eGrados: ver && err.grados, eComp: ver && err.comp, ePreg: ver && err.preg,
+      escOpts: optsEsc(f.escala, upd), catCampos: camposCats(f.escala, upd), hayCats: f.escala.tipo === 'categorias', eCats: ver && err.cats, ariaNombre: ver && err.nombre ? 'true' : 'false',
+      edEscOpts: ed ? optsEsc(ed.escala, updE) : [], edCatCampos: ed ? camposCats(ed.escala, updE) : [], edHayCats: !!ed && ed.escala.tipo === 'categorias', edCatsErr: !!ed && ed.intento && catsMal(ed.escala),
+      hayFiltros: q !== '' || tipo !== '', limpiar: () => this.setState({ q: '', tipo: '', pag: 1 }),
+      gradosForm: f.grados.map((x, i) => ({ id: 'nc-g' + i, nombre: lab(f.escala)[i], texto: x, cambiar: (e) => upd({ grados: arr(f.grados, i, e.target.value) }) })),
+      compForm: f.comps.map((g, gi) => ({ nombre: lab(f.escala)[gi], campos: g.map((x, k) => ({ label: 'Comportamiento ' + (k + 1), texto: x, cambiar: (e) => upd({ comps: f.comps.map((gg, a) => (a === gi ? arr(gg, k, e.target.value) : gg)) }) })) })),
+      pregForm: f.preguntas.map((x, k) => ({ label: 'Pregunta ' + (k + 1), texto: x, cambiar: (e) => upd({ preguntas: arr(f.preguntas, k, e.target.value) }) })),
+      abrirNueva: () => this.setState({ form: { nombre: '', tipo: '', descripcion: '', grados: ['', '', '', ''], comps: [['', '', '', ''], ['', '', '', ''], ['', '', '', ''], ['', '', '', '']], preguntas: ['', '', '', ''], escala: escNueva(), intento: false } }),
+      cerrarForm: () => this.setState({ form: null }),
+      teclaForm: (e) => { if (e.key === 'Escape') this.setState({ form: null }); },
+      setNombre: (e) => upd({ nombre: e.target.value }),
+      setTipoForm: (e) => upd({ tipo: e.target.value }),
+      setDesc: (e) => upd({ descripcion: e.target.value }),
+      guardar: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (hayErr) { this.setState({ form: { ...f, intento: true } }); return; }
+        const id = comps.reduce((m, c) => Math.max(m, c.id), 0) + 1;
+        this.setState({
+          comps: comps.concat([{ id, nombre: f.nombre.trim(), tipo: f.tipo, estado: 'Activo', descripcion: f.descripcion.trim(), grados: f.grados.map((x) => x.trim()), escala: { tipo: f.escala.tipo, cats: f.escala.cats.map((x) => x.trim()) }, comportamientos: f.comps.map((g) => g.map((x) => x.trim())), preguntas: f.preguntas.map((x) => x.trim()) }]),
+          form: null, q: '', tipo: '', aviso: 'Competencia creada correctamente.'
+        });
+      },
+      cerrarAviso: () => this.setState({ aviso: '' }),
+      teclaAviso: (e) => { if (e.key === 'Escape') this.setState({ aviso: '' }); },
+      filas: vista === 'cargando' || vista === 'error' ? [] : filas.slice((Math.min(pag, Math.max(1, Math.ceil(filas.length / TAM))) - 1) * TAM, Math.min(pag, Math.max(1, Math.ceil(filas.length / TAM))) * TAM),
+      sinResultados: vista !== 'cargando' && vista !== 'error' && filas.length === 0,
+      hayPaginas: vista !== 'cargando' && vista !== 'error' && filas.length > TAM,
+      paginasLista: Array.from({ length: Math.max(1, Math.ceil(filas.length / TAM)) }, (_, i) => { const on = Math.min(pag, Math.max(1, Math.ceil(filas.length / TAM))) === i + 1; return { n: String(i + 1), label: 'Página ' + (i + 1), cur: on ? 'page' : 'false', ir: () => this.setState({ pag: i + 1 }), style: on ? 'border:2px solid var(--accent);background:var(--soft);color:var(--accent);font-weight:600' : '' }; }),
+      resumen: vista === 'cargando' || vista === 'error' ? '' : filas.length + (filas.length === 1 ? ' competencia' : ' competencias')
+    };
+  }
+}
+</script>
+</body>
+</html>

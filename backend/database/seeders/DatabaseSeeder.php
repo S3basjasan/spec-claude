@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(UsuariosInicialesSeeder::class);
+        $this->call(TiposGradoSeeder::class);
         $this->call(CompetenciasSeeder::class);
-        $this->call(ComportamientosSeeder::class);
-        $this->call(PreguntasSeeder::class);
         $this->call(PuestosSeeder::class);
+        $this->call(MicroLearningSeeder::class);
         $this->call(CatalogoFormativoSeeder::class);
         $this->call(TiposUnidadSeeder::class);
         $this->call(UnidadesSeeder::class);
@@ -27,5 +27,13 @@ class DatabaseSeeder extends Seeder
         $this->call(IngresosSeeder::class);
         $this->call(DnfSeeder::class);
         $this->call(PlanFormacionSeeder::class);
+        $this->call(CategoriasReconocimientoSeeder::class);
+        $this->call(ActividadesSeeder::class);
+        // Progresos e intentos de ejemplo: necesitan las fichas de Personal, que se siembran después de los contenidos.
+        $this->call(MicroLearningSeeder::class);
+        // Reportes: encuestas, seguimientos, evaluaciones de impacto y una segunda DNF sobre las actividades sembradas.
+        $this->call(ReportesSeeder::class);
+        // Rutas de carrera: rutas, niveles e inscripciones de ejemplo; las Activas solo para colaboradores con vínculo vigente.
+        $this->call(RutasSeeder::class);
     }
 }

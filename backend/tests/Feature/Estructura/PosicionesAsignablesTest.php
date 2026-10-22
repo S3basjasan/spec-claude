@@ -7,12 +7,12 @@ it('describe una posición con su puesto y unidad vigentes y jefatura null', fun
     $unidad = unidadDe(['nombre' => 'Finanzas']);
     $posicion = posicionAsignable(['puesto_id' => $puesto->id, 'unidad_organizacional_id' => $unidad->id]);
 
-    $datos = EstructuraFacade::getPosicionLaboral($posicion->id);
+    $datos = EstructuraFacade::getPosicionDeGestion($posicion->id);
 
     expect($datos)->toMatchArray([
         'id' => $posicion->id, 'tenant_id' => 1, 'estado' => 'Vacante', 'puesto' => 'Analista contable',
         'puesto_activo' => true, 'unidad' => 'Finanzas', 'unidad_activa' => true, 'jefatura' => null,
-    ])->and(EstructuraFacade::getPosicionLaboral(999999))->toBeNull();
+    ])->and(EstructuraFacade::getPosicionDeGestion(999999))->toBeNull();
 });
 
 it('indica el motivo de cada posición no asignable', function () {

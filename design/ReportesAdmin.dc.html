@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reportes de evaluación — Administrador</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.tabbtn:focus-visible,.pill:focus-visible,.cchip:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.tabbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.tabbtn:hover{color:var(--text)}
+.tabbtn[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;font-weight:600}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.cchip{display:block;width:100%;box-sizing:border-box;text-align:left;border:0;padding:3px 6px;border-radius:4px;font:inherit;font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400;box-sizing:border-box;width:100%}
+textarea.fi{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+</style>
+</helmet>
+<div style="min-height: 3600px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="CatalogoAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="DNFAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Plan anual</a>
+      <a class="nav" href="MicroAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9.5l5 2.5-5 2.5z"></path></svg>Micro-learning</a>
+      <a class="nav" href="ActividadesAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>Actividades</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Reportes</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div>
+            <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Reportes de evaluación de resultados</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Plan de Formación 2026 · datos al 17 oct 2026</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <a class="btn" href="ReportesColaborador.dc.html"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador</a>
+            <button class="btn" onClick="{{exportarExcel}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"></path></svg>Exportar Excel</button>
+            <button class="btn btn-primary" onClick="{{exportarPdf}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"></path></svg>Exportar PDF</button>
+          </div>
+        </div>
+
+        <sc-if value="{{hayAviso}}" hint-placeholder-val="{{false}}">
+          <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600">
+            <span>{{aviso}}</span>
+            <button class="btn" onClick="{{cerrarAviso}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button>
+          </div>
+        </sc-if>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+          <div class="fl" style="flex: 0 1 170px"><label for="f-des">Desde</label><input id="f-des" class="fi" type="date" value="{{f.desde}}" onChange="{{f.setDesde}}"></div>
+          <div class="fl" style="flex: 0 1 170px"><label for="f-has">Hasta</label><input id="f-has" class="fi" type="date" value="{{f.hasta}}" onChange="{{f.setHasta}}"></div>
+          <div class="fl" style="flex: 0 1 200px"><label for="f-dep">Departamento</label>
+            <select id="f-dep" class="fi" value="{{f.depto}}" onChange="{{f.setDepto}}"><option value="todos">Todos</option><option value="Tecnología">Tecnología</option><option value="Talento Humano">Talento Humano</option><option value="Comercial">Comercial</option><option value="Finanzas">Finanzas</option><option value="Operaciones">Operaciones</option></select></div>
+          <div class="fl" style="flex: 0 1 190px"><label for="f-tip">Tipo de formación</label>
+            <select id="f-tip" class="fi" value="{{f.tipo}}" onChange="{{f.setTipo}}"><option value="todos">Todos</option><option value="Presencial">Presencial</option><option value="Virtual">Virtual</option><option value="E-learning">E-learning</option><option value="Codesarrollo">Codesarrollo</option><option value="Mentoring">Mentoring</option><option value="OJT">OJT</option></select></div>
+          <sc-if value="{{f.hay}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{f.limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button></sc-if>
+        </div>
+
+        <!-- ============ INDICADORES ============ -->
+        <section aria-labelledby="ind-t" style="display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px">
+            <h2 id="ind-t" style="margin: 0; font-size: 20px">Indicadores del plan</h2>
+            <span style="font-size: 13px; color: var(--muted)">{{filtroTxt}}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+            <sc-for list="{{kpis}}" as="k" hint-placeholder-count="5">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 13px; color: var(--muted)">{{k.label}}</span><span style="{{k.nivelStyle}}">{{k.nivel}}</span></div>
+                <div style="font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{k.valor}}</div>
+                <div style="font-size: 12px; color: var(--muted)">{{k.nota}}</div>
+                <sc-if value="{{k.hayCmp}}" hint-placeholder-val="{{true}}">
+                  <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; line-height: 1.5; color: var(--muted)">
+                    <div>{{k.meta}}</div>
+                    <div>{{k.prev}} <b style="{{k.deltaStyle}}">{{k.delta}}</b></div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+            <sc-for list="{{gestion}}" as="g" hint-placeholder-count="3">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+                <div><div style="font-size: 13px; color: var(--muted)">{{g.label}}</div><div style="margin-top: 2px; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums">{{g.valor}}</div></div>
+                <sc-if value="{{g.hayCmp}}" hint-placeholder-val="{{true}}"><div style="text-align: right; font-size: 12px; line-height: 1.5; color: var(--muted)"><div>{{g.prev}}</div><b style="{{g.deltaStyle}}">{{g.delta}}</b></div></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px">
+            <div role="note" style="padding: 12px 16px; border-radius: 10px; background: var(--infosoft); color: var(--info); font-size: 13px; line-height: 1.55"><b>Un indicador sin comparación es solo un dato.</b> Por eso cada valor se muestra contra una meta y contra 2025 (Alles, H.32, p. 171–172). Con filtros activos la comparación se oculta, porque meta y 2025 son globales. Indicadores de gestión: H.32, p. 171–172.</div>
+            <div role="note" style="padding: 12px 16px; border-radius: 10px; background: var(--neutralsoft); color: var(--neutral); font-size: 13px; line-height: 1.55"><b>Dos niveles de evaluación</b> (Bassett-Jones, cap. 10). <b>Validación:</b> cumplimiento de objetivos de aprendizaje y satisfacción; subjetiva y de corto plazo (Navarro, Paso 8, p. 97–114). <b>Impacto:</b> retorno y cambio medido antes y después; más valiosa. Cada tarjeta indica su nivel.</div>
+          </div>
+        </section>
+
+        <!-- ============ GRÁFICOS ============ -->
+        <section aria-labelledby="gr-t" style="display: flex; flex-direction: column; gap: 16px">
+          <h2 id="gr-t" style="margin: 0; font-size: 20px">Gráficos</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px">
+
+            <figure style="margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+              <figcaption><div style="font-size: 16px; font-weight: 600">Horas de formación por departamento</div><div style="font-size: 13px; color: var(--muted)">Horas ejecutadas (horas por persona x participantes)</div></figcaption>
+              <div role="img" aria-label="{{barrasAria}}" style="display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{barras}}" as="b" hint-placeholder-count="5">
+                  <div style="display: grid; grid-template-columns: 110px 1fr 70px; gap: 10px; align-items: center; font-size: 14px">
+                    <span>{{b.depto}}</span>
+                    <div style="height: 14px; background: var(--bg); border-radius: 4px; overflow: hidden"><div style="{{b.style}}"></div></div>
+                    <span style="text-align: right; font-weight: 700; font-variant-numeric: tabular-nums">{{b.horas}} h</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{sinBarras}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 14px; color: var(--muted)">Sin horas ejecutadas con estos filtros.</p></sc-if>
+            </figure>
+
+            <figure style="margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+              <figcaption><div style="font-size: 16px; font-weight: 600">Distribución por tipo de formación</div><div style="font-size: 13px; color: var(--muted)">Porcentaje de las horas ejecutadas</div></figcaption>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+                <div role="img" aria-label="{{pieAria}}" style="{{pieStyle}}"></div>
+                <table style="flex: 1 1 220px; border-collapse: collapse; font-size: 14px">
+                  <thead><tr style="text-align: left; color: var(--muted); font-size: 12px"><th scope="col" style="padding: 4px 6px; font-weight: 600">Tipo</th><th scope="col" style="padding: 4px 6px; font-weight: 600; text-align: right">Horas</th><th scope="col" style="padding: 4px 6px; font-weight: 600; text-align: right">%</th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{pie}}" as="p" hint-placeholder-count="6">
+                      <tr style="border-top: 1px solid var(--border)">
+                        <td style="padding: 6px"><span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="{{p.swatch}}"></span>{{p.tipo}}</span></td>
+                        <td style="padding: 6px; text-align: right; font-variant-numeric: tabular-nums">{{p.horas}}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums">{{p.pct}}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+            </figure>
+          </div>
+
+          <figure style="margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+            <figcaption style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+              <div><div style="font-size: 16px; font-weight: 600">Evolución de brechas cerradas (acumulado 2026)</div><div style="font-size: 13px; color: var(--muted)">Brechas de competencia cerradas por mes frente a la meta anual de {{linea.metaAnual}}</div></div>
+              <ul aria-label="Leyenda" style="list-style: none; margin: 0; padding: 0; display: flex; gap: 16px; font-size: 13px">
+                <li style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 22px; height: 3px; border-radius: 2px; background: var(--s1)"></span>Real</li>
+                <li style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 22px; height: 0; border-top: 3px dashed var(--muted)"></span>Meta</li>
+              </ul>
+            </figcaption>
+            <div role="img" aria-label="{{linea.aria}}" style="display: grid; grid-template-columns: 34px 1fr; gap: 8px">
+              <div style="position: relative; height: 230px">
+                <sc-for list="{{linea.ys}}" as="y" hint-placeholder-count="6"><span style="{{y.labelStyle}}">{{y.label}}</span></sc-for>
+              </div>
+              <div>
+                <div style="position: relative; height: 230px">
+                  <sc-for list="{{linea.ys}}" as="y" hint-placeholder-count="6"><div aria-hidden="true" style="{{y.gridStyle}}"></div></sc-for>
+                  <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible">
+                    <polyline points="{{linea.metaPts}}" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"></polyline>
+                    <polyline points="{{linea.realPts}}" fill="none" stroke="var(--s1)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline>
+                  </svg>
+                  <sc-for list="{{linea.dots}}" as="d" hint-placeholder-count="10"><span aria-hidden="true" style="{{d.style}}"></span></sc-for>
+                  <span style="{{linea.realEndStyle}}">{{linea.realEnd}}</span>
+                  <span style="{{linea.metaEndStyle}}">{{linea.metaEnd}}</span>
+                </div>
+                <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(12, 1fr); margin-top: 6px; font-size: 12px; color: var(--muted); text-align: center">
+                  <sc-for list="{{linea.meses}}" as="m" hint-placeholder-count="12"><span>{{m}}</span></sc-for>
+                </div>
+              </div>
+            </div>
+          </figure>
+        </section>
+
+        <!-- ============ TABLA ============ -->
+        <section aria-labelledby="tb-t" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px">
+            <h2 id="tb-t" style="margin: 0; font-size: 20px">Detalle por acción formativa</h2>
+            <span role="status" aria-live="polite" style="font-size: 14px; color: var(--muted)">{{resumen}}</span>
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+            <table style="width: 100%; min-width: 1240px; border-collapse: collapse; font-size: 14px">
+              <thead>
+                <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                  <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Actividad</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Tipo</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Departamento</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Cierre</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Participantes</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Horas</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Costo</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Satisfacción</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Brechas cerradas</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">ROI</th>
+                  <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{filas}}" as="r" hint-placeholder-count="14">
+                  <tr class="row" style="border-top: 1px solid var(--border)">
+                    <td style="padding: 10px 12px 10px 20px; font-weight: 600; max-width: 260px">{{r.nombre}}</td>
+                    <td style="padding: 10px 12px">{{r.tipo}}</td>
+                    <td style="padding: 10px 12px">{{r.depto}}</td>
+                    <td style="padding: 10px 12px; white-space: nowrap">{{r.fecha}}</td>
+                    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.part}}</td>
+                    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.horas}}</td>
+                    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.costo}}</td>
+                    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.sat}}</td>
+                    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.brechas}}</td>
+                    <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600">{{r.roi}}</td>
+                    <td style="padding: 10px 20px 10px 12px"><span style="{{r.estadoStyle}}">{{r.estado}}</span></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <sc-if value="{{sinFilas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 24px 20px; color: var(--muted); border-top: 1px solid var(--border)">Ninguna acción coincide con los filtros.</p></sc-if>
+          </div>
+          <p style="margin: 0; font-size: 12px; color: var(--muted)">Las horas de acciones en curso se prorratean por avance. Satisfacción, brechas cerradas y ROI se registran solo al cerrar la acción. El beneficio del ROI es una estimación atribuida por el responsable del área.</p>
+        </section>
+
+        <!-- ============ IMPACTO ============ -->
+        <section aria-labelledby="im-t" style="display: flex; flex-direction: column; gap: 14px">
+          <div>
+            <h2 id="im-t" style="margin: 0; font-size: 20px">Impacto a 30, 60 y 90 días</h2>
+            <p style="margin: 4px 0 0; font-size: 14px; color: var(--muted); max-width: 820px">Porcentaje de participantes que aplican lo aprendido en su puesto, medido por encuesta al participante y a su jefe. Sirve para detectar el problema de reingreso (re-entry): quien vuelve motivado puede ser «desgastado» por colegas que no vivieron la experiencia (Bassett-Jones, cap. 10).</p>
+          </div>
+          <sc-if value="{{imp.hayAlerta}}" hint-placeholder-val="{{true}}">
+            <div role="alert" style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 10px; background: var(--dangersoft); color: var(--danger); border: 1px solid var(--danger)">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18h.01"></path></svg>
+              <p style="margin: 0; font-size: 14px; line-height: 1.55"><b>{{imp.alertaTitulo}}</b> {{imp.alertaTxt}}</p>
+            </div>
+          </sc-if>
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+            <table style="width: 100%; min-width: 1080px; border-collapse: collapse; font-size: 14px">
+              <thead>
+                <tr style="text-align: left; color: var(--muted); font-size: 13px">
+                  <th scope="col" style="padding: 14px 12px 14px 20px; font-weight: 600">Actividad</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Brecha antes → después</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">Equipo capacitado</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">30 días</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">60 días</th>
+                  <th scope="col" style="padding: 14px 12px; font-weight: 600">90 días</th>
+                  <th scope="col" style="padding: 14px 20px 14px 12px; font-weight: 600">Riesgo de reingreso</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{imp.filas}}" as="r" hint-placeholder-count="6">
+                  <tr class="row" style="border-top: 1px solid var(--border)">
+                    <td style="padding: 10px 12px 10px 20px; font-weight: 600; max-width: 240px">{{r.nombre}}<div style="font-size: 12px; font-weight: 400; color: var(--muted)">Cierre: {{r.fecha}}</div></td>
+                    <td style="padding: 10px 12px; font-variant-numeric: tabular-nums; white-space: nowrap">{{r.brecha}}</td>
+                    <td style="padding: 10px 12px; min-width: 140px"><div style="display: flex; align-items: center; gap: 8px"><div aria-hidden="true" style="flex: 1; height: 8px; border-radius: 999px; background: var(--border); overflow: hidden"><div style="{{r.covBar}}"></div></div><span style="font-variant-numeric: tabular-nums; font-weight: 600">{{r.cov}}</span></div></td>
+                    <td style="padding: 10px 12px"><span style="{{r.s30}}">{{r.v30}}</span></td>
+                    <td style="padding: 10px 12px"><span style="{{r.s60}}">{{r.v60}}</span></td>
+                    <td style="padding: 10px 12px"><span style="{{r.s90}}">{{r.v90}}</span></td>
+                    <td style="padding: 10px 20px 10px 12px"><span style="{{r.riesgoStyle}}">{{r.riesgo}}</span><div style="margin-top: 4px; font-size: 12px; color: var(--muted)">{{r.nota}}</div></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+            <sc-if value="{{imp.sinFilas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 20px; color: var(--muted); border-top: 1px solid var(--border)">Sin seguimientos para estos filtros.</p></sc-if>
+          </div>
+          <p style="margin: 0; font-size: 12px; color: var(--muted)">Riesgo según la caída entre 30 y 90 días: alto con 15 puntos o más, medio entre 5 y 14, bajo en el resto. La mejor mitigación es capacitar a equipos completos en la misma experiencia.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":3600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { dark: null, aviso: '', fDesde: '', fHasta: '', fDepto: 'todos', fTipo: 'todos' };
+  }
+
+  getData() {
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    const catLight = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300'];
+    const catDark = ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300'];
+    const tipos = ['Presencial', 'Virtual', 'E-learning', 'Codesarrollo', 'Mentoring', 'OJT'];
+    const R = (id, nombre, tipo, depto, fin, hpp, part, costo, sat, brechas, benef, estado, avance) => ({ id, nombre, tipo, depto, fin, hpp, part, costo, sat, brechas, benef, estado, avance });
+    const rows = [
+      R('A01', 'Fundamentos de análisis con SQL', 'E-learning', 'Tecnología', '2026-02-27', 24, 18, 450, 4.4, 5, 1900, 'Realizada', 1),
+      R('A02', 'Liderazgo situacional', 'Presencial', 'Operaciones', '2026-03-12', 24, 20, 3200, 4.6, 4, 3600, 'Realizada', 1),
+      R('A03', 'Comunicación asertiva en el trabajo', 'Presencial', 'Comercial', '2026-04-15', 12, 22, 1100, 4.1, 6, 2400, 'Realizada', 1),
+      R('A04', 'Trabajo en equipo ágil', 'E-learning', 'Operaciones', '2026-05-29', 20, 30, 600, 3.8, 3, 1100, 'Realizada', 1),
+      R('A05', 'Estadística aplicada a la decisión', 'Virtual', 'Tecnología', '2026-06-26', 30, 14, 1800, 4.5, 5, 3000, 'Realizada', 1),
+      R('A06', 'Mentoring con líderes senior', 'Mentoring', 'Talento Humano', '2026-10-30', 40, 6, 900, null, 0, 0, 'En curso', 0.89),
+      R('A07', 'Visualización de datos con tableros', 'Virtual', 'Tecnología', '2026-10-23', 20, 16, 1200, null, 0, 0, 'En curso', 0.67),
+      R('A08', 'Presentaciones que convencen: data storytelling', 'Presencial', 'Comercial', '2026-10-21', 12, 12, 1000, null, 0, 0, 'Pendiente', 0),
+      R('A09', 'Codesarrollo: casos reales de equipo', 'Codesarrollo', 'Operaciones', '2026-11-10', 18, 10, 700, null, 0, 0, 'Pendiente', 0),
+      R('A10', 'Pensamiento crítico y análisis de problemas', 'Presencial', 'Finanzas', '2026-11-04', 12, 9, 1500, null, 0, 0, 'Pendiente', 0),
+      R('A11', 'Negociación efectiva', 'Presencial', 'Comercial', '2026-11-19', 24, 8, 1900, null, 0, 0, 'Pendiente', 0),
+      R('A12', 'Gestión del tiempo en la práctica', 'OJT', 'Finanzas', '2026-11-27', 40, 5, 0, null, 0, 0, 'Pendiente', 0),
+      R('A13', 'Aprendizaje autónomo y mejora continua', 'E-learning', 'Talento Humano', '2026-12-11', 12, 0, 300, null, 0, 0, 'Pendiente', 0),
+      R('A14', 'Conducción de procesos de cambio', 'Virtual', 'Operaciones', '2026-12-03', 12, 0, 2400, null, 0, 0, 'Pendiente', 0)
+    ];
+    const seg = { A01: { cov: 35, v: [72, 61, 48], antes: 38, desp: 22 }, A02: { cov: 100, v: [78, 80, 82], antes: 30, desp: 18 }, A03: { cov: 60, v: [70, 66, 63], antes: 33, desp: 25 }, A04: { cov: 90, v: [68, 70, 71], antes: 25, desp: 20 }, A05: { cov: 40, v: [75, 64, 52], antes: 45, desp: 28 }, A07: { cov: 50, v: null, antes: 40, desp: null } };
+    const head = { 'Tecnología': 35, 'Talento Humano': 10, 'Comercial': 30, 'Finanzas': 15, 'Operaciones': 30 };
+    return { light, dark, catLight, catDark, tipos, rows, seg, head, hoy: '2026-10-17', mesesC: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'] };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const cat = dark ? d.catDark : d.catLight;
+    const M = d.mesesC;
+    const num = (n, dec) => { const f = Number(n).toFixed(dec || 0); const p = f.split('.'); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return p.join(','); };
+    const money = (n) => '$' + num(n, 0);
+    const fecha = (iso) => { const p = iso.split('-').map(Number); return p[2] + ' ' + M[p[1] - 1] + ' ' + p[0]; };
+    const day = (iso) => { const p = iso.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]) / 86400000; };
+    const chip = (bg, fg, extra) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;box-sizing:border-box;background:' + bg + ';color:' + fg + ';' + (extra || '');
+    const EST = { 'Realizada': chip('var(--soft)', 'var(--accent)'), 'En curso': chip('var(--accent)', 'var(--onaccent)'), 'Pendiente': chip('var(--neutralsoft)', 'var(--neutral)') };
+
+    // ---- filtros
+    const ok = (r, conFecha) => (s.fDepto === 'todos' || r.depto === s.fDepto) && (s.fTipo === 'todos' || r.tipo === s.fTipo) && (!conFecha || ((!s.fDesde || r.fin >= s.fDesde) && (!s.fHasta || r.fin <= s.fHasta)));
+    const rows = d.rows.filter((r) => ok(r, true));
+    const hay = s.fDepto !== 'todos' || s.fTipo !== 'todos' || s.fDesde !== '' || s.fHasta !== '';
+    const f = {
+      desde: s.fDesde, hasta: s.fHasta, depto: s.fDepto, tipo: s.fTipo, hay,
+      setDesde: (e) => this.setState({ fDesde: e.target.value }), setHasta: (e) => this.setState({ fHasta: e.target.value }),
+      setDepto: (e) => this.setState({ fDepto: e.target.value }), setTipo: (e) => this.setState({ fTipo: e.target.value }),
+      limpiar: () => this.setState({ fDesde: '', fHasta: '', fDepto: 'todos', fTipo: 'todos' })
+    };
+
+    // ---- cálculos
+    const real = rows.filter((r) => r.estado === 'Realizada');
+    const horas = (r) => r.hpp * r.part * r.avance;
+    const totalHoras = rows.reduce((t, r) => t + horas(r), 0);
+    const costoEj = rows.reduce((t, r) => t + r.costo * r.avance, 0);
+    const partSat = real.filter((r) => r.sat !== null).reduce((t, r) => t + r.part, 0);
+    const sat = partSat ? real.filter((r) => r.sat !== null).reduce((t, r) => t + r.sat * r.part, 0) / partSat : null;
+    const brechas = real.reduce((t, r) => t + r.brechas, 0);
+    const costoReal = real.reduce((t, r) => t + r.costo, 0);
+    const benef = real.reduce((t, r) => t + r.benef, 0);
+    const roi = costoReal ? ((benef - costoReal) / costoReal) * 100 : null;
+    const cumpl = rows.length ? Math.round((real.length * 100) / rows.length) : null;
+    const head = s.fDepto === 'todos' ? 120 : d.head[s.fDepto];
+
+    const dl = (v, p, dec, suf, goodUp) => {
+      if (v === null) return { delta: '', deltaStyle: '' };
+      const dif = v - p; const txt = (dif >= 0 ? '+' : '−') + num(Math.abs(dif), dec) + suf;
+      const bien = goodUp ? dif >= 0 : dif <= 0;
+      return { delta: txt, deltaStyle: 'color:' + (bien ? 'var(--accent)' : 'var(--danger)') + ';' };
+    };
+    const nivelChip = { 'Gestión': chip('var(--neutralsoft)', 'var(--neutral)', 'font-size:11px;padding:2px 8px;'), 'Validación': chip('var(--infosoft)', 'var(--info)', 'font-size:11px;padding:2px 8px;'), 'Impacto': chip('var(--soft)', 'var(--accent)', 'font-size:11px;padding:2px 8px;') };
+    const K = (label, nivel, valor, nota, meta, prev, cmp) => Object.assign({ label, nivel, nivelStyle: nivelChip[nivel], valor, nota, hayCmp: !hay && cmp.v !== null, meta, prev }, dl(cmp.v, cmp.p, cmp.dec, cmp.suf, true));
+    const kpis = [
+      K('% Plan cumplido', 'Gestión', cumpl === null ? '—' : cumpl + ' %', real.length + ' de ' + rows.length + ' acciones cerradas', 'Meta al corte: 50 %', '2025 a esta fecha: 41 %', { v: cumpl, p: 41, dec: 0, suf: ' pts' }),
+      K('Total de horas', 'Gestión', num(totalHoras) + ' h', 'Prorrateadas por avance', 'Meta al corte: 2.400 h', '2025 a esta fecha: 2.200 h', { v: totalHoras, p: 2200, dec: 0, suf: ' h' }),
+      K('Satisfacción promedio', 'Validación', sat === null ? '—' : num(sat, 1) + ' / 5', 'Encuesta post-curso (Navarro, Paso 8)', 'Meta: 4,2', '2025: 4,0', { v: sat, p: 4.0, dec: 1, suf: '' }),
+      K('Brechas cerradas', 'Impacto', String(brechas), 'De competencias, medidas antes y después', 'Meta al corte: 25', '2025 a esta fecha: 19', { v: brechas, p: 19, dec: 0, suf: '' }),
+      K('ROI estimado', 'Impacto', roi === null ? '—' : num(roi, 0) + ' %', 'Beneficio estimado frente al costo', 'Meta: 60 %', '2025: 45 %', { v: roi, p: 45, dec: 0, suf: ' pts' })
+    ];
+    const G = (label, valor, prev, v, p, dec, suf, goodUp) => Object.assign({ label, valor, prev, hayCmp: !hay && v !== null }, dl(v, p, dec, suf, goodUp));
+    const inv = costoEj / head, hxc = totalHoras / head, cph = totalHoras ? costoEj / totalHoras : null;
+    const gestion = [
+      G('Inversión en formación por empleado', money(inv), '2025: $60', inv, 60, 0, '', true),
+      G('Horas de capacitación por colaborador', num(hxc, 1) + ' h', '2025: 18,3 h', hxc, 18.3, 1, ' h', true),
+      G('Costo por hora de formación', cph === null ? '—' : '$' + num(cph, 2), '2025: $3,60', cph, 3.6, 2, '', false)
+    ];
+
+    // ---- barras
+    const porDepto = {};
+    rows.forEach((r) => { const h = horas(r); if (h > 0) porDepto[r.depto] = (porDepto[r.depto] || 0) + h; });
+    const ordenD = Object.keys(porDepto).sort((a, b) => porDepto[b] - porDepto[a]);
+    const maxH = ordenD.length ? porDepto[ordenD[0]] : 1;
+    const barras = ordenD.map((k) => ({ depto: k, horas: num(porDepto[k]), style: 'height:100%;width:' + Math.max(2, Math.round((porDepto[k] / maxH) * 100)) + '%;background:var(--s1);border-radius:0 4px 4px 0;' }));
+    const barrasAria = 'Horas por departamento: ' + ordenD.map((k) => k + ' ' + num(porDepto[k]) + ' horas').join(', ');
+
+    // ---- pastel
+    const porTipo = {}; d.tipos.forEach((t) => { porTipo[t] = 0; });
+    rows.forEach((r) => { porTipo[r.tipo] += horas(r); });
+    const totT = d.tipos.reduce((t, k) => t + porTipo[k], 0);
+    const gap = 0.8; let acc = 0; const stops = [];
+    d.tipos.forEach((t, i) => {
+      if (porTipo[t] <= 0) return;
+      const a = acc, b = acc + (porTipo[t] / totT) * 360; acc = b;
+      stops.push(cat[i] + ' ' + a.toFixed(2) + 'deg ' + (b - gap).toFixed(2) + 'deg', th.surface + ' ' + (b - gap).toFixed(2) + 'deg ' + b.toFixed(2) + 'deg');
+    });
+    const pie = d.tipos.map((t, i) => ({ tipo: t, horas: porTipo[t] > 0 ? num(porTipo[t]) : '—', pct: totT && porTipo[t] > 0 ? Math.round((porTipo[t] * 100) / totT) + ' %' : '—', swatch: 'width:12px;height:12px;border-radius:3px;background:' + cat[i] + ';flex:none;' }));
+    const pieStyle = 'width:176px;height:176px;border-radius:50%;flex:none;' + (totT ? 'background:conic-gradient(' + stops.join(',') + ');' : 'background:var(--border);');
+    const pieAria = 'Distribución de horas por tipo: ' + d.tipos.filter((t) => porTipo[t] > 0).map((t) => t + ' ' + Math.round((porTipo[t] * 100) / totT) + ' por ciento').join(', ');
+
+    // ---- línea
+    const YMAX = 40, hoyMes = 9, META = 30;
+    const mes = (iso) => Number(iso.split('-')[1]) - 1;
+    const cum = []; let c = 0;
+    for (let m = 0; m <= hoyMes; m++) { c += real.filter((r) => mes(r.fin) === m).reduce((t, r) => t + r.brechas, 0); cum.push(c); }
+    const meta = []; for (let m = 0; m < 12; m++) meta.push(Math.round((META * (m + 1)) / 12));
+    const px = (i) => ((i + 0.5) / 12) * 100, py = (v) => 100 - (v / YMAX) * 100;
+    const ys = [0, 10, 20, 30, 40].map((v) => ({ label: String(v), labelStyle: 'position:absolute;right:0;top:' + py(v) + '%;transform:translateY(-50%);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;', gridStyle: 'position:absolute;left:0;right:0;top:' + py(v) + '%;height:0;border-top:1px solid var(--border);' }));
+    const dots = cum.map((v, i) => ({ style: 'position:absolute;left:' + px(i) + '%;top:' + py(v) + '%;width:9px;height:9px;border-radius:50%;background:var(--s1);border:2px solid var(--surface);box-sizing:content-box;transform:translate(-50%,-50%);' }));
+    const lastR = cum[cum.length - 1];
+    const linea = {
+      ys, dots, metaAnual: String(META), meses: M.map((m) => m.charAt(0).toUpperCase() + m.slice(1)),
+      realPts: cum.map((v, i) => px(i).toFixed(2) + ',' + py(v).toFixed(2)).join(' '),
+      metaPts: meta.map((v, i) => px(i).toFixed(2) + ',' + py(v).toFixed(2)).join(' '),
+      realEnd: String(lastR), realEndStyle: 'position:absolute;left:' + px(hoyMes) + '%;top:' + py(lastR) + '%;transform:translate(-50%,10px);font-size:13px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;',
+      metaEnd: String(meta[11]), metaEndStyle: 'position:absolute;left:' + px(11) + '%;top:' + py(meta[11]) + '%;transform:translate(-50%,-22px);font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;',
+      aria: 'Brechas cerradas acumuladas: ' + lastR + ' a octubre frente a una meta de ' + meta[hoyMes] + ' a esa fecha y ' + META + ' al cierre del año.'
+    };
+
+    // ---- tabla
+    const filas = rows.slice().sort((a, b) => a.fin.localeCompare(b.fin)).map((r) => {
+      const h = horas(r), done = r.estado === 'Realizada';
+      return {
+        nombre: r.nombre, tipo: r.tipo, depto: r.depto, fecha: fecha(r.fin), part: r.part ? String(r.part) : '—', horas: h > 0 ? num(h) : '—', costo: money(r.costo),
+        sat: done && r.sat !== null ? num(r.sat, 1) : '—', brechas: done ? String(r.brechas) : '—', roi: done && r.costo ? '+' + num(((r.benef - r.costo) / r.costo) * 100, 0) + ' %' : '—',
+        estado: r.estado, estadoStyle: EST[r.estado]
+      };
+    });
+
+    // ---- impacto 30-60-90
+    const hoy = day(d.hoy);
+    const val = (v) => (v >= 70 ? chip('var(--soft)', 'var(--accent)') : (v >= 55 ? chip('var(--warnsoft)', 'var(--warn)') : chip('var(--dangersoft)', 'var(--danger)')));
+    const sinD = chip('transparent', 'var(--muted)', 'border:1px dashed var(--border);font-weight:600;');
+    const impRows = d.rows.filter((r) => d.seg[r.id] && ok(r, false)).map((r) => {
+      const sg = d.seg[r.id];
+      const cel = (k, dias) => {
+        const due = day(r.fin) + dias;
+        if (sg.v && due <= hoy) return { t: sg.v[k] + ' %', st: val(sg.v[k]) };
+        const dd = new Date((due) * 86400000); return { t: 'Programado · ' + dd.getUTCDate() + ' ' + M[dd.getUTCMonth()], st: sinD };
+      };
+      const a = cel(0, 30), b = cel(1, 60), z = cel(2, 90);
+      let nivel = null, nota = 'Seguimiento por iniciar';
+      if (sg.v && day(r.fin) + 90 <= hoy) {
+        const caida = sg.v[0] - sg.v[2];
+        nivel = caida >= 15 ? 'Alto' : (caida >= 5 ? 'Medio' : 'Bajo');
+        nota = (caida > 0 ? 'Cae ' + caida + ' pts' : 'Se mantiene o sube') + ' · equipo ' + sg.cov + ' %';
+      }
+      return {
+        id: r.id, nombre: r.nombre, fecha: fecha(r.fin), brecha: sg.desp === null ? sg.antes + ' % → pendiente' : sg.antes + ' % → ' + sg.desp + ' %', cov: sg.cov + ' %',
+        covBar: 'height:100%;width:' + sg.cov + '%;background:var(--s1);', v30: a.t, s30: a.st, v60: b.t, s60: b.st, v90: z.t, s90: z.st,
+        riesgo: nivel === null ? 'Sin datos' : nivel, nota,
+        riesgoStyle: nivel === 'Alto' ? chip('var(--dangersoft)', 'var(--danger)') : (nivel === 'Medio' ? chip('var(--warnsoft)', 'var(--warn)') : (nivel === 'Bajo' ? chip('var(--soft)', 'var(--accent)') : sinD)),
+        alto: nivel === 'Alto'
+      };
+    });
+    const altos = impRows.filter((r) => r.alto);
+    const imp = {
+      filas: impRows, sinFilas: impRows.length === 0, hayAlerta: altos.length > 0,
+      alertaTitulo: altos.length + (altos.length === 1 ? ' actividad con riesgo alto de reingreso:' : ' actividades con riesgo alto de reingreso:'),
+      alertaTxt: altos.map((r) => r.nombre).join('; ') + '. Pocos compañeros de equipo participaron y la aplicación en el puesto cae con el tiempo. Considera inscribir al resto del equipo en la próxima edición.'
+    };
+
+    const flash = (t) => this.setState({ aviso: t });
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';') + ';' + cat.map((h, i) => '--s' + (i + 1) + ':' + h).join(';'),
+      toggleTheme: () => this.setState({ dark: !dark }),
+      hayAviso: s.aviso !== '', aviso: s.aviso, cerrarAviso: () => this.setState({ aviso: '' }),
+      exportarExcel: () => flash('Se generó «reporte-formacion-2026.xlsx» con ' + rows.length + ' filas y los filtros actuales (simulación del prototipo).'),
+      exportarPdf: () => flash('Se generó «reporte-formacion-2026.pdf» con indicadores, gráficos y tabla (simulación del prototipo).'),
+      f, filtroTxt: (s.fDepto === 'todos' ? 'Todos los departamentos' : s.fDepto) + ' · ' + (s.fTipo === 'todos' ? 'todos los tipos' : s.fTipo) + (s.fDesde || s.fHasta ? ' · ' + (s.fDesde ? fecha(s.fDesde) : 'inicio') + ' a ' + (s.fHasta ? fecha(s.fHasta) : 'hoy') : ' · año 2026'),
+      kpis, gestion, barras, barrasAria, sinBarras: barras.length === 0, pie, pieStyle, pieAria, linea,
+      filas, sinFilas: filas.length === 0, resumen: 'Mostrando ' + filas.length + ' de ' + d.rows.length + ' acciones', imp
+    };
+  }
+}
+</script>
+</body>
+</html>

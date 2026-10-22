@@ -12,15 +12,12 @@ use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
 use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
 use App\Modules\Estructura\Domain\ValueObjects\TipoFuncion;
 use App\Modules\Estructura\Domain\ValueObjects\TipoRequisito;
-use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\TipoGradoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\TipoUnidadModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\UnidadModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
-use Database\Factories\RegistroComportamientosFactory;
-use Database\Factories\RegistroPreguntasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\Support\Desarrollo\BrechasActivasFalsas;
@@ -28,8 +25,13 @@ use Tests\Support\Desarrollo\NivelesDeColaboradorFalso;
 use Tests\TestCase;
 
 require_once __DIR__.'/GestionPersonalHelpers.php';
+require_once __DIR__.'/CompensacionesHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/DnfHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/PlanHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/MicroHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/ActividadHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/ReportesHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/RutasHelpers.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -89,7 +91,15 @@ function actuarComoUsuario(): void
 }
 
 /**
- * Cuerpo válido para crear o actualizar una competencia.
+ * Id de una escala del catálogo (`Letras`, `Números` o `Categorías`).
+ */
+function escalaId(string $nombre = 'Letras'): int
+{
+    return (int) TipoGradoModel::query()->where('nombre', $nombre)->value('id');
+}
+
+/**
+ * Cuerpo válido para crear una competencia completa: escala Letras, 4 grados, 16 comportamientos y 4 preguntas.
  *
  * @param  array<string, mixed>  $cambios
  * @return array<string, mixed>
@@ -100,84 +110,26 @@ function datosCompetencia(array $cambios = []): array
         'nombre' => 'Innovación',
         'descripcion' => 'Generar ideas nuevas y llevarlas a la práctica.',
         'tipo' => 'Cardinal',
+        'tipo_grado_id' => escalaId('Letras'),
         'grados' => [
-            'A' => 'Impulsa la innovación en toda la organización.',
-            'B' => 'Propone y lidera mejoras sistemáticas.',
-            'C' => 'Propone mejoras en su trabajo.',
-            'D' => 'Aplica las ideas que otros proponen.',
+            'Impulsa la innovación en toda la organización.',
+            'Propone y lidera mejoras sistemáticas.',
+            'Propone mejoras en su trabajo.',
+            'Aplica las ideas que otros proponen.',
         ],
-    ], $cambios);
-}
-
-/**
- * Cuerpo válido para crear un registro de comportamientos (uno o dos textos por grado).
- *
- * @param  array<string, mixed>  $cambios
- * @return array<string, mixed>
- */
-function datosComportamientos(int $competenciaId, array $cambios = []): array
-{
-    return array_replace([
-        'competencia_id' => $competenciaId,
         'comportamientos' => [
-            'A' => ['Lidera con el ejemplo.', 'Inspira a otros.'],
-            'B' => ['Coordina al equipo.'],
-            'C' => ['Colabora con su equipo.', 'Cumple sus compromisos.'],
-            'D' => ['Sigue las indicaciones.'],
+            ['A1', 'A2', 'A3', 'A4'],
+            ['B1', 'B2', 'B3', 'B4'],
+            ['C1', 'C2', 'C3', 'C4'],
+            ['D1', 'D2', 'D3', 'D4'],
         ],
-    ], $cambios);
-}
-
-/**
- * Crea una competencia con su registro de comportamientos (cantidades por grado indicadas).
- *
- * @param  array<string, int>  $conteos
- * @param  array<string, mixed>  $competencia  Atributos de la competencia (nombre, estado…).
- */
-function registroDe(array $competencia = [], array $conteos = ['A' => 2, 'B' => 2, 'C' => 2, 'D' => 2], ?int $actor = null): Model
-{
-    $modelo = CompetenciaModel::factory()->create($competencia);
-
-    RegistroComportamientosFactory::new()
-        ->conComportamientos($conteos)
-        ->create(['competencia_id' => $modelo->id, 'created_by' => $actor]);
-
-    return $modelo;
-}
-
-/**
- * Cuerpo válido para crear un registro de preguntas (cuatro textos distintos).
- *
- * @param  array<string, mixed>  $cambios
- * @return array<string, mixed>
- */
-function datosPreguntas(int $competenciaId, array $cambios = []): array
-{
-    return array_replace([
-        'competencia_id' => $competenciaId,
         'preguntas' => [
-            'Cuéntame de una meta que lograste.',
-            '¿Cómo organizas tu trabajo?',
-            'Describe un error y qué aprendiste.',
-            '¿Cómo trabajas bajo presión?',
+            'Cuéntame de una idea que llevaste a la práctica.',
+            '¿Cómo fomentas ideas nuevas en tu equipo?',
+            'Describe una mejora que propusiste.',
+            '¿Cómo reaccionas ante una idea que no funciona?',
         ],
     ], $cambios);
-}
-
-/**
- * Crea una competencia con su registro de cuatro preguntas.
- *
- * @param  array<string, mixed>  $competencia  Atributos de la competencia (nombre, estado…).
- */
-function registroPreguntasDe(array $competencia = [], ?int $actor = null): Model
-{
-    $modelo = CompetenciaModel::factory()->create($competencia);
-
-    RegistroPreguntasFactory::new()
-        ->conPreguntas()
-        ->create(['competencia_id' => $modelo->id, 'created_by' => $actor]);
-
-    return $modelo;
 }
 
 /**
@@ -370,6 +322,7 @@ function posicionesDeUnidad(UnidadModel|int $unidad, string $estado, int $cantid
 
 /**
  * Cuerpo valido para crear o actualizar una unidad (por defecto, bajo la unidad padre indicada).
+ * El tipo de unidad no se envía: lo calcula el sistema a partir de la unidad padre (`GuardarUnidadRequest` lo prohíbe).
  *
  * @param  array<string, mixed>  $cambios
  * @return array<string, mixed>
@@ -378,13 +331,13 @@ function datosUnidad(?int $unidadPadreId, array $cambios = []): array
 {
     return array_replace([
         'nombre' => 'Reclutamiento',
-        'tipo_unidad_id' => tipoDeUnidad('Seccion')->id,
         'unidad_padre_id' => $unidadPadreId,
     ], $cambios);
 }
 
 /**
  * Cuerpo de un PUT con el contenido actual de la unidad (más los cambios indicados).
+ * El tipo de unidad no se envía: lo calcula el sistema a partir de la unidad padre (`GuardarUnidadRequest` lo prohíbe).
  *
  * @param  array<string, mixed>  $cambios
  * @return array<string, mixed>
@@ -395,7 +348,6 @@ function cuerpoDeUnidad(UnidadModel $unidad, array $cambios = []): array
 
     return array_replace([
         'nombre' => $unidad->nombre,
-        'tipo_unidad_id' => $unidad->tipo_unidad_id,
         'unidad_padre_id' => $unidad->unidad_padre_id,
         'version' => $unidad->version,
     ], $cambios);

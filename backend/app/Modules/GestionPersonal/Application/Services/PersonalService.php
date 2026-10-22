@@ -6,6 +6,7 @@ use App\Modules\GestionPersonal\Application\Ports\AccesosDeCuentaPort;
 use App\Modules\GestionPersonal\Application\Ports\CatalogoDeCategoriasPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeTenantPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorDeDesarrolloPort;
+use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\UseCases\RegistrarFicha;
 use App\Modules\GestionPersonal\Domain\Entities\Colaborador;
 use App\Modules\GestionPersonal\Domain\Exceptions\CategoriaInactiva;
@@ -29,7 +30,40 @@ class PersonalService
         private readonly VinculoLaboralRepositoryInterface $vinculos,
         private readonly LectorDeDesarrolloPort $desarrollo,
         private readonly CatalogoDeCategoriasPort $categorias,
+        private readonly LectorEstructuraPort $estructura,
     ) {}
+
+    /**
+     * Departamento (unidad organizacional) actual de cada colaborador: la unidad de la posición de su asignación laboral
+     * vigente en la fecha. Quien no tiene asignación vigente o su posición no tiene unidad figura con `null`.
+     *
+     * @param  array<int, int>  $colaboradorIds
+     * @return array<int, int|null> colaborador_id => unidad_id
+     *
+     * @throws InformacionNoDisponible Si la lectura de Estructura falla; el llamador decide su degradación.
+     */
+    public function getDepartamentoActual(int $tenantId, array $colaboradorIds, string $fecha): array
+    {
+        $ids = array_values(array_unique(array_map('intval', $colaboradorIds)));
+        $posiciones = $this->vinculos->posicionesVigentesDeFichas($tenantId, $ids, $fecha);
+
+        $unidades = [];
+        if ($posiciones !== []) {
+            $lectura = $this->estructura->posiciones(array_values(array_unique($posiciones)));
+            if (! $lectura->estaDisponible()) {
+                throw new InformacionNoDisponible;
+            }
+            $unidades = $lectura->datos;
+        }
+
+        $salida = [];
+        foreach ($ids as $id) {
+            $posicion = $posiciones[$id] ?? null;
+            $salida[$id] = $posicion === null ? null : ($unidades[$posicion]['unidad_id'] ?? null);
+        }
+
+        return $salida;
+    }
 
     /**
      * Posiciones, entre las dadas, con una asignación laboral vigente o futura en la fecha (fin nulo o posterior).

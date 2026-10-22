@@ -96,9 +96,9 @@ final class EloquentCatalogoFormativoRepository implements CatalogoFormativoRepo
 
         $busqueda = $q === null ? '' : $this->texto($q);
 
-        return $clase::query()->where('estado', EstadoRecurso::Disponible->value)->orderBy('nombre')->get()
+        return $clase::query()->where('estado', $this->estadoDisponible($tipo))->orderBy($this->columnaNombre($tipo))->get()
             ->reject(fn (Model $r) => $yaVinculados->contains($r->id))
-            ->filter(fn (Model $r) => $busqueda === '' || str_contains($this->texto((string) $r->nombre), $busqueda))
+            ->filter(fn (Model $r) => $busqueda === '' || str_contains($this->texto((string) $r->{$this->columnaNombre($tipo)}), $busqueda))
             ->map(fn (Model $r) => $this->recurso($r, $tipo, (int) ($usos[$r->id] ?? 0)))
             ->values()->all();
     }
@@ -121,7 +121,7 @@ final class EloquentCatalogoFormativoRepository implements CatalogoFormativoRepo
     {
         $clase = $tipo === TipoRecurso::Curso ? CursoModel::class : MicrocontenidoModel::class;
 
-        return array_map('intval', $clase::query()->where('estado', EstadoRecurso::Disponible->value)->pluck('id')->all());
+        return array_map('intval', $clase::query()->where('estado', $this->estadoDisponible($tipo))->pluck('id')->all());
     }
 
     public function guardarConfiguracion(int $competenciaId, int $versionEsperada, DatosConfiguracion $datos, ?int $actorId): ConfiguracionFormativa
@@ -135,7 +135,7 @@ final class EloquentCatalogoFormativoRepository implements CatalogoFormativoRepo
             $antes = $this->configuracionDe($competenciaId);
 
             $cursosAhora = CursoModel::query()->whereIn('id', $datos->cursoIds)->pluck('nombre', 'id')->all();
-            $microsAhora = MicrocontenidoModel::query()->whereIn('id', $datos->microcontenidoIds)->pluck('nombre', 'id')->all();
+            $microsAhora = MicrocontenidoModel::query()->whereIn('id', $datos->microcontenidoIds)->pluck('titulo', 'id')->all();
             $nombreAreaNueva = $datos->areaFormativaId === null
                 ? null
                 : AreaFormativaModel::query()->whereKey($datos->areaFormativaId)->value('nombre');
@@ -317,6 +317,21 @@ final class EloquentCatalogoFormativoRepository implements CatalogoFormativoRepo
 
     private function recurso(Model $modelo, TipoRecurso $tipo, int $competenciasCount = 0): RecursoFormativo
     {
+        if ($tipo === TipoRecurso::Microcontenido) {
+            // Micro-learning (016): solo Publicado está disponible; Borrador y Archivado no cuentan para el Catálogo.
+            return new RecursoFormativo(
+                (int) $modelo->id,
+                $tipo,
+                (string) $modelo->titulo,
+                (string) $modelo->tipo,
+                (int) $modelo->duracion_minutos,
+                null,
+                $modelo->estado === 'Publicado' ? EstadoRecurso::Disponible : EstadoRecurso::Archivado,
+                '/micro-learning/'.$modelo->id,
+                $competenciasCount,
+            );
+        }
+
         return new RecursoFormativo(
             (int) $modelo->id,
             $tipo,
@@ -328,6 +343,54 @@ final class EloquentCatalogoFormativoRepository implements CatalogoFormativoRepo
             $modelo->url_destino,
             $competenciasCount,
         );
+    }
+
+    /** Valor de `estado` que hace «disponible» a un recurso: los cursos usan Disponible y los micro-contenidos, Publicado. */
+    private function estadoDisponible(TipoRecurso $tipo): string
+    {
+        return $tipo === TipoRecurso::Curso ? EstadoRecurso::Disponible->value : 'Publicado';
+    }
+
+    private function columnaNombre(TipoRecurso $tipo): string
+    {
+        return $tipo === TipoRecurso::Curso ? 'nombre' : 'titulo';
+    }
+
+    public function sincronizarCompetenciasDeMicrocontenido(int $microcontenidoId, array $competenciaIds, ?int $actorId): void
+    {
+        $ids = array_values(array_unique(array_map('intval', $competenciaIds)));
+        $titulo = (string) MicrocontenidoModel::query()->whereKey($microcontenidoId)->value('titulo');
+        $actuales = CompetenciaMicrocontenidoModel::query()->where('microcontenido_id', $microcontenidoId)->pluck('competencia_id')->map(fn ($v) => (int) $v)->all();
+
+        $quitadas = array_values(array_diff($actuales, $ids));
+        $nuevas = array_values(array_diff($ids, $actuales));
+
+        if ($quitadas !== []) {
+            CompetenciaMicrocontenidoModel::query()->where('microcontenido_id', $microcontenidoId)->whereIn('competencia_id', $quitadas)->delete();
+        }
+        foreach ($nuevas as $competenciaId) {
+            CompetenciaMicrocontenidoModel::query()->create(['competencia_id' => $competenciaId, 'microcontenido_id' => $microcontenidoId, 'created_by' => $actorId]);
+        }
+
+        $cambios = [];
+        foreach ($nuevas as $competenciaId) {
+            $cambios[] = new CambioHistorial($competenciaId, TipoCambioHistorial::Microcontenido, AccionHistorial::Asociado, $microcontenidoId, null, $titulo);
+        }
+        foreach ($quitadas as $competenciaId) {
+            $cambios[] = new CambioHistorial($competenciaId, TipoCambioHistorial::Microcontenido, AccionHistorial::Quitado, $microcontenidoId, $titulo, null);
+        }
+
+        // Sube la versión de cada configuración afectada para que un panel abierto del Catálogo no sobrescriba el cambio.
+        foreach (array_merge($nuevas, $quitadas) as $competenciaId) {
+            $fila = CompetenciaFormativaModel::query()->where('competencia_id', $competenciaId)->first();
+            if ($fila === null) {
+                CompetenciaFormativaModel::query()->create(['competencia_id' => $competenciaId, 'area_formativa_id' => null, 'version' => 1, 'updated_by' => $actorId]);
+            } else {
+                $fila->forceFill(['version' => $fila->version + 1, 'updated_by' => $actorId])->save();
+            }
+        }
+
+        $this->registrar($cambios, $actorId);
     }
 
     /** Texto sin tildes ni mayúsculas para comparar búsquedas. */

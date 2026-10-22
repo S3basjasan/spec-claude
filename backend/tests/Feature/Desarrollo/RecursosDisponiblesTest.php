@@ -45,7 +45,7 @@ it('sin micro-contenidos registrados devuelve una lista vacía y lista los exist
     actuarComoAdmin();
     $this->getJson('/api/catalogo-formativo/recursos-disponibles?tipo=microcontenido')->assertOk()->assertJsonPath('data', []);
 
-    MicrocontenidoModel::factory()->create(['nombre' => 'Video uno']);
+    MicrocontenidoModel::factory()->publicado()->create(['titulo' => 'Video uno']);
     MicrocontenidoModel::factory()->archivado()->create();
 
     expect($this->getJson('/api/catalogo-formativo/recursos-disponibles?tipo=microcontenido')->json('data.0.accion'))->toBe('Ver');

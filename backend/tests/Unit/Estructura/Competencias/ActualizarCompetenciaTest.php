@@ -1,42 +1,64 @@
 <?php
 
-use App\Modules\Estructura\Application\DTO\DatosCompetenciaDTO;
 use App\Modules\Estructura\Application\UseCases\ActualizarCompetencia;
+use App\Modules\Estructura\Application\UseCases\ActualizarComportamientos;
+use App\Modules\Estructura\Application\UseCases\ActualizarPreguntas;
+use App\Modules\Estructura\Application\UseCases\CrearCompetencia;
 use App\Modules\Estructura\Domain\Exceptions\CompetenciaNoEncontrada;
 use App\Modules\Estructura\Domain\Exceptions\ConflictoDeVersion;
-use App\Modules\Estructura\Domain\ValueObjects\EstadoCompetencia;
-use App\Modules\Estructura\Domain\ValueObjects\TipoCompetencia;
 use Tests\Unit\Estructura\Competencias\RepositorioEnMemoria;
 
-function datosNuevos(): DatosCompetenciaDTO
+require_once __DIR__.'/Ayudas.php';
+
+function competenciaCreada(RepositorioEnMemoria $repo, string $nombre = 'Liderazgo'): int
 {
-    return new DatosCompetenciaDTO(' Nuevo ', ' Nueva descripción ', 'Especifica', ['A' => '1', 'B' => '2', 'C' => '3', 'D' => '4']);
+    return (new CrearCompetencia($repo, validadorUnitario(), auditoriaUnitaria()))->ejecutar(datosUnitarios($nombre))->id;
 }
 
-it('actualiza con la versión esperada y conserva código y estado', function () {
+it('actualiza datos y grados con la versión esperada y sube la versión', function () {
     $repo = new RepositorioEnMemoria;
-    $original = $repo->crear('Viejo', 'Vieja.', TipoCompetencia::Cardinal, ['A' => 'a', 'B' => 'b', 'C' => 'c', 'D' => 'd'], 1);
-    $repo->cambiarEstado($original->id, EstadoCompetencia::Inactivo, 1);
+    $id = competenciaCreada($repo);
 
-    $dto = (new ActualizarCompetencia($repo))->ejecutar($original->id, 1, datosNuevos(), 2);
+    $dto = (new ActualizarCompetencia($repo, validadorUnitario(), auditoriaUnitaria()))
+        ->ejecutar($id, 1, datosUnitarios(' Nuevo nombre ', 2), 5);
 
-    expect($dto->nombre)->toBe('Nuevo')
-        ->and($dto->descripcion)->toBe('Nueva descripción')
-        ->and($dto->tipo)->toBe('Especifica')
-        ->and($dto->estado)->toBe('Inactivo')
+    expect($dto->nombre)->toBe('Nuevo nombre')
         ->and($dto->version)->toBe(2)
-        ->and($dto->codigo)->toBe($original->codigo)
-        ->and($dto->grados['D'])->toBe('4')
-        ->and($repo->ultimoActor)->toBe(2);
+        ->and($dto->escala['nombre'])->toBe('Números')
+        ->and(array_column($dto->gradosDetalle, 'etiqueta'))->toBe(['Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4'])
+        ->and($repo->ultimoActor)->toBe(5);
 });
 
-it('lanza ConflictoDeVersion con una versión desactualizada', function () {
+it('lanza ConflictoDeVersion si la versión no coincide', function () {
     $repo = new RepositorioEnMemoria;
-    $original = $repo->crear('Viejo', 'Vieja.', TipoCompetencia::Cardinal, ['A' => 'a', 'B' => 'b', 'C' => 'c', 'D' => 'd'], null);
+    $id = competenciaCreada($repo);
 
-    (new ActualizarCompetencia($repo))->ejecutar($original->id, 7, datosNuevos());
+    (new ActualizarCompetencia($repo, validadorUnitario(), auditoriaUnitaria()))->ejecutar($id, 7, datosUnitarios());
 })->throws(ConflictoDeVersion::class);
 
 it('lanza CompetenciaNoEncontrada si no existe', function () {
-    (new ActualizarCompetencia(new RepositorioEnMemoria))->ejecutar(9, 1, datosNuevos());
+    (new ActualizarCompetencia(new RepositorioEnMemoria, validadorUnitario(), auditoriaUnitaria()))->ejecutar(99, 1, datosUnitarios());
 })->throws(CompetenciaNoEncontrada::class);
+
+it('actualiza los comportamientos y las preguntas subiendo la versión en cada escritura', function () {
+    $repo = new RepositorioEnMemoria;
+    $id = competenciaCreada($repo);
+
+    $conComportamientos = (new ActualizarComportamientos($repo, auditoriaUnitaria()))
+        ->ejecutar($id, 1, [[' x1 ', 'x2', 'x3', 'x4'], ['y1', 'y2', 'y3', 'y4'], ['z1', 'z2', 'z3', 'z4'], ['w1', 'w2', 'w3', 'w4']], 4);
+    $conPreguntas = (new ActualizarPreguntas($repo, auditoriaUnitaria()))->ejecutar($id, 2, [' q1 ', 'q2', 'q3', 'q4'], 4);
+
+    expect($conComportamientos->version)->toBe(2)
+        ->and($conComportamientos->gradosDetalle[0]['comportamientos'])->toBe(['x1', 'x2', 'x3', 'x4'])
+        ->and($conPreguntas->version)->toBe(3)
+        ->and($conPreguntas->preguntas)->toBe(['q1', 'q2', 'q3', 'q4']);
+});
+
+it('rechaza con ConflictoDeVersion una edición de preguntas sobre una versión vieja', function () {
+    $repo = new RepositorioEnMemoria;
+    $id = competenciaCreada($repo);
+    $caso = new ActualizarPreguntas($repo, auditoriaUnitaria());
+    $caso->ejecutar($id, 1, ['a', 'b', 'c', 'd']);
+
+    $caso->ejecutar($id, 1, ['x', 'y', 'z', 'w']);
+})->throws(ConflictoDeVersion::class);

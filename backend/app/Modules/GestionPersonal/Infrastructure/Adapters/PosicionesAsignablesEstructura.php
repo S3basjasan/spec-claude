@@ -25,7 +25,7 @@ final class PosicionesAsignablesEstructura implements PosicionesAsignablesPort
     {
         try {
             $veredicto = EstructuraFacade::posicionEsAsignable($posicionId, $tenantId);
-            $posicion = EstructuraFacade::getPosicionLaboral($posicionId);
+            $posicion = EstructuraFacade::getPosicionDeGestion($posicionId);
         } catch (Throwable) {
             throw new IngresoNoVerificable;
         }

@@ -5,16 +5,16 @@ use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\EstructuraFacadeLector;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\PosicionesAsignablesEstructura;
 
-it('mantiene la lectura laboral y el detalle de estructura para la misma posición', function () {
+it('mantiene las lecturas individual y por lote y la verificación de la misma posición', function () {
     $puesto = puestoDe(['nombre' => 'Analista contable']);
     $unidad = unidadDe(['nombre' => 'Finanzas']);
     $posicion = posicionAsignable(['puesto_id' => $puesto->id, 'unidad_organizacional_id' => $unidad->id]);
 
-    $detalle = EstructuraFacade::getPosicion($posicion->id);
-    $laboral = EstructuraFacade::getPosicionesLaboralesPorIds([$posicion->id]);
+    $detalle = EstructuraFacade::getPosicionDeGestion($posicion->id);
+    $laboral = EstructuraFacade::getPosicionesDeGestionPorIds([$posicion->id]);
     $verificacion = app(PosicionesAsignablesEstructura::class)->verificar($posicion->id, 1);
 
-    expect($detalle['puesto']['nombre'])->toBe('Analista contable')
+    expect($detalle['puesto'])->toBe('Analista contable')
         ->and($laboral[$posicion->id]['puesto'])->toBe('Analista contable')
         ->and($laboral[$posicion->id]['unidad'])->toBe('Finanzas')
         ->and($verificacion['asignable'])->toBeTrue()

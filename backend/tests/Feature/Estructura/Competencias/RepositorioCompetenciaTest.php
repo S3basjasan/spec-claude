@@ -1,155 +1,104 @@
 <?php
 
-use App\Modules\Estructura\Domain\Exceptions\CompetenciaNoEncontrada;
-use App\Modules\Estructura\Domain\Exceptions\ConflictoDeVersion;
-use App\Modules\Estructura\Domain\Exceptions\EstadoSinCambio;
+use App\Modules\Estructura\Domain\Exceptions\EscalaNoEncontrada;
 use App\Modules\Estructura\Domain\Exceptions\NombreDuplicado;
 use App\Modules\Estructura\Domain\Repositories\CompetenciaRepositoryInterface;
-use App\Modules\Estructura\Domain\ValueObjects\EstadoCompetencia;
 use App\Modules\Estructura\Domain\ValueObjects\TipoCompetencia;
-use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaEstadoHistorialModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CategoriaModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaGradoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use Illuminate\Database\QueryException;
-use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 
-function repositorio(): CompetenciaRepositoryInterface
+/**
+ * Crea por el repositorio con el cuerpo de datosCompetencia().
+ *
+ * @param  array<string, mixed>  $cambios
+ */
+function crearPorRepositorio(array $cambios = [])
 {
-    return app(CompetenciaRepositoryInterface::class);
+    $datos = datosCompetencia($cambios);
+
+    return app(CompetenciaRepositoryInterface::class)->crear(
+        $datos['nombre'],
+        $datos['descripcion'],
+        TipoCompetencia::from($datos['tipo']),
+        $datos['tipo_grado_id'],
+        $datos['categorias'] ?? null,
+        $datos['grados'],
+        $datos['comportamientos'],
+        $datos['preguntas'],
+        null,
+    );
 }
 
-/** @return array<string, string> */
-function gradosDe(string $prefijo = 'Grado'): array
-{
-    return ['A' => "$prefijo A", 'B' => "$prefijo B", 'C' => "$prefijo C", 'D' => "$prefijo D"];
-}
-
-it('asigna el código COMP-NNNN al crear, nace Activo y guarda los cuatro grados y el autor', function () {
-    $primera = repositorio()->crear('Liderazgo', 'Guiar a otros.', TipoCompetencia::Cardinal, gradosDe(), 7);
-    $segunda = repositorio()->crear('Gestión', 'Gestionar proyectos.', TipoCompetencia::Especifica, gradosDe(), null);
+it('asigna el código dentro de la transacción y no lo reutiliza', function () {
+    $primera = crearPorRepositorio(['nombre' => 'Primera']);
+    $segunda = crearPorRepositorio(['nombre' => 'Segunda']);
 
     expect($primera->codigo)->toBe('COMP-0001')
-        ->and($segunda->codigo)->toBe('COMP-0002')
-        ->and($primera->estado)->toBe(EstadoCompetencia::Activo)
-        ->and($primera->version)->toBe(1)
-        ->and($primera->creadoPor)->toBe(7)
-        ->and($primera->modificadoPor)->toBeNull()
-        ->and($segunda->creadoPor)->toBeNull()
-        ->and($primera->grados)->toBe(gradosDe());
+        ->and($segunda->codigo)->toBe('COMP-0002');
 });
 
-it('rechaza un nombre duplicado sin distinguir mayúsculas, con acentos ni estado', function () {
-    $primera = repositorio()->crear('Innovación', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
-    repositorio()->cambiarEstado($primera->id, EstadoCompetencia::Inactivo, null);
+it('dos creaciones seguidas con el mismo nombre dejan un solo registro y no repiten el código', function () {
+    crearPorRepositorio(['nombre' => 'Única']);
 
-    expect(fn () => repositorio()->crear('INNOVACIÓN', 'Otra.', TipoCompetencia::Cardinal, gradosDe(), null))
-        ->toThrow(NombreDuplicado::class)
-        ->and(fn () => repositorio()->crear('  innovación ', 'Otra.', TipoCompetencia::Cardinal, gradosDe(), null))
-        ->toThrow(NombreDuplicado::class);
-});
-
-it('no deja una competencia a medias si falla la creación', function () {
-    repositorio()->crear('Repetida', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
-
-    try {
-        repositorio()->crear('repetida', 'Otra.', TipoCompetencia::Cardinal, gradosDe(), null);
-    } catch (NombreDuplicado) {
-    }
-
+    expect(fn () => crearPorRepositorio(['nombre' => ' única ']))->toThrow(NombreDuplicado::class);
     expect(CompetenciaModel::query()->count())->toBe(1)
-        ->and(CompetenciaGradoModel::query()->count())->toBe(4);
+        ->and(CompetenciaModel::query()->pluck('codigo')->unique()->count())->toBe(1);
 });
 
-it('permite un solo grado de cada letra por competencia', function () {
-    $competencia = repositorio()->crear('Única', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
+it('hace única la clave del nombre sin distinguir mayúsculas, tildes ni espacios', function () {
+    crearPorRepositorio(['nombre' => 'Orientación']);
 
-    CompetenciaGradoModel::query()->create(['competencia_id' => $competencia->id, 'grado' => 'A', 'descripcion' => 'Repetido']);
-})->throws(UniqueConstraintViolationException::class);
-
-it('no permite borrar una competencia: sus grados la protegen (sin cascada)', function () {
-    $competencia = repositorio()->crear('Permanente', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
-
-    expect(fn () => CompetenciaModel::query()->whereKey($competencia->id)->delete())
-        ->toThrow(QueryException::class)
-        ->and(CompetenciaModel::query()->count())->toBe(1)
-        ->and(CompetenciaGradoModel::query()->count())->toBe(4);
+    expect(CompetenciaModel::query()->value('nombre_clave'))->toBe('orientacion')
+        ->and(fn () => DB::table('competencias')->insert([
+            'codigo' => 'COMP-9999', 'nombre' => 'Otra', 'nombre_clave' => 'orientacion', 'descripcion' => 'd',
+            'tipo' => 'Cardinal', 'estado' => 'Activo', 'version' => 1,
+        ]))->toThrow(QueryException::class);
 });
 
-it('actualiza incrementando la versión, conservando código y estado y guardando quién editó', function () {
-    $competencia = repositorio()->crear('Original', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), 1);
-    repositorio()->cambiarEstado($competencia->id, EstadoCompetencia::Inactivo, 1);
+it('guarda los cuatro grados con la escala elegida y sin borrado en cascada', function () {
+    $competencia = crearPorRepositorio(['tipo_grado_id' => escalaId('Números')]);
 
-    $actualizada = repositorio()->actualizar($competencia->id, 1, 'Cambiada', 'Nueva.', TipoCompetencia::Especifica, gradosDe('Nuevo'), 2);
-
-    expect($actualizada->version)->toBe(2)
-        ->and($actualizada->codigo)->toBe($competencia->codigo)
-        ->and($actualizada->estado)->toBe(EstadoCompetencia::Inactivo)
-        ->and($actualizada->creadoPor)->toBe(1)
-        ->and($actualizada->modificadoPor)->toBe(2)
-        ->and($actualizada->nombre)->toBe('Cambiada')
-        ->and($actualizada->tipo)->toBe(TipoCompetencia::Especifica)
-        ->and($actualizada->grados['D'])->toBe('Nuevo D');
+    expect(CompetenciaGradoModel::query()->where('competencia_id', $competencia->id)->count())->toBe(4)
+        ->and(array_map(fn ($g) => $g->etiqueta, $competencia->gradosDetalle))->toBe(['Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4'])
+        ->and(fn () => DB::table('competencia_grados')->where('competencia_id', $competencia->id)->delete())->toThrow(QueryException::class);
 });
 
-it('rechaza actualizar con una versión desactualizada', function () {
-    $competencia = repositorio()->crear('Original', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
-    repositorio()->actualizar($competencia->id, 1, 'Original', 'Primera edición.', TipoCompetencia::Cardinal, gradosDe(), null);
+it('rechaza una escala inexistente sin dejar datos a medias', function () {
+    expect(fn () => crearPorRepositorio(['tipo_grado_id' => 99999]))->toThrow(EscalaNoEncontrada::class);
 
-    repositorio()->actualizar($competencia->id, 1, 'Original', 'Segunda edición.', TipoCompetencia::Cardinal, gradosDe(), null);
-})->throws(ConflictoDeVersion::class);
-
-it('informa que no existe al actualizar o cambiar el estado de un id inexistente', function () {
-    expect(fn () => repositorio()->actualizar(999, 1, 'X', 'X', TipoCompetencia::Cardinal, gradosDe(), null))
-        ->toThrow(CompetenciaNoEncontrada::class)
-        ->and(fn () => repositorio()->cambiarEstado(999, EstadoCompetencia::Inactivo, null))
-        ->toThrow(CompetenciaNoEncontrada::class);
+    expect(CompetenciaModel::query()->count())->toBe(0);
 });
 
-it('rechaza renombrar a un nombre existente', function () {
-    repositorio()->crear('Primera', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
-    $segunda = repositorio()->crear('Segunda', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
+it('hace única cada categoría dentro de la competencia', function () {
+    $competencia = crearPorRepositorio(['tipo_grado_id' => escalaId('Categorías'), 'categorias' => ['Alta', 'Media', 'Baja', 'Mínima']]);
 
-    repositorio()->actualizar($segunda->id, 1, 'primera', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
-})->throws(NombreDuplicado::class);
-
-it('cambia el estado registrando el historial sin tocar la versión ni quién editó', function () {
-    $competencia = repositorio()->crear('Estable', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), 1);
-
-    $inactiva = repositorio()->cambiarEstado($competencia->id, EstadoCompetencia::Inactivo, 5);
-    $activa = repositorio()->cambiarEstado($competencia->id, EstadoCompetencia::Activo, 6);
-
-    expect($inactiva->estado)->toBe(EstadoCompetencia::Inactivo)
-        ->and($inactiva->version)->toBe(1)
-        ->and($inactiva->modificadoPor)->toBeNull()
-        ->and($activa->estado)->toBe(EstadoCompetencia::Activo);
-
-    $historial = CompetenciaEstadoHistorialModel::query()->orderBy('id')->get();
-    expect($historial)->toHaveCount(2)
-        ->and($historial[0]->estado_anterior)->toBe('Activo')
-        ->and($historial[0]->estado_nuevo)->toBe('Inactivo')
-        ->and($historial[0]->user_id)->toBe(5)
-        ->and($historial[1]->estado_anterior)->toBe('Inactivo')
-        ->and($historial[1]->estado_nuevo)->toBe('Activo')
-        ->and($historial[1]->user_id)->toBe(6)
-        ->and($historial[0]->created_at)->not->toBeNull();
+    expect(CategoriaModel::query()->where('competencia_id', $competencia->id)->count())->toBe(4)
+        ->and(fn () => CategoriaModel::query()->create([
+            'competencia_id' => $competencia->id, 'orden' => 1, 'nombre' => 'Otra', 'nombre_clave' => 'otra',
+        ]))->toThrow(QueryException::class)
+        ->and(fn () => CategoriaModel::query()->create([
+            'competencia_id' => $competencia->id, 'orden' => 9, 'nombre' => 'ALTA', 'nombre_clave' => 'alta',
+        ]))->toThrow(QueryException::class);
 });
 
-it('no registra historial si la competencia ya está en ese estado', function () {
-    $competencia = repositorio()->crear('Estable', 'Descripción.', TipoCompetencia::Cardinal, gradosDe(), null);
+it('permite intercambiar los nombres de las categorías al editarlas', function () {
+    $competencia = crearPorRepositorio(['tipo_grado_id' => escalaId('Categorías'), 'categorias' => ['Alta', 'Media', 'Baja', 'Mínima']]);
+    $datos = datosCompetencia();
 
-    expect(fn () => repositorio()->cambiarEstado($competencia->id, EstadoCompetencia::Activo, null))
-        ->toThrow(EstadoSinCambio::class)
-        ->and(CompetenciaEstadoHistorialModel::query()->count())->toBe(0);
-});
+    $editada = app(CompetenciaRepositoryInterface::class)->actualizar(
+        $competencia->id,
+        $competencia->version,
+        $competencia->nombre,
+        $competencia->descripcion,
+        $competencia->tipo,
+        escalaId('Categorías'),
+        ['Media', 'Alta', 'Mínima', 'Baja'],
+        $datos['grados'],
+        null,
+    );
 
-it('devuelve solo las activas con sus grados ordenadas por nombre', function () {
-    $b = repositorio()->crear('Beta', 'D.', TipoCompetencia::Cardinal, gradosDe(), null);
-    repositorio()->crear('Alfa', 'D.', TipoCompetencia::Cardinal, gradosDe(), null);
-    repositorio()->cambiarEstado($b->id, EstadoCompetencia::Inactivo, null);
-
-    $activas = repositorio()->obtenerActivas();
-
-    expect($activas)->toHaveCount(1)
-        ->and($activas[0]->nombre)->toBe('Alfa')
-        ->and($activas[0]->grados)->toHaveCount(4);
+    expect($editada->categorias)->toBe([1 => 'Media', 2 => 'Alta', 3 => 'Mínima', 4 => 'Baja']);
 });

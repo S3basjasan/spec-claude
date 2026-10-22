@@ -4,8 +4,24 @@ import { AuthenticatedLayout } from './modules/auth/login/components/Authenticat
 import { RedirectIfAuthenticated } from './modules/auth/login/components/RedirectIfAuthenticated'
 import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
+import { categoriasReconocimientoNav } from './modules/compensaciones/categorias/nav'
+import { CategoriasReconocimientoPage } from './modules/compensaciones/categorias/pages/CategoriasReconocimientoPage'
+import { RequireRole as RequireRoleActividades } from './modules/desarrollo/actividades/components/RequireRole'
+import { actividadesNav } from './modules/desarrollo/actividades/nav'
+
+import { ActividadesPage } from './modules/desarrollo/actividades/pages/ActividadesPage'
+import { AsistenciaPage } from './modules/desarrollo/actividades/pages/AsistenciaPage'
 import { catalogoFormativoNav } from './modules/desarrollo/catalogo-formativo/nav'
 import { CatalogoPage } from './modules/desarrollo/catalogo-formativo/pages/CatalogoPage'
+import { RequireRole as RequireRoleMicro } from './modules/desarrollo/micro-learning/components/RequireRole'
+import { microLearningNav } from './modules/desarrollo/micro-learning/nav'
+import { MicroLearningPage } from './modules/desarrollo/micro-learning/pages/MicroLearningPage'
+import { reportesNav } from './modules/desarrollo/reportes/nav'
+import { ReportesPage } from './modules/desarrollo/reportes/pages/ReportesPage'
+import { RequireRole as RequireRoleRutas } from './modules/desarrollo/rutas/components/RequireRole'
+import { RutaEditorPage } from './modules/desarrollo/rutas/pages/RutaEditorPage'
+import { RutasPage } from './modules/desarrollo/rutas/pages/RutasPage'
+import { ReproduccionPage } from './modules/desarrollo/micro-learning/pages/ReproduccionPage'
 import { RequireAdmin as RequireAdminDnf } from './modules/desarrollo/dnf/components/RequireAdmin'
 import { dnfNav } from './modules/desarrollo/dnf/nav'
 import { DnfDetallePage } from './modules/desarrollo/dnf/pages/DnfDetallePage'
@@ -17,22 +33,14 @@ import { AccionesPage } from './modules/desarrollo/plan-formacion/pages/Acciones
 import { AsistentePlanPage } from './modules/desarrollo/plan-formacion/pages/AsistentePlanPage'
 import { PlanDetallePage } from './modules/desarrollo/plan-formacion/pages/PlanDetallePage'
 import { PlanFormacionPage } from './modules/desarrollo/plan-formacion/pages/PlanFormacionPage'
-import { RequireAdmin } from './modules/estructura/competencias/components/RequireAdmin'
 import { competenciasNav } from './modules/estructura/competencias/nav'
-import { CompetenciaFormPage } from './modules/estructura/competencias/pages/CompetenciaFormPage'
 import { CompetenciasPage } from './modules/estructura/competencias/pages/CompetenciasPage'
-import { RequireAdmin as RequireAdminComportamientos } from './modules/estructura/comportamientos/components/RequireAdmin'
-import { comportamientosNav } from './modules/estructura/comportamientos/nav'
-import { ComportamientosFormPage } from './modules/estructura/comportamientos/pages/ComportamientosFormPage'
-import { ComportamientosPage } from './modules/estructura/comportamientos/pages/ComportamientosPage'
-import { RequireAdmin as RequireAdminPreguntas } from './modules/estructura/preguntas/components/RequireAdmin'
-import { preguntasNav } from './modules/estructura/preguntas/nav'
-import { PreguntasFormPage } from './modules/estructura/preguntas/pages/PreguntasFormPage'
-import { PreguntasPage } from './modules/estructura/preguntas/pages/PreguntasPage'
 import { RequireAdmin as RequireAdminPuestos } from './modules/estructura/puestos/components/RequireAdmin'
 import { puestosNav } from './modules/estructura/puestos/nav'
 import { PuestoFormPage } from './modules/estructura/puestos/pages/PuestoFormPage'
 import { PuestosPage } from './modules/estructura/puestos/pages/PuestosPage'
+import { organigramaNav } from './modules/estructura/organigrama/nav'
+import { OrganigramaPage } from './modules/estructura/organigrama/pages/OrganigramaPage'
 import { posicionesNav } from './modules/estructura/posiciones/nav'
 import { PosicionesPage } from './modules/estructura/posiciones/pages/PosicionesPage'
 import { unidadesNav } from './modules/estructura/unidades/nav'
@@ -54,13 +62,18 @@ import { politicasNav } from './modules/gestionPersonal/politicas/nav'
 import { BorradorPage } from './modules/gestionPersonal/politicas/pages/BorradorPage'
 import { PoliticaDetallePage } from './modules/gestionPersonal/politicas/pages/PoliticaDetallePage'
 import { PoliticasPage } from './modules/gestionPersonal/politicas/pages/PoliticasPage'
-import { inicioNav } from './modules/inicio/nav'
-import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
+import type { ShellNavGroup } from './shared/layouts/AppShell'
 import { queryClient } from './shared/lib/queryClient'
 
-/** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, categoriasNav, politicasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+/** Menú lateral: cada módulo aporta su ítem; aquí se agrupan por área funcional del HRMS. */
+const navGroups: ShellNavGroup[] = [
+  { label: 'Mi espacio', items: [miFichaNav, misDocumentosNav, exportarMiFichaNav] },
+  { label: 'Organización', items: [organigramaNav, unidadesNav, puestosNav, posicionesNav] },
+  { label: 'Personas', items: [colaboradoresNav, categoriasNav, politicasNav, categoriasReconocimientoNav] },
+  { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, microLearningNav] },
+  { label: 'Analítica', items: [reportesNav] },
+]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -87,23 +100,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
         </Route>
         <Route element={<RequireAuth />}>
-          <Route element={<AuthenticatedLayout navItems={navItems} />}>
-            <Route index element={<InicioPage />} />
+          <Route element={<AuthenticatedLayout navGroups={navGroups} />}>
+            <Route index element={<CompetenciasPage />} />
             <Route path="competencias" element={<CompetenciasPage />} />
-            <Route element={<RequireAdmin />}>
-              <Route path="competencias/nueva" element={<CompetenciaFormPage />} />
-              <Route path="competencias/:id/editar" element={<CompetenciaFormPage />} />
-            </Route>
-            <Route path="comportamientos" element={<ComportamientosPage />} />
-            <Route element={<RequireAdminComportamientos />}>
-              <Route path="comportamientos/nuevo" element={<ComportamientosFormPage />} />
-              <Route path="comportamientos/:competenciaId/editar" element={<ComportamientosFormPage />} />
-            </Route>
-            <Route path="preguntas" element={<PreguntasPage />} />
-            <Route element={<RequireAdminPreguntas />}>
-              <Route path="preguntas/nuevo" element={<PreguntasFormPage />} />
-              <Route path="preguntas/:competenciaId/editar" element={<PreguntasFormPage />} />
-            </Route>
             <Route path="formacion" element={<CatalogoPage />} />
             <Route path="dnf" element={<DnfPage />} />
             <Route element={<RequireAdminDnf />}>
@@ -117,13 +116,22 @@ function App() {
               <Route path="plan-formacion/:id/editar" element={<AsistentePlanPage />} />
               <Route path="plan-formacion/:id" element={<PlanDetallePage />} />
             </Route>
+            <Route path="actividades" element={<ActividadesPage />} />
+            <Route path="actividades/:id/asistencia" element={<RequireRoleActividades admin={<AsistenciaPage />} />} />
+            <Route path="reportes" element={<ReportesPage />} />
+            <Route path="rutas" element={<RutasPage />} />
+            <Route path="rutas/:id" element={<RequireRoleRutas admin={<RutaEditorPage />} />} />
+            <Route path="micro-learning" element={<MicroLearningPage />} />
+            <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />
             <Route element={<RequireAdminPuestos />}>
               <Route path="puestos/nuevo" element={<PuestoFormPage />} />
               <Route path="puestos/:puestoId/editar" element={<PuestoFormPage />} />
             </Route>
+            <Route path="compensaciones/categorias" element={<CategoriasReconocimientoPage />} />
             <Route path="unidades" element={<UnidadesPage />} />
             <Route path="posiciones" element={<PosicionesPage />} />
+            <Route path="organigrama" element={<OrganigramaPage />} />
             <Route path="mi-ficha" element={<MiFichaPage />} />
             <Route path="mis-documentos" element={<MisDocumentosPage />} />
             <Route path="exportar-mi-ficha" element={<MiExportacionPage />} />
