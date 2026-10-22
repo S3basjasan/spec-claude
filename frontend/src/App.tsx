@@ -50,13 +50,17 @@ import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDe
 import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
 import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
 import { RegistrarIngresoPage } from './modules/gestionPersonal/fichas/pages/RegistrarIngresoPage'
+import { politicasNav } from './modules/gestionPersonal/politicas/nav'
+import { BorradorPage } from './modules/gestionPersonal/politicas/pages/BorradorPage'
+import { PoliticaDetallePage } from './modules/gestionPersonal/politicas/pages/PoliticaDetallePage'
+import { PoliticasPage } from './modules/gestionPersonal/politicas/pages/PoliticasPage'
 import { inicioNav } from './modules/inicio/nav'
 import { InicioPage } from './modules/inicio/pages/InicioPage'
 import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, comportamientosNav, preguntasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, unidadesNav, colaboradoresNav, categoriasNav, politicasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -130,6 +134,9 @@ function App() {
               <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
               <Route path="colaboradores/:colaboradorId/ingreso" element={<RegistrarIngresoPage />} />
               <Route path="categorias-documentales" element={<CategoriasPage />} />
+              <Route path="politicas-personal" element={<PoliticasPage />} />
+              <Route path="politicas-personal/:tipo" element={<PoliticaDetallePage />} />
+              <Route path="politicas-personal/:tipo/borrador" element={<BorradorPage />} />
             </Route>
           </Route>
         </Route>
