@@ -65,8 +65,8 @@ final class ObtenerMiRuta
             'nivel_actual_id' => $i->nivelActualId,
             'nivel_objetivo_id' => $i->nivelObjetivoId,
             'siguiente_nivel_id' => $this->siguiente($i, $ruta)?->id,
-            // La vista de adecuación a puesto futuro todavía no existe: el botón «Ver mi adecuación» no se ofrece.
-            'puede_ver_adecuacion' => false,
+            // «Ver mi adecuación» (feature 020) se ofrece solo si la inscripción tiene un nivel objetivo.
+            'puede_ver_adecuacion' => $i->nivelObjetivoId !== null,
         ];
     }
 

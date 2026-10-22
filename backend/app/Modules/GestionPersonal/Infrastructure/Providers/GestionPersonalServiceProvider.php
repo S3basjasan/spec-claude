@@ -12,14 +12,17 @@ use App\Modules\GestionPersonal\Application\Ports\LectorDeDesarrolloPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Application\Ports\PosicionesAsignablesPort;
+use App\Modules\GestionPersonal\Application\Ports\RelojPort;
 use App\Modules\GestionPersonal\Application\Ports\RenderizadorDePdfPort;
 use App\Modules\GestionPersonal\Application\Ports\TransaccionPort;
 use App\Modules\GestionPersonal\Application\Ports\ValidadorDePdfPort;
 use App\Modules\GestionPersonal\Application\Services\PersonalService;
+use App\Modules\GestionPersonal\Application\Services\PoliticasService;
 use App\Modules\GestionPersonal\Domain\Repositories\CategoriaRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\DesarrolloRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\DocumentoRepositoryInterface;
+use App\Modules\GestionPersonal\Domain\Repositories\PoliticaRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\AlmacenDeDocumentosDisco;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\CatalogoDeCategoriasEloquent;
@@ -28,6 +31,7 @@ use App\Modules\GestionPersonal\Infrastructure\Adapters\EstructuraFacadeLector;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\LectorDeCapacidadesDesarrollo;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\LectorDeDesarrolloEloquent;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\PosicionesAsignablesEstructura;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\RelojDelSistema;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\RenderizadorDePdfDompdf;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\SharedContextoDeTenant;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\TransaccionLaravel;
@@ -39,6 +43,7 @@ use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentDesarrolloRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentDocumentoRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentLectorLaboral;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentPoliticaRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentVinculoLaboralRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -61,6 +66,8 @@ class GestionPersonalServiceProvider extends ServiceProvider
         $this->app->bind(TransaccionPort::class, TransaccionLaravel::class);
         $this->app->bind(ContextoDeLecturaPort::class, ContextoDeLecturaSnapshot::class);
         $this->app->bind(RenderizadorDePdfPort::class, RenderizadorDePdfDompdf::class);
+        $this->app->bind(PoliticaRepositoryInterface::class, EloquentPoliticaRepository::class);
+        $this->app->bind(RelojPort::class, RelojDelSistema::class);
         $this->app->bind(AccesosDeCuentaPort::class, EloquentAccesosDeCuenta::class);
         $this->app->bind(ContextoDeTenantPort::class, SharedContextoDeTenant::class);
 
@@ -72,6 +79,7 @@ class GestionPersonalServiceProvider extends ServiceProvider
         $this->app->bind(PosicionesAsignablesPort::class, PosicionesAsignablesEstructura::class);
 
         $this->app->singleton('personal-facade', fn ($app) => $app->make(PersonalService::class));
+        $this->app->singleton('politicas-facade', fn ($app) => $app->make(PoliticasService::class));
     }
 
     public function boot(): void

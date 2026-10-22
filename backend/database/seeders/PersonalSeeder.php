@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Modules\GestionPersonal\Domain\Services\NormalizadorDeTexto;
+use App\Modules\GestionPersonal\Domain\Services\ReglasDePolitica;
 use App\Modules\GestionPersonal\Domain\ValueObjects\CodigoColaborador;
+use App\Modules\GestionPersonal\Domain\ValueObjects\TipoDePolitica;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\CategoriaDocumentalModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorCuentaModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
@@ -14,6 +16,7 @@ use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Database\Seeders\Support\PdfDeEjemplo;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -54,6 +57,7 @@ class PersonalSeeder extends Seeder
         $this->desarrollo((int) $admin, $ana, $luis, $maria);
         $this->categoriasDocumentales((int) $admin);
         $this->documentosDeEjemplo((int) $admin, $ana);
+        $this->politicasDeEjemplo((int) $admin);
 
         $this->acceso($usuario, $ana, true, true, true);
         $this->acceso($colaborador2, $luis, true);
@@ -122,6 +126,44 @@ class PersonalSeeder extends Seeder
                 'puede_exportar' => $puedeExportar,
             ],
         );
+    }
+
+    /**
+     * Políticas operativas (feature 016): las siete cabeceras del tenant 1 y una política de Permisos publicada
+     * (versión 1, vigente) de ejemplo; el resto de los tipos queda «sin configurar». Idempotente.
+     */
+    private function politicasDeEjemplo(int $actor): void
+    {
+        $ahora = now()->utc()->format('Y-m-d H:i:s');
+
+        foreach (TipoDePolitica::cases() as $tipo) {
+            DB::table('politicas_personal')->insertOrIgnore([
+                'tenant_id' => 1, 'tipo' => $tipo->value, 'ultimo_numero' => 0, 'version' => 1, 'created_at' => $ahora, 'updated_at' => $ahora,
+            ]);
+        }
+
+        $cabecera = DB::table('politicas_personal')->where('tenant_id', 1)->where('tipo', TipoDePolitica::Permisos->value)->first();
+        if ($cabecera === null || (int) $cabecera->ultimo_numero > 0) {
+            return;
+        }
+
+        $reglas = app(ReglasDePolitica::class);
+        $parametros = $reglas->canonicos(TipoDePolitica::Permisos, [
+            'disponible' => true, 'justificacion_obligatoria' => true, 'documento_obligatorio' => false, 'anticipacion_dias' => 2,
+        ]);
+        $inicio = now()->utc()->subDay();
+        $sellado = $reglas->sellar(TipoDePolitica::Permisos, 1, $inicio->format('Y-m-d\TH:i:s\Z'), $parametros);
+
+        DB::table('politica_versiones')->insert([
+            'tenant_id' => 1, 'politica_id' => $cabecera->id, 'numero' => 1,
+            'descripcion' => 'Permisos de ejemplo: justificación obligatoria y dos días de anticipación.',
+            'parametros' => ReglasDePolitica::json($parametros), 'version' => 1,
+            'created_by' => $actor, 'updated_by' => $actor, 'created_at' => $ahora, 'updated_at' => $ahora,
+            'publicada_en' => $ahora, 'publicada_por' => $actor, 'inicio_vigencia' => $inicio->format('Y-m-d H:i:s'),
+            'motivo_cambio' => 'Política inicial de ejemplo', 'revisor_nombre' => 'Talento Humano', 'revision_en' => $ahora,
+            'condiciones' => $sellado['json'], 'condiciones_hash' => $sellado['hash'],
+        ]);
+        DB::table('politicas_personal')->where('id', $cabecera->id)->update(['ultimo_numero' => 1]);
     }
 
     /** Documentos sintéticos de Ana (feature 014): uno visible y uno archivado; idempotente por operación. */

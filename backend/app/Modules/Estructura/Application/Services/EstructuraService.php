@@ -426,7 +426,7 @@ class EstructuraService
      */
     public function getPosicionDeGestion(int $id): ?array
     {
-        return $this->posiciones->obtener($id);
+        return $this->posiciones->datosDe($id);
     }
 
     /**

@@ -66,6 +66,38 @@ class PersonalService
     }
 
     /**
+     * Puesto actual de cada colaborador: el puesto de la posición de su asignación laboral vigente en la fecha. Quien no
+     * tiene asignación vigente figura con `null`.
+     *
+     * @param  array<int, int>  $colaboradorIds
+     * @return array<int, int|null> colaborador_id => puesto_id
+     *
+     * @throws InformacionNoDisponible Si la lectura de Estructura falla; el llamador decide su degradación.
+     */
+    public function getPuestoActual(int $tenantId, array $colaboradorIds, string $fecha): array
+    {
+        $ids = array_values(array_unique(array_map('intval', $colaboradorIds)));
+        $posiciones = $this->vinculos->posicionesVigentesDeFichas($tenantId, $ids, $fecha);
+
+        $puestos = [];
+        if ($posiciones !== []) {
+            $lectura = $this->estructura->posiciones(array_values(array_unique($posiciones)));
+            if (! $lectura->estaDisponible()) {
+                throw new InformacionNoDisponible;
+            }
+            $puestos = $lectura->datos;
+        }
+
+        $salida = [];
+        foreach ($ids as $id) {
+            $posicion = $posiciones[$id] ?? null;
+            $salida[$id] = $posicion === null ? null : ($puestos[$posicion]['puesto_id'] ?? null);
+        }
+
+        return $salida;
+    }
+
+    /**
      * Posiciones, entre las dadas, con una asignación laboral vigente o futura en la fecha (fin nulo o posterior).
      * Lo consumen Estructura (desactivar puestos y unidades) y futuras funcionalidades de movimientos.
      *

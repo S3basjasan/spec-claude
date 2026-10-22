@@ -17,6 +17,7 @@ final class EstructuraFacadeLector implements LectorEstructuraPort
             foreach (EstructuraFacade::getPosicionesDeGestionPorIds($posicionIds) as $id => $posicion) {
                 $salida[(int) $id] = [
                     'puesto' => $posicion['puesto'],
+                    'puesto_id' => $posicion['puesto_id'] ?? null,
                     'unidad_id' => $posicion['unidad_id'],
                     'unidad' => $posicion['unidad'],
                     'jefatura' => $posicion['jefatura'],

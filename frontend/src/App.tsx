@@ -19,6 +19,10 @@ import { MicroLearningPage } from './modules/desarrollo/micro-learning/pages/Mic
 import { reportesNav } from './modules/desarrollo/reportes/nav'
 import { ReportesPage } from './modules/desarrollo/reportes/pages/ReportesPage'
 import { RequireRole as RequireRoleRutas } from './modules/desarrollo/rutas/components/RequireRole'
+import { adecuacionNav } from './modules/desarrollo/adecuacion/nav'
+import { RequirePermiso as RequirePermisoAdecuacion, SinAccesoAdecuacion } from './modules/desarrollo/adecuacion/components/RequirePermiso'
+import { DetalleAdecuacionPage } from './modules/desarrollo/adecuacion/pages/DetalleAdecuacionPage'
+import { EntradaAdecuacionPage } from './modules/desarrollo/adecuacion/pages/EntradaAdecuacionPage'
 import { rutasNav } from './modules/desarrollo/rutas/nav'
 import { RutaEditorPage } from './modules/desarrollo/rutas/pages/RutaEditorPage'
 import { RutasPage } from './modules/desarrollo/rutas/pages/RutasPage'
@@ -59,13 +63,22 @@ import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDe
 import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
 import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
 import { RegistrarIngresoPage } from './modules/gestionPersonal/fichas/pages/RegistrarIngresoPage'
-import { inicioNav } from './modules/inicio/nav'
-import { InicioPage } from './modules/inicio/pages/InicioPage'
+import { politicasNav } from './modules/gestionPersonal/politicas/nav'
+import { BorradorPage } from './modules/gestionPersonal/politicas/pages/BorradorPage'
+import { PoliticaDetallePage } from './modules/gestionPersonal/politicas/pages/PoliticaDetallePage'
+import { PoliticasPage } from './modules/gestionPersonal/politicas/pages/PoliticasPage'
 import { onSessionExpired } from './shared/api/httpClient'
+import type { ShellNavGroup } from './shared/layouts/AppShell'
 import { queryClient } from './shared/lib/queryClient'
 
-/** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, rutasNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+/** Menú lateral: cada módulo aporta su ítem; aquí se agrupan por área funcional del HRMS. */
+const navGroups: ShellNavGroup[] = [
+  { label: 'Mi espacio', items: [miFichaNav, misDocumentosNav, exportarMiFichaNav] },
+  { label: 'Organización', items: [organigramaNav, unidadesNav, puestosNav, posicionesNav] },
+  { label: 'Personas', items: [colaboradoresNav, categoriasNav, politicasNav, categoriasReconocimientoNav] },
+  { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, rutasNav, adecuacionNav, microLearningNav] },
+  { label: 'Analítica', items: [reportesNav] },
+]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -92,8 +105,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
         </Route>
         <Route element={<RequireAuth />}>
-          <Route element={<AuthenticatedLayout navItems={navItems} />}>
-            <Route index element={<InicioPage />} />
+          <Route element={<AuthenticatedLayout navGroups={navGroups} />}>
+            <Route index element={<CompetenciasPage />} />
             <Route path="competencias" element={<CompetenciasPage />} />
             <Route path="formacion" element={<CatalogoPage />} />
             <Route path="dnf" element={<DnfPage />} />
@@ -113,6 +126,8 @@ function App() {
             <Route path="reportes" element={<ReportesPage />} />
             <Route path="rutas" element={<RutasPage />} />
             <Route path="rutas/:id" element={<RequireRoleRutas admin={<RutaEditorPage />} />} />
+            <Route path="adecuacion" element={<EntradaAdecuacionPage />} />
+            <Route path="adecuacion/evaluaciones/:id" element={<RequirePermisoAdecuacion clave="desarrollo.adecuacion.ver" fallback={<SinAccesoAdecuacion />}><DetalleAdecuacionPage /></RequirePermisoAdecuacion>} />
             <Route path="micro-learning" element={<MicroLearningPage />} />
             <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />
@@ -134,6 +149,9 @@ function App() {
               <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
               <Route path="colaboradores/:colaboradorId/ingreso" element={<RegistrarIngresoPage />} />
               <Route path="categorias-documentales" element={<CategoriasPage />} />
+              <Route path="politicas-personal" element={<PoliticasPage />} />
+              <Route path="politicas-personal/:tipo" element={<PoliticaDetallePage />} />
+              <Route path="politicas-personal/:tipo/borrador" element={<BorradorPage />} />
             </Route>
           </Route>
         </Route>

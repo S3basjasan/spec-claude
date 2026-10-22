@@ -26,7 +26,7 @@ it('devuelve la escalera con nivel actual, objetivo y siguiente, los requisitos 
         ->and($i['ruta'])->toBe(['id' => $ruta['id'], 'codigo' => $ruta['codigo'], 'nombre' => 'Ruta 1', 'tipo' => 'Especialista'])
         ->and($i['nivel_actual_id'])->toBe($ruta['niveles'][0])->and($i['nivel_objetivo_id'])->toBe($ruta['niveles'][2])
         ->and($i['siguiente_nivel_id'])->toBe($ruta['niveles'][1])
-        ->and($i['puede_ver_adecuacion'])->toBeFalse()
+        ->and($i['puede_ver_adecuacion'])->toBeTrue()
         ->and(array_column($i['niveles'], 'orden'))->toBe([1, 2, 3])
         ->and($i['niveles'][2]['competencias'][0])->toMatchArray(['grado' => 'A', 'diferencial' => ['tipo' => 'sube', 'antes' => 'B', 'delta' => 1]])
         ->and($i['niveles'][2]['conocimientos'])->toBe(['informativo' => true, 'formacion' => ['Ingeniería'], 'capacitacion' => ['Excel avanzado', 'SQL']])
@@ -125,4 +125,16 @@ it('el colaborador no accede a las rutas de gestión', function () {
     $this->getJson("/api/rutas/{$ruta['id']}")->assertForbidden();
     $this->getJson('/api/inscripciones-ruta')->assertForbidden();
     $this->getJson("/api/rutas/{$ruta['id']}/historial")->assertForbidden();
+});
+
+it('«Ver mi adecuación» solo se ofrece cuando la inscripción tiene un nivel objetivo', function () {
+    $ruta = rutaEnBd([1, 2, 3], 'Vigente');
+    $otra = rutaEnBd([1, 2], 'Vigente');
+    $yo = actuarComoColaboradorDeRuta();
+    inscripcionEnBd($ruta['id'], $yo, $ruta['niveles'][0], $ruta['niveles'][2]);
+    inscripcionEnBd($otra['id'], $yo, $otra['niveles'][0], null);
+
+    $i = collect($this->getJson('/api/rutas/mi-ruta')->assertOk()->json('data.inscripciones'))->keyBy('ruta.id');
+
+    expect($i[$ruta['id']]['puede_ver_adecuacion'])->toBeTrue()->and($i[$otra['id']]['puede_ver_adecuacion'])->toBeFalse();
 });

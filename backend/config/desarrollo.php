@@ -18,4 +18,23 @@ return [
 
     'conocimientos_con_grado' => (bool) env('DESARROLLO_CONOCIMIENTOS_CON_GRADO', false),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Adecuación a puesto futuro (feature 020)
+    |--------------------------------------------------------------------------
+    |
+    | `conocimientos_con_grado`: con `false` (valor por defecto) la dimensión Conocimientos queda desactivada: no se
+    | generan resultados, el diagnóstico muestra un aviso informativo y los pesos de las demás dimensiones se reescalan.
+    | La rama `true` no está implementada (specs/020-adecuacion-puesto-futuro, research.md R4).
+    |
+    | `experiencia_disponible`: con `false` la experiencia acumulada no se lee de Gestión de Personal y la dimensión
+    | Experiencia queda sin evaluar.
+    |
+    */
+
+    'adecuacion' => [
+        'conocimientos_con_grado' => (bool) env('DESARROLLO_ADECUACION_CONOCIMIENTOS_CON_GRADO', false),
+        'experiencia_disponible' => (bool) env('DESARROLLO_ADECUACION_EXPERIENCIA_DISPONIBLE', true),
+    ],
+
 ];

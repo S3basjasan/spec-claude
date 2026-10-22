@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\GestionPersonal\Domain\ValueObjects\TipoDePolitica;
 use App\Modules\GestionPersonal\Presentation\Controllers\CategoriaDocumentalController;
 use App\Modules\GestionPersonal\Presentation\Controllers\ColaboradorController;
 use App\Modules\GestionPersonal\Presentation\Controllers\DesarrolloController;
@@ -10,6 +11,9 @@ use App\Modules\GestionPersonal\Presentation\Controllers\MiDesarrolloController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiDocumentoController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiExportacionController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiFichaController;
+use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaAplicableController;
+use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaBorradorController;
+use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaPersonalController;
 use App\Modules\GestionPersonal\Presentation\Controllers\SituacionLaboralController;
 use App\Modules\GestionPersonal\Presentation\Middleware\LimitarTamanoDeCarga;
 use Illuminate\Support\Facades\Route;
@@ -76,5 +80,28 @@ Route::prefix('api/categorias-documentales')->middleware('api')->group(function 
         Route::get('/{categoria}', [CategoriaDocumentalController::class, 'show'])->whereNumber('categoria')->name('categorias.show');
         Route::patch('/{categoria}', [CategoriaDocumentalController::class, 'update'])->whereNumber('categoria')->name('categorias.update');
         Route::patch('/{categoria}/estado', [CategoriaDocumentalController::class, 'updateEstado'])->whereNumber('categoria')->name('categorias.estado');
+    });
+});
+
+// Políticas operativas de personal (feature 016). Sin DELETE ni PUT: una versión publicada no se edita ni se elimina.
+Route::prefix('api/politicas-personal')->middleware('api')->group(function () {
+    $tipo = implode('|', TipoDePolitica::identificadores());
+
+    // Condiciones aplicables: lectura informativa para cualquier usuario autenticado del tenant (no expone borradores ni auditoría).
+    Route::middleware('auth:sanctum')->get('/{tipo}/aplicable', [PoliticaAplicableController::class, 'show'])->where('tipo', $tipo)->name('politicas.aplicable');
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () use ($tipo) {
+        Route::get('/', [PoliticaPersonalController::class, 'index'])->name('politicas.index');
+        Route::get('/{tipo}', [PoliticaPersonalController::class, 'show'])->where('tipo', $tipo)->name('politicas.show');
+
+        Route::get('/{tipo}/versiones/{version}', [PoliticaPersonalController::class, 'version'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.version');
+        Route::get('/{tipo}/versiones/{version}/comparacion', [PoliticaPersonalController::class, 'comparacion'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.comparacion');
+        Route::post('/{tipo}/versiones/{version}/retiro', [PoliticaPersonalController::class, 'retirar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.retiro');
+
+        Route::post('/{tipo}/borrador', [PoliticaBorradorController::class, 'store'])->where('tipo', $tipo)->name('politicas.borrador.store');
+        Route::patch('/{tipo}/borrador/{version}', [PoliticaBorradorController::class, 'update'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.update');
+        Route::post('/{tipo}/borrador/{version}/descarte', [PoliticaBorradorController::class, 'descartar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.descarte');
+        Route::post('/{tipo}/borrador/{version}/previsualizacion', [PoliticaBorradorController::class, 'previsualizar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.previsualizacion');
+        Route::post('/{tipo}/borrador/{version}/publicacion', [PoliticaBorradorController::class, 'publicar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.publicacion');
     });
 });

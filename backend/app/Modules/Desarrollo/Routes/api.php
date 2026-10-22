@@ -2,12 +2,14 @@
 
 use App\Modules\Desarrollo\Presentation\Controllers\ActividadAsistenciaController;
 use App\Modules\Desarrollo\Presentation\Controllers\ActividadController;
+use App\Modules\Desarrollo\Presentation\Controllers\AdecuacionesController;
 use App\Modules\Desarrollo\Presentation\Controllers\AreaFormativaController;
 use App\Modules\Desarrollo\Presentation\Controllers\CatalogoFormativoController;
 use App\Modules\Desarrollo\Presentation\Controllers\CertificadoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
 use App\Modules\Desarrollo\Presentation\Controllers\InscripcionesRutaController;
 use App\Modules\Desarrollo\Presentation\Controllers\IntentoMicroController;
+use App\Modules\Desarrollo\Presentation\Controllers\MiAdecuacionController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiAprendizajeController;
 use App\Modules\Desarrollo\Presentation\Controllers\MicrocontenidoController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiProgresoController;
@@ -189,4 +191,21 @@ Route::prefix('api/inscripciones-ruta')->middleware(['api', 'auth:sanctum'])->gr
     Route::patch('/{id}/niveles', [InscripcionesRutaController::class, 'niveles'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.niveles');
     Route::patch('/{id}/alcanzar', [InscripcionesRutaController::class, 'alcanzar'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.alcanzar');
     Route::patch('/{id}/retirar', [InscripcionesRutaController::class, 'retirar'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.retirar');
+});
+
+// Adecuación a puesto futuro y mapa de talento (feature 020). Prefijo /api/adecuaciones por contrato (desviación aprobada).
+// Cada operación se autoriza con una clave de permiso (`permiso:<clave>`). No existen endpoints PUT, PATCH ni DELETE sobre
+// las adecuaciones: son inmutables. Las rutas fijas se declaran antes de `/{id}` para que nunca se interpreten como identificador.
+Route::prefix('api/adecuaciones')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/permisos', [AdecuacionesController::class, 'permisos'])->name('adecuaciones.permisos');
+    Route::get('/opciones', [AdecuacionesController::class, 'opciones'])->middleware('permiso:desarrollo.adecuacion.generar')->name('adecuaciones.opciones');
+    Route::get('/mi-adecuacion', [MiAdecuacionController::class, 'show'])->middleware('permiso:desarrollo.adecuacion.ver_propio')->name('adecuaciones.mi-adecuacion');
+    Route::post('/previsualizar', [AdecuacionesController::class, 'previsualizar'])->middleware('permiso:desarrollo.adecuacion.generar')->name('adecuaciones.previsualizar');
+    Route::post('/', [AdecuacionesController::class, 'store'])->middleware('permiso:desarrollo.adecuacion.generar')->name('adecuaciones.store');
+    Route::get('/parametros', [AdecuacionesController::class, 'parametros'])->middleware('permiso:desarrollo.adecuacion.parametros')->name('adecuaciones.parametros');
+    Route::put('/parametros', [AdecuacionesController::class, 'actualizarParametros'])->middleware('permiso:desarrollo.adecuacion.parametros')->name('adecuaciones.parametros.actualizar');
+    Route::get('/mapa', [AdecuacionesController::class, 'mapa'])->middleware('permiso:desarrollo.adecuacion.mapa')->name('adecuaciones.mapa');
+    Route::get('/comparar', [AdecuacionesController::class, 'comparar'])->middleware('permiso:desarrollo.adecuacion.comparar')->name('adecuaciones.comparar');
+    Route::get('/', [AdecuacionesController::class, 'index'])->middleware('permiso:desarrollo.adecuacion.ver')->name('adecuaciones.index');
+    Route::get('/{id}', [AdecuacionesController::class, 'show'])->whereNumber('id')->middleware('permiso:desarrollo.adecuacion.ver')->name('adecuaciones.show');
 });

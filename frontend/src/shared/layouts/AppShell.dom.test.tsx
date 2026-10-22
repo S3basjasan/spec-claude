@@ -14,7 +14,7 @@ function renderShell(props: Partial<Parameters<typeof AppShell>[0]> = {}) {
           element={
             <AppShell
               user={{ name: 'Ana Pérez', role: 'admin' }}
-              navItems={[{ to: '/', label: 'Inicio', icon: <span />, end: true }]}
+              navGroups={[{ label: 'General', items: [{ to: '/', label: 'Inicio', icon: <span />, end: true }] }]}
               onLogout={onLogout}
               isLoggingOut={false}
               {...props}
@@ -42,6 +42,27 @@ describe('AppShell', () => {
     expect(screen.getByRole('link', { name: 'Inicio' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByText('Contenido')).toBeInTheDocument()
     expect(screen.getByRole('contentinfo')).toHaveTextContent('Versión 0.1')
+  })
+
+  it('despliega y pliega cada grupo del menú', async () => {
+    renderShell({
+      navGroups: [
+        { label: 'Uno', items: [{ to: '/', label: 'Inicio', icon: <span />, end: true }] },
+        { label: 'Dos', items: [{ to: '/otro', label: 'Otro', icon: <span /> }] },
+      ],
+    })
+    const user = userEvent.setup()
+    const dos = screen.getByRole('button', { name: 'Dos' })
+
+    expect(screen.getByRole('button', { name: 'Uno' })).toHaveAttribute('aria-expanded', 'true')
+    expect(dos).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('link', { name: 'Otro' })).not.toBeInTheDocument()
+
+    await user.click(dos)
+    expect(screen.getByRole('link', { name: 'Otro' })).toBeInTheDocument()
+
+    await user.click(dos)
+    expect(screen.queryByRole('link', { name: 'Otro' })).not.toBeInTheDocument()
   })
 
   it('muestra nombre y rol en el menú de usuario', async () => {
