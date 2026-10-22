@@ -162,9 +162,9 @@ export function AppShell({ user, navGroups, onLogout, isLoggingOut }: AppShellPr
       <div className="flex flex-1 flex-col md:flex-row">
         <nav
           aria-label={shellText.mainNavigation}
-          className="border-b border-border bg-surface p-3 md:w-62 md:shrink-0 md:border-b-0 md:border-r"
+          className="border-b border-border bg-surface md:w-62 md:shrink-0 md:border-b-0 md:border-r"
         >
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 p-3 md:sticky md:top-0 md:max-h-screen md:overflow-y-auto">
             {visibleGroups.map((group, index) => {
               const open = openGroups.has(group.label)
               const panelId = `nav-panel-${index}`
