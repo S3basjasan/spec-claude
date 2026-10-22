@@ -3,6 +3,7 @@
 namespace App\Modules\Desarrollo\Application\Services;
 
 use App\Modules\Desarrollo\Application\UseCases\ConsultarActividadesParaOtrosModulos;
+use App\Modules\Desarrollo\Application\UseCases\ConsultarRutasParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
@@ -33,6 +34,7 @@ class DesarrolloService
         private readonly ProgresoMicroRepositoryInterface $progresosMicro,
         private readonly CalculadorDeResumen $calculadorDeResumen,
         private readonly ConsultarActividadesParaOtrosModulos $actividades,
+        private readonly ConsultarRutasParaOtrosModulos $rutas,
     ) {}
 
     /**
@@ -230,5 +232,26 @@ class DesarrolloService
     public function getAsistencias(int $tenantId, array $filtros = []): array
     {
         return $this->actividades->asistencias($tenantId, $filtros);
+    }
+
+    /**
+     * Inscripciones Activas del colaborador a rutas de carrera, con sus niveles actual y objetivo (para Adecuación, el Plan de
+     * Desarrollo Individual y Reportes). Solo lectura; las de quien ya no tiene vínculo vigente se retiran y no se devuelven.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function inscripcionesActivas(int $tenantId, int $colaboradorId): array
+    {
+        return $this->rutas->inscripcionesActivas($tenantId, $colaboradorId);
+    }
+
+    /**
+     * Nivel de una ruta: ruta, orden, puesto y experiencia mínima (para Adecuación). Solo lectura.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function obtenerNivel(int $tenantId, int $nivelId): ?array
+    {
+        return $this->rutas->obtenerNivel($tenantId, $nivelId);
     }
 }

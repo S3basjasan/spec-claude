@@ -34,5 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MicroLearningSeeder::class);
         // Reportes: encuestas, seguimientos, evaluaciones de impacto y una segunda DNF sobre las actividades sembradas.
         $this->call(ReportesSeeder::class);
+        // Rutas de carrera: rutas, niveles e inscripciones de ejemplo; las Activas solo para colaboradores con vínculo vigente.
+        $this->call(RutasSeeder::class);
     }
 }

@@ -6,16 +6,19 @@ use App\Modules\Desarrollo\Presentation\Controllers\AreaFormativaController;
 use App\Modules\Desarrollo\Presentation\Controllers\CatalogoFormativoController;
 use App\Modules\Desarrollo\Presentation\Controllers\CertificadoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\DnfController;
+use App\Modules\Desarrollo\Presentation\Controllers\InscripcionesRutaController;
 use App\Modules\Desarrollo\Presentation\Controllers\IntentoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiAprendizajeController;
 use App\Modules\Desarrollo\Presentation\Controllers\MicrocontenidoController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiProgresoController;
+use App\Modules\Desarrollo\Presentation\Controllers\MiRutaController;
 use App\Modules\Desarrollo\Presentation\Controllers\MisActividadesController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanAccionController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanController;
 use App\Modules\Desarrollo\Presentation\Controllers\ProgresoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\ReportesController;
 use App\Modules\Desarrollo\Presentation\Controllers\ReportesImpactoController;
+use App\Modules\Desarrollo\Presentation\Controllers\RutasController;
 use Illuminate\Support\Facades\Route;
 
 // Catálogo formativo de competencias (feature 005). Prefijo /api/catalogo-formativo por contrato.
@@ -161,4 +164,29 @@ Route::prefix('api/reportes')->middleware('api')->group(function () {
         Route::get('/impactos', [ReportesImpactoController::class, 'index'])->name('reportes.impactos.index');
         Route::put('/impactos/{planAccionId}', [ReportesImpactoController::class, 'update'])->whereNumber('planAccionId')->name('reportes.impactos.update');
     });
+});
+
+// Rutas y planes de carrera (feature 019). Prefijo /api/rutas por contrato. Cada operación se autoriza con una clave de
+// permiso (`permiso:<clave>`). No existen endpoints DELETE: las rutas se archivan y las inscripciones se retiran.
+// Las rutas fijas (`permisos`, `opciones`, `mi-ruta`) se declaran antes de `/{id}` para que nunca se interpreten como identificador.
+Route::prefix('api/rutas')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/permisos', [RutasController::class, 'permisos'])->name('rutas.permisos');
+    Route::get('/mi-ruta', [MiRutaController::class, 'show'])->middleware('permiso:desarrollo.rutas.ver_propio')->name('rutas.mi-ruta');
+    Route::get('/opciones', [RutasController::class, 'opciones'])->middleware('permiso:desarrollo.rutas.gestionar')->name('rutas.opciones');
+    Route::get('/', [RutasController::class, 'index'])->middleware('permiso:desarrollo.rutas.ver')->name('rutas.index');
+    Route::post('/', [RutasController::class, 'store'])->middleware('permiso:desarrollo.rutas.gestionar')->name('rutas.store');
+    Route::get('/{id}', [RutasController::class, 'show'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.ver')->name('rutas.show');
+    Route::put('/{id}', [RutasController::class, 'update'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.gestionar')->name('rutas.update');
+    Route::get('/{id}/historial', [RutasController::class, 'historial'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.historial')->name('rutas.historial');
+    Route::patch('/{id}/estado', [RutasController::class, 'cambiarEstado'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.gestionar')->name('rutas.estado');
+});
+
+// Inscripciones a rutas de carrera (feature 019). Prefijo /api/inscripciones-ruta por contrato. Sin DELETE: se finalizan o se retiran.
+Route::prefix('api/inscripciones-ruta')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/', [InscripcionesRutaController::class, 'index'])->middleware('permiso:desarrollo.rutas.inscripciones')->name('inscripciones-ruta.index');
+    Route::get('/colaboradores', [InscripcionesRutaController::class, 'colaboradores'])->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.colaboradores');
+    Route::post('/', [InscripcionesRutaController::class, 'store'])->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.store');
+    Route::patch('/{id}/niveles', [InscripcionesRutaController::class, 'niveles'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.niveles');
+    Route::patch('/{id}/alcanzar', [InscripcionesRutaController::class, 'alcanzar'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.alcanzar');
+    Route::patch('/{id}/retirar', [InscripcionesRutaController::class, 'retirar'])->whereNumber('id')->middleware('permiso:desarrollo.rutas.inscribir')->name('inscripciones-ruta.retirar');
 });

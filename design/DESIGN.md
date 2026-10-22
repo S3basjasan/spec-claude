@@ -1,4 +1,16 @@
-# Design system — HRMS
+### Actividades formativas *(feature 017)*
+Referencias: `ActividadesAdmin.dc.html` (lista y formulario en modal), `ActividadesAsistencia.dc.html` (registro de asistencia), `ActividadesCalificaciones.dc.html` (calificaciones) y `ActividadesColaborador.dc.html` (Mis actividades). Se omiten los controles de prototipo («Ver como colaborador», menú con Empleados/Ajustes) y el panel «Fundamento de cada tipo».
+
+1. **Lista (Administrador)**: encabezado con «+ Nueva Actividad», pestañas «Actividades» y «Calificaciones» (en la URL), búsqueda por nombre, filtros (tipo, estado, departamento, competencia, plan, rango de fechas —año actual por defecto— y «Limpiar filtros») y `DataTable` con código, nombre, tipo, fechas, lugar o enlace, formador, departamento, capacidad, inscritos, estado y acciones «Asistencia» y «Editar». No hay botón de eliminar ni de cancelar.
+2. **Formulario (Modal de 860px)**: selector de la acción del plan (con filtro por plan), datos heredados en solo lectura y solo lugar o enlace y departamento editables; al editar, la acción es fija.
+3. **Registro de asistencia**: encabezado con datos y estado de la actividad, resumen de asistencia, «Marcar todos presentes», tabla de inscritos (control de asistencia, calificación 1–5 y observaciones), «Guardar» con confirmación si cambia un registro previo y acceso al historial. Con la actividad Programada, Cancelada o el plan Cerrado la vista queda deshabilitada con su explicación.
+4. **Calificaciones**: sub-pestañas «Por actividad» y «Por participante», filtros de fechas, tipo, departamento y plan, y detalle por actividad de un participante.
+5. **Mis actividades (Colaborador)**: resumen, «Próximas actividades» e «Historial» con tarjetas; mensaje informativo si no hay actividades.
+6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito.
+
+---
+
+ign system — HRMS
 
 Fuente visual única del HRMS. Aplica a los 5 módulos.
 Las referencias `*.dc.html` de esta carpeta son mockups de Claude Design: sirven como **referencia visual**, no como código para copiar. La implementación usa los componentes compartidos de `frontend/src/shared`.
@@ -101,11 +113,44 @@ Los tipos de actividad usan los mismos colores que el tipo de la acción del pla
 | Badge «Sin evaluación» | `--neutral` / `--neutralsoft` | |
 | Series de los gráficos | Presencial `--accent`, Virtual `--info`, E-learning `--violet`, OJT `--warning`, Codesarrollo `--rose`, Mentoring `--danger`, Micro-learning `--neutral` | cada gráfico lleva una tabla de datos equivalente |
 
+**Colores por estado de actividad y asistencia** *(feature 017, Actividades formativas; sin tokens nuevos)*. El color nunca es la única señal: siempre va con el nombre del estado.
+
+| Elemento | Texto / fondo | Tokens |
+|---|---|---|
+| Actividad Programada | `--info` / `--infosoft` | igual que la acción |
+| Actividad En curso | `--accent` / `--soft` | |
+| Actividad Finalizada | `--neutral` / `--neutralsoft` | |
+| Actividad Cancelada | `--danger` / `--dangersoft` | |
+| Asistencia Pendiente | `--neutral` / `--neutralsoft` | sin registro |
+| Asistencia Presente | `--accent` / `--soft` | |
+| Asistencia Ausente | `--danger` / `--dangersoft` | |
+| Asistencia Justificado | `--warning` / `--warningsoft` | |
+| Badge «Asistencia pendiente» | `--warning` / `--warningsoft` | actividad Finalizada con inscritos sin registro |
+
+Los tipos de actividad usan los mismos colores que el tipo de la acción del plan.
+
 **Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
 Contrastes verificados (WCAG AA): `--text` y `--muted` sobre `--bg`/`--surface` ≥ 5.4:1; `--accent` sobre blanco 6:1; `--danger` sobre `--dangersoft` 5.75:1.
 
 **`--input-border` es nuevo.** Los mockups usan `--border` (1.26:1) o `#C9CED6` (1.58:1) en los inputs, y ninguno llega al 3:1 que exige WCAG 1.4.11 para el borde de un control. Los valores propuestos dan 3.07:1 (claro) y 3.05:1 (oscuro).
+
+**Colores de rutas de carrera** *(feature 019, Rutas y planes de carrera; valores de `RutasAdmin.dc.html`, sin tokens nuevos)*. El color nunca es la única señal: siempre va con el nombre del estado o del tipo.
+
+| Elemento | Texto / fondo | Tokens |
+|---|---|---|
+| Ruta Borrador | `--neutral` / `--neutralsoft` | |
+| Ruta Vigente | `--accent` / `--soft` | |
+| Ruta Archivada | `--warn` / `--warnsoft` | |
+| Inscripción Activa | `--accent` / `--soft` | |
+| Inscripción Finalizada | `--neutral` / `--neutralsoft` | |
+| Inscripción Retirada | `--danger` / `--dangersoft` | |
+| Tipo Especialista | `--accent` / `--soft` | |
+| Tipo Gerencial | `--info` / `--infosoft` | |
+| Tipo Interáreas | `--violet` / `--violetsoft` | |
+| Tipo Jóvenes profesionales | `--warn` / `--warnsoft` | |
+| Nivel con puesto inactivo | `--warning` (texto con icono de alerta) | la advertencia lleva siempre texto |
+| Aviso «guía, no promesa» | `--info` / `--infosoft` con borde `--border` | nota permanente `role="note"` |
 
 ### Tipografía
 
@@ -279,6 +324,28 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Formulario de encuesta y de seguimiento** | Modal de 640px: escala(s) de 1 a 5, comentario opcional con contador (máx. 1 000) y, antes de enviar, `ConfirmDialog` de tono primario («Una vez enviada no podrás modificarla»). |
 | **Tarjetas de «Mi progreso»** | Cuatro tarjetas (`minmax(180px, 1fr)`): formaciones completadas, competencias adquiridas, horas acumuladas y certificados. |
 
+**Componentes de Actividades formativas** *(feature 017; referencias `ActividadesAdmin.dc.html`, `ActividadesAsistencia.dc.html`, `ActividadesCalificaciones.dc.html` y `ActividadesColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Control de asistencia** | Grupo (`role="group"`, `aria-label` con el nombre) de tres botones de 40px «Presente», «Ausente» y «Justificado» con `aria-pressed`; la opción elegida lleva el color de su asistencia con borde (`--accent`, `--danger`, `--warning`). Pulsar de nuevo la elegida vuelve a Pendiente. Deshabilitado si la actividad no admite registro. |
+| **Campo de calificación** | `input type="number"` de 40px y 80px de ancho, mín. 1, máx. 5, paso 1, con etiqueta accesible por participante; deshabilitado salvo con Presente; el error aparece debajo con `role="alert"`. |
+| **Resumen de asistencia** | Lista de chips (píldoras 13px 700): Presentes, Ausentes, Justificados y Sin registrar con su cantidad. |
+| **Tarjeta de actividad** | `article` de `--surface` con borde `--border`, radio 12px: título (h3), `Etiqueta de tipo` y badge de estado, aviso de proximidad («Es hoy», «Empieza mañana», «Empieza en N días», «Está en curso») y lista de datos (fecha, lugar o enlace, formador, asistencia y calificación). Nunca muestra observaciones. |
+| **Resumen del colaborador** | Cuatro tarjetas (`minmax(180px, 1fr)`): actividades inscritas, finalizadas, % de asistencia y calificación promedio; «—» cuando no hay datos. |
+**Componentes de Rutas de carrera** *(feature 019; referencias `RutasAdmin.dc.html` —lista, editor y participantes— y `RutasColaborador.dc.html`)*
+
+| Componente | Especificación |
+|---|---|
+| **Tarjeta de ruta** | `article` de `--surface` con borde `--border`, radio 12px y relleno 18×20px: título (h3 17px), badge de estado, código y departamento, descripción, peldaños (una barra por nivel, creciente, `--accent`; `--border` si la ruta está Archivada) y pie con «N niveles · N participantes» y el botón «Abrir» (36px). Se agrupan por tipo en una cuadrícula de `minmax(320px, 1fr)`. |
+| **Escalera de niveles** | Lista ordenada (`ol`) con el nivel más alto arriba y el nivel 1 abajo; cada peldaño se desplaza 14px a la derecha (máx. 6). Peldaño: tarjeta de 2px de borde (`--accent` si está elegido, `--border` si no) con «Nivel N», nombre, código y personas, y a la derecha los botones de 40px «Subir», «Bajar» y «Quitar» (este último en `--danger`, deshabilitado si el nivel está en uso). Un puesto inactivo añade una advertencia con icono y texto. |
+| **Escalera del colaborador** | Misma escalera sin controles de gestión: el nivel actual se resalta (`--soft`, borde `--accent`, `aria-current="step"`) con la etiqueta «Estás aquí»; el nivel objetivo lleva la etiqueta «Objetivo» y el siguiente «Siguiente»; los niveles ya superados se atenúan. |
+| **Detalle de nivel** | Tres tarjetas en `minmax(210px, 1fr)`: **Competencias** (nombre, grado A–D y diferencial «+N (antes X)», «Nuevo requisito» o «Sin cambio»), **Conocimientos** con la etiqueta «Informativo» (lista de texto de formación y capacitación, sin grado ni diferencial) y **Experiencia** (años mínimos en 22px, diferencial y requisitos de texto). Debajo, la nota de la escala de grados. |
+| **Cantera por nivel** | Barras de 12px (`--info`) con «Nivel N · nombre», cuenta alineada a la derecha y `role="img"` con resumen accesible; informa aparte los participantes sin nivel actual y los niveles sin cantera. |
+| **Tabla de participantes** | `table` con colaborador y departamento, nivel actual, nivel objetivo, badge de estado y las acciones «Cambiar niveles», «Registrar nivel alcanzado» y «Retirar» (36px) solo en inscripciones Activas. |
+| **Tarjeta «Inscribir colaborador»** | Tarjeta de `--surface` con búsqueda, selector de colaboradores con vínculo vigente, niveles actual y objetivo opcionales y el botón «Inscribir en la ruta». |
+| **Aviso «guía, no promesa»** | Nota permanente (`role="note"`) con icono de información en `--info` sobre `--infosoft`: «Esta ruta es una guía de desarrollo; no implica la promesa de un puesto.» |
+
 **Foco visible** en todo elemento interactivo: `outline: 2px solid var(--accent); outline-offset: 2px`.
 
 ---
@@ -447,6 +514,17 @@ Referencias: `ReportesAdmin.dc.html` (administrador) y `ReportesColaborador.dc.h
 5. **Mi progreso (Colaborador)**: tarjetas, evolución de competencias, certificados descargables, «Mi plan de desarrollo» y «Pendientes por responder» con sus formularios. Sin datos: mensaje informativo.
 6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; las fuentes caídas se avisan con un `Alert` neutro.
 
+### Rutas de carrera *(feature 019)*
+Referencias: `RutasAdmin.dc.html` (lista, editor con pestañas Escalera y Participantes) y `RutasColaborador.dc.html` («Mi ruta de carrera»). `RutasEditor.dc.html` y `RutasParticipantes.dc.html` son el mismo prototipo con otra vista inicial. Se omiten el menú de prototipo, «Ver como colaborador», la duración en meses, «Registrar mi interés», «Mis propuestas de interés» y el panel de permisos simulados.
+
+1. **Lista (Administrador)**: encabezado con «Nueva ruta», aviso «guía, no promesa», tres indicadores (Rutas vigentes, Participantes activos y Rutas en borrador), filtros (búsqueda, tipo, departamento, estado y «Limpiar filtros», todos en la URL) y tarjetas agrupadas por tipo.
+2. **Editor**: botón «Rutas de carrera» para volver, título con etiqueta de tipo y badge de estado, línea de auditoría, selector «Estado de la ruta» (solo las transiciones válidas) y «Editar ruta». Pestañas «Escalera de niveles», «Participantes (n)» e «Historial» (esta última con el permiso del historial); la pestaña y el nivel elegido van en la URL.
+3. **Escalera de niveles**: escalera a la izquierda con «Agregar nivel arriba» (selector de puestos activos) y, a la derecha, el detalle del nivel elegido con sus tres tarjetas y, con permiso de gestión, los datos propios del nivel (nombre y experiencia mínima). Quitar un nivel pide confirmación.
+4. **Participantes**: tabla con filtro por estado y paginación (en la URL) a la izquierda; a la derecha la cantera y la tarjeta «Inscribir colaborador». «Cambiar niveles» y «Retirar» abren un modal; «Registrar nivel alcanzado» pide confirmación e indica que el cambio real de puesto lo ejecuta Gestión de Personal. Retirar exige el motivo.
+5. **Historial**: tabla de solo lectura con fecha, usuario, acción, valor anterior, valor nuevo y motivo, con paginación.
+6. **Mi ruta de carrera (Colaborador)**: una sección por ruta con la escalera (actual resaltado, objetivo marcado, siguiente indicado), el detalle del nivel elegido (por defecto el objetivo), «Ver mi adecuación» solo cuando existe esa vista y hay objetivo, y la lista de rutas Vigentes disponibles. Sin inscripciones: estado vacío.
+7. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; si otra fuente no responde, un `Alert` neutro con «Reintentar» y sin datos inventados; un conflicto de edición (409) muestra un aviso con «Recargar».
+
 ---
 
 ## 6. Iconos
@@ -585,3 +663,15 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `ReportesAdmin.dc.html` mide el impacto con «Brecha antes → después» y riesgo alto, medio o bajo | Por hito: tasa de respuesta, promedio de aplicación y de apoyo; alerta de reingreso binaria (caída de 1 punto con 3 respuestas) |
 | `ReportesAdmin.dc.html` no tiene evaluación de impacto ni formulario | Se agrega la pestaña «Evaluación de impacto» con su modal |
 | `ReportesColaborador.dc.html` no tiene «Pendientes por responder» y compara «enero frente a hoy» | Se agregan los pendientes; la evolución compara la primera DNF con la más reciente |
+| `ActividadesAdmin.dc.html` crea la actividad con nombre, tipo, competencia, fechas, horas, formador, capacidad y campos de codesarrollo, mentoring y OJT | La actividad nace de una acción del plan: el modal elige la acción (datos heredados en solo lectura) y solo edita lugar o enlace y departamento |
+| `ActividadesAdmin.dc.html` ofrece «Cancelar» por fila y «Ver como colaborador» | La actividad no se cancela aquí (se cancela la acción en el plan) y cada persona tiene un solo rol |
+| `ActividadesAdmin.dc.html` filtra por tipo sin E-learning y sin código, competencia, plan ni rango de fechas | Se agregan el tipo E-learning, la columna Código y los filtros de competencia, plan y fechas (año actual por defecto), además del badge «Asistencia pendiente» |
+| `ActividadesAsistencia.dc.html` admite calificaciones con pasos de 0,5 | La calificación es un entero de 1 a 5, solo con asistencia Presente; observaciones solo con asistencia registrada |
+| `ActividadesColaborador.dc.html` muestra las observaciones del formador en la tarjeta | Las observaciones son de uso interno y nunca se muestran al colaborador |
+| `RutasAdmin.dc.html` ofrece «Ver como colaborador» y un menú con Empleados y Ajustes | Se omiten: cada persona tiene un solo rol y el App Shell real ya existe |
+| `RutasAdmin.dc.html` filtra y asigna por «Área» con una lista fija y define la «Duración de la ruta (meses)» | El filtro y el campo se llaman «Departamento» y salen de las unidades de Estructura; la duración no se modela |
+| `RutasAdmin.dc.html` dibuja «Conocimientos» con grado A–D y diferencial | Solo las competencias llevan grado y diferencial; «Conocimientos» es informativo (formación y capacitación del puesto, sin grado) |
+| `RutasAdmin.dc.html` inscribe en el nivel 1 y mueve el nivel con «+» y «−» | La inscripción lleva nivel actual (opcional) y objetivo; se agregan «Cambiar niveles», «Registrar nivel alcanzado» y «Retirar» con motivo |
+| `RutasAdmin.dc.html` solo tiene las pestañas Escalera y Participantes | Se agrega la pestaña «Historial» con el permiso del historial |
+| `RutasColaborador.dc.html` incluye «Registrar mi interés» y «Mis propuestas de interés», y un panel de permisos simulados | Se omiten: la propuesta de interés queda para una etapa posterior |
+| `RutasColaborador.dc.html` muestra «Ver mi adecuación» según un permiso simulado | Solo aparece con nivel objetivo y cuando la vista de adecuación existe |
