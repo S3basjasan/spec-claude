@@ -34,6 +34,9 @@ return [
         'exportacion_habilitada' => (bool) env('GESTION_PERSONAL_EXPORTACION_HABILITADA', true),
 
         // Documentos del colaborador (feature 014): archivos PDF privados.
+        // Políticas operativas de personal (feature 016): en false se detienen las escrituras (503) conservando versiones y consultas.
+        'politicas_habilitado' => (bool) env('GESTION_PERSONAL_POLITICAS_HABILITADO', true),
+
         'documentos' => [
             // En false se detienen cargas y cambios (503) conservando documentos y consultas.
             'habilitado' => (bool) env('GESTION_PERSONAL_DOCUMENTOS_HABILITADOS', true),

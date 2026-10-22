@@ -14,4 +14,7 @@ interface TransaccionPort
      * @return T
      */
     public function enTransaccion(callable $accion): mixed;
+
+    /** Indica si ya hay una transacción abierta (los llamadores que exigen compartir la unidad de trabajo lo comprueban). */
+    public function enCurso(): bool;
 }

@@ -11,4 +11,9 @@ final class TransaccionLaravel implements TransaccionPort
     {
         return DB::transaction(fn () => $accion());
     }
+
+    public function enCurso(): bool
+    {
+        return DB::transactionLevel() > 0;
+    }
 }

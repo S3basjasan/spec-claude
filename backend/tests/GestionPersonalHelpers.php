@@ -3,10 +3,14 @@
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
+use App\Modules\GestionPersonal\Domain\Services\ReglasDePolitica;
 use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
+use App\Modules\GestionPersonal\Domain\ValueObjects\TipoDePolitica;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\CategoriaDocumentalModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\DocumentoColaboradorModel;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\PoliticaPersonalModel;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\PoliticaVersionModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\TenantModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -376,4 +380,117 @@ function urlDocumentos(int $ficha, string $sufijo = ''): string
 function urlCategoria(int $id, string $sufijo = ''): string
 {
     return "/api/categorias-documentales/{$id}{$sufijo}";
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Políticas operativas de personal (feature 016)
+// ---------------------------------------------------------------------------------------------------------------
+
+/** Cambia la zona horaria del tenant (para los casos de cambio de hora). */
+function tenantConZona(string $zona, int $tenantId = 1): void
+{
+    TenantModel::query()->whereKey($tenantId)->update(['zona_horaria' => $zona]);
+}
+
+/**
+ * Parámetros válidos y completos de un tipo de política.
+ *
+ * @return array<string, mixed>
+ */
+function parametrosValidos(string $tipo): array
+{
+    return match ($tipo) {
+        'Ausencias' => ['disponible' => true, 'justificacion_obligatoria' => true, 'documento_obligatorio' => false],
+        'Ascensos', 'Traslados' => ['disponible' => true, 'anticipacion_dias' => 5, 'documento_adicional_obligatorio' => false],
+        'Offboarding' => ['tareas' => [
+            ['nombre' => 'Devolver equipos', 'descripcion' => 'Laptop y credenciales', 'exige_evidencia' => true],
+            ['nombre' => 'Cerrar accesos', 'descripcion' => null, 'exige_evidencia' => false],
+        ]],
+        default => ['disponible' => true, 'justificacion_obligatoria' => true, 'documento_obligatorio' => false, 'anticipacion_dias' => 2],
+    };
+}
+
+function cabeceraDePolitica(string $tipo, int $tenantId = 1): PoliticaPersonalModel
+{
+    return PoliticaPersonalModel::query()->firstOrCreate(
+        ['tenant_id' => $tenantId, 'tipo' => $tipo],
+        ['ultimo_numero' => 0, 'version' => 1],
+    );
+}
+
+/**
+ * Borrador activo de un tipo (parámetros válidos por defecto).
+ *
+ * @param  array<string, mixed>  $atributos
+ */
+function borradorDe(string $tipo, array $atributos = [], int $tenantId = 1): PoliticaVersionModel
+{
+    $parametros = $atributos['parametros'] ?? parametrosValidos($tipo);
+    unset($atributos['parametros']);
+
+    return PoliticaVersionModel::factory()->create(array_merge([
+        'tenant_id' => $tenantId,
+        'politica_id' => cabeceraDePolitica($tipo, $tenantId)->id,
+        'descripcion' => 'Política de '.$tipo,
+        'parametros' => ReglasDePolitica::json($parametros),
+    ], $atributos));
+}
+
+/**
+ * Versión publicada coherente (numeración, condiciones selladas). `inicio` y `publicada` admiten `DateTimeImmutable`.
+ *
+ * @param  array<string, mixed>  $atributos  `numero`, `inicio`, `publicada`, `parametros`, `retirada`, `descripcion`, `tenant_id`
+ */
+function politicaPublicada(string $tipo, array $atributos = []): PoliticaVersionModel
+{
+    $tenantId = $atributos['tenant_id'] ?? 1;
+    $cabecera = cabeceraDePolitica($tipo, $tenantId);
+    $numero = $atributos['numero'] ?? ((int) $cabecera->ultimo_numero + 1);
+    $inicio = $atributos['inicio'] ?? new DateTimeImmutable('-1 day', new DateTimeZone('UTC'));
+    $publicada = $atributos['publicada'] ?? $inicio;
+    $parametros = $atributos['parametros'] ?? parametrosValidos($tipo);
+
+    $reglas = app(ReglasDePolitica::class);
+    $enum = TipoDePolitica::from($tipo);
+    $sellado = $reglas->sellar($enum, $numero, $inicio->format('Y-m-d\TH:i:s\Z'), $reglas->canonicos($enum, $parametros));
+    $formato = fn (DateTimeImmutable $d) => $d->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+
+    $fila = [
+        'tenant_id' => $tenantId, 'politica_id' => $cabecera->id, 'numero' => $numero,
+        'descripcion' => $atributos['descripcion'] ?? 'Política de '.$tipo,
+        'parametros' => ReglasDePolitica::json($reglas->canonicos($enum, $parametros)),
+        'version' => 1, 'created_by' => 1, 'updated_by' => 1,
+        'created_at' => $formato($publicada), 'updated_at' => $formato($publicada),
+        'publicada_en' => $formato($publicada), 'publicada_por' => 1, 'inicio_vigencia' => $formato($inicio),
+        'motivo_cambio' => 'Motivo de prueba', 'revisor_nombre' => 'Revisor de prueba', 'revision_observaciones' => null,
+        'revision_en' => $formato($publicada), 'condiciones' => $sellado['json'], 'condiciones_hash' => $sellado['hash'],
+    ];
+    if (isset($atributos['retirada'])) {
+        $fila += ['retirada_en' => $formato($atributos['retirada']), 'retirada_por' => 1, 'retiro_motivo' => 'Retiro de prueba'];
+    }
+
+    $id = DB::table('politica_versiones')->insertGetId($fila);
+    DB::table('politicas_personal')->where('id', $cabecera->id)->update(['ultimo_numero' => max($numero, (int) $cabecera->ultimo_numero)]);
+
+    return PoliticaVersionModel::query()->findOrFail($id);
+}
+
+function urlPoliticas(string $tipo = '', string $sufijo = ''): string
+{
+    return '/api/politicas-personal'.($tipo === '' ? '' : '/'.strtolower($tipo)).$sufijo;
+}
+
+/**
+ * Publica un borrador por HTTP con valores válidos por defecto.
+ *
+ * @param  array<string, mixed>  $cuerpo
+ */
+function publicarApi(mixed $prueba, string $tipo, int $version, array $cuerpo = [], ?string $clave = null, int $versionEsperada = 1): TestResponse
+{
+    return $prueba->postJson(urlPoliticas($tipo, "/borrador/{$version}/publicacion"), array_replace_recursive([
+        'version' => $versionEsperada,
+        'motivo' => 'Revisión inicial de condiciones',
+        'revision' => ['revisor' => 'Ana Núñez', 'observaciones' => 'Revisado con Talento Humano'],
+        'inicio' => ['modo' => 'inmediato'],
+    ], $cuerpo), ['Idempotency-Key' => $clave ?? (string) Str::uuid()]);
 }
