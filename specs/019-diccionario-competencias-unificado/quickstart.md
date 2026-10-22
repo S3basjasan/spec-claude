@@ -37,7 +37,7 @@ cd frontend && npx playwright test e2e/competencias.spec.ts
 
 ## Escenarios manuales (administrador)
 
-1. **Listado**: abre Competencias. Ves las 7 competencias en dos columnas (activas e inactivas), con código, nombre y tipo; COMP-0007 con el nombre atenuado. No hay filtro de estado. Bajo la lista dice "7 competencias".
+1. **Listado**: abre Competencias. Ves las 7 competencias, una por fila (activas e inactivas), con código, nombre y tipo; COMP-0007 con el nombre atenuado. No hay filtro de estado. Bajo la lista dice "7 competencias".
 2. **Búsqueda y filtros**: escribe "lidérazgo" y se filtra a Liderazgo; elige el tipo Cardinal y aparece "Limpiar filtros"; una búsqueda sin resultados muestra "Ninguna competencia coincide con los filtros."
 3. **Detalle**: despliega "Comunicación efectiva". Pestaña Competencia: descripción y grados nombrados Excelente / Muy buena / Buena / Normal. Pestañas Comportamientos (cuatro por grado) y Preguntas (1 a 4).
 4. **Vista previa de escala**: en Competencia elige "Letras": los grados pasan a Grado A–D con "(vista previa)" y aparecen "Aplicar esta escala" y "Descartar". Descartar restablece. Aplicar muestra "Escala de grados actualizada correctamente." y el cambio persiste al recargar; las descripciones y comportamientos no cambian.

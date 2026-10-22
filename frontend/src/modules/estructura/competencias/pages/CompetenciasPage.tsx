@@ -153,7 +153,7 @@ export function CompetenciasPage() {
       {errorEstado && <Alert>{errorEstado}</Alert>}
 
       {consulta.isPending ? (
-        <div role="status" aria-label={text.loadingLabel} className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,26rem),1fr))] gap-3">
+        <div role="status" aria-label={text.loadingLabel} className="flex flex-col gap-3">
           {[0, 1, 2, 3].map((fila) => (
             <Skeleton key={fila} className="h-16" />
           ))}
@@ -183,7 +183,7 @@ export function CompetenciasPage() {
       ) : (
         pagina && (
           <>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,26rem),1fr))] items-start gap-3">
+            <div className="flex flex-col gap-3">
               {pagina.data.map((competencia) => {
                 const abierta = abiertas.has(competencia.id)
                 return (

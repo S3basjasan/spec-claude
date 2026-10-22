@@ -66,7 +66,7 @@ Todas las decisiones parten de lo ya construido en 001, 002 y 003 (revisado en e
 
 ## R10. Paginación (decisión que la spec dejó al plan)
 
-- **Decisión**: se conserva la paginación del servidor y el paginador del design system, con 12 tarjetas por página (múltiplo de dos columnas), máximo 50, y el número de página en la URL. El recuento bajo la cuadrícula es el total de resultados, no el de la página.
+- **Decisión**: se conserva la paginación del servidor y el paginador del design system, con 12 tarjetas por página, máximo 50, y el número de página en la URL. El recuento bajo la cuadrícula es el total de resultados, no el de la página.
 - **Razón**: con cientos de competencias, cargarlas todas es frágil, la constitución exige persistir la paginación en la URL y el diseño de listados del repositorio ya la define. El mockup no tenía paginador porque solo mostraba siete.
 - **Alternativas**: sin paginación (riesgo de listas largas); "cargar más" (componente nuevo sin necesidad).
 

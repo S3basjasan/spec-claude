@@ -57,7 +57,7 @@ Enfoque técnico:
 | II. App Shell, loading/empty/error/success, formularios, confirmación accesible, WCAG | PASA. Estados completos; desactivar usa `ConfirmDialog` (`alertdialog`); los formularios bloquean el envío pendiente, conservan valores y muestran errores por campo; tarjetas, pestañas y modales accesibles por teclado. |
 | II. Texto visible en español y centralizado; sin `any` | PASA. Todos los textos en `competencias/text.ts`. |
 | II. E2E real por feature | PASA. `frontend/e2e/competencias.spec.ts` cubre crear, consultar por pestañas, editar una sección, escala y desactivar. |
-| III. `design/` como fuente | PASA (diseño ya actualizado). Se añadió `design/Diccionario.dc.html` (artboard del zip ajustado a esta spec: dos columnas, descripción en la pestaña, confirmación al desactivar, Tipo en la edición, filtro por rol, paginación, estados de carga y error, aviso de contenido incompleto), se registró en `design/canvas.json` y se documentó en `design/DESIGN.md` (§5 «Listado de tarjetas con pestañas» y §9). `Competencias.dc.html` se conserva: sigue siendo el patrón genérico «Listado (tabla de datos)» que referencian otras secciones. |
+| III. `design/` como fuente | PASA (diseño ya actualizado). Se añadió `design/Diccionario.dc.html` (artboard del zip ajustado a esta spec: una competencia por fila, descripción en la pestaña, confirmación al desactivar, Tipo en la edición, filtro por rol, paginación, estados de carga y error, aviso de contenido incompleto), se registró en `design/canvas.json` y se documentó en `design/DESIGN.md` (§5 «Listado de tarjetas con pestañas» y §9). `Competencias.dc.html` se conserva: sigue siendo el patrón genérico «Listado (tabla de datos)» que referencian otras secciones. |
 | IV. Dependencias | PASA. Sin dependencias nuevas. |
 | IV. Pruebas, seguridad | PASA. Pest, Vitest y E2E; validación en backend y frontend con los mismos mensajes; el rol se verifica en cada petición. |
 
@@ -93,7 +93,7 @@ Las funcionalidades 001, 002 y 003 ya existen. Para ajustarlas a este plan:
 |---|---|---|
 | Diseño | `design/Competencias.dc.html` en tabla; comportamientos y preguntas como filas desplegables | **Hecho**: `design/Diccionario.dc.html` (tarjetas con pestañas) y `design/DESIGN.md` actualizado; `Competencias.dc.html` queda como patrón de tabla |
 | Módulos | `estructura/competencias`, `estructura/comportamientos`, `estructura/preguntas` | solo `estructura/competencias`; se eliminan los otros dos, sus rutas en `App.tsx`, `nav.tsx`, fixtures y pruebas |
-| Listado | tabla con paginación, filtro de estado | cuadrícula de dos columnas de tarjetas desplegables; sin filtro de estado; "Limpiar filtros" |
+| Listado | tabla con paginación, filtro de estado | lista de tarjetas desplegables, una por fila; sin filtro de estado; "Limpiar filtros" |
 | Detalle | `GradosPanel` | pestañas Competencia, Comportamientos y Preguntas con vista previa de escala |
 | Formularios | página `CompetenciaFormPage` (grados A–D) | modal "Nueva competencia" completo y tres modales de edición por sección |
 | Avisos | mensajes en la página | aviso emergente centrado con Aceptar para cada acción |

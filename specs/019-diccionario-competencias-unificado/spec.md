@@ -188,7 +188,7 @@ Cada creación, modificación, cambio de estado y cambio de escala queda registr
 
 **Listado y consulta**
 
-- **FR-019**: El listado MUST mostrar tarjetas ordenadas por código ascendente, en dos columnas en pantallas anchas y una en pantallas angostas; cada tarjeta MUST mostrar código, nombre y tipo en su cabecera, sin descripción ni indicador de estado, y el nombre atenuado si está inactiva.
+- **FR-019**: El listado MUST mostrar tarjetas ordenadas por código ascendente, con una competencia por fila en cualquier ancho de pantalla; cada tarjeta MUST mostrar código, nombre y tipo en su cabecera, sin descripción ni indicador de estado, y el nombre atenuado si está inactiva.
 - **FR-020**: El listado MUST ofrecer búsqueda por nombre que ignore mayúsculas y tildes y filtre mientras se escribe, filtro por tipo ("Todos los tipos", Cardinal, Específica) y un botón "Limpiar filtros" visible solo con algún filtro aplicado; MUST NOT existir filtro por estado.
 - **FR-021**: El listado MUST indicar bajo las tarjetas el número de competencias encontradas, y mostrar "Ninguna competencia coincide con los filtros." cuando no haya resultados.
 - **FR-022**: Cada tarjeta MUST poder desplegarse (varias a la vez) con tres pestañas: Competencia (descripción y grados), Comportamientos (por grado, como viñetas) y Preguntas (numeradas); la pestaña inicial MUST ser Competencia y el código MUST NOT repetirse en lo desplegado.
@@ -248,7 +248,7 @@ Cada creación, modificación, cambio de estado y cambio de escala queda registr
 - Los comportamientos y las preguntas de cada competencia se registran en su creación. Las competencias ya existentes conservan su contenido: las que ya tengan todo quedan como estaban y las incompletas quedan Inactivas hasta completarse (ver FR-012).
 - El listado se pagina (12 competencias por página, con la página en la URL) y el recuento bajo las tarjetas indica el total de resultados encontrados, no el de la página.
 - El administrador ve las competencias inactivas junto a las activas, sin filtro por estado, reconociéndolas por el nombre atenuado.
-- Se sigue la lista de cambios de mejora ya acordada: dos columnas, descripción solo al desplegar y sin indicador de estado en las tarjetas; el diseño de referencia del archivo adjunto (una columna, descripción en la cabecera) se ajusta a esta especificación y debe incorporarse a `design/` antes de implementar.
+- Se sigue la lista de cambios de mejora ya acordada: una competencia por fila, descripción solo al desplegar y sin indicador de estado en las tarjetas; el diseño de referencia del archivo adjunto (descripción en la cabecera de la tarjeta) se ajusta a esta especificación y debe incorporarse a `design/` antes de implementar.
 - El diálogo de confirmación al desactivar y el campo Tipo en la edición no figuran en el diseño de referencia y se añaden.
 - Los marcos comunes de la aplicación (barra superior, menú lateral, pie de página, tema claro/oscuro) ya existen y se reutilizan.
 - Depende de los módulos de autenticación y de puestos existentes; las columnas de auditoría que el modelo de datos aún no tiene se resuelven en el plan.
@@ -260,7 +260,7 @@ Cada creación, modificación, cambio de estado y cambio de escala queda registr
 - **Datos que muestra**: por tarjeta, código, nombre y tipo; conteo de competencias encontradas. Desplegada: pestañas Competencia (descripción y grados con la escala), Comportamientos (por grado) y Preguntas.
 - **Acciones disponibles** (y quién puede hacerlas): buscar por nombre, filtrar por tipo, limpiar filtros, desplegar tarjetas, cambiar de pestaña y previsualizar escala (todos); "Nueva competencia", Activar / Desactivar, botones de edición por pestaña y "Aplicar esta escala" (solo administrador).
 - **Estados**: vacío ("Ninguna competencia coincide con los filtros." con "Limpiar filtros"), cargando, error con reintentar, sin permisos (las acciones de gestión no aparecen).
-- **Mockup**: patrón Listado de tarjetas desplegables con pestañas (design/Diccionario.dc.html, del archivo Competencia-html.zip, por incorporar a `design/`); ajustado a dos columnas y con la descripción en la pestaña Competencia.
+- **Mockup**: patrón Listado de tarjetas desplegables con pestañas (design/Diccionario.dc.html, del archivo Competencia-html.zip, por incorporar a `design/`); con una competencia por fila y con la descripción en la pestaña Competencia.
 
 ### Formulario Nueva competencia
 - **Propósito**: crear una competencia completa.
