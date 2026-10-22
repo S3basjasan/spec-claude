@@ -3,10 +3,10 @@
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\UnidadModel;
 use Illuminate\Support\Facades\Route;
 
-it('bajo api/unidades solo existen seis rutas y ninguna es DELETE', function () {
+it('bajo api/unidades solo existen siete rutas y ninguna es DELETE', function () {
     $rutas = collect(Route::getRoutes()->getRoutes())->filter(fn ($r) => str_starts_with($r->uri(), 'api/unidades'));
 
-    expect($rutas)->toHaveCount(6)
+    expect($rutas)->toHaveCount(7)
         ->and($rutas->flatMap(fn ($r) => $r->methods())->unique()->values()->sort()->values()->all())->toBe(['GET', 'HEAD', 'PATCH', 'POST', 'PUT']);
 });
 

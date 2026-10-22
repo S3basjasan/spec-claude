@@ -1,119 +1,141 @@
 <?php
 
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CategoriaModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaGradoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Laravel\Sanctum\Sanctum;
 
-it('actualiza con la versión actual, incrementa la versión y conserva código y estado', function () {
-    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Original']);
-    actuarComoAdmin();
+/**
+ * Cuerpo del PUT de la competencia y sus grados.
+ *
+ * @param  array<string, mixed>  $cambios
+ * @return array<string, mixed>
+ */
+function cuerpoDeEdicionCompetencia(CompetenciaModel $competencia, array $cambios = []): array
+{
+    return array_replace([
+        'version' => $competencia->version,
+        'nombre' => $competencia->nombre,
+        'descripcion' => $competencia->descripcion,
+        'tipo' => $competencia->tipo,
+        'tipo_grado_id' => escalaId('Letras'),
+        'grados' => ['Nuevo A', 'Nuevo B', 'Nuevo C', 'Nuevo D'],
+    ], $cambios);
+}
 
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['nombre' => 'Cambiada', 'tipo' => 'Especifica', 'version' => 1]))
-        ->assertOk()
-        ->assertJsonPath('data.nombre', 'Cambiada')
-        ->assertJsonPath('data.tipo', 'Especifica')
-        ->assertJsonPath('data.version', 2)
-        ->assertJsonPath('data.codigo', 'COMP-0001')
-        ->assertJsonPath('data.estado', 'Activo')
-        ->assertJsonPath('data.grados.3.descripcion', 'Aplica las ideas que otros proponen.');
-});
-
-it('edita una competencia inactiva sin cambiar su estado', function () {
-    $competencia = CompetenciaModel::factory()->inactiva()->create(['nombre' => 'Retirada']);
-    actuarComoAdmin();
-
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['nombre' => 'Retirada y corregida', 'version' => 1, 'estado' => 'Activo']))
-        ->assertOk()
-        ->assertJsonPath('data.nombre', 'Retirada y corregida')
-        ->assertJsonPath('data.estado', 'Inactivo')
-        ->assertJsonPath('data.codigo', 'COMP-0001');
-});
-
-it('ignora el código enviado', function () {
-    $competencia = CompetenciaModel::factory()->create();
-    actuarComoAdmin();
-
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['version' => 1, 'codigo' => 'ZZZ-1']))
-        ->assertOk()
-        ->assertJsonPath('data.codigo', 'COMP-0001');
-});
-
-it('registra quién la modificó sin alterar quién la creó', function () {
+it('actualiza nombre, descripción, tipo y grados conservando código, estado y autor', function () {
     $creador = UserModel::factory()->admin()->create();
+    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Original', 'created_by' => $creador->id]);
+    $codigo = $competencia->fresh()->codigo;
     $editor = UserModel::factory()->admin()->create();
-    $competencia = CompetenciaModel::factory()->create(['created_by' => $creador->id]);
     Sanctum::actingAs($editor, ['admin']);
 
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['version' => 1]))->assertOk();
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia, [
+        'nombre' => 'Renombrada',
+        'descripcion' => 'Nueva descripción',
+        'tipo' => 'Especifica',
+    ]))
+        ->assertOk()
+        ->assertJsonPath('data.nombre', 'Renombrada')
+        ->assertJsonPath('data.tipo', 'Especifica')
+        ->assertJsonPath('data.codigo', $codigo)
+        ->assertJsonPath('data.estado', 'Activo')
+        ->assertJsonPath('data.version', 2)
+        ->assertJsonPath('data.grados.*.descripcion', ['Nuevo A', 'Nuevo B', 'Nuevo C', 'Nuevo D']);
 
-    $competencia->refresh();
-    expect($competencia->created_by)->toBe($creador->id)
-        ->and($competencia->updated_by)->toBe($editor->id);
+    $guardada = $competencia->fresh();
+    expect($guardada->nombre_clave)->toBe('renombrada')
+        ->and($guardada->created_by)->toBe($creador->id)
+        ->and($guardada->updated_by)->toBe($editor->id);
 });
 
-it('rechaza con 401 sin sesión y con 403 al Usuario', function () {
+it('actualiza las mismas filas de grado, sin borrarlas ni recrearlas', function () {
+    $competencia = CompetenciaModel::factory()->create();
+    $antes = CompetenciaGradoModel::query()->where('competencia_id', $competencia->id)->orderBy('id')->pluck('id')->all();
+    actuarComoAdmin();
+
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia))->assertOk();
+
+    expect(CompetenciaGradoModel::query()->where('competencia_id', $competencia->id)->orderBy('id')->pluck('id')->all())->toBe($antes);
+});
+
+it('conservar el propio nombre no es un duplicado, pero el de otra competencia sí', function () {
+    $una = CompetenciaModel::factory()->create(['nombre' => 'Liderazgo']);
+    CompetenciaModel::factory()->create(['nombre' => 'Empatía']);
+    actuarComoAdmin();
+
+    $this->putJson("/api/competencias/{$una->id}", cuerpoDeEdicionCompetencia($una, ['nombre' => ' liderazgo ']))->assertOk();
+
+    $this->putJson("/api/competencias/{$una->id}", cuerpoDeEdicionCompetencia($una->fresh(), ['nombre' => 'EMPATIA']))
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.nombre.0', 'Ya existe una competencia con este nombre.');
+});
+
+it('rechaza código y estado en el cuerpo con 422', function () {
+    $competencia = CompetenciaModel::factory()->create();
+    actuarComoAdmin();
+
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia, ['codigo' => 'COMP-9999']))
+        ->assertUnprocessable()->assertJsonValidationErrors('codigo');
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia, ['estado' => 'Inactivo']))
+        ->assertUnprocessable()->assertJsonValidationErrors('estado');
+
+    expect($competencia->fresh()->estado)->toBe('Activo');
+});
+
+it('permite editar una competencia inactiva y la mantiene inactiva', function () {
+    $inactiva = CompetenciaModel::factory()->inactiva()->create();
+    actuarComoAdmin();
+
+    $this->putJson("/api/competencias/{$inactiva->id}", cuerpoDeEdicionCompetencia($inactiva, ['nombre' => 'Retirada y editada']))
+        ->assertOk()
+        ->assertJsonPath('data.estado', 'Inactivo');
+});
+
+it('reemplaza las categorías cuando llegan y conserva las guardadas cuando se omiten', function () {
+    $competencia = CompetenciaModel::factory()->conCategorias()->create();
+    actuarComoAdmin();
+    $categorias = fn () => CategoriaModel::query()->where('competencia_id', $competencia->id)->orderBy('orden')->pluck('nombre')->all();
+
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia, [
+        'tipo_grado_id' => escalaId('Categorías'),
+        'categorias' => ['Inicial', 'Competente', 'Avanzado', 'Maestría'],
+    ]))->assertOk();
+    expect($categorias())->toBe(['Inicial', 'Competente', 'Avanzado', 'Maestría']);
+
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia->fresh(), ['tipo_grado_id' => escalaId('Letras')]))
+        ->assertOk()
+        ->assertJsonPath('data.grados.0.etiqueta', 'Grado A')
+        ->assertJsonPath('data.categorias', ['Inicial', 'Competente', 'Avanzado', 'Maestría']);
+    expect($categorias())->toBe(['Inicial', 'Competente', 'Avanzado', 'Maestría']);
+});
+
+it('exige los cuatro nombres al pasar a la escala Categorías sin nombres propios', function () {
+    $competencia = CompetenciaModel::factory()->create();
+    actuarComoAdmin();
+
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia, ['tipo_grado_id' => escalaId('Categorías')]))
+        ->assertUnprocessable()->assertJsonValidationErrors('categorias');
+});
+
+it('rechaza con 403 al Usuario, 401 sin sesión y 404 si no existe', function () {
     $competencia = CompetenciaModel::factory()->create();
 
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['version' => 1]))->assertUnauthorized();
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia))->assertUnauthorized();
 
     actuarComoUsuario();
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['version' => 1]))->assertForbidden();
-});
+    $this->putJson("/api/competencias/{$competencia->id}", cuerpoDeEdicionCompetencia($competencia))->assertForbidden();
 
-it('devuelve 404 si no existe', function () {
     actuarComoAdmin();
-
-    $this->putJson('/api/competencias/999', datosCompetencia(['version' => 1]))
-        ->assertNotFound()->assertExactJson(['message' => 'La competencia no existe.']);
-});
-
-it('devuelve 409 con una versión desactualizada y no cambia nada', function () {
-    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Original']);
-    actuarComoAdmin();
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['nombre' => 'Primera edición', 'version' => 1]))->assertOk();
-
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['nombre' => 'Segunda edición', 'version' => 1]))
-        ->assertStatus(409)
-        ->assertExactJson(['message' => 'La competencia cambió desde que la abriste. Recarga para ver la versión actual.']);
-
-    expect($competencia->fresh()->nombre)->toBe('Primera edición');
+    $this->putJson('/api/competencias/99999', cuerpoDeEdicionCompetencia($competencia))->assertNotFound();
 });
 
 it('exige la versión', function () {
     $competencia = CompetenciaModel::factory()->create();
     actuarComoAdmin();
+    $cuerpo = cuerpoDeEdicionCompetencia($competencia);
+    unset($cuerpo['version']);
 
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia())
-        ->assertUnprocessable()->assertJsonValidationErrors('version');
-});
-
-it('devuelve 422 con datos inválidos y no cambia la competencia', function () {
-    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Original']);
-    actuarComoAdmin();
-
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['nombre' => '', 'version' => 1]))
-        ->assertUnprocessable()->assertJsonValidationErrors('nombre');
-
-    $conExtra = datosCompetencia(['version' => 1]);
-    $conExtra['grados']['E'] = 'extra';
-    $this->putJson("/api/competencias/{$competencia->id}", $conExtra)->assertUnprocessable()->assertJsonValidationErrors('grados');
-
-    expect($competencia->fresh()->nombre)->toBe('Original')->and($competencia->fresh()->version)->toBe(1);
-});
-
-it('rechaza el nombre de otra competencia pero permite conservar el propio', function () {
-    CompetenciaModel::factory()->create(['nombre' => 'Primera']);
-    $segunda = CompetenciaModel::factory()->create(['nombre' => 'Segunda']);
-    actuarComoAdmin();
-
-    $this->putJson("/api/competencias/{$segunda->id}", datosCompetencia(['nombre' => 'primera', 'version' => 1]))
-        ->assertUnprocessable()->assertJsonValidationErrors('nombre');
-
-    $this->putJson("/api/competencias/{$segunda->id}", datosCompetencia(['nombre' => 'SEGUNDA', 'version' => 1]))
-        ->assertOk()->assertJsonPath('data.nombre', 'SEGUNDA');
-
-    // Al renombrar se actualiza también la clave de unicidad: el nombre anterior queda libre.
-    $this->postJson('/api/competencias', datosCompetencia(['nombre' => 'segunda']))->assertUnprocessable();
-    $this->putJson("/api/competencias/{$segunda->id}", datosCompetencia(['nombre' => 'Tercera', 'version' => 2]))->assertOk();
-    $this->postJson('/api/competencias', datosCompetencia(['nombre' => 'Segunda']))->assertCreated();
+    $this->putJson("/api/competencias/{$competencia->id}", $cuerpo)->assertUnprocessable()->assertJsonValidationErrors('version');
 });

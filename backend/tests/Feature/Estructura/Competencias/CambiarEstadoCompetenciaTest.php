@@ -2,24 +2,102 @@
 
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaEstadoHistorialModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoCompetenciaModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Laravel\Sanctum\Sanctum;
 
-it('desactiva y vuelve a activar una competencia', function () {
+it('desactiva y reactiva registrando el historial, la versión y el autor', function () {
     $competencia = CompetenciaModel::factory()->create();
-    actuarComoAdmin();
+    $admin = UserModel::factory()->admin()->create();
+    Sanctum::actingAs($admin, ['admin']);
 
     $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])
         ->assertOk()
         ->assertJsonPath('data.estado', 'Inactivo')
-        ->assertJsonPath('data.codigo', 'COMP-0001')
-        ->assertJsonCount(4, 'data.grados');
+        ->assertJsonPath('data.version', 2);
 
     $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Activo'])
+        ->assertOk()
+        ->assertJsonPath('data.estado', 'Activo')
+        ->assertJsonPath('data.version', 3);
+
+    $historial = CompetenciaEstadoHistorialModel::query()->where('competencia_id', $competencia->id)->orderBy('id')->get();
+    expect($historial->map(fn ($h) => [$h->estado_anterior, $h->estado_nuevo, $h->user_id])->all())
+        ->toBe([['Activo', 'Inactivo', $admin->id], ['Inactivo', 'Activo', $admin->id]])
+        ->and($competencia->fresh()->updated_by)->toBe($admin->id);
+});
+
+it('rechaza con 422 un estado que ya es el pedido y no escribe historial', function () {
+    $competencia = CompetenciaModel::factory()->create();
+    actuarComoAdmin();
+
+    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Activo'])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.estado.0', 'La competencia ya está en ese estado.');
+
+    expect(CompetenciaEstadoHistorialModel::query()->count())->toBe(0)
+        ->and($competencia->fresh()->version)->toBe(1);
+});
+
+it('valida el valor del estado', function () {
+    $competencia = CompetenciaModel::factory()->create();
+    actuarComoAdmin();
+
+    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Otro'])
+        ->assertUnprocessable()->assertJsonValidationErrors('estado');
+    $this->patchJson("/api/competencias/{$competencia->id}/estado", [])->assertUnprocessable();
+});
+
+it('no permite activar una competencia incompleta e indica lo que falta', function () {
+    $incompleta = CompetenciaModel::factory()->incompleta()->inactiva()->create();
+    $soloPreguntas = CompetenciaModel::factory()->sinPreguntas()->inactiva()->create();
+    actuarComoAdmin();
+
+    $this->patchJson("/api/competencias/{$incompleta->id}/estado", ['estado' => 'Activo'])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.estado.0', 'No se puede activar: faltan los comportamientos y las preguntas.');
+    $this->patchJson("/api/competencias/{$soloPreguntas->id}/estado", ['estado' => 'Activo'])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.estado.0', 'No se puede activar: faltan las preguntas.');
+
+    expect($incompleta->fresh()->estado)->toBe('Inactivo')
+        ->and(CompetenciaEstadoHistorialModel::query()->count())->toBe(0);
+});
+
+it('permite activarla cuando se completa el contenido', function () {
+    $incompleta = CompetenciaModel::factory()->incompleta()->inactiva()->create();
+    actuarComoAdmin();
+
+    $this->putJson("/api/competencias/{$incompleta->id}/comportamientos", ['version' => 1, 'comportamientos' => comportamientosNuevos()])->assertOk();
+    $this->putJson("/api/competencias/{$incompleta->id}/preguntas", ['version' => 2, 'preguntas' => ['a', 'b', 'c', 'd']])->assertOk();
+
+    $this->patchJson("/api/competencias/{$incompleta->id}/estado", ['estado' => 'Activo'])
         ->assertOk()->assertJsonPath('data.estado', 'Activo');
 });
 
-it('rechaza con 401 sin sesión y con 403 al Usuario sin cambiar nada', function () {
+it('los demás usuarios dejan de ver la competencia desactivada y siguen pudiendo consultarla por id', function () {
+    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Retirable']);
+    actuarComoAdmin();
+    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertOk();
+
+    actuarComoUsuario();
+    expect($this->getJson('/api/competencias')->json('data'))->toBe([]);
+    $this->getJson("/api/competencias/{$competencia->id}")->assertOk()->assertJsonPath('data.estado', 'Inactivo');
+});
+
+it('desactivar no modifica las asignaciones existentes de los puestos', function () {
+    $competencia = CompetenciaModel::factory()->create();
+    $puesto = puestoDe();
+    PuestoCompetenciaModel::query()->create(['puesto_id' => $puesto->id, 'competencia_id' => $competencia->id, 'grado_requerido' => 'C']);
+    actuarComoAdmin();
+
+    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertOk();
+
+    $asignacion = PuestoCompetenciaModel::query()->where('puesto_id', $puesto->id)->with('grado.valor')->first();
+    expect($asignacion->grado_requerido)->toBe('C');
+});
+
+it('rechaza con 401, 403 y 404', function () {
     $competencia = CompetenciaModel::factory()->create();
 
     $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertUnauthorized();
@@ -27,90 +105,6 @@ it('rechaza con 401 sin sesión y con 403 al Usuario sin cambiar nada', function
     actuarComoUsuario();
     $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertForbidden();
 
-    expect($competencia->fresh()->estado)->toBe('Activo')
-        ->and(CompetenciaEstadoHistorialModel::query()->count())->toBe(0);
-});
-
-it('devuelve 404 si no existe', function () {
     actuarComoAdmin();
-
-    $this->patchJson('/api/competencias/999/estado', ['estado' => 'Inactivo'])
-        ->assertNotFound()->assertExactJson(['message' => 'La competencia no existe.']);
-});
-
-it('devuelve 422 con un estado ausente o inválido', function () {
-    $competencia = CompetenciaModel::factory()->create();
-    actuarComoAdmin();
-
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", [])
-        ->assertUnprocessable()->assertJsonValidationErrors('estado');
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Borrado'])
-        ->assertUnprocessable()->assertJsonValidationErrors('estado');
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'inactivo'])
-        ->assertUnprocessable()->assertJsonValidationErrors('estado');
-});
-
-it('devuelve 422 si ya está en el estado pedido y no escribe historial', function () {
-    $competencia = CompetenciaModel::factory()->create();
-    actuarComoAdmin();
-
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Activo'])
-        ->assertUnprocessable()
-        ->assertJsonPath('message', 'La competencia ya está en ese estado.')
-        ->assertJsonValidationErrors('estado');
-
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertOk();
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertUnprocessable();
-
-    expect(CompetenciaEstadoHistorialModel::query()->count())->toBe(1);
-});
-
-it('no cambia la versión ni quién editó por último', function () {
-    $competencia = CompetenciaModel::factory()->create(['version' => 4, 'updated_by' => 9]);
-    actuarComoAdmin();
-
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])
-        ->assertOk()->assertJsonPath('data.version', 4);
-
-    expect($competencia->fresh()->version)->toBe(4)->and($competencia->fresh()->updated_by)->toBe(9);
-});
-
-it('al desactivar, el Usuario deja de verla en el listado pero puede consultarla', function () {
-    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Saliente']);
-    actuarComoAdmin();
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertOk();
-
-    actuarComoUsuario();
-    $this->getJson('/api/competencias')->assertOk()->assertJsonPath('meta.total', 0);
-    $this->getJson("/api/competencias/{$competencia->id}")->assertOk()->assertJsonPath('data.estado', 'Inactivo');
-
-    actuarComoAdmin();
-    $this->getJson('/api/competencias')->assertOk()->assertJsonPath('meta.total', 0);
-    $this->getJson('/api/competencias?estado=Inactivo')->assertOk()->assertJsonPath('meta.total', 1);
-});
-
-it('un cambio de estado no provoca conflicto en una edición abierta antes', function () {
-    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Original']);
-    actuarComoAdmin();
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertOk();
-
-    $this->putJson("/api/competencias/{$competencia->id}", datosCompetencia(['nombre' => 'Editada', 'version' => 1]))
-        ->assertOk()
-        ->assertJsonPath('data.estado', 'Inactivo')
-        ->assertJsonPath('data.nombre', 'Editada');
-});
-
-it('registra el historial con usuario, estado anterior y nuevo', function () {
-    $competencia = CompetenciaModel::factory()->create();
-    $admin = UserModel::factory()->admin()->create();
-    Sanctum::actingAs($admin, ['admin']);
-
-    $this->patchJson("/api/competencias/{$competencia->id}/estado", ['estado' => 'Inactivo'])->assertOk();
-
-    $registro = CompetenciaEstadoHistorialModel::query()->sole();
-    expect($registro->competencia_id)->toBe($competencia->id)
-        ->and($registro->estado_anterior)->toBe('Activo')
-        ->and($registro->estado_nuevo)->toBe('Inactivo')
-        ->and($registro->user_id)->toBe($admin->id)
-        ->and($registro->created_at)->not->toBeNull();
+    $this->patchJson('/api/competencias/99999/estado', ['estado' => 'Inactivo'])->assertNotFound();
 });

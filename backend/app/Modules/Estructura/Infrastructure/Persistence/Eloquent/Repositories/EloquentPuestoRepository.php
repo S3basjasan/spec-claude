@@ -18,12 +18,14 @@ use App\Modules\Estructura\Domain\ValueObjects\EstadoCompetencia;
 use App\Modules\Estructura\Domain\ValueObjects\EstadoPosicion;
 use App\Modules\Estructura\Domain\ValueObjects\EstadoPuesto;
 use App\Modules\Estructura\Domain\ValueObjects\FuncionPuesto;
+use App\Modules\Estructura\Domain\ValueObjects\GradoLetra;
 use App\Modules\Estructura\Domain\ValueObjects\PaginaPuestos;
 use App\Modules\Estructura\Domain\ValueObjects\RequisitoPuesto;
 use App\Modules\Estructura\Domain\ValueObjects\TipoCompetencia;
 use App\Modules\Estructura\Domain\ValueObjects\TipoFuncion;
 use App\Modules\Estructura\Domain\ValueObjects\TipoRequisito;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\AuditoriaCambioModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaGradoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoCompetenciaModel;
@@ -92,7 +94,7 @@ final class EloquentPuestoRepository implements PuestoRepositoryInterface
     public function competenciasDisponibles(): array
     {
         return CompetenciaModel::query()
-            ->with('grados')
+            ->with('grados.valor')
             ->where('estado', EstadoCompetencia::Activo->value)
             ->orderBy('nombre')
             ->get()
@@ -103,7 +105,7 @@ final class EloquentPuestoRepository implements PuestoRepositoryInterface
     public function competenciasPorIds(array $ids): array
     {
         $resultado = [];
-        foreach (CompetenciaModel::query()->with('grados')->whereIn('id', $ids)->get() as $competencia) {
+        foreach (CompetenciaModel::query()->with('grados.valor')->whereIn('id', $ids)->get() as $competencia) {
             $resultado[$competencia->id] = $this->conGrados($competencia);
         }
 
@@ -226,7 +228,7 @@ final class EloquentPuestoRepository implements PuestoRepositoryInterface
     /** @return Builder<PuestoModel> */
     private function conListas(): Builder
     {
-        return PuestoModel::query()->with(['funciones', 'requisitos', 'competenciasAsignadas.competencia']);
+        return PuestoModel::query()->with(['funciones', 'requisitos', 'competenciasAsignadas.competencia', 'competenciasAsignadas.grado.valor']);
     }
 
     /**
@@ -256,13 +258,33 @@ final class EloquentPuestoRepository implements PuestoRepositoryInterface
             ]);
         }
 
+        $grados = $this->idsDeGrados(array_map(fn ($asignacion) => $asignacion->competenciaId, $datos->competencias));
+
         foreach ($datos->competencias as $asignacion) {
             PuestoCompetenciaModel::query()->create([
                 'puesto_id' => $puestoId,
                 'competencia_id' => $asignacion->competenciaId,
-                'grado_requerido' => $asignacion->grado,
+                // El grado requerido apunta al grado de la competencia: cambiar su escala no lo altera.
+                'competencia_grado_id' => $grados[$asignacion->competenciaId][$asignacion->grado],
             ]);
         }
+    }
+
+    /**
+     * Id del grado de cada competencia por clave posicional (A = orden 1 … D = orden 4).
+     *
+     * @param  array<int, int>  $competenciaIds
+     * @return array<int, array<string, int>>
+     */
+    private function idsDeGrados(array $competenciaIds): array
+    {
+        $mapa = [];
+
+        foreach (CompetenciaGradoModel::query()->with('valor')->whereIn('competencia_id', array_unique($competenciaIds))->get() as $grado) {
+            $mapa[(int) $grado->competencia_id][GradoLetra::desdeOrden((int) $grado->valor->orden)] = (int) $grado->id;
+        }
+
+        return $mapa;
     }
 
     /**
@@ -354,7 +376,7 @@ final class EloquentPuestoRepository implements PuestoRepositoryInterface
     {
         return new CompetenciaConGrados(
             $this->asociada($competencia),
-            $competencia->grados->pluck('descripcion', 'grado')->all(),
+            $competencia->gradosPorLetra(),
         );
     }
 

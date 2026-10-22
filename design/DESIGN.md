@@ -1,16 +1,4 @@
-### Actividades formativas *(feature 017)*
-Referencias: `ActividadesAdmin.dc.html` (lista y formulario en modal), `ActividadesAsistencia.dc.html` (registro de asistencia), `ActividadesCalificaciones.dc.html` (calificaciones) y `ActividadesColaborador.dc.html` (Mis actividades). Se omiten los controles de prototipo («Ver como colaborador», menú con Empleados/Ajustes) y el panel «Fundamento de cada tipo».
-
-1. **Lista (Administrador)**: encabezado con «+ Nueva Actividad», pestañas «Actividades» y «Calificaciones» (en la URL), búsqueda por nombre, filtros (tipo, estado, departamento, competencia, plan, rango de fechas —año actual por defecto— y «Limpiar filtros») y `DataTable` con código, nombre, tipo, fechas, lugar o enlace, formador, departamento, capacidad, inscritos, estado y acciones «Asistencia» y «Editar». No hay botón de eliminar ni de cancelar.
-2. **Formulario (Modal de 860px)**: selector de la acción del plan (con filtro por plan), datos heredados en solo lectura y solo lugar o enlace y departamento editables; al editar, la acción es fija.
-3. **Registro de asistencia**: encabezado con datos y estado de la actividad, resumen de asistencia, «Marcar todos presentes», tabla de inscritos (control de asistencia, calificación 1–5 y observaciones), «Guardar» con confirmación si cambia un registro previo y acceso al historial. Con la actividad Programada, Cancelada o el plan Cerrado la vista queda deshabilitada con su explicación.
-4. **Calificaciones**: sub-pestañas «Por actividad» y «Por participante», filtros de fechas, tipo, departamento y plan, y detalle por actividad de un participante.
-5. **Mis actividades (Colaborador)**: resumen, «Próximas actividades» e «Historial» con tarjetas; mensaje informativo si no hay actividades.
-6. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito.
-
----
-
-ign system — HRMS
+# Design system — HRMS
 
 Fuente visual única del HRMS. Aplica a los 5 módulos.
 Las referencias `*.dc.html` de esta carpeta son mockups de Claude Design: sirven como **referencia visual**, no como código para copiar. La implementación usa los componentes compartidos de `frontend/src/shared`.
@@ -112,22 +100,6 @@ Los tipos de actividad usan los mismos colores que el tipo de la acción del pla
 | Badge «Con evaluación» | `--accent` / `--soft` | |
 | Badge «Sin evaluación» | `--neutral` / `--neutralsoft` | |
 | Series de los gráficos | Presencial `--accent`, Virtual `--info`, E-learning `--violet`, OJT `--warning`, Codesarrollo `--rose`, Mentoring `--danger`, Micro-learning `--neutral` | cada gráfico lleva una tabla de datos equivalente |
-
-**Colores por estado de actividad y asistencia** *(feature 017, Actividades formativas; sin tokens nuevos)*. El color nunca es la única señal: siempre va con el nombre del estado.
-
-| Elemento | Texto / fondo | Tokens |
-|---|---|---|
-| Actividad Programada | `--info` / `--infosoft` | igual que la acción |
-| Actividad En curso | `--accent` / `--soft` | |
-| Actividad Finalizada | `--neutral` / `--neutralsoft` | |
-| Actividad Cancelada | `--danger` / `--dangersoft` | |
-| Asistencia Pendiente | `--neutral` / `--neutralsoft` | sin registro |
-| Asistencia Presente | `--accent` / `--soft` | |
-| Asistencia Ausente | `--danger` / `--dangersoft` | |
-| Asistencia Justificado | `--warning` / `--warningsoft` | |
-| Badge «Asistencia pendiente» | `--warning` / `--warningsoft` | actividad Finalizada con inscritos sin registro |
-
-Los tipos de actividad usan los mismos colores que el tipo de la acción del plan.
 
 **Estados del plan y de la acción**: Borrador `--neutral`/`--neutralsoft`; Revisión `--warn`/`--warnsoft`; Aprobado `--info`/`--infosoft`; Ejecutando `--accent`/`--soft`; Cerrado `--neutral`/`--neutralsoft` con borde `--border`. Acción: Programada `--info`/`--infosoft`; En curso `--accent`/`--soft`; Finalizada `--neutral`/`--neutralsoft`; Cancelada `--danger`/`--dangersoft`.
 
@@ -324,15 +296,6 @@ Estos componentes viven en `frontend/src/shared/components` y los usan todos los
 | **Formulario de encuesta y de seguimiento** | Modal de 640px: escala(s) de 1 a 5, comentario opcional con contador (máx. 1 000) y, antes de enviar, `ConfirmDialog` de tono primario («Una vez enviada no podrás modificarla»). |
 | **Tarjetas de «Mi progreso»** | Cuatro tarjetas (`minmax(180px, 1fr)`): formaciones completadas, competencias adquiridas, horas acumuladas y certificados. |
 
-**Componentes de Actividades formativas** *(feature 017; referencias `ActividadesAdmin.dc.html`, `ActividadesAsistencia.dc.html`, `ActividadesCalificaciones.dc.html` y `ActividadesColaborador.dc.html`)*
-
-| Componente | Especificación |
-|---|---|
-| **Control de asistencia** | Grupo (`role="group"`, `aria-label` con el nombre) de tres botones de 40px «Presente», «Ausente» y «Justificado» con `aria-pressed`; la opción elegida lleva el color de su asistencia con borde (`--accent`, `--danger`, `--warning`). Pulsar de nuevo la elegida vuelve a Pendiente. Deshabilitado si la actividad no admite registro. |
-| **Campo de calificación** | `input type="number"` de 40px y 80px de ancho, mín. 1, máx. 5, paso 1, con etiqueta accesible por participante; deshabilitado salvo con Presente; el error aparece debajo con `role="alert"`. |
-| **Resumen de asistencia** | Lista de chips (píldoras 13px 700): Presentes, Ausentes, Justificados y Sin registrar con su cantidad. |
-| **Tarjeta de actividad** | `article` de `--surface` con borde `--border`, radio 12px: título (h3), `Etiqueta de tipo` y badge de estado, aviso de proximidad («Es hoy», «Empieza mañana», «Empieza en N días», «Está en curso») y lista de datos (fecha, lugar o enlace, formador, asistencia y calificación). Nunca muestra observaciones. |
-| **Resumen del colaborador** | Cuatro tarjetas (`minmax(180px, 1fr)`): actividades inscritas, finalizadas, % de asistencia y calificación promedio; «—» cuando no hay datos. |
 **Componentes de Rutas de carrera** *(feature 019; referencias `RutasAdmin.dc.html` —lista, editor y participantes— y `RutasColaborador.dc.html`)*
 
 | Componente | Especificación |
@@ -379,6 +342,19 @@ Referencia: `Competencias.dc.html`. Para cualquier catálogo o lista de registro
 14. **Historial de DNF** (Administrador). Patrón Listado (`Competencias.dc.html`): barra de filtros con fechas desde/hasta, `Combobox` de colaborador, `SelectField` de departamento y de prioridad (parámetros en la URL); `DataTable` con código, fecha, alcance, colaborador o departamento, cantidad de brechas, prioridad más alta (Badge) y «Ver detalle»; paginación. Sin editar ni eliminar. El detalle (`/dnf/:id`) muestra el paso 2 en solo lectura, con autor y fecha de generación y, si existe, el enlace al plan generado.
 
 15. **Mi diagnóstico** (Colaborador). Referencia: `DNFColaborador.dc.html`. Encabezado con el puesto, KPI, leyenda «Cómo leer las barras» («A es el nivel más alto · Diferencia negativa = te falta»), **Mis brechas prioritarias**, «Otras brechas detectadas» y «Competencias que ya cumples». Sin DNF o sin brechas: mensaje informativo (EmptyState) en lugar de tarjetas.
+
+### Listado de tarjetas con pestañas *(feature 019)*
+Referencia: `Diccionario.dc.html`. Para recursos que nunca se eliminan y cuyo detalle se compone de varias partes que se consultan y editan por separado (p. ej. el diccionario de competencias: competencia y grados, comportamientos y preguntas). Reutiliza el encabezado y la barra de filtros del patrón Listado, con estas particularidades:
+
+1. **Lista de tarjetas** con una competencia por fila (`grid-template-columns: 1fr`, 12px de separación) en cualquier ancho, ordenada por código. Paginación del patrón Listado debajo (12 por página) y recuento «N competencias» / «1 competencia» en una región `aria-live`.
+2. **Cabecera de la tarjeta**: toda la fila es un botón (`role="button"`, `aria-expanded`, `aria-label` «Ver información adicional de {nombre}» u «Ocultar información adicional de {nombre}») con código (13px `--muted`), nombre (16px 600; `--muted` si está inactiva), etiqueta de tipo, chevron que gira 180° al abrir y, solo para el Administrador, el IconButton Activar/Desactivar. No hay badge de estado ni descripción en la cabecera: lo inactivo se reconoce por el nombre atenuado.
+3. **Filtros**: SearchField (por nombre, sin tildes ni mayúsculas) y select de tipo; el botón «Limpiar filtros» aparece solo con algún filtro aplicado. **No hay filtro de estado**: el Administrador ve activas e inactivas y el resto de usuarios solo activas.
+4. **Parte desplegada** (fondo `--bg`, borde superior `--border`): barra de `Tabs` (`role="tablist"`, navegación con flechas, Inicio y Fin) con tres pestañas: «Competencia» (descripción completa y «Grados de desarrollo · {escala}» con cada grado como píldora `--soft`/`--accent` y su descripción), «Comportamientos» (por grado, lista de viñetas) y «Preguntas» (lista numerada). Cada pestaña lleva en su encabezado un IconButton de lápiz de edición solo para el Administrador. Varias tarjetas pueden estar abiertas a la vez, cada una con su pestaña.
+5. **Vista previa de escala** (pestañas Competencia y Comportamientos): grupo «Ver con escala:» con tres chips (Letras, Números, Categorías; `aria-pressed`). Cambia solo los nombres en pantalla y marca «(vista previa)»; con una vista previa distinta de la guardada aparecen «Aplicar esta escala» (solo Administrador) y «Descartar».
+6. **Formulario completo en modal** (720px) para crear y **tres modales de edición** (640px) por sección, con el patrón Formulario en modal. La escala se elige con un radiogroup de tres tarjetas; con Categorías aparecen cuatro campos de nombre propio (máx. 20, sin repetir). Los rótulos de los grados siguen la escala elegida.
+7. **Desactivar** pasa por ConfirmDialog (`alertdialog`, título «¿Desactivar «{nombre}»?» y la consecuencia); **Activar** actúa sin confirmación. Los resultados de crear, editar, aplicar escala, activar y desactivar se muestran en un **aviso emergente** centrado (`alertdialog`, ícono de verificación, mensaje y botón Aceptar; se cierra con Aceptar o Escape).
+8. **Contenido incompleto** (solo Administrador): una competencia que no tiene todos sus comportamientos y preguntas muestra un aviso neutro (`role="status"`) sobre las pestañas y no se puede activar hasta completarla.
+9. **Estados**: cargando (esqueletos de tarjeta), vacío («Ninguna competencia coincide con los filtros.» con «Limpiar filtros») y error con «Reintentar», según el patrón Estados. El artboard los muestra con la propiedad `vista` (normal, incompleta, cargando, error) y alterna Administrador/Usuario con `admin`.
 
 ### Listado en árbol
 Referencia: `Unidades.dc.html`. Para recursos jerárquicos (p. ej. unidades organizacionales). Reutiliza el patrón Listado con estas particularidades:
@@ -583,6 +559,10 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 
 | Mockup | Spec vigente |
 |---|---|
+| `Diccionario.dc.html` (zip original) mostraba la lista en una columna, con la descripción en la cabecera de la tarjeta | La spec 019 mantiene una competencia por fila y pide la descripción solo en la pestaña Competencia; el artboard se ajustó |
+| `Diccionario.dc.html` (zip original) no tenía confirmación al desactivar, Tipo en la edición de la competencia, filtro por rol, paginación, estados de carga y error ni aviso de contenido incompleto | Se añadieron al artboard (§5 Listado de tarjetas con pestañas) |
+| `Diccionario.dc.html` no muestra el aviso de conflicto de edición ni el error de «no se puede activar» | Salen del patrón Estados: Alert de error en el modal («Esta competencia cambió mientras la editabas. Recarga para ver la versión actual.») y mensaje junto a la acción |
+| `Competencias.dc.html` sigue siendo el patrón **Listado (tabla de datos)**; ya no es el diseño del diccionario de competencias | El diccionario usa `Diccionario.dc.html` (feature 019). Las filas siguientes sobre `Competencias.dc.html` y competencias corresponden a las features 001–003, reemplazadas por la 019 |
 | `Competencias.dc.html` no muestra el botón "Visualizar grados" | La spec lo pide: cada fila despliega los 4 grados |
 | La búsqueda dice "por nombre o descripción" | Solo por nombre |
 | Usa "Clasificación" y "Grados de dominio" | Términos de la spec: "Tipo" y "Grados de desarrollo" |

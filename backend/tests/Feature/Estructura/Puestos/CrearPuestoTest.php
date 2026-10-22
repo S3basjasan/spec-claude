@@ -3,6 +3,7 @@
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaGradoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\TipoGradoValorModel;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\Sanctum;
@@ -172,8 +173,9 @@ it('rechaza un requisito repetido del mismo tipo pero acepta el mismo texto en o
 
 it('valida las competencias: obligatorias, sin repetir, existentes, activas y con grado', function () {
     $inactiva = CompetenciaModel::factory()->inactiva()->create();
-    $sinGradoD = CompetenciaModel::factory()->create();
-    CompetenciaGradoModel::query()->where('competencia_id', $sinGradoD->id)->where('grado', 'D')->delete();
+    $sinGradoD = CompetenciaModel::factory()->sinComportamientos()->create();
+    CompetenciaGradoModel::query()->where('competencia_id', $sinGradoD->id)
+        ->whereIn('tipo_grado_valor_id', TipoGradoValorModel::query()->where('orden', 4)->pluck('id'))->delete();
     actuarComoAdmin();
 
     enviarPuesto($this, datosPuesto($this->competencia->id, ['competencias' => []]))

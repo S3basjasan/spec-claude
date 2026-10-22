@@ -45,19 +45,19 @@ class ListarCompetenciasRequest extends FormRequest
     }
 
     /**
-     * Resuelve el estado efectivo según el rol: quien no es administrador solo recibe competencias
-     * `Activo` (el parámetro se ignora); el administrador recibe `Activo` por defecto, o `Inactivo`/`Todos`.
+     * Resuelve el estado efectivo según el rol: quien no es administrador solo recibe competencias `Activo`
+     * (el parámetro se ignora); el administrador recibe activas e inactivas salvo que pida `Activo` o `Inactivo`.
      */
     public function filtro(bool $esAdministrador): FiltroCompetenciasDTO
     {
-        $pedido = $esAdministrador ? ($this->validated('estado') ?? 'Activo') : 'Activo';
+        $pedido = $esAdministrador ? ($this->validated('estado') ?? 'Todos') : 'Activo';
 
         return new FiltroCompetenciasDTO(
             $this->validated('q'),
             $this->validated('tipo'),
             $pedido === 'Todos' ? null : $pedido,
             (int) ($this->validated('page') ?? 1),
-            (int) ($this->validated('per_page') ?? 10),
+            (int) ($this->validated('per_page') ?? 12),
         );
     }
 }

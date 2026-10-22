@@ -15,9 +15,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(UsuariosInicialesSeeder::class);
+        $this->call(TiposGradoSeeder::class);
         $this->call(CompetenciasSeeder::class);
-        $this->call(ComportamientosSeeder::class);
-        $this->call(PreguntasSeeder::class);
         $this->call(PuestosSeeder::class);
         $this->call(MicroLearningSeeder::class);
         $this->call(CatalogoFormativoSeeder::class);

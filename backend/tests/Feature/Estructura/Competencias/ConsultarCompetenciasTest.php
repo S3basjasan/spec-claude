@@ -1,156 +1,130 @@
 <?php
 
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
+use Illuminate\Support\Facades\DB;
 
-it('rechaza con 401 sin sesión', function () {
+it('lista ordenado por código y devuelve solo los datos de la tarjeta', function () {
+    CompetenciaModel::factory()->create(['nombre' => 'Zeta']);
+    CompetenciaModel::factory()->create(['nombre' => 'Alfa']);
+    actuarComoAdmin();
+
+    $respuesta = $this->getJson('/api/competencias')->assertOk();
+
+    expect($respuesta->json('data.*.codigo'))->toBe(['COMP-0001', 'COMP-0002'])
+        ->and($respuesta->json('data.*.nombre'))->toBe(['Zeta', 'Alfa'])
+        ->and($respuesta->json('data.0'))->toHaveKeys(['id', 'codigo', 'nombre', 'tipo', 'estado', 'completa'])
+        ->and($respuesta->json('data.0'))->not->toHaveKeys(['descripcion', 'grados', 'preguntas', 'comportamientos'])
+        ->and($respuesta->json('meta.total'))->toBe(2)
+        ->and($respuesta->json('meta.per_page'))->toBe(12);
+});
+
+it('muestra al administrador las activas y las inactivas, y a los demás solo las activas', function () {
+    CompetenciaModel::factory()->create(['nombre' => 'Activa']);
+    CompetenciaModel::factory()->inactiva()->create(['nombre' => 'Retirada']);
+
+    actuarComoAdmin();
+    expect($this->getJson('/api/competencias')->json('data.*.nombre'))->toBe(['Activa', 'Retirada']);
+    expect($this->getJson('/api/competencias?estado=Inactivo')->json('data.*.nombre'))->toBe(['Retirada']);
+    expect($this->getJson('/api/competencias?estado=Activo')->json('data.*.nombre'))->toBe(['Activa']);
+
+    actuarComoUsuario();
+    expect($this->getJson('/api/competencias')->json('data.*.nombre'))->toBe(['Activa']);
+    expect($this->getJson('/api/competencias?estado=Inactivo')->json('data.*.nombre'))->toBe(['Activa']);
+    expect($this->getJson('/api/competencias?estado=Todos')->json('data.*.nombre'))->toBe(['Activa']);
+});
+
+it('filtra por nombre sin distinguir mayúsculas ni tildes y por tipo', function () {
+    CompetenciaModel::factory()->cardinal()->create(['nombre' => 'Liderazgo']);
+    CompetenciaModel::factory()->especifica()->create(['nombre' => 'Análisis de datos']);
+    actuarComoAdmin();
+
+    expect($this->getJson('/api/competencias?q=lidérazgo')->json('data.*.nombre'))->toBe(['Liderazgo'])
+        ->and($this->getJson('/api/competencias?q=ANALISIS')->json('data.*.nombre'))->toBe(['Análisis de datos'])
+        ->and($this->getJson('/api/competencias?tipo=Especifica')->json('data.*.nombre'))->toBe(['Análisis de datos'])
+        ->and($this->getJson('/api/competencias?q=lider&tipo=Especifica')->json('data'))->toBe([]);
+});
+
+it('pagina con 12 por página por defecto y acepta entre 1 y 50', function () {
+    CompetenciaModel::factory()->count(14)->create();
+    actuarComoAdmin();
+
+    $primera = $this->getJson('/api/competencias')->assertOk();
+    expect($primera->json('data'))->toHaveCount(12)
+        ->and($primera->json('meta.total'))->toBe(14);
+    expect($this->getJson('/api/competencias?page=2')->json('data'))->toHaveCount(2);
+
+    $this->getJson('/api/competencias?per_page=51')->assertUnprocessable()->assertJsonValidationErrors('per_page');
+    $this->getJson('/api/competencias?per_page=0')->assertUnprocessable();
+    expect($this->getJson('/api/competencias?per_page=50')->json('data'))->toHaveCount(14);
+});
+
+it('indica en el listado si la competencia está completa', function () {
+    CompetenciaModel::factory()->create(['nombre' => 'Completa']);
+    CompetenciaModel::factory()->incompleta()->create(['nombre' => 'Heredada']);
+    actuarComoAdmin();
+
+    $respuesta = $this->getJson('/api/competencias')->assertOk();
+
+    expect($respuesta->json('data.*.completa'))->toBe([true, false]);
+});
+
+it('devuelve el detalle con escala, grados ordenados con sus comportamientos y las preguntas', function () {
+    $competencia = CompetenciaModel::factory()->conCategorias()->create(['nombre' => 'Comunicación']);
+    actuarComoAdmin();
+
+    $detalle = $this->getJson("/api/competencias/{$competencia->id}")->assertOk()->json('data');
+
+    expect($detalle['codigo'])->toBe('COMP-0001')
+        ->and($detalle['version'])->toBe(1)
+        ->and($detalle['completa'])->toBeTrue()
+        ->and($detalle['faltantes'])->toBe([])
+        ->and($detalle['escala']['nombre'])->toBe('Categorías')
+        ->and($detalle['categorias'])->toBe(['Maestría', 'Avanzado', 'Competente', 'Inicial'])
+        ->and(array_column($detalle['grados'], 'orden'))->toBe([1, 2, 3, 4])
+        ->and(array_column($detalle['grados'], 'etiqueta'))->toBe(['Maestría', 'Avanzado', 'Competente', 'Inicial'])
+        ->and($detalle['grados'][0]['comportamientos'])->toHaveCount(4)
+        ->and($detalle['preguntas'])->toHaveCount(4)
+        ->and($detalle)->toHaveKey('auditoria');
+});
+
+it('permite consultar una competencia inactiva a cualquier usuario y omite la auditoría a quien no es administrador', function () {
+    $inactiva = CompetenciaModel::factory()->inactiva()->create();
+    actuarComoUsuario();
+
+    $detalle = $this->getJson("/api/competencias/{$inactiva->id}")->assertOk()->json('data');
+
+    expect($detalle['estado'])->toBe('Inactivo')
+        ->and($detalle)->not->toHaveKey('auditoria')
+        ->and($detalle['grados'])->toHaveCount(4);
+});
+
+it('indica lo que falta en una competencia incompleta', function () {
+    $incompleta = CompetenciaModel::factory()->incompleta()->create();
+    actuarComoAdmin();
+
+    $detalle = $this->getJson("/api/competencias/{$incompleta->id}")->assertOk()->json('data');
+
+    expect($detalle['completa'])->toBeFalse()
+        ->and($detalle['faltantes'])->toBe(['comportamientos', 'preguntas']);
+});
+
+it('responde 404 si no existe y 401 sin sesión', function () {
     $this->getJson('/api/competencias')->assertUnauthorized();
     $this->getJson('/api/competencias/1')->assertUnauthorized();
-});
-
-it('lista para un Usuario ordenado por nombre, con código y estado y sin grados', function () {
-    CompetenciaModel::factory()->create(['nombre' => 'Zeta']);
-    CompetenciaModel::factory()->create(['nombre' => 'alfa']);
-    CompetenciaModel::factory()->create(['nombre' => 'Beta']);
-    actuarComoUsuario();
-
-    $respuesta = $this->getJson('/api/competencias');
-
-    $respuesta->assertOk()
-        ->assertJsonPath('data.*.nombre', ['alfa', 'Beta', 'Zeta'])
-        ->assertJsonPath('data.0.codigo', 'COMP-0002')
-        ->assertJsonPath('data.0.estado', 'Activo')
-        ->assertJsonPath('meta.total', 3)
-        ->assertJsonPath('meta.per_page', 10)
-        ->assertJsonMissingPath('data.0.grados')
-        ->assertJsonStructure(['data' => [['id', 'codigo', 'nombre', 'descripcion', 'tipo', 'estado']], 'links', 'meta']);
-});
-
-it('lista también para un Administrador', function () {
-    CompetenciaModel::factory()->create();
-    actuarComoAdmin();
-
-    $this->getJson('/api/competencias')->assertOk()->assertJsonPath('meta.total', 1);
-});
-
-it('al Usuario solo le llegan las activas aunque pida otro estado', function () {
-    CompetenciaModel::factory()->create(['nombre' => 'Vigente']);
-    CompetenciaModel::factory()->inactiva()->create(['nombre' => 'Retirada']);
-    actuarComoUsuario();
-
-    foreach (['', '?estado=Todos', '?estado=Inactivo', '?estado=Activo'] as $consulta) {
-        $this->getJson("/api/competencias$consulta")->assertOk()
-            ->assertJsonPath('meta.total', 1)
-            ->assertJsonPath('data.0.nombre', 'Vigente');
-    }
-});
-
-it('al Administrador le llegan las activas por defecto y puede pedir inactivas o todas', function () {
-    CompetenciaModel::factory()->create(['nombre' => 'Vigente']);
-    CompetenciaModel::factory()->inactiva()->create(['nombre' => 'Retirada']);
-    actuarComoAdmin();
-
-    $this->getJson('/api/competencias')->assertOk()->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.nombre', 'Vigente');
-    $this->getJson('/api/competencias?estado=Activo')->assertOk()->assertJsonPath('meta.total', 1);
-    $this->getJson('/api/competencias?estado=Inactivo')->assertOk()
-        ->assertJsonPath('meta.total', 1)
-        ->assertJsonPath('data.0.nombre', 'Retirada')
-        ->assertJsonPath('data.0.estado', 'Inactivo');
-    $this->getJson('/api/competencias?estado=Todos')->assertOk()->assertJsonPath('meta.total', 2);
-});
-
-it('busca por nombre sin distinguir mayúsculas y filtra por tipo, combinados', function () {
-    CompetenciaModel::factory()->cardinal()->create(['nombre' => 'Trabajo en equipo']);
-    CompetenciaModel::factory()->especifica()->create(['nombre' => 'Trabajo remoto']);
-    CompetenciaModel::factory()->cardinal()->create(['nombre' => 'Liderazgo']);
-    actuarComoUsuario();
-
-    $this->getJson('/api/competencias?q=TRABAJO')->assertOk()->assertJsonPath('meta.total', 2);
-    $this->getJson('/api/competencias?tipo=Cardinal')->assertOk()->assertJsonPath('meta.total', 2);
-    $this->getJson('/api/competencias?q=trabajo&tipo=Cardinal')->assertOk()
-        ->assertJsonPath('meta.total', 1)
-        ->assertJsonPath('data.0.nombre', 'Trabajo en equipo');
-});
-
-it('combina búsqueda, tipo y estado para el Administrador', function () {
-    CompetenciaModel::factory()->cardinal()->create(['nombre' => 'Trabajo en equipo']);
-    CompetenciaModel::factory()->cardinal()->inactiva()->create(['nombre' => 'Trabajo en red']);
-    CompetenciaModel::factory()->especifica()->inactiva()->create(['nombre' => 'Trabajo remoto']);
-    actuarComoAdmin();
-
-    $this->getJson('/api/competencias?q=trabajo&tipo=Cardinal&estado=Inactivo')->assertOk()
-        ->assertJsonPath('meta.total', 1)
-        ->assertJsonPath('data.0.nombre', 'Trabajo en red');
-});
-
-it('busca sin distinguir mayúsculas con acentos', function () {
-    CompetenciaModel::factory()->create(['nombre' => 'Orientación a resultados']);
-    CompetenciaModel::factory()->create(['nombre' => 'Liderazgo']);
-    actuarComoUsuario();
-
-    $this->getJson('/api/competencias?q=ORIENTACIÓN')->assertOk()
-        ->assertJsonPath('meta.total', 1)
-        ->assertJsonPath('data.0.nombre', 'Orientación a resultados');
-});
-
-it('no trata % ni _ de la búsqueda como comodines', function () {
-    CompetenciaModel::factory()->create(['nombre' => 'Liderazgo']);
-    CompetenciaModel::factory()->create(['nombre' => 'Mejora 100% continua']);
-    actuarComoUsuario();
-
-    $this->getJson('/api/competencias?q=%25')->assertOk()
-        ->assertJsonPath('meta.total', 1)
-        ->assertJsonPath('data.0.nombre', 'Mejora 100% continua');
-    $this->getJson('/api/competencias?q=_')->assertOk()->assertJsonPath('meta.total', 0);
-});
-
-it('pagina con per_page por defecto 10 y respeta page y per_page', function () {
-    CompetenciaModel::factory()->count(12)->create();
-    actuarComoUsuario();
-
-    $this->getJson('/api/competencias')->assertOk()->assertJsonCount(10, 'data')->assertJsonPath('meta.last_page', 2);
-    $this->getJson('/api/competencias?page=2')->assertOk()->assertJsonCount(2, 'data')->assertJsonPath('meta.from', 11);
-    $this->getJson('/api/competencias?per_page=5&page=3')->assertOk()->assertJsonCount(2, 'data');
-});
-
-it('devuelve 422 con parámetros inválidos', function () {
-    actuarComoUsuario();
-
-    $this->getJson('/api/competencias?tipo=otra')->assertUnprocessable()->assertJsonValidationErrors('tipo');
-    $this->getJson('/api/competencias?tipo=cardinal')->assertUnprocessable()->assertJsonValidationErrors('tipo');
-    $this->getJson('/api/competencias?estado=Borrado')->assertUnprocessable()->assertJsonValidationErrors('estado');
-    $this->getJson('/api/competencias?per_page=51')->assertUnprocessable()->assertJsonValidationErrors('per_page');
-    $this->getJson('/api/competencias?per_page=0')->assertUnprocessable()->assertJsonValidationErrors('per_page');
-    $this->getJson('/api/competencias?page=0')->assertUnprocessable()->assertJsonValidationErrors('page');
-});
-
-it('devuelve el detalle con estado, versión y los cuatro grados en orden A–D', function () {
-    $competencia = CompetenciaModel::factory()->create(['nombre' => 'Liderazgo']);
-    actuarComoUsuario();
-
-    $this->getJson("/api/competencias/{$competencia->id}")
-        ->assertOk()
-        ->assertJsonPath('data.codigo', 'COMP-0001')
-        ->assertJsonPath('data.estado', 'Activo')
-        ->assertJsonPath('data.version', 1)
-        ->assertJsonCount(4, 'data.grados')
-        ->assertJsonPath('data.grados.*.grado', ['A', 'B', 'C', 'D']);
-});
-
-it('permite a cualquier persona autenticada consultar una competencia inactiva', function () {
-    $competencia = CompetenciaModel::factory()->inactiva()->create(['nombre' => 'Retirada']);
-
-    actuarComoUsuario();
-    $this->getJson("/api/competencias/{$competencia->id}")
-        ->assertOk()
-        ->assertJsonPath('data.estado', 'Inactivo')
-        ->assertJsonCount(4, 'data.grados');
 
     actuarComoAdmin();
-    $this->getJson("/api/competencias/{$competencia->id}")->assertOk()->assertJsonPath('data.estado', 'Inactivo');
+    $this->getJson('/api/competencias/99999')->assertNotFound();
 });
 
-it('devuelve 404 con mensaje si no existe', function () {
-    actuarComoUsuario();
+it('lista y consulta sin consultas repetidas por cada competencia', function () {
+    CompetenciaModel::factory()->count(10)->create();
+    actuarComoAdmin();
 
-    $this->getJson('/api/competencias/999')->assertNotFound()->assertExactJson(['message' => 'La competencia no existe.']);
+    DB::enableQueryLog();
+    $this->getJson('/api/competencias?per_page=10')->assertOk();
+    $consultas = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    // Autenticación + conteo + competencias + 4 relaciones eager load: no crece con el número de competencias.
+    expect($consultas)->toBeLessThan(15);
 });

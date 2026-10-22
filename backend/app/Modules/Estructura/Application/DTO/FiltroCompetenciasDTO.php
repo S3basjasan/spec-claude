@@ -12,6 +12,6 @@ final class FiltroCompetenciasDTO
         public readonly ?string $tipo = null,
         public readonly ?string $estado = null,
         public readonly int $pagina = 1,
-        public readonly int $porPagina = 10,
+        public readonly int $porPagina = 12,
     ) {}
 }
