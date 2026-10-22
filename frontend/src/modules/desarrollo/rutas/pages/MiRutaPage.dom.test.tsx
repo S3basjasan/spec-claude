@@ -66,7 +66,7 @@ describe('MiRutaPage', () => {
     expect(screen.getByText('Tecnólogo')).toBeInTheDocument()
   })
 
-  it('«Ver mi adecuación» no se ofrece mientras la vista de adecuación no exista', async () => {
+  it('«Ver mi adecuación» no se ofrece cuando el servidor no la habilita', async () => {
     renderPage()
     await screen.findByRole('list', { name: 'Escalera de niveles' })
 

@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getAsistencias(int $tenantId, array $filtros = []) Registros de asistencia y calificación sin observaciones (filtros de getActividades más colaborador_id y actividad_id).
  * @method static array inscripcionesActivas(int $tenantId, int $colaboradorId) Inscripciones Activas del colaborador a rutas de carrera: [{inscripcion_id, ruta_id, ruta_codigo, ruta_nombre, ruta_tipo, nivel_actual: {id, orden, puesto_id, nombre}|null, nivel_objetivo: {id, orden, puesto_id, nombre, experiencia_minima_anios}|null}]. Las de quien ya no tiene vínculo vigente se retiran y no se devuelven.
  * @method static array|null obtenerNivel(int $tenantId, int $nivelId) Nivel de una ruta: {nivel_id, ruta_id, ruta_nombre, orden, puesto_id, nombre, experiencia_minima_anios}, o null.
+ * @method static array|null ultimaAdecuacion(int $tenantId, int $colaboradorId, int $puestoObjetivoId) Adecuación vigente del colaborador para ese puesto objetivo: {adecuacion_id, codigo, fecha, preparacion, umbral_meses, puesto_actual_id, puesto_objetivo_id, inscripcion_id, brechas: [{dimension, tipo_elemento, elemento_id, nombre, diferencia, tiempo_cierre_meses}]}, o null.
+ * @method static array adecuacionesPorFiltros(int $tenantId, array $filtros = []) Cabeceras de adecuaciones vigentes [{adecuacion_id, colaborador_id, puesto_objetivo_id, preparacion, brechas, tiempo_maximo_cierre_meses, fecha}] (filtros: fecha_desde, fecha_hasta, colaborador_id, puesto_objetivo_id, preparacion, departamento_id).
  *
  * @see DesarrolloService
  */

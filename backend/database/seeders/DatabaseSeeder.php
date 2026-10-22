@@ -35,5 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ReportesSeeder::class);
         // Rutas de carrera: rutas, niveles e inscripciones de ejemplo; las Activas solo para colaboradores con vínculo vigente.
         $this->call(RutasSeeder::class);
+        // Adecuación a puesto futuro: cuatro adecuaciones de ejemplo que cubren las cuatro preparaciones.
+        $this->call(AdecuacionesSeeder::class);
     }
 }

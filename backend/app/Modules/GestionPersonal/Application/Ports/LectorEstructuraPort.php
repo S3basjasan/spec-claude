@@ -9,7 +9,7 @@ interface LectorEstructuraPort
 {
     /**
      * @param  list<int>  $posicionIds
-     * @return Lectura Datos: [posicion_id => {puesto: string, unidad_id: int|null, unidad: string|null}]
+     * @return Lectura Datos: [posicion_id => {puesto: string, puesto_id: int|null, unidad_id: int|null, unidad: string|null}]
      */
     public function posiciones(array $posicionIds): Lectura;
 

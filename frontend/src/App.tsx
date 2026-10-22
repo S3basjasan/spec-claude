@@ -19,6 +19,10 @@ import { MicroLearningPage } from './modules/desarrollo/micro-learning/pages/Mic
 import { reportesNav } from './modules/desarrollo/reportes/nav'
 import { ReportesPage } from './modules/desarrollo/reportes/pages/ReportesPage'
 import { RequireRole as RequireRoleRutas } from './modules/desarrollo/rutas/components/RequireRole'
+import { adecuacionNav } from './modules/desarrollo/adecuacion/nav'
+import { RequirePermiso as RequirePermisoAdecuacion, SinAccesoAdecuacion } from './modules/desarrollo/adecuacion/components/RequirePermiso'
+import { DetalleAdecuacionPage } from './modules/desarrollo/adecuacion/pages/DetalleAdecuacionPage'
+import { EntradaAdecuacionPage } from './modules/desarrollo/adecuacion/pages/EntradaAdecuacionPage'
 import { rutasNav } from './modules/desarrollo/rutas/nav'
 import { RutaEditorPage } from './modules/desarrollo/rutas/pages/RutaEditorPage'
 import { RutasPage } from './modules/desarrollo/rutas/pages/RutasPage'
@@ -65,7 +69,7 @@ import { onSessionExpired } from './shared/api/httpClient'
 import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem. */
-const navItems = [inicioNav, competenciasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, rutasNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
+const navItems = [inicioNav, competenciasNav, puestosNav, posicionesNav, catalogoFormativoNav, dnfNav, planFormacionNav, categoriasReconocimientoNav, actividadesNav, reportesNav, rutasNav, adecuacionNav, microLearningNav, unidadesNav, organigramaNav, colaboradoresNav, categoriasNav, miFichaNav, misDocumentosNav, exportarMiFichaNav]
 
 /** Vuelve a /login cuando el backend invalida la sesión (token revocado o inválido). */
 function SessionWatcher() {
@@ -113,6 +117,8 @@ function App() {
             <Route path="reportes" element={<ReportesPage />} />
             <Route path="rutas" element={<RutasPage />} />
             <Route path="rutas/:id" element={<RequireRoleRutas admin={<RutaEditorPage />} />} />
+            <Route path="adecuacion" element={<EntradaAdecuacionPage />} />
+            <Route path="adecuacion/evaluaciones/:id" element={<RequirePermisoAdecuacion clave="desarrollo.adecuacion.ver" fallback={<SinAccesoAdecuacion />}><DetalleAdecuacionPage /></RequirePermisoAdecuacion>} />
             <Route path="micro-learning" element={<MicroLearningPage />} />
             <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />

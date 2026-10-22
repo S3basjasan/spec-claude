@@ -168,7 +168,8 @@ test('Colaborador: «Mi ruta de carrera» muestra su escalera, el aviso y no ofr
   // Rutas Vigentes disponibles (solo lectura) y nada de gestión ni de interés.
   await expect(page.getByRole('region', { name: 'Rutas disponibles' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Nueva ruta|Inscribir|Retirar|Registrar mi interés/ })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Ver mi adecuación' })).toHaveCount(0)
+  // Con la adecuación a puesto futuro (feature 020) disponible, «Ver mi adecuación» se ofrece en las inscripciones con nivel objetivo.
+  await expect(page.getByRole('link', { name: 'Ver mi adecuación' }).first()).toHaveAttribute('href', '/adecuacion')
 })
 
 test('Colaborador: no puede abrir el editor de una ruta', async ({ page }) => {

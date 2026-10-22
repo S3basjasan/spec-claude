@@ -3,6 +3,7 @@
 namespace App\Modules\Desarrollo\Application\Services;
 
 use App\Modules\Desarrollo\Application\UseCases\ConsultarActividadesParaOtrosModulos;
+use App\Modules\Desarrollo\Application\UseCases\ConsultarAdecuacionesParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\ConsultarRutasParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
@@ -35,6 +36,7 @@ class DesarrolloService
         private readonly CalculadorDeResumen $calculadorDeResumen,
         private readonly ConsultarActividadesParaOtrosModulos $actividades,
         private readonly ConsultarRutasParaOtrosModulos $rutas,
+        private readonly ConsultarAdecuacionesParaOtrosModulos $adecuaciones,
     ) {}
 
     /**
@@ -253,5 +255,28 @@ class DesarrolloService
     public function obtenerNivel(int $tenantId, int $nivelId): ?array
     {
         return $this->rutas->obtenerNivel($tenantId, $nivelId);
+    }
+
+    /**
+     * Adecuación vigente del colaborador para un puesto objetivo, con sus brechas, o `null` si no tiene (para el Plan de
+     * Desarrollo Individual). Solo lectura.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function ultimaAdecuacion(int $tenantId, int $colaboradorId, int $puestoObjetivoId): ?array
+    {
+        return $this->adecuaciones->ultimaAdecuacion($tenantId, $colaboradorId, $puestoObjetivoId);
+    }
+
+    /**
+     * Cabeceras de las adecuaciones vigentes (para Reportes). Filtros: fecha_desde, fecha_hasta, colaborador_id,
+     * puesto_objetivo_id, preparacion y departamento_id. Solo lectura.
+     *
+     * @param  array<string, mixed>  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function adecuacionesPorFiltros(int $tenantId, array $filtros = []): array
+    {
+        return $this->adecuaciones->adecuacionesPorFiltros($tenantId, $filtros);
     }
 }
