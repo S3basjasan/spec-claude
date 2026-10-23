@@ -3,17 +3,21 @@
 namespace App\Modules\Desarrollo\Infrastructure\Providers;
 
 use App\Modules\Desarrollo\Application\Ports\AccionesDePlanInterface;
+use App\Modules\Desarrollo\Application\Ports\AccionesVinculablesInterface;
 use App\Modules\Desarrollo\Application\Ports\AprobadoresInterface;
 use App\Modules\Desarrollo\Application\Ports\AsistenciaInterface;
 use App\Modules\Desarrollo\Application\Ports\AsistenciaRegistradaInterface;
 use App\Modules\Desarrollo\Application\Ports\BrechasActivasInterface;
+use App\Modules\Desarrollo\Application\Ports\BrechasParaPdiInterface;
 use App\Modules\Desarrollo\Application\Ports\CertificadoPdfInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresEvaluablesInterface;
 use App\Modules\Desarrollo\Application\Ports\ColaboradoresVigentesInterface;
 use App\Modules\Desarrollo\Application\Ports\CompetenciasInterface;
+use App\Modules\Desarrollo\Application\Ports\ConfiguracionDePdiInterface;
 use App\Modules\Desarrollo\Application\Ports\CuentaColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\DepartamentoDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\DepartamentosInterface;
+use App\Modules\Desarrollo\Application\Ports\EstadoFormativoDeAccionInterface;
 use App\Modules\Desarrollo\Application\Ports\ExperienciaDelColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\FuenteDeActividadesInterface;
 use App\Modules\Desarrollo\Application\Ports\FuenteDeDnfInterface;
@@ -33,6 +37,7 @@ use App\Modules\Desarrollo\Application\Ports\PuestoActualDelColaboradorInterface
 use App\Modules\Desarrollo\Application\Ports\PuestosParaRutasInterface;
 use App\Modules\Desarrollo\Application\Ports\RelojInterface;
 use App\Modules\Desarrollo\Application\Ports\RutasParaAdecuacionInterface;
+use App\Modules\Desarrollo\Application\Ports\ValidadorDeVinculoInterface;
 use App\Modules\Desarrollo\Application\Ports\ValoresDeLaPersonaInterface;
 use App\Modules\Desarrollo\Application\Services\DesarrolloService;
 use App\Modules\Desarrollo\Domain\Repositories\ActividadRepositoryInterface;
@@ -43,21 +48,26 @@ use App\Modules\Desarrollo\Domain\Repositories\MicrocontenidoRepositoryInterface
 use App\Modules\Desarrollo\Domain\Repositories\PlanRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\ProgresoMicroRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\ReportesRepositoryInterface;
+use App\Modules\Desarrollo\Domain\Repositories\RepositorioDePdiInterface;
 use App\Modules\Desarrollo\Domain\Repositories\RutasRepositoryInterface;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AccionesDesdePlan;
+use App\Modules\Desarrollo\Infrastructure\Adapters\AccionesVinculablesDesdePlanes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ActividadesParaReportes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AprobadoresDesdeShared;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaDesdeActividades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaRegistradaDesdeActividades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasActivasDesdeDnf;
+use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasParaPdiDesdeDnfYAdecuacion;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CertificadoPdfDompdf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesSinDatos;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresVigentesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CompetenciasDesdeEstructura;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ConfiguracionDePdiDesdeConfig;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CuentaColaboradorDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentoDeColaboradorDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\DepartamentosDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\DnfParaReportes;
+use App\Modules\Desarrollo\Infrastructure\Adapters\EstadoFormativoDesdeActividades;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ExcelConZip;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ExperienciaDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\MicrolearningParaReportes;
@@ -78,6 +88,7 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\PuestosParaRutasDesdeEstructu
 use App\Modules\Desarrollo\Infrastructure\Adapters\RelojDelSistema;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ReportePdfDompdf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\RutasParaAdecuacionDesdeRutas;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ValidadorDeVinculoDesdePlanes;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ValoresDeLaPersonaDesdeDnf;
 use App\Modules\Desarrollo\Infrastructure\Console\ConciliarBajasRutasCommand;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentActividadRepository;
@@ -85,6 +96,7 @@ use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\Eloq
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentCatalogoFormativoRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentDnfRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentMicrocontenidoRepository;
+use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentPdiRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentPlanRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentProgresoMicroRepository;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Repositories\EloquentReportesRepository;
@@ -136,6 +148,12 @@ class DesarrolloServiceProvider extends ServiceProvider
 
         // Adecuación a puesto futuro (020): solo se persisten adecuaciones (inmutables) y sus parámetros; el resto se lee por puertos.
         $this->app->bind(AdecuacionesRepositoryInterface::class, EloquentAdecuacionesRepository::class);
+        $this->app->bind(RepositorioDePdiInterface::class, EloquentPdiRepository::class);
+        $this->app->bind(BrechasParaPdiInterface::class, BrechasParaPdiDesdeDnfYAdecuacion::class);
+        $this->app->bind(ConfiguracionDePdiInterface::class, ConfiguracionDePdiDesdeConfig::class);
+        $this->app->bind(ValidadorDeVinculoInterface::class, ValidadorDeVinculoDesdePlanes::class);
+        $this->app->bind(AccionesVinculablesInterface::class, AccionesVinculablesDesdePlanes::class);
+        $this->app->bind(EstadoFormativoDeAccionInterface::class, EstadoFormativoDesdeActividades::class);
         $this->app->bind(ValoresDeLaPersonaInterface::class, ValoresDeLaPersonaDesdeDnf::class);
         $this->app->bind(ExperienciaDelColaboradorInterface::class, ExperienciaDesdePersonal::class);
         $this->app->bind(PuestoActualDelColaboradorInterface::class, PuestoActualDesdePersonal::class);

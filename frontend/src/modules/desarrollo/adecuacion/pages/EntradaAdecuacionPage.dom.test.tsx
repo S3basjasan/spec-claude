@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import { Route } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { opcionesDeColaboradores } from '../../../../test/adecuacionFixtures'
+import { opcionesDeColaborador, opcionesDeColaboradores } from '../../../../test/adecuacionFixtures'
 import { renderRoutes } from '../../../../test/renderRoutes'
-import { buscarColaboradores, listarAdecuaciones, obtenerMiAdecuacion, obtenerPermisos, type ClavePermiso } from '../api'
+import { buscarColaboradores, listarAdecuaciones, obtenerMiAdecuacion, obtenerOpcionesDeColaborador, obtenerPermisos, previsualizar, type ClavePermiso } from '../api'
 import { EntradaAdecuacionPage } from './EntradaAdecuacionPage'
 
 vi.mock('../api', async (importOriginal) => ({
@@ -13,6 +13,8 @@ vi.mock('../api', async (importOriginal) => ({
   buscarColaboradores: vi.fn(),
   listarAdecuaciones: vi.fn(),
   obtenerMiAdecuacion: vi.fn(),
+  obtenerOpcionesDeColaborador: vi.fn(),
+  previsualizar: vi.fn(),
 }))
 
 const GESTION: ClavePermiso[] = ['desarrollo.adecuacion.generar', 'desarrollo.adecuacion.ver', 'desarrollo.adecuacion.comparar', 'desarrollo.adecuacion.mapa', 'desarrollo.adecuacion.parametros']
@@ -26,6 +28,8 @@ function render(permisos: ClavePermiso[], entrada = '/adecuacion') {
 beforeEach(() => {
   vi.mocked(buscarColaboradores).mockReset().mockResolvedValue(opcionesDeColaboradores())
   vi.mocked(listarAdecuaciones).mockReset().mockResolvedValue({ data: [], meta: { page: 1, per_page: 15, total: 0, last_page: 1 } })
+  vi.mocked(obtenerOpcionesDeColaborador).mockReset().mockResolvedValue(opcionesDeColaborador())
+  vi.mocked(previsualizar).mockReset()
   vi.mocked(obtenerMiAdecuacion).mockReset().mockResolvedValue({ adecuaciones: [], seleccionada: null, aviso: 'Esta evaluación es una guía de desarrollo; no implica la promesa de un puesto.', fuentes_no_disponibles: [] })
 })
 
@@ -65,5 +69,23 @@ describe('Entrada de Adecuación', () => {
 
     expect(await screen.findByText('No tienes acceso a esta sección')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Volver al inicio' })).toHaveAttribute('href', '/')
+  })
+
+  it('desde el PDI, ?colaborador=&puesto= preselecciona colaborador y puesto objetivo (R13)', async () => {
+    vi.mocked(obtenerOpcionesDeColaborador).mockResolvedValue(opcionesDeColaborador({ inscripciones: [] }))
+    vi.mocked(previsualizar).mockReturnValue(new Promise(() => undefined))
+    render(GESTION, '/adecuacion?colaborador=10&puesto=3')
+
+    await screen.findByLabelText('Puesto objetivo')
+    await waitFor(() => expect(screen.getByLabelText('Puesto objetivo')).toHaveValue('p:3'))
+    expect(obtenerOpcionesDeColaborador).toHaveBeenCalledWith(10)
+    await waitFor(() => expect(previsualizar).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 10, puesto_objetivo_id: 3 })))
+  })
+
+  it('un colaborador inválido en la URL se ignora', async () => {
+    render(GESTION, '/adecuacion?colaborador=abc&puesto=3')
+
+    await screen.findByRole('heading', { level: 1, name: 'Adecuación a puesto futuro' })
+    expect(obtenerOpcionesDeColaborador).not.toHaveBeenCalled()
   })
 })

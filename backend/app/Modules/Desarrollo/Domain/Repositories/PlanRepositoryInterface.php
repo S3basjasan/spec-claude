@@ -120,6 +120,14 @@ interface PlanRepositoryInterface
     public function idsDeAccionesDeColaboradorEnEjecucion(int $tenantId, int $colaboradorId): array;
 
     /**
+     * Ids de las acciones no canceladas de planes Aprobado o Ejecutando en las que el colaborador es participante
+     * (las que un plan de desarrollo individual puede vincular).
+     *
+     * @return list<int>
+     */
+    public function idsDeAccionesVinculablesDeColaborador(int $tenantId, int $colaboradorId): array;
+
+    /**
      * Planes Ejecutando o Cerrado del tenant (los que pueden tener actividades), del año más reciente al más antiguo.
      *
      * @return list<array{id: int, codigo: string, nombre: string, anio: int, estado: string}>

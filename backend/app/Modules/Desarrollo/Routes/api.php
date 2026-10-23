@@ -12,9 +12,13 @@ use App\Modules\Desarrollo\Presentation\Controllers\IntentoMicroController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiAdecuacionController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiAprendizajeController;
 use App\Modules\Desarrollo\Presentation\Controllers\MicrocontenidoController;
+use App\Modules\Desarrollo\Presentation\Controllers\MiPlanPdiController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiProgresoController;
 use App\Modules\Desarrollo\Presentation\Controllers\MiRutaController;
 use App\Modules\Desarrollo\Presentation\Controllers\MisActividadesController;
+use App\Modules\Desarrollo\Presentation\Controllers\PdiAccionesController;
+use App\Modules\Desarrollo\Presentation\Controllers\PdiController;
+use App\Modules\Desarrollo\Presentation\Controllers\PdiHitosController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanAccionController;
 use App\Modules\Desarrollo\Presentation\Controllers\PlanController;
 use App\Modules\Desarrollo\Presentation\Controllers\ProgresoMicroController;
@@ -208,4 +212,37 @@ Route::prefix('api/adecuaciones')->middleware(['api', 'auth:sanctum'])->group(fu
     Route::get('/comparar', [AdecuacionesController::class, 'comparar'])->middleware('permiso:desarrollo.adecuacion.comparar')->name('adecuaciones.comparar');
     Route::get('/', [AdecuacionesController::class, 'index'])->middleware('permiso:desarrollo.adecuacion.ver')->name('adecuaciones.index');
     Route::get('/{id}', [AdecuacionesController::class, 'show'])->whereNumber('id')->middleware('permiso:desarrollo.adecuacion.ver')->name('adecuaciones.show');
+});
+
+// Plan de desarrollo individual (feature 021). Prefijo /api/pdi por contrato (desviación aprobada el 2026-10-22).
+// Cada operación se autoriza con una clave de permiso (`permiso:<clave>`; `a|b` admite cualquiera de las dos). No existen
+// endpoints DELETE: los planes se cierran y las acciones se cancelan. Las rutas fijas se declaran antes de `/{id}`.
+Route::prefix('api/pdi')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('/permisos', [PdiController::class, 'permisos'])->name('pdi.permisos');
+    Route::get('/opciones', [PdiController::class, 'opciones'])->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.opciones');
+    Route::get('/precarga', [PdiController::class, 'precarga'])->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.precarga');
+    Route::get('/acciones-vinculables', [PdiAccionesController::class, 'vinculables'])->middleware('permiso:desarrollo.pdi.vincular')->name('pdi.acciones-vinculables');
+    Route::get('/mi-plan', [MiPlanPdiController::class, 'show'])->middleware('permiso:desarrollo.pdi.ver_propio')->name('pdi.mi-plan');
+    Route::get('/gantt', [PdiController::class, 'gantt'])->middleware('permiso:desarrollo.pdi.gantt')->name('pdi.gantt');
+    Route::get('/sin-plan', [PdiController::class, 'sinPlan'])->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.sin-plan');
+    Route::get('/', [PdiController::class, 'index'])->middleware('permiso:desarrollo.pdi.ver')->name('pdi.index');
+    Route::post('/', [PdiController::class, 'store'])->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.store');
+    Route::get('/{id}', [PdiController::class, 'show'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.ver|desarrollo.pdi.ver_propio')->name('pdi.show');
+    Route::put('/{id}', [PdiController::class, 'update'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.update');
+    Route::get('/{id}/historial', [PdiController::class, 'historial'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.ver|desarrollo.pdi.ver_propio')->name('pdi.historial');
+    Route::post('/{id}/acuerdo', [PdiController::class, 'acuerdo'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.acordar')->name('pdi.acuerdo');
+    Route::post('/{id}/aceptar', [PdiController::class, 'aceptar'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.aceptar_propio')->name('pdi.aceptar');
+    Route::post('/{id}/devolver-colaborador', [PdiController::class, 'devolverColaborador'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.aceptar_propio')->name('pdi.devolver-colaborador');
+    Route::post('/{id}/devolver', [PdiController::class, 'devolver'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.devolver');
+    Route::post('/{id}/cerrar', [PdiController::class, 'cerrar'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.cerrar')->name('pdi.cerrar');
+    Route::patch('/{id}/responsable', [PdiController::class, 'responsable'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.gestionar')->name('pdi.responsable');
+});
+
+Route::prefix('api/pdi-acciones')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::put('/{id}/vinculo', [PdiAccionesController::class, 'vinculo'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.vincular')->name('pdi-acciones.vinculo');
+    Route::patch('/{id}/avance', [PdiAccionesController::class, 'avance'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.seguimiento')->name('pdi-acciones.avance');
+});
+
+Route::prefix('api/pdi-hitos')->middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::patch('/{id}', [PdiHitosController::class, 'update'])->whereNumber('id')->middleware('permiso:desarrollo.pdi.seguimiento')->name('pdi-hitos.update');
 });

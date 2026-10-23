@@ -23,7 +23,7 @@ final class ConsultarAdecuacionesParaOtrosModulos
     /**
      * La adecuación vigente del colaborador para ese puesto objetivo, con sus brechas, o `null` si no tiene.
      *
-     * @return array{adecuacion_id: int, codigo: string, fecha: string|null, preparacion: string, umbral_meses: int, puesto_actual_id: int|null, puesto_objetivo_id: int, inscripcion_id: int|null, brechas: list<array{dimension: string, tipo_elemento: string|null, elemento_id: int|null, nombre: string|null, diferencia: float|null, tiempo_cierre_meses: int|null}>}|null
+     * @return array{adecuacion_id: int, codigo: string, fecha: string|null, preparacion: string, umbral_meses: int, puesto_actual_id: int|null, puesto_objetivo_id: int, inscripcion_id: int|null, brechas: list<array{dimension: string, tipo_elemento: string|null, elemento_id: int|null, nombre: string|null, diferencia: float|null, tiempo_cierre_meses: int|null, nivel_actual: string|null, nivel_objetivo: string|null, valor_anios: float|null, requerido_anios: float|null}>}|null
      */
     public function ultimaAdecuacion(int $tenantId, int $colaboradorId, int $puestoObjetivoId): ?array
     {
@@ -49,6 +49,10 @@ final class ConsultarAdecuacionesParaOtrosModulos
                 'nombre' => $r->nombreElemento,
                 'diferencia' => $r->diferencia,
                 'tiempo_cierre_meses' => $r->tiempoCierreMeses,
+                'nivel_actual' => $r->valorNivel?->value,
+                'nivel_objetivo' => $r->requeridoObjetivoNivel?->value,
+                'valor_anios' => $r->valorAnios,
+                'requerido_anios' => $r->requeridoObjetivoAnios,
             ], $a->brechas()),
         ];
     }

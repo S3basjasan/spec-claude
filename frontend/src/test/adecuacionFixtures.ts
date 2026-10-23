@@ -99,8 +99,8 @@ export function adecuacion(sobrescribir: Partial<Adecuacion> = {}): Adecuacion {
     brechas: 2,
     tiempo_maximo_cierre_meses: 6,
     acciones: {
-      crear_plan: { habilitado: false, motivo: 'Disponible cuando exista el Plan de Desarrollo Individual.' },
-      incluir_programa: { habilitado: false, motivo: 'Disponible cuando exista el Plan de Desarrollo Individual.' },
+      crear_plan: { habilitado: true, motivo: '' },
+      incluir_programa: { habilitado: true, motivo: '' },
     },
     fuentes_no_disponibles: [],
     ...sobrescribir,

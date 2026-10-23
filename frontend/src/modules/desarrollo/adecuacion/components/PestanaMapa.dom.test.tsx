@@ -80,13 +80,12 @@ describe('Mapa de talento', () => {
     expect(within(filaDeLucia).getByText('—', { selector: 'td.tabular-nums' })).toBeInTheDocument()
   })
 
-  it('«Diagnóstico» abre el detalle e «Incluir» está deshabilitado con su motivo', async () => {
+  it('«Diagnóstico» abre el detalle e «Incluir» lleva al asistente del PDI con brechas y se deshabilita sin ellas', async () => {
     renderMapa()
 
     expect(await screen.findByRole('link', { name: 'Ver diagnóstico de Diego Paredes' })).toHaveAttribute('href', '/adecuacion/evaluaciones/1')
-    const incluir = screen.getByRole('button', { name: 'Incluir a Diego Paredes en el Programa de Talentos' })
-    expect(incluir).toBeDisabled()
-    expect(incluir).toHaveAttribute('title', 'Disponible cuando exista el Plan de Desarrollo Individual.')
+    const incluir = screen.getByRole('link', { name: 'Incluir a Diego Paredes en el Programa de Talentos' })
+    expect(incluir.getAttribute('href')).toMatch(/^\/pdi\/nuevo\?colaborador=\d+&tipo=Talento&puesto_objetivo=\d+$/)
   })
 
   it('los filtros viven en la URL y «Limpiar filtros» los quita', async () => {

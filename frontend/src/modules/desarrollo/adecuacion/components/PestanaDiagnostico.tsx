@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { toApiError } from '../../../../shared/api/httpClient'
 import { Alert } from '../../../../shared/ui/Alert'
 import { Button } from '../../../../shared/ui/Button'
@@ -28,10 +29,22 @@ interface Props {
   onRegistrada: (mensaje: string) => void
 }
 
+function idDeUrl(valor: string | null): number | null {
+  const n = Number(valor)
+
+  return valor !== null && Number.isInteger(n) && n > 0 ? n : null
+}
+
 /** Pestaña «Diagnóstico»: Selección → Diagnóstico → Confirmación, en una sola pantalla como el tablero. */
 export function PestanaDiagnostico({ onRegistrada }: Props) {
-  const [colaboradorId, setColaboradorId] = useState<number | null>(null)
-  const [objetivo, setObjetivo] = useState<ObjetivoValor>('')
+  const [params] = useSearchParams()
+  // Enlace desde el PDI (R13): ?colaborador=<id>&puesto=<id> preselecciona colaborador y puesto objetivo.
+  const [colaboradorId, setColaboradorId] = useState<number | null>(() => idDeUrl(params.get('colaborador')))
+  const [objetivo, setObjetivo] = useState<ObjetivoValor>(() => {
+    const puesto = idDeUrl(params.get('puesto'))
+
+    return puesto !== null && idDeUrl(params.get('colaborador')) !== null ? `p:${puesto}` : ''
+  })
   const [experiencia, setExperiencia] = useState('')
   const [tiempos, setTiempos] = useState<Record<string, string>>({})
   const [observaciones, setObservaciones] = useState('')

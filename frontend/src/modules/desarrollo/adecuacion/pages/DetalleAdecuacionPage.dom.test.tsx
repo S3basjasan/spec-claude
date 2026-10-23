@@ -35,14 +35,13 @@ describe('Detalle de una evaluación', () => {
     expect(screen.getByText('Umbral de preparación aplicado: 12 meses')).toBeInTheDocument()
   })
 
-  it('no ofrece editar ni eliminar y deja deshabilitadas las acciones del plan con su motivo', async () => {
+  it('no ofrece editar ni eliminar y habilita las acciones del plan hacia el asistente del PDI', async () => {
     renderDetalle()
     await screen.findByRole('heading', { level: 1 })
 
     expect(screen.queryByRole('button', { name: /editar|eliminar|borrar/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Crear plan de desarrollo' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Incluir en Programa de Talentos' })).toBeDisabled()
-    expect(screen.getByText('Disponible cuando exista el Plan de Desarrollo Individual.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Crear plan de desarrollo' }).getAttribute('href')).toMatch(/^\/pdi\/nuevo\?colaborador=\d+&tipo=Carrera&puesto_objetivo=\d+$/)
+    expect(screen.getByRole('link', { name: 'Incluir en Programa de Talentos' }).getAttribute('href')).toMatch(/&tipo=Talento&/)
   })
 
   it('avisa si hay una evaluación más reciente', async () => {
