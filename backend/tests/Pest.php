@@ -33,6 +33,7 @@ require_once __DIR__.'/Support/Desarrollo/ActividadHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/ReportesHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/RutasHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/AdecuacionHelpers.php';
+require_once __DIR__.'/Support/Desarrollo/PdiHelpers.php';
 
 /*
 |--------------------------------------------------------------------------

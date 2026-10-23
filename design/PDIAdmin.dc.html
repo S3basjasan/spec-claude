@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>PDI — Lista</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.nav:focus-visible,.ibtn:focus-visible,.btn:focus-visible,.step:focus-visible,.tabbtn:focus-visible,.pill:focus-visible,.cchip:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.ibtn:hover{background:var(--soft)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn-primary:hover{background:var(--accent);filter:brightness(1.08)}
+.tabbtn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.tabbtn:hover{color:var(--text)}
+.tabbtn[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pill[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);color:var(--accent)}
+.step{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:14px;font-weight:600}
+.step[aria-current="step"]{border-color:var(--accent);color:var(--text);background:var(--soft)}
+.cchip{display:block;width:100%;box-sizing:border-box;text-align:left;border:0;padding:3px 6px;border-radius:4px;font:inherit;font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.flink{color:var(--muted);text-decoration:none}.flink:hover{color:var(--text);text-decoration:underline}
+.row:hover{background:var(--soft)}
+.fl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.fi{height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:400;box-sizing:border-box;width:100%}
+textarea.fi{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+</style>
+</helmet>
+<div style="min-height: 2600px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; {{themeStyle}}">
+
+  <header style="height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div style="display: flex; align-items: center; gap: 12px; width: 200px">
+      <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</div>
+      <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">HRMS</span>
+    </div>
+    <div style="flex: 1"></div>
+    <button class="ibtn" aria-label="Cambiar tema" onClick="{{toggleTheme}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>
+    </button>
+    <button style="display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 10px 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer" aria-haspopup="menu" aria-expanded="false">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">MR</span>
+      <span style="font-size: 14px; font-weight: 600">Marta Ríos</span>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <div style="flex: 1; display: flex; flex-wrap: wrap; align-items: stretch">
+    <nav aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="Main.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h5v-6h4v6h5V10"></path></svg>Inicio</a>
+      <a class="nav" href="Competencias.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"></circle><path d="M8.5 14L7 22l5-3 5 3-1.5-8"></path></svg>Competencias</a>
+      <a class="nav" href="Puestos.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg>Puestos</a>
+      <a class="nav" href="Perfilamiento.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Perfilamiento</a>
+      <a class="nav" href="CatalogoAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"></path><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6"></path></svg>Formación</a>
+      <a class="nav" href="DNFAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 14l2 2 4-4"></path></svg>DNF</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>Plan anual</a>
+      <a class="nav" href="MicroAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9.5l5 2.5-5 2.5z"></path></svg>Micro-learning</a>
+      <a class="nav" href="ActividadesAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg>Actividades</a>
+      <a class="nav" href="ReportesAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Reportes</a>
+      <a class="nav" href="RutasAdmin.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h5v-5h5v-5h5V5h3"></path></svg>Rutas de carrera</a>
+      <a class="nav" href="AdecuacionDiagnostico.dc.html"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3"></circle></svg>Adecuación</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"></rect><path d="M9 4h6v3H9zM9 12h6M9 16h4"></path></svg>PDI</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"></path><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"></path></svg>Empleados</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="17" r="2"></circle></svg>Ajustes</a>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px">
+      <div style="max-width: 1128px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div>
+            <p style="margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--accent)">Desarrollo y Formación</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Plan de Desarrollo Individual (PDI)</h1>
+            <p style="margin: 6px 0 0; color: var(--muted); font-size: 16px">Compromisos de mejora acordados entre jefatura y colaborador.</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <a class="btn" href="PDIColaborador.dc.html"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Ver como colaborador</a>
+            <button class="btn btn-primary" onClick="{{irWizard}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nuevo PDI</button>
+          </div>
+        </div>
+
+        <section aria-label="Alcance del rol" style="background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; padding: 12px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px">
+          <div style="flex: 1 1 280px"><div style="font-size: 14px; font-weight: 600">Permisos del rol (simulación del prototipo)</div><div style="font-size: 12px; color: var(--muted)">{{alcanceTxt}} No hay una vista exclusiva de Líder: el alcance Equipo usa estas mismas pantallas.</div></div>
+          <div class="fl" style="flex: 0 1 240px"><label for="al">Alcance de <code style="font-size: 12px">desarrollo.pdi.*</code></label>
+            <select id="al" class="fi" value="{{alcance}}" onChange="{{hAlcance}}"><option value="todos">Todos</option><option value="equipo">Equipo (jefatura de Tecnología)</option></select></div>
+        </section>
+
+        <sc-if value="{{hayMsg}}" hint-placeholder-val="{{false}}">
+          <div role="status" aria-live="polite" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border-radius: 10px; background: var(--soft); border: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600"><span>{{msg}}</span><button class="btn" onClick="{{cerrarMsg}}" style="height: 36px; padding: 0 12px; font-size: 13px; border-color: transparent; color: var(--accent)">Cerrar</button></div>
+        </sc-if>
+        <sc-if value="{{hayErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">{{err}}</p></sc-if>
+
+        <div role="tablist" aria-label="Vistas de PDI" style="display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--border)">
+          <button class="tabbtn" role="tab" aria-selected="{{v.lista}}" onClick="{{irLista}}">Lista de PDI</button>
+          <button class="tabbtn" role="tab" aria-selected="{{v.gantt}}" onClick="{{irGantt}}">Seguimiento (Gantt)</button>
+        </div>
+
+        <!-- ============ LISTA ============ -->
+        <sc-if value="{{v.lista}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px">
+              <sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px"><div style="font-size: 13px; color: var(--muted)">{{k.label}}</div><div style="margin-top: 4px; font-size: 28px; line-height: 1.1; font-weight: 700; font-variant-numeric: tabular-nums">{{k.valor}}</div><div style="margin-top: 4px; font-size: 13px; color: var(--muted)">{{k.nota}}</div></div>
+              </sc-for>
+            </div>
+
+            <section aria-labelledby="sp-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px">
+              <div><h2 id="sp-t" style="margin: 0; font-size: 18px">Personas con brecha y sin PDI</h2><p style="margin: 2px 0 0; font-size: 13px; color: var(--muted)">{{sinPdiTxt}}</p></div>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <sc-for list="{{sinPdiList}}" as="p" hint-placeholder-count="4">
+                  <div style="display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border: 1px solid var(--border); border-radius: 10px"><div><div style="font-size: 14px; font-weight: 600">{{p.n}}</div><div style="font-size: 12px; color: var(--muted)">{{p.depto}}</div></div><button class="btn" onClick="{{p.crear}}" aria-label="Crear PDI para {{p.n}}" style="height: 36px; padding: 0 12px; font-size: 13px">Crear PDI</button></div>
+                </sc-for>
+              </div>
+                          </section>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+              <div class="fl" style="flex: 0 1 170px"><label for="f-tipo">Tipo</label>
+                <select id="f-tipo" class="fi" value="{{f.tipo}}" onChange="{{f.setTipo}}"><option value="todos">Todos</option><option value="Mejora">Mejora</option><option value="Carrera">Carrera</option><option value="Talento">Talento</option></select></div>
+              <div class="fl" style="flex: 0 1 190px"><label for="f-est">Estado</label>
+                <select id="f-est" class="fi" value="{{f.estado}}" onChange="{{f.setEstado}}"><option value="todos">Todos</option><option value="Borrador">Borrador</option><option value="Acordado">Acordado</option><option value="En seguimiento">En seguimiento</option><option value="Cerrado">Cerrado</option></select></div>
+              <div class="fl" style="flex: 0 1 200px"><label for="f-dep">Departamento</label>
+                <select id="f-dep" class="fi" value="{{f.depto}}" onChange="{{f.setDepto}}"><option value="todos">Todos</option><option value="Tecnología">Tecnología</option><option value="Comercial">Comercial</option><option value="Operaciones">Operaciones</option><option value="Finanzas">Finanzas</option><option value="Talento Humano">Talento Humano</option></select></div>
+              <div class="fl" style="flex: 0 1 210px"><label for="f-res">Responsable</label>
+                <select id="f-res" class="fi" value="{{f.resp}}" onChange="{{f.setResp}}"><option value="todos">Todos</option><option value="Marcela Reyes">Marcela Reyes</option><option value="Roberto Salgado">Roberto Salgado</option><option value="Patricia Andrade">Patricia Andrade</option><option value="Luis Barragán">Luis Barragán</option></select></div>
+              <sc-if value="{{f.hay}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{f.limpiar}}" style="border-color: transparent; color: var(--accent)">Limpiar filtros</button></sc-if>
+            </div>
+            <p role="status" aria-live="polite" style="margin: 0; font-size: 14px; color: var(--muted)">{{resumen}}</p>
+
+            <section aria-label="Lista de PDI" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+              <table style="width: 100%; min-width: 860px; border-collapse: collapse; font-size: 14px">
+                <thead><tr style="text-align: left; color: var(--muted); font-size: 13px">
+                  <th scope="col" style="padding: 12px 12px 12px 18px; font-weight: 600">Colaborador</th><th scope="col" style="padding: 12px; font-weight: 600">Tipo</th><th scope="col" style="padding: 12px; font-weight: 600">Estado</th><th scope="col" style="padding: 12px; font-weight: 600">Responsable</th><th scope="col" style="padding: 12px; font-weight: 600">Periodo</th><th scope="col" style="padding: 12px; font-weight: 600; width: 170px">Progreso</th><th scope="col" style="padding: 12px 18px 12px 12px; font-weight: 600; text-align: right">Acción</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{filas}}" as="r" hint-placeholder-count="8">
+                    <tr class="row" style="border-top: 1px solid var(--border)">
+                      <td style="padding: 8px 12px 8px 18px"><div style="font-weight: 600">{{r.c}}</div><div style="font-size: 12px; color: var(--muted)">{{r.id}} · {{r.depto}}</div></td>
+                      <td style="padding: 8px 12px"><span style="{{r.tipoStyle}}">{{r.tipo}}</span></td>
+                      <td style="padding: 8px 12px"><span style="{{r.estadoStyle}}">{{r.estado}}</span></td>
+                      <td style="padding: 8px 12px">{{r.jefe}}</td>
+                      <td style="padding: 8px 12px; font-size: 13px">{{r.periodo}}</td>
+                      <td style="padding: 8px 12px"><div style="height: 8px; background: var(--bg); border-radius: 4px"><div style="{{r.bar}}"></div></div><div style="font-size: 12px; color: var(--muted); margin-top: 3px">{{r.gTxt}}</div></td>
+                      <td style="padding: 8px 18px 8px 12px; text-align: right"><button class="btn" onClick="{{r.abrir}}" aria-label="Abrir {{r.id}} de {{r.c}}" style="height: 36px; padding: 0 14px; font-size: 13px">Abrir</button></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+              <sc-if value="{{sinFilas}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 20px; color: var(--muted); border-top: 1px solid var(--border)">Ningún PDI coincide con los filtros.</p></sc-if>
+            </section>
+          </div>
+        </sc-if>
+
+        <!-- ============ GANTT ============ -->
+        <sc-if value="{{v.gantt}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+              <div class="fl" style="flex: 0 1 170px"><label for="g-tipo">Tipo</label>
+                <select id="g-tipo" class="fi" value="{{gTipo}}" onChange="{{hGTipo}}"><option value="todos">Todos</option><option value="Mejora">Mejora</option><option value="Carrera">Carrera</option><option value="Talento">Talento</option></select></div>
+              <div class="fl" style="flex: 0 1 200px"><label for="g-dep">Departamento</label>
+                <select id="g-dep" class="fi" value="{{gDepto}}" onChange="{{hGDepto}}"><option value="todos">Todos</option><option value="Tecnología">Tecnología</option><option value="Comercial">Comercial</option><option value="Operaciones">Operaciones</option><option value="Finanzas">Finanzas</option><option value="Talento Humano">Talento Humano</option></select></div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; padding-bottom: 10px">
+                <span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 3px; background: var(--accent)"></span>Hecha</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 3px; background: var(--s1)"></span>En curso</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 22px; height: 10px; border-radius: 3px; border: 2px dashed var(--muted); box-sizing: border-box"></span>Pendiente</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 10px; height: 10px; background: var(--text); transform: rotate(45deg)"></span>Hito</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 2px; height: 14px; background: var(--danger)"></span>{{hoyTxt}}</span>
+              </div>
+            </div>
+            <section aria-label="Carta Gantt de acciones de PDI abiertos" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto">
+              <div style="min-width: 900px">
+                <div style="display: grid; grid-template-columns: 320px 1fr; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted)">
+                  <div style="padding: 10px 14px; font-weight: 600">PDI y acciones</div>
+                  <div style="position: relative; height: 38px"><sc-for list="{{meses}}" as="m" hint-placeholder-count="7"><span style="{{m.style}}"><span style="position: absolute; top: 10px; left: 6px">{{m.label}}</span></span></sc-for></div>
+                </div>
+                <sc-for list="{{gantt}}" as="r" hint-placeholder-count="10">
+                  <div style="{{r.rowStyle}}display: grid; grid-template-columns: 320px 1fr; border-bottom: 1px solid var(--border); min-height: 48px">
+                    <div style="padding: 6px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0"><div style="min-width: 0"><div style="{{r.labelStyle}}font-size: 13px; line-height: 1.3">{{r.label}}</div><div style="font-size: 12px; color: var(--muted)">{{r.sub}}</div></div><sc-if value="{{r.esCab}}" hint-placeholder-val="{{false}}"><button class="btn" onClick="{{r.abrir}}" aria-label="Abrir {{r.label}}" style="height: 32px; padding: 0 10px; font-size: 12px; flex: none">Abrir</button></sc-if></div>
+                    <div style="position: relative">
+                      <sc-for list="{{r.meses}}" as="m" hint-placeholder-count="7"><span style="{{m.style}}"></span></sc-for>
+                      <span style="{{r.hoy}}"></span>
+                      <span style="{{r.bar}}"></span>
+                      <sc-for list="{{r.marcas}}" as="k" hint-placeholder-count="0"><span title="{{k.t}}" style="{{k.style}}"></span></sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{sinGantt}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 20px; color: var(--muted)">No hay PDI abiertos (Acordado o En seguimiento) con estos filtros.</p></sc-if>
+            </section>
+          </div>
+        </sc-if>
+
+        <!-- ============ WIZARD ============ -->
+        <sc-if value="{{v.wizard}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <ol aria-label="Pasos" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{wiz.pasos}}" as="p" hint-placeholder-count="3"><li style="{{p.style}}"><span aria-hidden="true">{{p.n}}</span>{{p.x}}</li></sc-for>
+            </ol>
+            <sc-if value="{{wiz.hayErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--dangersoft); color: var(--danger); font-size: 14px; font-weight: 600">{{wiz.err}}</p></sc-if>
+
+            <sc-if value="{{wiz.s1}}" hint-placeholder-val="{{false}}">
+              <section aria-labelledby="w1-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+                <h2 id="w1-t" style="margin: 0; font-size: 18px">Paso 1: colaborador y tipo</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+                  <div class="fl"><label for="w-col">Colaborador</label><select id="w-col" class="fi" value="{{wiz.colab}}" onChange="{{wiz.hColab}}"><option value="Diego Paredes">Diego Paredes · Tecnología</option><option value="Lucía Andrade">Lucía Andrade · Tecnología</option><option value="Mateo Cárdenas">Mateo Cárdenas · Tecnología</option><option value="Valentina Ortiz">Valentina Ortiz · Tecnología</option><option value="Sebastián Mora">Sebastián Mora · Tecnología</option><option value="Camila Játiva">Camila Játiva · Tecnología</option><option value="Andrés Villacís">Andrés Villacís · Tecnología</option><option value="Paola Cevallos">Paola Cevallos · Tecnología</option><option value="Javier Salazar">Javier Salazar · Tecnología</option><option value="Daniela Proaño">Daniela Proaño · Tecnología</option><option value="Esteban Naranjo">Esteban Naranjo · Tecnología</option><option value="Carolina Quishpe">Carolina Quishpe · Tecnología</option><option value="Fernando Tipán">Fernando Tipán · Tecnología</option><option value="Gabriela Almeida">Gabriela Almeida · Tecnología</option><option value="Ricardo Chávez">Ricardo Chávez · Comercial</option><option value="Mónica Lasso">Mónica Lasso · Comercial</option><option value="Pablo Guerrero">Pablo Guerrero · Operaciones</option><option value="Natalia Vásconez">Natalia Vásconez · Finanzas</option><option value="Santiago Herrera">Santiago Herrera · Operaciones</option><option value="Elena Montalvo">Elena Montalvo · Talento Humano</option><option value="Bryan Toapanta">Bryan Toapanta · Comercial</option><option value="Karla Espinoza">Karla Espinoza · Finanzas</option><option value="Hugo Benítez">Hugo Benítez · Tecnología</option><option value="Ivonne Tapia">Ivonne Tapia · Finanzas</option><option value="Kevin Mera">Kevin Mera · Finanzas</option><option value="Marcos Zambrano">Marcos Zambrano · Comercial</option><option value="Rosa Pazmiño">Rosa Pazmiño · Talento Humano</option><option value="Iván Cuenca">Iván Cuenca · Operaciones</option><option value="Teresa Loor">Teresa Loor · Operaciones</option><option value="Julio Ayala">Julio Ayala · Comercial</option></select></div>
+                  <div class="fl"><label for="w-tip">Tipo de PDI</label><select id="w-tip" class="fi" value="{{wiz.tipo}}" onChange="{{wiz.hTipo}}"><option value="Mejora">Mejora: brechas del puesto actual</option><option value="Carrera">Carrera: brechas hacia el puesto objetivo</option><option value="Talento">Talento: Programa de Talentos</option></select></div>
+                </div>
+                <div style="padding: 14px 16px; border-radius: 10px; background: var(--bg)">
+                  <div style="font-size: 14px; font-weight: 600">{{wiz.origen}}</div>
+                  <div style="font-size: 13px; color: var(--muted); margin-top: 2px">Destino: {{wiz.destino}}. {{wiz.nPre}} brechas detectadas.</div>
+                  <ul style="margin: 8px 0 0; padding-left: 18px; font-size: 14px">
+                    <sc-for list="{{wiz.pre}}" as="b" hint-placeholder-count="5"><li>{{b.meta}}</li></sc-for>
+                  </ul>
+                  <sc-if value="{{wiz.sinPre}}" hint-placeholder-val="{{false}}"><p style="margin: 8px 0 0; font-size: 14px; color: var(--muted)">No hay brechas precargadas: podrás agregar los compromisos a mano.</p></sc-if>
+                </div>
+                <div><button class="btn btn-primary" onClick="{{wiz.sig1}}">Continuar</button></div>
+              </section>
+            </sc-if>
+
+            <sc-if value="{{wiz.s2}}" hint-placeholder-val="{{false}}">
+              <section aria-labelledby="w2-t" style="display: flex; flex-direction: column; gap: 14px">
+                <div><h2 id="w2-t" style="margin: 0; font-size: 18px">Paso 2: compromisos y acciones</h2><p style="margin: 2px 0 0; font-size: 13px; color: var(--muted)">Cada compromiso tiene una meta, una acción de mejora, un indicador opcional, el periodo estimado y un responsable. Para brechas de experiencia usa «Nueva responsabilidad», que un curso no cierra.</p></div>
+                <sc-for list="{{wiz.rows}}" as="r" hint-placeholder-count="3">
+                  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><h3 style="margin: 0; font-size: 15px">Compromiso {{r.n}}</h3><button class="btn" onClick="{{r.quitar}}" aria-label="Quitar el compromiso {{r.n}}" style="height: 36px; padding: 0 12px; font-size: 13px; color: var(--danger)">Quitar</button></div>
+                    <div class="fl"><label>Competencia o meta a mejorar</label><input class="fi" type="text" value="{{r.meta}}" onChange="{{r.hMeta}}" aria-label="Meta del compromiso {{r.n}}"></div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px">
+                      <div class="fl"><label>Tipo de acción</label><select class="fi" value="{{r.tipoAcc}}" onChange="{{r.hTipo}}" aria-label="Tipo de acción del compromiso {{r.n}}"><option value="Plan de Formación">Plan de Formación</option><option value="Mentoring">Mentoring</option><option value="Coaching">Coaching</option><option value="Autodesarrollo">Autodesarrollo</option><option value="Codesarrollo">Codesarrollo</option><option value="Nueva responsabilidad">Nueva responsabilidad / experiencia</option></select></div>
+                      <div class="fl"><label>Acción de mejora</label><input class="fi" type="text" value="{{r.texto}}" onChange="{{r.hTexto}}" aria-label="Acción del compromiso {{r.n}}"></div>
+                      <div class="fl"><label>Indicador (opcional)</label><input class="fi" type="text" value="{{r.ind}}" onChange="{{r.hInd}}" aria-label="Indicador del compromiso {{r.n}}"></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px">
+                      <div class="fl"><label>Inicio</label><input class="fi" type="date" value="{{r.ini}}" onChange="{{r.hIni}}" aria-label="Inicio del compromiso {{r.n}}"></div>
+                      <div class="fl"><label>Fin</label><input class="fi" type="date" value="{{r.fin}}" onChange="{{r.hFin}}" aria-label="Fin del compromiso {{r.n}}"></div>
+                      <div class="fl"><label>Responsable</label><select class="fi" value="{{r.resp}}" onChange="{{r.hResp}}" aria-label="Responsable del compromiso {{r.n}}"><option value="Colaborador">Colaborador</option><option value="Jefatura">Jefatura</option><option value="Mentor/a">Mentor/a</option><option value="Formador/a">Formador/a</option></select></div>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{wiz.sinRows}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 20px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted)">Aún no hay compromisos.</p></sc-if>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                  <button class="btn" onClick="{{wiz.agregar}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Agregar compromiso</button>
+                  <button class="btn" onClick="{{wiz.recargar}}">Volver a precargar brechas</button>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between"><button class="btn" onClick="{{wiz.atras}}">Atrás</button><button class="btn btn-primary" onClick="{{wiz.sig2}}">Continuar</button></div>
+              </section>
+            </sc-if>
+
+            <sc-if value="{{wiz.s3}}" hint-placeholder-val="{{false}}">
+              <section aria-labelledby="w3-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+                <h2 id="w3-t" style="margin: 0; font-size: 18px">Paso 3: hitos, responsable y periodo</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+                  <div class="fl"><label for="w-res">Responsable del PDI (jefatura)</label><select id="w-res" class="fi" value="{{wiz.resp}}" onChange="{{wiz.hResp}}"><option value="Marcela Reyes">Marcela Reyes</option><option value="Roberto Salgado">Roberto Salgado</option><option value="Patricia Andrade">Patricia Andrade</option><option value="Luis Barragán">Luis Barragán</option></select></div>
+                  <div class="fl"><label for="w-ini">Inicio del periodo</label><input id="w-ini" class="fi" type="date" value="{{wiz.ini}}" onChange="{{wiz.hIni}}"></div>
+                  <div class="fl"><label for="w-fin">Fin del periodo</label><input id="w-fin" class="fi" type="date" value="{{wiz.fin}}" onChange="{{wiz.hFin}}"></div>
+                  <sc-if value="{{wiz.esTalento}}" hint-placeholder-val="{{false}}"><div class="fl"><label for="w-mes">Duración del programa (meses)</label><input id="w-mes" class="fi" type="number" min="1" max="36" value="{{wiz.meses}}" onChange="{{wiz.hMeses}}"></div></sc-if>
+                </div>
+                <div>
+                  <h3 style="margin: 0 0 4px; font-size: 15px">Hitos intermedios</h3><p style="margin: 0 0 10px; font-size: 13px; color: var(--muted)">Puntos de revisión de avance para la jefatura (campo propio del sistema).</p>
+                  <ul style="list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                    <sc-for list="{{wiz.hitos}}" as="h" hint-placeholder-count="2"><li style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px"><span style="font-size: 14px"><b>{{h.f}}</b> · {{h.x}}</span><button class="btn" onClick="{{h.quitar}}" aria-label="Quitar el hito {{h.x}}" style="height: 36px; padding: 0 12px; font-size: 13px">Quitar</button></li></sc-for>
+                  </ul>
+                  <sc-if value="{{wiz.sinHitos}}" hint-placeholder-val="{{false}}"><p style="margin: 0 0 10px; font-size: 14px; color: var(--muted)">Aún no hay hitos.</p></sc-if>
+                  <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+                    <div class="fl" style="flex: 1 1 260px"><label for="w-hx">Hito</label><input id="w-hx" class="fi" type="text" value="{{wiz.hx}}" onChange="{{wiz.hHx}}"></div>
+                    <div class="fl" style="flex: 0 1 180px"><label for="w-hf">Fecha</label><input id="w-hf" class="fi" type="date" value="{{wiz.hf}}" onChange="{{wiz.hHf}}"></div>
+                    <button class="btn" onClick="{{wiz.addHito}}">Agregar hito</button>
+                  </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between"><button class="btn" onClick="{{wiz.atras}}">Atrás</button><button class="btn btn-primary" onClick="{{wiz.crear}}">Crear PDI (Borrador)</button></div>
+              </section>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ============ DETALLE ============ -->
+        <sc-if value="{{v.detalle}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 20px">
+            <div><button class="btn" onClick="{{irLista}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg>Lista de PDI</button></div>
+            <section aria-label="Resumen del PDI" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><h2 style="margin: 0; font-size: 22px">{{det.c}}</h2><span style="{{det.tipoStyle}}">{{det.tipo}}</span><span style="{{det.estadoStyle}}">{{det.estado}}</span></div>
+              <div style="font-size: 14px; color: var(--muted)">{{det.id}} · {{det.depto}} · Destino: {{det.destino}} · Responsable: {{det.jefe}} · {{det.periodo}}</div>
+              <div><div style="height: 10px; background: var(--bg); border-radius: 5px"><div style="{{det.bar}}"></div></div><div style="font-size: 13px; color: var(--muted); margin-top: 4px">{{det.gTxt}} ({{det.pc}} %)</div></div>
+              <ol aria-label="Estados del PDI" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+                <sc-for list="{{stepper}}" as="p" hint-placeholder-count="4"><li style="{{p.style}}"><span aria-hidden="true">{{p.n}}</span>{{p.x}}</li></sc-for>
+              </ol>
+            </section>
+
+            <section aria-labelledby="ac-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+              <h2 id="ac-t" style="margin: 0; font-size: 18px">Acuerdo y estado</h2>
+              <div style="display: flex; flex-wrap: wrap; gap: 24px; font-size: 14px">
+                <div><div style="color: var(--muted); font-size: 13px">Firma de jefatura</div><span style="{{det.firmaJefeStyle}}">{{det.firmaJefe}}</span></div>
+                <div><div style="color: var(--muted); font-size: 13px">Firma del colaborador</div><span style="{{det.firmaColabStyle}}">{{det.firmaColab}}</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <sc-if value="{{det.puedeFirmar}}" hint-placeholder-val="{{false}}"><button class="btn btn-primary" onClick="{{det.firmar}}">Firmar como jefatura</button></sc-if>
+                <sc-if value="{{det.puedeIniciar}}" hint-placeholder-val="{{false}}"><button class="btn btn-primary" onClick="{{det.iniciar}}">Iniciar seguimiento</button></sc-if>
+              </div>
+              <sc-if value="{{det.esperaFirma}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 13px; color: var(--muted)">El PDI pasa a Acordado cuando firman la jefatura y el colaborador.</p></sc-if>
+            </section>
+
+            <section aria-labelledby="co-t" style="display: flex; flex-direction: column; gap: 14px">
+              <h2 id="co-t" style="margin: 0; font-size: 18px">Compromisos y acciones</h2>
+              <sc-for list="{{comp}}" as="c" hint-placeholder-count="3">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+                  <div><h3 style="margin: 0; font-size: 16px">{{c.n}}. {{c.meta}}</h3><div style="font-size: 13px; color: var(--muted); margin-top: 2px">Indicador: {{c.ind}} · Responsable: {{c.resp}}</div></div>
+                  <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+                    <sc-for list="{{c.acc}}" as="a" hint-placeholder-count="2">
+                      <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px">
+                        <div style="min-width: 220px; flex: 1"><div style="font-size: 14px; font-weight: 600">{{a.t}}: {{a.x}}</div><div style="font-size: 12px; color: var(--muted)">{{a.per}} · {{a.vinc}}</div><div style="font-size: 12px; color: var(--muted)">{{a.ayuda}}</div></div>
+                        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                          <select class="fi" value="{{a.e}}" onChange="{{a.hEstado}}" disabled="{{a.bloqueada}}" aria-label="Estado de la acción {{a.x}}" style="width: 140px"><option value="Pendiente">Pendiente</option><option value="En curso">En curso</option><option value="Hecha">Hecha</option></select>
+                          <button class="btn" onClick="{{a.vincular}}" disabled="{{a.noVincular}}" aria-label="Vincular la acción {{a.x}} al Plan de Formación" style="height: 40px; font-size: 13px">Vincular a Plan de Formación</button>
+                        </div>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </div>
+              </sc-for>
+            </section>
+
+            <section aria-labelledby="hi-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+              <h2 id="hi-t" style="margin: 0; font-size: 18px">Hitos de revisión</h2>
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+                <sc-for list="{{hitos}}" as="h" hint-placeholder-count="3">
+                  <li><label style="display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; font-size: 14px"><input type="checkbox" checked="{{h.ok}}" onChange="{{h.toggle}}" disabled="{{h.bloqueado}}" style="width: 18px; height: 18px; accent-color: var(--accent)"><span><b>{{h.f}}</b> · {{h.x}}</span></label></li>
+                </sc-for>
+              </ul>
+              <sc-if value="{{sinHitos}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 14px; color: var(--muted)">Este PDI no tiene hitos.</p></sc-if>
+            </section>
+
+            <section aria-labelledby="ci-t" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+              <h2 id="ci-t" style="margin: 0; font-size: 18px">Registro de cierre</h2>
+              <sc-if value="{{det.puedeCerrar}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-direction: column; gap: 12px">
+                  <div class="fl" style="max-width: 280px"><label for="ci-res">Resultado</label><select id="ci-res" class="fi" value="{{det.res}}" onChange="{{det.hRes}}"><option value="Brecha cerrada">Brecha cerrada</option><option value="Parcial">Parcial</option><option value="No cerrada">No cerrada</option></select></div>
+                  <div class="fl"><label for="ci-not">Observaciones</label><textarea id="ci-not" class="fi" rows="3" onChange="{{det.hNota}}">{{det.nota}}</textarea></div>
+                  <div><button class="btn btn-primary" onClick="{{det.cerrar}}">Cerrar PDI</button></div>
+                  <p style="margin: 0; font-size: 13px; color: var(--muted)">Al cerrar, el resultado queda disponible para el siguiente DNF y la próxima adecuación.</p>
+                </div>
+              </sc-if>
+              <sc-if value="{{det.cerrado}}" hint-placeholder-val="{{false}}"><div style="display: flex; flex-direction: column; gap: 6px"><div><span style="{{det.cierre.style}}">{{det.cierre.resultado}}</span> <span style="font-size: 13px; color: var(--muted)">cerrado el {{det.cierre.fecha}}</span></div><p style="margin: 0; font-size: 14px">{{det.cierre.nota}}</p></div></sc-if>
+              <sc-if value="{{det.sinCierre}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 14px; color: var(--muted)">El cierre se registra cuando el PDI está En seguimiento.</p></sc-if>
+            </section>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+
+  <footer style="box-sizing: border-box; padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border)">
+    <span>© 2026 HRMS · Versión 0.1</span>
+    <span style="display: flex; gap: 20px"><a class="flink" href="#">Ayuda</a><a class="flink" href="#">Privacidad</a><a class="flink" href="#">Términos</a></span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":2600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const d = this.getData();
+    this.state = Object.assign({
+      dark: null, vista: 'lista', sel: 'PDI-01', alcance: 'todos', pdis: d.pdisSeed, msg: '', err: '',
+      fTipo: 'todos', fEstado: 'todos', fDepto: 'todos', fResp: 'todos', gTipo: 'todos', gDepto: 'todos',
+      wStep: 1, wColab: 'Esteban Naranjo', wTipo: 'Carrera', wRows: d.precarga('Esteban Naranjo', 'Carrera'), wHitos: [{ x: 'Primera revisión de avance', f: '2026-12-04' }], wHx: '', wHf: '', wResp: 'Marcela Reyes', wIni: '2026-11-02', wFin: '2027-03-31', wMeses: '12', wErr: '',
+      cRes: 'Brecha cerrada', cNota: ''
+    }, {});
+  }
+
+  getData() {
+    const kv = (s) => s.split(';').map((x) => { const p = x.split(':'); return [p[0].trim(), p[1].trim()]; });
+    const P = (id, nombre, area, k, c, anios, exp) => ({ id, nombre, area, k: kv(k), c: kv(c), anios, exp });
+    const puestos = [
+      P('PU-002', 'Trainee', 'Todas las áreas', 'Herramientas ofimáticas:C;Cultura organizacional:D', 'Aprendizaje continuo:C;Trabajo en equipo:D', 0, 'Sin experiencia previa; recién egresado.'),
+      P('PU-008', 'Asistente profesional', 'Todas las áreas', 'Herramientas ofimáticas:B;Cultura organizacional:C;Gestión documental:D', 'Aprendizaje continuo:B;Trabajo en equipo:C;Comunicación efectiva:D', 1, 'Hasta 1 año de práctica en el área.'),
+      P('PU-011', 'Analista de datos Jr', 'Tecnología', 'SQL:D;Hojas de cálculo:C;Estadística descriptiva:D', 'Análisis de datos:D;Trabajo en equipo:C;Comunicación efectiva:D', 0, 'Práctica profesional o proyectos académicos con datos.'),
+      P('PU-014', 'Analista de datos', 'Tecnología', 'SQL:C;Hojas de cálculo:B;Estadística descriptiva:C;Visualización de datos:D', 'Análisis de datos:C;Trabajo en equipo:C;Comunicación efectiva:C;Orientación a resultados:C', 1, 'Un año produciendo reportes y análisis propios.'),
+      P('PU-018', 'Analista de datos Senior', 'Tecnología', 'SQL:B;Hojas de cálculo:B;Estadística descriptiva:C;Estadística inferencial:C;Visualización de datos:C;Python para datos:D', 'Análisis de datos:B;Pensamiento analítico:C;Comunicación efectiva:B;Orientación a resultados:B', 3, 'Tres años, con al menos un proyecto analítico completo a su cargo.'),
+      P('PU-023', 'Especialista en datos', 'Tecnología', 'SQL:A;Estadística inferencial:B;Visualización de datos:B;Python para datos:C;Modelado predictivo:D', 'Análisis de datos:A;Pensamiento analítico:B;Comunicación efectiva:B;Aprendizaje continuo:B', 5, 'Cinco años, dos de ellos guiando proyectos de otros analistas.'),
+      P('PU-027', 'Especialista principal en datos', 'Tecnología', 'SQL:A;Estadística inferencial:A;Visualización de datos:B;Python para datos:B;Modelado predictivo:B;Arquitectura de datos:C', 'Análisis de datos:A;Pensamiento analítico:A;Comunicación efectiva:A;Aprendizaje continuo:A', 8, 'Ocho años, con referencia técnica reconocida en la organización.'),
+      P('PU-031', 'Líder de equipo de TI', 'Tecnología', 'Gestión de proyectos:C;Metodologías ágiles:C', 'Liderazgo:C;Comunicación efectiva:B;Trabajo en equipo:B', 3, 'Tres años en tecnología; ha coordinado tareas de otros.'),
+      P('PU-036', 'Jefe de área de TI', 'Tecnología', 'Gestión de proyectos:B;Metodologías ágiles:C;Presupuestos:C;Gestión de riesgos:C', 'Liderazgo:B;Negociación:C;Orientación a resultados:B', 5, 'Cinco años, dos liderando un equipo.'),
+      P('PU-041', 'Gerente de TI', 'Tecnología', 'Gestión de proyectos:A;Presupuestos:B;Gestión de riesgos:B;Gobierno de TI:C', 'Liderazgo:A;Negociación:B;Pensamiento estratégico:B;Orientación a resultados:A', 8, 'Ocho años, tres a cargo de un área con presupuesto propio.'),
+      P('PU-045', 'Director de Tecnología', 'Tecnología', 'Gobierno de TI:B;Planificación estratégica:B;Presupuestos:A;Finanzas para no financieros:C', 'Liderazgo:A;Pensamiento estratégico:A;Negociación:A;Orientación a resultados:A', 12, 'Doce años, con experiencia directiva comprobable.'),
+      P('PU-052', 'Ejecutivo comercial', 'Comercial', 'Productos y servicios:C;Técnicas de venta:C', 'Orientación al cliente:C;Comunicación efectiva:C', 1, 'Un año en ventas o atención a clientes.'),
+      P('PU-056', 'Coordinador de cuentas', 'Comercial', 'Productos y servicios:B;Técnicas de venta:B;Gestión de cuentas:C', 'Orientación al cliente:B;Comunicación efectiva:B;Negociación:C', 3, 'Tres años, con cartera de clientes propia.'),
+      P('PU-061', 'Analista de procesos', 'Operaciones', 'Mapeo de procesos:C;Indicadores de gestión:C;Gestión de cuentas:C', 'Pensamiento analítico:B;Orientación a resultados:B;Gestión del cambio:C;Negociación:C', 4, 'Cuatro años, al menos uno en Operaciones.'),
+      P('PU-066', 'Jefe de operaciones comerciales', 'Operaciones', 'Mapeo de procesos:B;Indicadores de gestión:B;Gestión de cuentas:B;Gestión de proyectos:C', 'Liderazgo:B;Gestión del cambio:B;Negociación:B;Orientación a resultados:B', 6, 'Seis años entre Comercial y Operaciones, dos liderando un equipo.'),
+      P('PU-071', 'Asistente de Talento Humano', 'Talento Humano', 'Administración de personal:C;Normativa laboral:D', 'Orientación al cliente:C;Comunicación efectiva:C', 1, 'Un año en gestión administrativa.'),
+      P('PU-074', 'Analista de Talento Humano', 'Talento Humano', 'Administración de personal:B;Normativa laboral:C;Gestión por competencias:C', 'Comunicación efectiva:B;Análisis de datos:C;Orientación al cliente:B', 3, 'Tres años en procesos de talento humano.'),
+      P('PU-078', 'Especialista en desarrollo organizacional', 'Talento Humano', 'Gestión por competencias:A;Diseño de capacitación:B;Evaluación del desempeño:B', 'Pensamiento analítico:B;Comunicación efectiva:A;Gestión del cambio:B', 6, 'Seis años, con diseño de planes de formación.'),
+      P('PU-081', 'Analista financiero', 'Finanzas', 'Contabilidad general:C;Análisis financiero:C', 'Pensamiento analítico:C;Orientación a resultados:C', 2, 'Dos años en contabilidad o finanzas.'),
+      P('PU-085', 'Jefe de contabilidad', 'Finanzas', 'Contabilidad general:B;Análisis financiero:B;Normativa tributaria:C', 'Liderazgo:B;Pensamiento analítico:B;Integridad:A', 5, 'Cinco años, dos coordinando un equipo.'),
+      P('PU-089', 'Gerente financiero', 'Finanzas', 'Análisis financiero:A;Normativa tributaria:B;Presupuestos:A', 'Liderazgo:A;Pensamiento estratégico:B;Integridad:A', 9, 'Nueve años, con responsabilidad sobre presupuesto institucional.'),
+      P('PU-093', 'Director financiero', 'Finanzas', 'Análisis financiero:A;Planificación estratégica:B;Gobierno corporativo:C', 'Liderazgo:A;Pensamiento estratégico:A;Negociación:A', 12, 'Doce años, con experiencia directiva.')
+    ];
+    const pById = {}; puestos.forEach((p) => { pById[p.id] = p; });
+    const R = (id, nombre, tipo, area, estado, desc, niveles, part, dur) => ({ id, nombre, tipo, area, estado, desc, niveles, part, dur: dur || 0 });
+    const Pt = (n, puesto) => ({ n, puesto });
+    const rutas = [
+      R('R1', 'Especialista en análisis de datos', 'Especialista', 'Tecnología', 'Vigente', 'Profundiza en el puesto técnico de datos sin pasar a gestión.', ['PU-011', 'PU-014', 'PU-018', 'PU-023', 'PU-027'],
+        [Pt('Lucía Andrade', 'PU-011'), Pt('Mateo Cárdenas', 'PU-011'), Pt('Diego Paredes', 'PU-014'), Pt('Valentina Ortiz', 'PU-014'), Pt('Sebastián Mora', 'PU-014'), Pt('Camila Játiva', 'PU-018'), Pt('Andrés Villacís', 'PU-018'), Pt('Paola Cevallos', 'PU-023'), Pt('Javier Salazar', 'PU-027')]),
+      R('R2', 'Gerencial de Tecnología', 'Gerencial', 'Tecnología', 'Vigente', 'Asciende desde la coordinación de un equipo hasta la dirección del área.', ['PU-031', 'PU-036', 'PU-041', 'PU-045'],
+        [Pt('Daniela Proaño', 'PU-031'), Pt('Esteban Naranjo', 'PU-031'), Pt('Carolina Quishpe', 'PU-036'), Pt('Fernando Tipán', 'PU-036'), Pt('Gabriela Almeida', 'PU-041')]),
+      R('R3', 'Comercial a Operaciones', 'Interáreas', 'Comercial y Operaciones', 'Vigente', 'Conecta la experiencia comercial con la gestión de operaciones.', ['PU-052', 'PU-056', 'PU-061', 'PU-066'],
+        [Pt('Ricardo Chávez', 'PU-052'), Pt('Mónica Lasso', 'PU-056'), Pt('Pablo Guerrero', 'PU-061')]),
+      R('R4', 'Jóvenes profesionales 2026', 'Jóvenes profesionales', 'Todas las áreas', 'Vigente', 'Ruta de 24 meses para recién egresados.', ['PU-002', 'PU-008', 'PU-011'],
+        [Pt('Natalia Vásconez', 'PU-002'), Pt('Santiago Herrera', 'PU-002'), Pt('Elena Montalvo', 'PU-002'), Pt('Bryan Toapanta', 'PU-008'), Pt('Karla Espinoza', 'PU-008'), Pt('Hugo Benítez', 'PU-011')], 24),
+      R('R5', 'Especialista en Talento Humano', 'Especialista', 'Talento Humano', 'Borrador', 'Camino técnico en desarrollo organizacional.', ['PU-071', 'PU-074', 'PU-078'], []),
+      R('R6', 'Gerencial Financiera', 'Gerencial', 'Finanzas', 'Archivada', 'Ruta reemplazada por el nuevo esquema financiero.', ['PU-081', 'PU-085', 'PU-089', 'PU-093'],
+        [Pt('Ivonne Tapia', 'PU-085'), Pt('Kevin Mera', 'PU-081')])
+    ];
+    const directorio = [['Diego Paredes', 'Tecnología'], ['Lucía Andrade', 'Tecnología'], ['Mateo Cárdenas', 'Tecnología'], ['Valentina Ortiz', 'Tecnología'], ['Sebastián Mora', 'Tecnología'], ['Camila Játiva', 'Tecnología'], ['Andrés Villacís', 'Tecnología'], ['Paola Cevallos', 'Tecnología'], ['Javier Salazar', 'Tecnología'], ['Daniela Proaño', 'Tecnología'], ['Esteban Naranjo', 'Tecnología'], ['Carolina Quishpe', 'Tecnología'], ['Fernando Tipán', 'Tecnología'], ['Gabriela Almeida', 'Tecnología'], ['Ricardo Chávez', 'Comercial'], ['Mónica Lasso', 'Comercial'], ['Pablo Guerrero', 'Operaciones'], ['Natalia Vásconez', 'Finanzas'], ['Santiago Herrera', 'Operaciones'], ['Elena Montalvo', 'Talento Humano'], ['Bryan Toapanta', 'Comercial'], ['Karla Espinoza', 'Finanzas'], ['Hugo Benítez', 'Tecnología'], ['Ivonne Tapia', 'Finanzas'], ['Kevin Mera', 'Finanzas'], ['Marcos Zambrano', 'Comercial'], ['Rosa Pazmiño', 'Talento Humano'], ['Iván Cuenca', 'Operaciones'], ['Teresa Loor', 'Operaciones'], ['Julio Ayala', 'Comercial']];
+    const AVISO = 'Esta ruta es una guía de desarrollo; no implica la promesa de un puesto.';
+    const GR = { D: 1, C: 2, B: 3, A: 4 };
+    const MAPA_PU = { 'Marcos Zambrano': 'PU-052', 'Rosa Pazmiño': 'PU-071', 'Iván Cuenca': 'PU-061', 'Teresa Loor': 'PU-061', 'Julio Ayala': 'PU-056' };
+    const EV_D = { 'SQL': 3, 'Hojas de cálculo': 3, 'Estadística descriptiva': 3, 'Estadística inferencial': 1, 'Visualización de datos': 2, 'Python para datos': 0, 'Análisis de datos': 2, 'Pensamiento analítico': 2, 'Comunicación efectiva': 2, 'Orientación a resultados': 2 };
+    const hs = (s) => { let h = 7; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973; return h; };
+    const infoDe = (nombre) => {
+      for (let i = 0; i < rutas.length; i++) { const p = rutas[i].part.find((x) => x.n === nombre); if (p) return { puesto: p.puesto, ruta: rutas[i] }; }
+      return { puesto: MAPA_PU[nombre] || 'PU-008', ruta: null };
+    };
+    const deptoDe = (n) => (directorio.find((x) => x[0] === n) || ['', ''])[1];
+    const evalG = (nombre, item, act) => {
+      if (nombre === 'Diego Paredes' && EV_D[item] !== undefined) return EV_D[item];
+      const h = hs(nombre + '|' + item) % 100;
+      if (act > 0) { const dl = h < 18 ? -1 : (h < 80 ? 0 : 1); return Math.max(1, Math.min(4, act + dl)); }
+      return h < 45 ? 0 : (h < 80 ? 1 : 2);
+    };
+    const calc = (nombre, tpid) => {
+      const inf = infoDe(nombre); const cp = pById[inf.puesto]; const tp = pById[tpid];
+      const dimItems = (key) => {
+        const names = []; tp[key].forEach((x) => names.push(x[0])); cp[key].forEach((x) => { if (names.indexOf(x[0]) < 0) names.push(x[0]); });
+        return names.map((n) => {
+          const a = cp[key].find((x) => x[0] === n); const f = tp[key].find((x) => x[0] === n);
+          const act = a ? GR[a[1]] : 0; const fut = f ? GR[f[1]] : 0; const per = evalG(nombre, n, act);
+          return { n, act, per, fut, brecha: Math.max(0, fut - per) };
+        });
+      };
+      const pct = (rows, f) => { const sf = rows.reduce((s, r) => s + r[f], 0); if (!sf) return 100; return Math.round(rows.reduce((s, r) => s + Math.min(r.per, r[f]), 0) / sf * 100); };
+      const k = dimItems('k'); const c = dimItems('c');
+      const anios = cp.anios + (nombre === 'Diego Paredes' ? 1 : hs(nombre) % 3);
+      const pe = (req) => (req ? Math.round(Math.min(1, anios / req) * 100) : 100);
+      return { nombre, cp, tp, k, c, anios, exp: { act: cp.anios, per: anios, fut: tp.anios, brecha: Math.max(0, tp.anios - anios) }, pf: { exp: pe(tp.anios), k: pct(k, 'fut'), c: pct(c, 'fut') }, pa: { exp: pe(cp.anios), k: pct(k, 'act'), c: pct(c, 'act') } };
+    };
+    const prepDe = (pf, w) => {
+      const ww = w || { exp: 1, k: 1, c: 1 }; const sw = ww.exp + ww.k + ww.c;
+      const sc = Math.round((pf.exp * ww.exp + pf.k * ww.k + pf.c * ww.c) / sw);
+      return { score: sc, cat: sc >= 80 ? 'Listo' : (sc >= 60 ? 'Listo con desarrollo' : 'No listo') };
+    };
+    const siguiente = (nombre) => { const inf = infoDe(nombre); if (!inf.ruta) return ''; const i = inf.ruta.niveles.indexOf(inf.puesto); return inf.ruta.niveles[i + 1] || ''; };
+    const gL = { 0: 'Sin dato', 1: 'D', 2: 'C', 3: 'B', 4: 'A' };
+    const cursosPor = {
+      'Estadística inferencial': 'Estadística aplicada a la decisión', 'Python para datos': 'Python para análisis de datos', 'Análisis de datos': 'Análisis de datos para la decisión',
+      'Comunicación efectiva': 'Presentaciones que convencen: data storytelling', 'Orientación a resultados': 'Gestión por objetivos y resultados', 'Visualización de datos': 'Visualización de datos con tableros',
+      'SQL': 'SQL intermedio y avanzado', 'Modelado predictivo': 'Introducción al modelado predictivo', 'Liderazgo': 'Liderazgo de equipos', 'Negociación': 'Negociación efectiva'
+    };
+    const cursoDe = (item) => cursosPor[item] || ('Fundamentos de ' + item.toLowerCase());
+    const tiemposSeed = { 'Diego Paredes|PU-018|Estadística inferencial': '6', 'Diego Paredes|PU-018|Python para datos': '4', 'Diego Paredes|PU-018|Análisis de datos': '5', 'Diego Paredes|PU-018|Comunicación efectiva': '3', 'Diego Paredes|PU-018|Orientación a resultados': '3', 'Diego Paredes|PU-018|__exp': '12' };
+    const programaSeed = { 'Paola Cevallos': { inicio: 'mar 2026', meses: 12 }, 'Camila Játiva': { inicio: 'abr 2026', meses: 12 }, 'Gabriela Almeida': { inicio: 'feb 2026', meses: 18 } };
+    const HOY = '2026-10-22';
+    const JEFE = { 'Tecnología': 'Marcela Reyes', 'Comercial': 'Roberto Salgado', 'Operaciones': 'Roberto Salgado', 'Finanzas': 'Patricia Andrade', 'Talento Humano': 'Luis Barragán' };
+    const dn = (s) => Date.parse(s + 'T00:00:00Z') / 86400000;
+    const A = (t, x, i, f, e, v) => ({ t, x, i, f, e, v: v || '' });
+    const Cm = (meta, ind, resp, acc) => ({ meta, ind, resp, acc });
+    const H = (x, f, ok) => ({ x, f, ok: !!ok });
+    const PD = (id, c, tipo, estado, ini, fin, destino, comp, hitos, firmas, cierre) => ({ id, c, tipo, estado, depto: deptoDe(c), jefe: JEFE[deptoDe(c)], ini, fin, destino, comp, hitos, firmas, cierre: cierre || null });
+    const pdisSeed = [
+      PD('PDI-01', 'Diego Paredes', 'Carrera', 'En seguimiento', '2026-09-01', '2027-03-31', 'Analista de datos Senior', [
+        Cm('Estadística inferencial (conocimiento)', 'Aprobar la evaluación final con 80 % o más', 'Colaborador', [A('Plan de Formación', 'Estadística aplicada a la decisión (virtual, 30 h)', '2026-09-07', '2026-11-20', 'En curso', 'Plan anual 2026'), A('Autodesarrollo', 'Lectura guiada y ejercicios semanales', '2026-09-07', '2026-12-15', 'En curso')]),
+        Cm('Python para datos (conocimiento)', 'Entregar un notebook de análisis revisado por el equipo', 'Formador/a', [A('Codesarrollo', 'Grupo de práctica con el equipo de datos', '2026-11-02', '2027-01-29', 'Pendiente')]),
+        Cm('Experiencia: años de práctica', '', 'Jefatura', [A('Nueva responsabilidad', 'Liderar un proyecto analítico de punta a punta', '2026-10-01', '2027-02-26', 'En curso')]),
+        Cm('Comunicación efectiva (competencia)', 'Presentación trimestral evaluada en B', 'Mentor/a', [A('Coaching', 'Sesiones de coaching sobre data storytelling', '2026-11-02', '2027-01-15', 'Pendiente')])
+      ], [H('Revisión de avance en estadística', '2026-10-30'), H('Prueba de Python', '2026-12-15'), H('Cierre del proyecto analítico', '2027-02-26')], { jefe: true, colab: true }),
+      PD('PDI-02', 'Diego Paredes', 'Mejora', 'Borrador', '2026-11-09', '2027-01-29', 'Puesto actual: Analista de datos', [
+        Cm('Orientación a resultados (puesto actual)', 'Cumplir 3 de 3 metas trimestrales', 'Jefatura', [A('Mentoring', 'Mentoría mensual con la jefa de área', '2026-11-09', '2027-01-29', 'Pendiente')])
+      ], [H('Revisión de metas del trimestre', '2027-01-15')], { jefe: true, colab: false }),
+      PD('PDI-03', 'Camila Játiva', 'Talento', 'En seguimiento', '2026-04-01', '2027-03-31', 'Programa de Talentos (12 meses)', [
+        Cm('Liderazgo (competencia)', 'Dirigir un equipo de proyecto', 'Mentor/a', [A('Mentoring', 'Mentoría con la gerencia de TI', '2026-04-13', '2026-12-18', 'En curso')]),
+        Cm('Pensamiento estratégico (competencia)', '', 'Formador/a', [A('Plan de Formación', 'Taller de pensamiento estratégico', '2026-09-14', '2026-12-11', 'En curso', 'Plan anual 2026')])
+      ], [H('Revisión semestral del programa', '2026-09-30', true), H('Presentación de proyecto a gerencia', '2027-02-12')], { jefe: true, colab: true }),
+      PD('PDI-04', 'Valentina Ortiz', 'Carrera', 'Acordado', '2026-11-02', '2027-03-31', 'Analista de datos Senior', [
+        Cm('Estadística inferencial (conocimiento)', '', 'Colaborador', [A('Plan de Formación', 'Estadística aplicada a la decisión (virtual, 30 h)', '2026-11-02', '2027-01-22', 'Pendiente')]),
+        Cm('Análisis de datos (competencia)', 'Informe analítico evaluado en B', 'Jefatura', [A('Coaching', 'Coaching en análisis de datos', '2026-11-09', '2027-02-26', 'Pendiente')])
+      ], [H('Primera revisión', '2026-12-04')], { jefe: true, colab: true }),
+      PD('PDI-05', 'Mónica Lasso', 'Carrera', 'En seguimiento', '2026-08-24', '2027-02-26', 'Analista de procesos', [
+        Cm('Mapeo de procesos (conocimiento)', 'Mapear un proceso completo', 'Formador/a', [A('Plan de Formación', 'Mapeo de procesos de negocio', '2026-09-01', '2026-11-27', 'En curso', 'Plan anual 2026')]),
+        Cm('Experiencia: años de práctica', '', 'Jefatura', [A('Nueva responsabilidad', 'Apoyar el levantamiento de procesos de Operaciones', '2026-09-14', '2027-02-26', 'En curso')])
+      ], [H('Revisión de avance', '2026-11-13')], { jefe: true, colab: true }),
+      PD('PDI-06', 'Ricardo Chávez', 'Mejora', 'Borrador', '2026-11-16', '2027-02-26', 'Puesto actual: Ejecutivo comercial', [
+        Cm('Comunicación efectiva (competencia)', '', 'Mentor/a', [A('Coaching', 'Coaching en negociación con clientes', '2026-11-16', '2027-02-26', 'Pendiente')])
+      ], [], { jefe: false, colab: false }),
+      PD('PDI-07', 'Andrés Villacís', 'Mejora', 'Cerrado', '2026-03-02', '2026-09-11', 'Puesto actual: Analista de datos Senior', [
+        Cm('Comunicación efectiva (competencia)', '', 'Mentor/a', [A('Coaching', 'Coaching en presentaciones', '2026-03-09', '2026-08-28', 'Hecha')])
+      ], [H('Revisión final', '2026-09-04', true)], { jefe: true, colab: true }, { resultado: 'Brecha cerrada', fecha: '2026-09-11', nota: 'Evaluación de seguimiento en B; la brecha quedó cerrada.' }),
+      PD('PDI-08', 'Paola Cevallos', 'Talento', 'Cerrado', '2026-02-02', '2026-09-30', 'Programa de Talentos', [
+        Cm('Pensamiento estratégico (competencia)', '', 'Mentor/a', [A('Mentoring', 'Mentoría con dirección', '2026-02-09', '2026-09-18', 'Hecha')])
+      ], [H('Evaluación de cierre', '2026-09-25', true)], { jefe: true, colab: true }, { resultado: 'Parcial', fecha: '2026-09-30', nota: 'Avance en 2 de 3 metas; se recomienda un nuevo PDI de Carrera.' }),
+      PD('PDI-09', 'Natalia Vásconez', 'Carrera', 'En seguimiento', '2026-09-07', '2027-01-29', 'Asistente profesional', [
+        Cm('Cultura organizacional (conocimiento)', '', 'Formador/a', [A('Plan de Formación', 'Inducción a la cultura organizacional', '2026-09-14', '2026-11-13', 'En curso', 'Plan anual 2026')])
+      ], [H('Revisión de avance', '2026-11-20')], { jefe: true, colab: true })
+    ];
+    const precarga = (colab, tipo) => {
+      const inf = infoDe(colab); let t = tipo === 'Mejora' ? inf.puesto : siguiente(colab);
+      if (!t) return [];
+      const r = calc(colab, t); const out = [];
+      const base = tipo === 'Mejora' ? 'act' : 'fut';
+      const mk = (rows, suf) => rows.forEach((x) => { if (x[base] > 0 && x.per < x[base]) out.push({ meta: x.n + ' (' + suf + ')', tipoAcc: suf === 'conocimiento' ? 'Plan de Formación' : (tipo === 'Talento' ? 'Mentoring' : 'Coaching'), texto: suf === 'conocimiento' ? cursoDe(x.n) : 'Acompañamiento para desarrollar ' + x.n.toLowerCase(), ind: '', ini: '2026-11-02', fin: '2027-01-29', resp: suf === 'conocimiento' ? 'Colaborador' : 'Mentor/a' }); });
+      if (tipo !== 'Mejora' && r.exp.brecha > 0) out.push({ meta: 'Experiencia: años de práctica', tipoAcc: 'Nueva responsabilidad', texto: 'Asumir una responsabilidad del puesto objetivo', ind: '', ini: '2026-11-02', fin: '2027-03-31', resp: 'Jefatura' });
+      mk(r.k, 'conocimiento'); mk(r.c, 'competencia');
+      return out;
+    };
+    const conBrecha = () => {
+      const out = [];
+      rutas.filter((r) => r.estado === 'Vigente').forEach((r) => r.part.forEach((p) => { const t = siguiente(p.n); if (!t) return; if (prepDe(calc(p.n, t).pf).cat !== 'Listo') out.push(p.n); }));
+      return out;
+    };
+
+    const light = { bg: '#F5F6F8', surface: '#FFFFFF', border: '#E2E5EA', text: '#12171D', muted: '#5A6573', accent: '#0F6F69', onaccent: '#FFFFFF', soft: '#E3F2F0', danger: '#B42318', dangersoft: '#FDECEA', warn: '#8A4B0B', warnsoft: '#FDEFD9', info: '#1F4E9C', infosoft: '#E4EDFB', neutral: '#3B4654', neutralsoft: '#ECEEF1' };
+    const dark = { bg: '#0E1318', surface: '#151B22', border: '#27303A', text: '#E7EBEF', muted: '#9CA7B3', accent: '#4FD1C5', onaccent: '#06201E', soft: '#12302D', danger: '#FF8A80', dangersoft: '#3A1B1A', warn: '#F2C27A', warnsoft: '#3A2A12', info: '#9DBEF5', infosoft: '#172A4A', neutral: '#B8C2CD', neutralsoft: '#232B34' };
+    return { puestos, pById, rutas, directorio, light, dark, pdisSeed, precarga, conBrecha, deptoDe, JEFE, HOY, dn, siguiente, infoDe };
+  }
+
+  renderVals() {
+    const d = this.getData();
+    const s = this.state;
+    const dark = s.dark === null ? !!this.props.dark : s.dark;
+    const th = dark ? d.dark : d.light;
+    const set = (o) => this.setState(o);
+    const pill = (c) => 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:' + c[0] + ';color:' + c[1] + ';';
+    const tipoC = dark ? { 'Mejora': ['#3A2A12', '#F2C27A'], 'Carrera': ['#172A4A', '#9DBEF5'], 'Talento': ['#2C1D44', '#CDA9F2'] } : { 'Mejora': ['#FDEFD9', '#8A4B0B'], 'Carrera': ['#E4EDFB', '#1F4E9C'], 'Talento': ['#F0E7FA', '#5B2E91'] };
+    const estC = dark ? { 'Borrador': ['#232B34', '#B8C2CD'], 'Acordado': ['#172A4A', '#9DBEF5'], 'En seguimiento': ['#12302D', '#7FE0D6'], 'Cerrado': ['#232B34', '#B8C2CD'] } : { 'Borrador': ['#ECEEF1', '#3B4654'], 'Acordado': ['#E4EDFB', '#1F4E9C'], 'En seguimiento': ['#E3F2F0', '#0B5A55'], 'Cerrado': ['#ECEEF1', '#3B4654'] };
+    const resC = dark ? { 'Brecha cerrada': ['#12302D', '#7FE0D6'], 'Parcial': ['#3A2A12', '#F2C27A'], 'No cerrada': ['#3A1B1A', '#FF8A80'] } : { 'Brecha cerrada': ['#E3F2F0', '#0B5A55'], 'Parcial': ['#FDEFD9', '#8A4B0B'], 'No cerrada': ['#FDECEA', '#B42318'] };
+    const vis = (p) => s.alcance === 'todos' || p.jefe === 'Marcela Reyes';
+    const fecha = (iso) => { const m = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']; const x = iso.split('-'); return parseInt(x[2], 10) + ' ' + m[parseInt(x[1], 10) - 1] + ' ' + x[0]; };
+    const prog = (p) => { const a = [].concat.apply([], p.comp.map((c) => c.acc)); const h = a.filter((x) => x.e === 'Hecha').length; return { h, t: a.length, pc: a.length ? Math.round(h / a.length * 100) : 0 }; };
+    const updP = (id, fn) => set({ pdis: s.pdis.map((p) => (p.id === id ? fn(p) : p)) });
+    const goDet = (id) => set({ vista: 'detalle', sel: id, msg: '', err: '' });
+    const pdisV = s.pdis.filter(vis);
+
+    // ---------- lista ----------
+    const brechaAll = d.conBrecha().filter((n) => s.alcance === 'todos' || d.JEFE[d.deptoDe(n)] === 'Marcela Reyes');
+    const sinPdi = brechaAll.filter((n) => !s.pdis.some((p) => p.c === n && p.estado !== 'Cerrado'));
+    const cerrados = pdisV.filter((p) => p.estado === 'Cerrado');
+    const kpis = [
+      { label: 'PDI abiertos', valor: String(pdisV.filter((p) => p.estado !== 'Cerrado').length), nota: pdisV.filter((p) => p.estado === 'Borrador').length + ' en borrador' },
+      { label: 'Con brecha y sin PDI', valor: (brechaAll.length ? Math.round(sinPdi.length / brechaAll.length * 100) : 0) + ' %', nota: sinPdi.length + ' de ' + brechaAll.length + ' personas con brecha' },
+      { label: 'Pendientes de firma', valor: String(pdisV.filter((p) => p.estado === 'Borrador' && !(p.firmas.jefe && p.firmas.colab)).length), nota: 'Borradores sin acuerdo completo' },
+      { label: 'Cerrados con brecha cerrada', valor: cerrados.filter((p) => p.cierre.resultado === 'Brecha cerrada').length + ' de ' + cerrados.length, nota: 'Resultado disponible para el próximo DNF' }
+    ];
+    const filas = pdisV.filter((p) => (s.fTipo === 'todos' || p.tipo === s.fTipo) && (s.fEstado === 'todos' || p.estado === s.fEstado) && (s.fDepto === 'todos' || p.depto === s.fDepto) && (s.fResp === 'todos' || p.jefe === s.fResp)).map((p) => {
+      const g = prog(p);
+      return { id: p.id, c: p.c, depto: p.depto, tipo: p.tipo, tipoStyle: pill(tipoC[p.tipo]), estado: p.estado, estadoStyle: pill(estC[p.estado]), jefe: p.jefe, periodo: fecha(p.ini) + ' – ' + fecha(p.fin), pc: g.pc, bar: 'height:100%;border-radius:3px;background:var(--accent);width:' + g.pc + '%;', gTxt: g.h + ' de ' + g.t + ' acciones', abrir: () => goDet(p.id) };
+    });
+    const f = {
+      tipo: s.fTipo, estado: s.fEstado, depto: s.fDepto, resp: s.fResp,
+      setTipo: (e) => set({ fTipo: e.target.value }), setEstado: (e) => set({ fEstado: e.target.value }), setDepto: (e) => set({ fDepto: e.target.value }), setResp: (e) => set({ fResp: e.target.value }),
+      hay: s.fTipo !== 'todos' || s.fEstado !== 'todos' || s.fDepto !== 'todos' || s.fResp !== 'todos', limpiar: () => set({ fTipo: 'todos', fEstado: 'todos', fDepto: 'todos', fResp: 'todos' })
+    };
+    const abrirWizard = (colab, tipo) => set({ vista: 'wizard', wStep: 1, wColab: colab, wTipo: tipo, wRows: d.precarga(colab, tipo), wHitos: [], wErr: '', msg: '', err: '', wResp: d.JEFE[d.deptoDe(colab)] });
+    const sinPdiList = sinPdi.slice(0, 6).map((n) => ({ n, depto: d.deptoDe(n), crear: () => abrirWizard(n, 'Carrera') }));
+
+    // ---------- gantt ----------
+    const S = d.dn('2026-09-01'); const T = d.dn('2027-03-31') - S;
+    const pc = (iso) => Math.max(0, Math.min(100, (d.dn(iso) - S) / T * 100));
+    const meses = ['2026-09-01', '2026-10-01', '2026-11-01', '2026-12-01', '2027-01-01', '2027-02-01', '2027-03-01'].map((m, i) => ({ label: ['Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar'][i], left: pc(m), style: 'position:absolute;top:0;bottom:0;left:' + pc(m) + '%;border-left:1px solid var(--border);' }));
+    const hoyStyle = 'position:absolute;top:0;bottom:0;left:' + pc(d.HOY) + '%;width:2px;background:var(--danger);';
+    const abiertos = pdisV.filter((p) => (p.estado === 'Acordado' || p.estado === 'En seguimiento') && (s.gTipo === 'todos' || p.tipo === s.gTipo) && (s.gDepto === 'todos' || p.depto === s.gDepto));
+    const estBar = { 'Hecha': 'background:var(--accent);', 'En curso': 'background:var(--s1);', 'Pendiente': 'background:transparent;border:2px dashed var(--muted);box-sizing:border-box;' };
+    const gRows = [];
+    abiertos.forEach((p) => {
+      gRows.push({ cab: true, label: p.c + ' · ' + p.tipo, sub: p.estado + ' · ' + p.jefe, meses, hoy: hoyStyle, bar: 'display:none;', hasBar: false, marcas: p.hitos.map((h) => ({ style: 'position:absolute;top:50%;left:calc(' + pc(h.f) + '% - 6px);width:12px;height:12px;transform:translateY(-50%) rotate(45deg);background:' + (h.ok ? 'var(--accent)' : 'var(--text)') + ';', t: h.x + ', ' + fecha(h.f) })), abrir: () => goDet(p.id), rowStyle: 'background:var(--bg);', labelStyle: 'font-weight:700;' });
+      p.comp.forEach((c) => c.acc.forEach((a) => gRows.push({ cab: false, label: a.t + ': ' + a.x, sub: fecha(a.i) + ' – ' + fecha(a.f) + ' · ' + a.e + (a.v ? ' · en el Plan' : ''), meses, hoy: hoyStyle, bar: 'position:absolute;top:50%;height:16px;transform:translateY(-50%);border-radius:4px;left:' + pc(a.i) + '%;width:' + Math.max(1.2, pc(a.f) - pc(a.i)) + '%;' + estBar[a.e], hasBar: true, marcas: [], abrir: () => goDet(p.id), rowStyle: '', labelStyle: 'font-weight:500;' })));
+    });
+    const gantt = gRows.map((r) => Object.assign({}, r, { esCab: r.cab, noCab: !r.cab }));
+
+    // ---------- detalle ----------
+    const pd = s.pdis.find((p) => p.id === s.sel) || s.pdis[0];
+    const g = prog(pd);
+    const pasos = ['Borrador', 'Acordado', 'En seguimiento', 'Cerrado'];
+    const iEst = pasos.indexOf(pd.estado);
+    const stepper = pasos.map((x, i) => ({ n: i + 1, x, style: 'display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:' + (i === iEst ? 700 : 500) + ';border:' + (i === iEst ? '2px solid var(--accent)' : '1px solid var(--border)') + ';background:' + (i < iEst ? 'var(--soft)' : 'var(--surface)') + ';color:' + (i <= iEst ? 'var(--text)' : 'var(--muted)') + ';', actual: i === iEst }));
+    const aviso = (m) => set({ msg: m, err: '' });
+    const comp = pd.comp.map((c, ci) => ({
+      meta: c.meta, ind: c.ind || 'Sin indicador', resp: c.resp, n: ci + 1,
+      acc: c.acc.map((a, ai) => ({
+        t: a.t, x: a.x, per: fecha(a.i) + ' – ' + fecha(a.f), e: a.e, vinc: a.v ? 'En el Plan de Formación (' + a.v + ')' : 'No vinculada', vinculada: !!a.v,
+        noVincular: !!a.v || a.t === 'Nueva responsabilidad' || pd.estado === 'Cerrado', ayuda: a.t === 'Nueva responsabilidad' ? 'Una experiencia en el puesto no se cierra con un curso.' : '',
+        hEstado: (e) => updP(pd.id, (p) => Object.assign({}, p, { comp: p.comp.map((cc, k) => (k !== ci ? cc : Object.assign({}, cc, { acc: cc.acc.map((aa, j) => (j !== ai ? aa : Object.assign({}, aa, { e: e.target.value }))) }))) })),
+        vincular: () => { updP(pd.id, (p) => Object.assign({}, p, { comp: p.comp.map((cc, k) => (k !== ci ? cc : Object.assign({}, cc, { acc: cc.acc.map((aa, j) => (j !== ai ? aa : Object.assign({}, aa, { v: 'Plan anual 2026' }))) }))) })); aviso('La acción «' + a.x + '» se vinculó al Plan de Formación (Plan anual 2026).'); },
+        bloqueada: pd.estado === 'Cerrado'
+      }))
+    }));
+    const hitos = pd.hitos.map((h, hi) => ({ x: h.x, f: fecha(h.f), ok: h.ok, vencido: !h.ok && d.dn(h.f) < d.dn(d.HOY), toggle: () => updP(pd.id, (p) => Object.assign({}, p, { hitos: p.hitos.map((q, j) => (j === hi ? Object.assign({}, q, { ok: !q.ok }) : q)) })), bloqueado: pd.estado === 'Cerrado' }));
+    const ambas = pd.firmas.jefe && pd.firmas.colab;
+    const det = {
+      id: pd.id, c: pd.c, depto: pd.depto, tipo: pd.tipo, tipoStyle: pill(tipoC[pd.tipo]), estado: pd.estado, estadoStyle: pill(estC[pd.estado]), destino: pd.destino, jefe: pd.jefe, periodo: fecha(pd.ini) + ' – ' + fecha(pd.fin),
+      pc: g.pc, bar: 'height:100%;border-radius:4px;background:var(--accent);width:' + g.pc + '%;', gTxt: g.h + ' de ' + g.t + ' acciones hechas',
+      firmaJefe: pd.firmas.jefe ? 'Firmado' : 'Pendiente', firmaJefeStyle: pill(pd.firmas.jefe ? estC['En seguimiento'] : estC['Borrador']),
+      firmaColab: pd.firmas.colab ? 'Firmado' : 'Pendiente', firmaColabStyle: pill(pd.firmas.colab ? estC['En seguimiento'] : estC['Borrador']),
+      puedeFirmar: pd.estado === 'Borrador' && !pd.firmas.jefe,
+      firmar: () => { const fm = Object.assign({}, pd.firmas, { jefe: true }); updP(pd.id, (p) => Object.assign({}, p, { firmas: fm, estado: fm.colab ? 'Acordado' : p.estado })); aviso(fm.colab ? 'Firma de jefatura registrada: el PDI quedó Acordado.' : 'Firma de jefatura registrada. Falta la firma del colaborador.'); },
+      puedeIniciar: pd.estado === 'Acordado', iniciar: () => { updP(pd.id, (p) => Object.assign({}, p, { estado: 'En seguimiento' })); aviso('El PDI pasó a En seguimiento.'); },
+      esperaFirma: pd.estado === 'Borrador' && !ambas,
+      puedeCerrar: pd.estado === 'En seguimiento', cerrado: pd.estado === 'Cerrado', sinCierre: pd.estado !== 'Cerrado' && pd.estado !== 'En seguimiento',
+      cierre: pd.cierre ? { resultado: pd.cierre.resultado, style: pill(resC[pd.cierre.resultado]), fecha: fecha(pd.cierre.fecha), nota: pd.cierre.nota } : { resultado: '', style: '', fecha: '', nota: '' },
+      res: s.cRes, hRes: (e) => set({ cRes: e.target.value }), nota: s.cNota, hNota: (e) => set({ cNota: e.target.value }),
+      cerrar: () => { updP(pd.id, (p) => Object.assign({}, p, { estado: 'Cerrado', cierre: { resultado: s.cRes, fecha: d.HOY, nota: s.cNota.trim() || 'Sin observaciones.' } })); set({ msg: 'PDI cerrado con resultado «' + s.cRes + '». Queda disponible para el siguiente DNF y la próxima adecuación.', err: '', cNota: '' }); }
+    };
+
+    // ---------- wizard ----------
+    const rowSet = (i, patch) => set({ wRows: s.wRows.map((r, k) => (k === i ? Object.assign({}, r, patch) : r)) });
+    const wRows = s.wRows.map((r, i) => ({
+      n: i + 1, meta: r.meta, tipoAcc: r.tipoAcc, texto: r.texto, ind: r.ind, ini: r.ini, fin: r.fin, resp: r.resp,
+      hMeta: (e) => rowSet(i, { meta: e.target.value }), hTipo: (e) => rowSet(i, { tipoAcc: e.target.value }), hTexto: (e) => rowSet(i, { texto: e.target.value }), hInd: (e) => rowSet(i, { ind: e.target.value }),
+      hIni: (e) => rowSet(i, { ini: e.target.value }), hFin: (e) => rowSet(i, { fin: e.target.value }), hResp: (e) => rowSet(i, { resp: e.target.value }),
+      quitar: () => set({ wRows: s.wRows.filter((x, k) => k !== i) })
+    }));
+    const pre = d.precarga(s.wColab, s.wTipo);
+    const hayObjetivo = s.wTipo === 'Mejora' || !!d.siguiente(s.wColab);
+    const infoW = d.infoDe(s.wColab);
+    const destinoW = s.wTipo === 'Mejora' ? 'Puesto actual: ' + d.pById[infoW.puesto].nombre : (s.wTipo === 'Talento' ? 'Programa de Talentos (' + s.wMeses + ' meses)' : (d.siguiente(s.wColab) ? d.pById[d.siguiente(s.wColab)].nombre : ''));
+    const wiz = {
+      step: s.wStep, s1: s.wStep === 1, s2: s.wStep === 2, s3: s.wStep === 3,
+      pasos: [1, 2, 3].map((n) => ({ n, x: ['Colaborador y tipo', 'Compromisos y acciones', 'Hitos, responsable y periodo'][n - 1], style: 'display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:' + (n === s.wStep ? 700 : 500) + ';border:' + (n === s.wStep ? '2px solid var(--accent)' : '1px solid var(--border)') + ';background:' + (n < s.wStep ? 'var(--soft)' : 'var(--surface)') + ';color:' + (n <= s.wStep ? 'var(--text)' : 'var(--muted)') + ';' })),
+      colab: s.wColab, hColab: (e) => set({ wColab: e.target.value, wRows: d.precarga(e.target.value, s.wTipo), wErr: '', wResp: d.JEFE[d.deptoDe(e.target.value)] }),
+      tipo: s.wTipo, hTipo: (e) => set({ wTipo: e.target.value, wRows: d.precarga(s.wColab, e.target.value), wErr: '' }),
+      origen: s.wTipo === 'Mejora' ? 'Las brechas se precargan desde el DNF (Feature 2): puesto actual.' : 'Las brechas se precargan desde la adecuación (Feature 8) hacia ' + (destinoW || 'el puesto objetivo') + '.',
+      pre: pre.map((r) => ({ meta: r.meta })), nPre: pre.length, sinPre: pre.length === 0, hayObjetivo,
+      destino: destinoW, hayErr: s.wErr !== '', err: s.wErr, rows: wRows, sinRows: wRows.length === 0,
+      agregar: () => set({ wRows: s.wRows.concat([{ meta: '', tipoAcc: 'Autodesarrollo', texto: '', ind: '', ini: '2026-11-02', fin: '2027-01-29', resp: 'Colaborador' }]) }),
+      recargar: () => set({ wRows: d.precarga(s.wColab, s.wTipo) }),
+      sig1: () => {
+        if (!hayObjetivo) { set({ wErr: s.wColab + ' no tiene siguiente nivel en su ruta: elige otro tipo de PDI.' }); return; }
+        if (s.pdis.some((p) => p.c === s.wColab && p.tipo === s.wTipo && p.estado !== 'Cerrado')) { set({ wErr: s.wColab + ' ya tiene un PDI abierto de tipo ' + s.wTipo + '.' }); return; }
+        set({ wStep: 2, wErr: '' });
+      },
+      sig2: () => {
+        if (!s.wRows.length) { set({ wErr: 'Agrega al menos un compromiso.' }); return; }
+        if (s.wRows.some((r) => r.meta.trim() === '' || r.texto.trim() === '')) { set({ wErr: 'Cada compromiso necesita la meta y la acción.' }); return; }
+        if (s.wRows.some((r) => !r.ini || !r.fin || r.ini > r.fin)) { set({ wErr: 'Revisa las fechas: el inicio debe ser anterior al fin.' }); return; }
+        set({ wStep: 3, wErr: '' });
+      },
+      atras: () => set({ wStep: Math.max(1, s.wStep - 1), wErr: '' }),
+      resp: s.wResp, hResp: (e) => set({ wResp: e.target.value }), ini: s.wIni, fin: s.wFin, hIni: (e) => set({ wIni: e.target.value }), hFin: (e) => set({ wFin: e.target.value }),
+      esTalento: s.wTipo === 'Talento', meses: s.wMeses, hMeses: (e) => set({ wMeses: e.target.value }),
+      hitos: s.wHitos.map((h, i) => ({ x: h.x, f: fecha(h.f), quitar: () => set({ wHitos: s.wHitos.filter((q, k) => k !== i) }) })), sinHitos: s.wHitos.length === 0,
+      hx: s.wHx, hf: s.wHf, hHx: (e) => set({ wHx: e.target.value }), hHf: (e) => set({ wHf: e.target.value }),
+      addHito: () => { if (s.wHx.trim() === '' || !s.wHf) { set({ wErr: 'Escribe el hito y su fecha.' }); return; } set({ wHitos: s.wHitos.concat([{ x: s.wHx.trim(), f: s.wHf }]), wHx: '', wHf: '', wErr: '' }); },
+      crear: () => {
+        if (!s.wIni || !s.wFin || s.wIni >= s.wFin) { set({ wErr: 'El periodo no es válido: el inicio debe ser anterior al fin.' }); return; }
+        const id = 'PDI-' + String(s.pdis.length + 1).padStart(2, '0');
+        const nuevo = { id, c: s.wColab, tipo: s.wTipo, estado: 'Borrador', depto: d.deptoDe(s.wColab), jefe: s.wResp, ini: s.wIni, fin: s.wFin, destino: destinoW, comp: s.wRows.map((r) => ({ meta: r.meta.trim(), ind: r.ind.trim(), resp: r.resp, acc: [{ t: r.tipoAcc, x: r.texto.trim(), i: r.ini, f: r.fin, e: 'Pendiente', v: '' }] })), hitos: s.wHitos.map((h) => ({ x: h.x, f: h.f, ok: false })), firmas: { jefe: false, colab: false }, cierre: null };
+        set({ pdis: s.pdis.concat([nuevo]), vista: 'detalle', sel: id, msg: 'PDI creado en estado Borrador. Falta el acuerdo firmado por jefatura y colaborador.', err: '' });
+      }
+    };
+
+    return {
+      themeStyle: Object.keys(th).map((k) => '--' + k + ':' + th[k]).join(';') + ';--s1:' + (dark ? '#3987e5' : '#2a78d6') + ';',
+      toggleTheme: () => set({ dark: !dark }),
+      v: { lista: s.vista === 'lista', wizard: s.vista === 'wizard', gantt: s.vista === 'gantt', detalle: s.vista === 'detalle' },
+      irLista: () => set({ vista: 'lista', msg: '', err: '' }), irGantt: () => set({ vista: 'gantt', msg: '', err: '' }), irWizard: () => abrirWizard(s.wColab, s.wTipo),
+      alcance: s.alcance, hAlcance: (e) => set({ alcance: e.target.value }), alcanceTxt: s.alcance === 'todos' ? 'Alcance Todos: ves los PDI de toda la organización.' : 'Alcance Equipo: ves y operas solo los PDI de tus colaboradores directos (jefatura de Tecnología).',
+      hayMsg: s.msg !== '', msg: s.msg, cerrarMsg: () => set({ msg: '' }), hayErr: s.err !== '', err: s.err,
+      kpis, f, filas, sinFilas: filas.length === 0, resumen: 'Mostrando ' + filas.length + ' de ' + pdisV.length + ' PDI', sinPdiList, haySinPdi: sinPdiList.length > 0, sinPdiTxt: sinPdi.length + ' de ' + brechaAll.length + ' personas con brecha no tienen un PDI abierto.',
+      gTipo: s.gTipo, gDepto: s.gDepto, hGTipo: (e) => set({ gTipo: e.target.value }), hGDepto: (e) => set({ gDepto: e.target.value }), meses, gantt, sinGantt: gantt.length === 0, hoyTxt: 'Hoy: ' + fecha(d.HOY),
+      det, stepper, comp, hitos, sinHitos: hitos.length === 0, wiz
+    };
+  }
+}
+</script>
+</body>
+</html>

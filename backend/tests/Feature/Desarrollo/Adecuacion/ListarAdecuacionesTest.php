@@ -97,7 +97,7 @@ it('lista sin consultas por fila (sin N+1)', function () {
     expect($consultas)->toBeLessThan(16);
 });
 
-it('devuelve el detalle de solo lectura con resultados, quién la generó y las acciones deshabilitadas', function () {
+it('devuelve el detalle de solo lectura con resultados, quién la generó y las acciones de plan habilitadas', function () {
     actuarComoAdminDeTenant();
     adecuacionFalsos();
     $a = adecuacionEnBd([
@@ -112,8 +112,8 @@ it('devuelve el detalle de solo lectura con resultados, quién la generó y las 
         ->and($d['resultados'][0])->toMatchArray(['estado' => 'ConBrecha', 'diferencia' => -1, 'tiempo_cierre_meses' => 6])
         ->and($d['colaborador']['id'])->toBe(10)
         ->and($d['puesto_objetivo']['id'])->toBe(2)
-        ->and($d['acciones']['crear_plan'])->toBe(['habilitado' => false, 'motivo' => 'Disponible cuando exista el Plan de Desarrollo Individual.'])
-        ->and($d['acciones']['incluir_programa']['habilitado'])->toBeFalse();
+        ->and($d['acciones']['crear_plan'])->toBe(['habilitado' => true, 'motivo' => ''])
+        ->and($d['acciones']['incluir_programa']['habilitado'])->toBeTrue();
 });
 
 it('en el detalle sin brechas el motivo de las acciones es «No hay brechas.»', function () {

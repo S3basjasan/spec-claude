@@ -6,6 +6,7 @@ use App\Modules\Desarrollo\Application\DTO\DiagnosticoDTO;
 use App\Modules\Desarrollo\Application\Ports\DepartamentoDeColaboradorInterface;
 use App\Modules\Desarrollo\Application\Ports\DepartamentosInterface;
 use App\Modules\Desarrollo\Application\Ports\NombresDeReferenciaInterface;
+use App\Modules\Desarrollo\Application\UseCases\ConsultarPdiParaOtrosModulos;
 use App\Modules\Desarrollo\Domain\Entities\Adecuacion;
 use App\Modules\Desarrollo\Domain\Entities\ParametrosDeAdecuacion;
 use App\Modules\Desarrollo\Domain\Entities\ResultadoDeAdecuacion;
@@ -30,6 +31,7 @@ final class ArmadorDeAdecuaciones
         private readonly CalculadorDeCumplimiento $cumplimiento,
         private readonly CalculadorDePuntaje $puntaje,
         private readonly CalculadorDePreparacion $preparacion,
+        private readonly ConsultarPdiParaOtrosModulos $planesDeDesarrollo,
     ) {}
 
     /**
@@ -135,6 +137,29 @@ final class ArmadorDeAdecuaciones
     }
 
     /**
+     * «Crear plan de desarrollo» (Carrera) e «Incluir en Programa de Talentos» (Talento) se habilitan si hay brechas y la
+     * persona no tiene ya un plan abierto de ese tipo (feature 021, FR-044).
+     *
+     * @return array{habilitado: bool, motivo: string}
+     */
+    private function accionDePlan(Adecuacion $a, int $brechas, string $tipo): array
+    {
+        if ($brechas === 0) {
+            return ['habilitado' => false, 'motivo' => 'No hay brechas.'];
+        }
+
+        try {
+            $abierto = $this->planesDeDesarrollo->existePlanAbierto($a->tenantId, $a->colaboradorId, $tipo);
+        } catch (Throwable) {
+            return ['habilitado' => false, 'motivo' => 'No se pudo consultar el Plan de Desarrollo Individual.'];
+        }
+
+        return $abierto
+            ? ['habilitado' => false, 'motivo' => "La persona ya tiene un plan de {$tipo} abierto."]
+            : ['habilitado' => true, 'motivo' => ''];
+    }
+
+    /**
      * @param  array<string, float|null>  $valores
      * @return array<string, float|null>
      */
@@ -153,7 +178,6 @@ final class ArmadorDeAdecuaciones
         $fuentes = [];
         $ctx = $this->contexto($tenantId, [$a->colaboradorId], [$a->puestoActualId ?? 0, $a->puestoObjetivoId], $fuentes);
         $brechas = $a->cantidadDeBrechas();
-        $motivo = $brechas === 0 ? 'No hay brechas.' : 'Disponible cuando exista el Plan de Desarrollo Individual.';
 
         return [
             'id' => $a->id,
@@ -176,8 +200,8 @@ final class ArmadorDeAdecuaciones
             'brechas' => $brechas,
             'tiempo_maximo_cierre_meses' => $a->tiempoMaximoDeCierre(),
             'acciones' => [
-                'crear_plan' => ['habilitado' => false, 'motivo' => $motivo],
-                'incluir_programa' => ['habilitado' => false, 'motivo' => $motivo],
+                'crear_plan' => $this->accionDePlan($a, $brechas, 'Carrera'),
+                'incluir_programa' => $this->accionDePlan($a, $brechas, 'Talento'),
             ],
             'fuentes_no_disponibles' => array_values(array_unique($fuentes)),
         ];

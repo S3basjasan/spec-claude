@@ -453,6 +453,19 @@ final class EloquentPlanRepository implements PlanRepositoryInterface
             ->pluck('a.id')->map(fn ($i) => (int) $i)->all();
     }
 
+    public function idsDeAccionesVinculablesDeColaborador(int $tenantId, int $colaboradorId): array
+    {
+        return DB::table('plan_accion_participantes as pp')
+            ->join('plan_acciones as a', 'a.id', '=', 'pp.plan_accion_id')
+            ->join('planes as p', 'p.id', '=', 'a.plan_id')
+            ->where('p.tenant_id', $tenantId)
+            ->where('pp.colaborador_id', $colaboradorId)
+            ->whereIn('p.estado', [EstadoPlan::Aprobado->value, EstadoPlan::Ejecutando->value])
+            ->where('a.cancelada', false)
+            ->orderBy('a.id')
+            ->pluck('a.id')->map(fn ($i) => (int) $i)->all();
+    }
+
     public function planesParaActividades(int $tenantId): array
     {
         return DB::table('planes')

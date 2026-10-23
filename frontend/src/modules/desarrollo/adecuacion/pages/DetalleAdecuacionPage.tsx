@@ -103,7 +103,16 @@ export function DetalleAdecuacionPage() {
         </section>
       )}
 
-      <AccionesDeAdecuacion conBrechas={adecuacion.brechas > 0} motivo={adecuacion.acciones.crear_plan.motivo} />
+      <AccionesDeAdecuacion
+        conBrechas={adecuacion.brechas > 0}
+        motivo={adecuacion.acciones.crear_plan.motivo}
+        plan={{
+          colaboradorId: adecuacion.colaborador.id,
+          puestoObjetivoId: adecuacion.puesto_objetivo.id,
+          crear: adecuacion.acciones.crear_plan,
+          incluir: adecuacion.acciones.incluir_programa,
+        }}
+      />
     </div>
   )
 }

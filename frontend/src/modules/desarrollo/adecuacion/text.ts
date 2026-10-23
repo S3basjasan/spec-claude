@@ -125,7 +125,7 @@ export const adecuacionText = {
     crearPlan: 'Crear plan de desarrollo',
     incluirPrograma: 'Incluir en Programa de Talentos',
     motivoSinBrechas: 'No hay brechas.',
-    motivoSinPdi: 'Disponible cuando exista el Plan de Desarrollo Individual.',
+    motivoSinPdi: 'Disponible cuando registres la evaluación.',
     faltanTiempos: 'Ingresa el tiempo de cierre de cada brecha para poder registrar.',
     dialogo: {
       titulo: 'Registrar la evaluación',
@@ -249,7 +249,7 @@ export const adecuacionText = {
     diagnosticoAria: (nombre: string) => `Ver diagnóstico de ${nombre}`,
     incluir: 'Incluir',
     incluirAria: (nombre: string) => `Incluir a ${nombre} en el Programa de Talentos`,
-    incluirMotivo: 'Disponible cuando exista el Plan de Desarrollo Individual.',
+    incluirMotivo: 'No hay brechas.',
     sinRuta: 'Puesto directo',
     sinPuestoActual: 'Sin puesto actual',
     vacio: { title: 'Ninguna persona coincide con los filtros', description: 'Prueba con otros filtros o límpialos.' },

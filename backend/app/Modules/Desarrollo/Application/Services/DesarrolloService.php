@@ -4,8 +4,10 @@ namespace App\Modules\Desarrollo\Application\Services;
 
 use App\Modules\Desarrollo\Application\UseCases\ConsultarActividadesParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\ConsultarAdecuacionesParaOtrosModulos;
+use App\Modules\Desarrollo\Application\UseCases\ConsultarPdiParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\ConsultarRutasParaOtrosModulos;
 use App\Modules\Desarrollo\Application\UseCases\CrearBorradorDesdeDnf;
+use App\Modules\Desarrollo\Application\UseCases\ListarAccionesVinculables;
 use App\Modules\Desarrollo\Application\UseCases\ObtenerBrechasActivas;
 use App\Modules\Desarrollo\Domain\Repositories\CatalogoFormativoRepositoryInterface;
 use App\Modules\Desarrollo\Domain\Repositories\DnfRepositoryInterface;
@@ -37,6 +39,8 @@ class DesarrolloService
         private readonly ConsultarActividadesParaOtrosModulos $actividades,
         private readonly ConsultarRutasParaOtrosModulos $rutas,
         private readonly ConsultarAdecuacionesParaOtrosModulos $adecuaciones,
+        private readonly ListarAccionesVinculables $vinculables,
+        private readonly ConsultarPdiParaOtrosModulos $pdi,
     ) {}
 
     /**
@@ -266,6 +270,57 @@ class DesarrolloService
     public function ultimaAdecuacion(int $tenantId, int $colaboradorId, int $puestoObjetivoId): ?array
     {
         return $this->adecuaciones->ultimaAdecuacion($tenantId, $colaboradorId, $puestoObjetivoId);
+    }
+
+    /**
+     * La DNF más reciente del colaborador con sus brechas «Con brecha» y su identificador (para precargar un plan de
+     * desarrollo individual). `brechasActivas` no cambia. Solo lectura.
+     *
+     * @return array{dnf_id: int, fecha: string|null, brechas: list<array{competencia_id: int, nivel_requerido: string, nivel_actual: string|null, diferencia: int|null, prioridad: string|null}>}|null
+     */
+    public function ultimaDnfConBrechas(int $tenantId, int $colaboradorId): ?array
+    {
+        return $this->brechasActivas->ultimaConBrechas($tenantId, $colaboradorId);
+    }
+
+    /**
+     * Planes de desarrollo individual no Cerrados del colaborador, visibles para él (Borrador con el acuerdo del
+     * responsable o Acordado), con su avance (para «Mi plan de desarrollo» de Reportes). Solo lectura.
+     *
+     * @return list<array{pdi_id: int, codigo: string, tipo: string, estado: string, objetivo: string, fecha_inicio: string, fecha_fin: string, avance: int|null, hitos_vencidos: int}>
+     */
+    public function planesActivos(int $tenantId, int $colaboradorId): array
+    {
+        return $this->pdi->planesActivos($tenantId, $colaboradorId);
+    }
+
+    /**
+     * Cabeceras de planes de desarrollo individual (para los indicadores de cierre de brechas de Reportes). Filtros: tipo,
+     * estado, resultado, fecha_desde, fecha_hasta (sobre la fecha de fin) y colaborador_id. Solo lectura.
+     *
+     * @param  array<string, mixed>  $filtros
+     * @return list<array<string, mixed>>
+     */
+    public function pdiPorFiltros(int $tenantId, array $filtros = []): array
+    {
+        return $this->pdi->pdiPorFiltros($tenantId, $filtros);
+    }
+
+    /** Indica si el colaborador tiene un plan de desarrollo individual no Cerrado de ese tipo (Mejora, Carrera o Talento). */
+    public function existePlanAbierto(int $tenantId, int $colaboradorId, string $tipo): bool
+    {
+        return $this->pdi->existePlanAbierto($tenantId, $colaboradorId, $tipo);
+    }
+
+    /**
+     * Acciones no canceladas de planes de formación Aprobado o Ejecutando en las que el colaborador es participante: las
+     * que una acción del plan de desarrollo individual puede vincular. Solo lectura.
+     *
+     * @return list<array{plan_accion_id: int, plan_id: int, plan_codigo: string, plan_nombre: string, plan_estado: string, nombre: string, tipo: string|null, fecha_inicio: string|null, fecha_fin: string|null, formador: string|null}>
+     */
+    public function getAccionesVinculablesDeColaborador(int $tenantId, int $colaboradorId): array
+    {
+        return $this->vinculables->ejecutar($tenantId, $colaboradorId);
     }
 
     /**

@@ -564,6 +564,17 @@ Solo si la pantalla tiene una interacción que ningún patrón cubre. Por ejempl
 
 En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude Design** (para heredar los tokens), se exporta aquí y se añade a la tabla de patrones si es reutilizable.
 
+### Plan de desarrollo individual (PDI) *(feature 021)*
+Referencias: `PDIAdmin.dc.html` (lista), `PDIAsistente.dc.html` (asistente), `PDIDetalle.dc.html` (detalle) y `PDISeguimiento.dc.html` (Gantt) —mismo prototipo del administrador; solo cambia la vista inicial— y `PDIColaborador.dc.html` («Mi plan de desarrollo»). Se omiten el menú de prototipo, «Ver como colaborador», el panel «Permisos del rol (simulación del prototipo)» y el alcance Todos/Equipo.
+
+1. **Administrador, lista**: cabecera («Desarrollo y Formación», «Plan de Desarrollo Individual (PDI)») con «Nuevo PDI», pestañas `tabbtn` «Lista de PDI» y «Seguimiento (Gantt)», indicadores (Borradores, Acordados, Cerrados, Hitos vencidos), bloque «Personas con brecha y sin PDI» con «Crear PDI», filtros (Tipo, Estado, Departamento, Responsable y rango de fechas, «Limpiar filtros», todos en la URL) y tabla (Colaborador, Tipo, Estado, Responsable, Periodo, Progreso, hitos vencidos, «Abrir»).
+2. **Asistente**: tres pasos `step` (Colaborador y tipo; Compromisos y acciones; Hitos, responsable y periodo). Un compromiso admite varias acciones; «Vincular a Plan de Formación» solo en Curso, Mentoring y Codesarrollo. Termina con «Crear PDI (Borrador)».
+3. **Detalle**: encabezado con colaborador, insignias, avance y panel «Acuerdo y estado» (acuerdo del responsable y aceptación del colaborador), pestañas Resumen, Compromisos y acciones, Hitos e Historial. «Devolver a Borrador» y «Cerrar» abren un modal.
+4. **Gantt**: filtros Tipo, Responsable y Departamento; leyenda Cumplida / En curso / Pendiente / Hito, marcador de hoy y alternativa tabular accesible.
+5. **Mi plan de desarrollo (Colaborador)**: tarjetas de planes, detalle de solo lectura, «Aceptar plan» (con casilla de lectura) y «Devolver con comentario» solo en un Borrador con el acuerdo del responsable, y «Qué sigue».
+6. **Insignias semánticas**: Borrador = neutro, Acordado = acento, Cerrado = éxito; Mejora, Carrera y Talento con tres tonos distintos de los tokens existentes; Pendiente = neutro, En curso = acento, Cumplida = éxito, Cancelada = peligro; Brecha cerrada = éxito, Parcial = advertencia, No cerrada = peligro. Sin tokens nuevos.
+7. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; un 409 muestra «Recargar» y las devoluciones y el cierre piden confirmación en modal.
+
 ---
 
 ## 9. Diferencias conocidas entre mockups y specs
@@ -673,3 +684,11 @@ En ese caso, se agrega como una pantalla nueva **en el mismo canvas de Claude De
 | `AdecuacionComparar.dc.html` acepta pesos que sumen más de cero | Los pesos de la consulta deben sumar 100 |
 | `AdecuacionMapa.dc.html` filtra por «Área», lista solo personas con ruta vigente y cuenta «En Programa de Talentos» | Filtra por Departamento, Ruta y Preparación; lista toda adecuación vigente (incluye puesto directo); el indicador de programa se omite; se añaden Brechas y Tiempo máx. |
 | `AdecuacionColaborador.dc.html` incluye menú de prototipo, «Simulación: estoy incluido en un programa» y el porcentaje de preparación | Se omiten; la sección «Programa de Talentos» es informativa y no se muestra ningún puntaje |
+| `PDI*.dc.html` hablan de «Jefatura», «Firma de jefatura», «Firmar acuerdo» y un alcance Todos/Equipo | La spec 021 usa «Responsable» (administrador), «Acuerdo del responsable» y «Aceptación del colaborador»; no existe el rol de jefatura ni el alcance por equipo |
+| `PDI*.dc.html` tienen cuatro estados (Borrador, Acordado, En seguimiento, Cerrado) y «Iniciar seguimiento» | Solo hay tres estados; Acordado cubre el seguimiento y «Iniciar seguimiento» no existe |
+| `PDIAsistente.dc.html` pide una «acción de mejora» por compromiso, tipo «Plan de Formación» y un «Responsable» de lista cerrada por acción | Un compromiso tiene varias acciones; los tipos son Curso, Mentoring, Coaching, Autodesarrollo, Codesarrollo, Nueva responsabilidad y Otra; la persona a cargo es texto libre |
+| `PDIAsistente.dc.html` incluye «Duración del programa (meses)» | Se omite: el periodo se define con fecha de inicio y de fin |
+| `PDIDetalle.dc.html` cierra con un panel en línea (un resultado y observaciones) | El cierre es un modal con el resultado de cada compromiso y una conclusión; el resultado del plan se calcula |
+| `PDIDetalle.dc.html` usa «Hecha» para las acciones | Los estados son Pendiente, En curso, Cumplida y Cancelada; las acciones vinculadas son de solo lectura |
+| `PDISeguimiento.dc.html` filtra por Tipo y Departamento | Se añade el filtro Responsable y solo se muestran planes Acordados |
+| `PDIColaborador.dc.html` deja firmar sin orden | El colaborador solo ve y responde un Borrador después del acuerdo del responsable; puede devolverlo con comentario |

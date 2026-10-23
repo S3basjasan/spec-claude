@@ -136,13 +136,13 @@ describe('Adecuación a puesto futuro (Administrador)', () => {
     expect(await screen.findByText('Evaluación registrada como ADE-0001.')).toBeInTheDocument()
   })
 
-  it('los botones del plan de desarrollo quedan deshabilitados con su motivo', async () => {
+  it('en la vista previa los botones del plan de desarrollo quedan deshabilitados hasta registrar la evaluación', async () => {
     renderPagina()
     await elegirColaborador()
 
     expect(await screen.findByRole('button', { name: 'Crear plan de desarrollo' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Incluir en Programa de Talentos' })).toBeDisabled()
-    expect(screen.getByText('Disponible cuando exista el Plan de Desarrollo Individual.')).toBeInTheDocument()
+    expect(screen.getByText('Disponible cuando registres la evaluación.')).toBeInTheDocument()
   })
 
   it('sin brechas la preparación es Lista y el motivo es «No hay brechas.»', async () => {

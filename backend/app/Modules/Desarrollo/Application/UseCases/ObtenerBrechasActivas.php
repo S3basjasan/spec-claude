@@ -18,10 +18,20 @@ final class ObtenerBrechasActivas
      */
     public function ejecutar(int $tenantId, int $colaboradorId): array
     {
+        return $this->ultimaConBrechas($tenantId, $colaboradorId)['brechas'] ?? [];
+    }
+
+    /**
+     * La DNF más reciente del colaborador con sus brechas «Con brecha» (para precargar un plan de desarrollo).
+     *
+     * @return array{dnf_id: int, fecha: string|null, brechas: list<array{competencia_id: int, nivel_requerido: string, nivel_actual: string|null, diferencia: int|null, prioridad: string|null}>}|null
+     */
+    public function ultimaConBrechas(int $tenantId, int $colaboradorId): ?array
+    {
         $dnf = $this->repositorio->masRecienteDeColaborador($tenantId, $colaboradorId);
         $resultado = $dnf?->resultados[0] ?? null;
-        if ($resultado === null) {
-            return [];
+        if ($dnf === null || $resultado === null) {
+            return null;
         }
 
         $activas = [];
@@ -37,6 +47,6 @@ final class ObtenerBrechasActivas
             }
         }
 
-        return $activas;
+        return ['dnf_id' => (int) $dnf->id, 'fecha' => $dnf->creadoEn?->format('Y-m-d\TH:i:sP'), 'brechas' => $activas];
     }
 }

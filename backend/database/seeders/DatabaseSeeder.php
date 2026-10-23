@@ -37,5 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RutasSeeder::class);
         // Adecuación a puesto futuro: cuatro adecuaciones de ejemplo que cubren las cuatro preparaciones.
         $this->call(AdecuacionesSeeder::class);
+        // Plan de desarrollo individual: cinco planes de ejemplo (Borrador, Acordado y Cerrado) sobre las personas y el Plan de Formación sembrados.
+        $this->call(PdisSeeder::class);
     }
 }

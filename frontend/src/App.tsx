@@ -20,6 +20,11 @@ import { reportesNav } from './modules/desarrollo/reportes/nav'
 import { ReportesPage } from './modules/desarrollo/reportes/pages/ReportesPage'
 import { RequireRole as RequireRoleRutas } from './modules/desarrollo/rutas/components/RequireRole'
 import { adecuacionNav } from './modules/desarrollo/adecuacion/nav'
+import { RequirePermiso as RequirePermisoPdi, SinAccesoPdi } from './modules/desarrollo/pdi/components/RequirePermiso'
+import { miPlanNav, pdiNav } from './modules/desarrollo/pdi/nav'
+import { AsistenteDePdiPage } from './modules/desarrollo/pdi/pages/AsistenteDePdiPage'
+import { DetalleDePdiPage } from './modules/desarrollo/pdi/pages/DetalleDePdiPage'
+import { EntradaPdiPage } from './modules/desarrollo/pdi/pages/EntradaPdiPage'
 import { RequirePermiso as RequirePermisoAdecuacion, SinAccesoAdecuacion } from './modules/desarrollo/adecuacion/components/RequirePermiso'
 import { DetalleAdecuacionPage } from './modules/desarrollo/adecuacion/pages/DetalleAdecuacionPage'
 import { EntradaAdecuacionPage } from './modules/desarrollo/adecuacion/pages/EntradaAdecuacionPage'
@@ -76,7 +81,7 @@ const navGroups: ShellNavGroup[] = [
   { label: 'Mi espacio', items: [miFichaNav, misDocumentosNav, exportarMiFichaNav] },
   { label: 'Organización', items: [organigramaNav, unidadesNav, puestosNav, posicionesNav] },
   { label: 'Personas', items: [colaboradoresNav, categoriasNav, politicasNav, categoriasReconocimientoNav] },
-  { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, rutasNav, adecuacionNav, microLearningNav] },
+  { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, rutasNav, adecuacionNav, pdiNav, miPlanNav, microLearningNav] },
   { label: 'Analítica', items: [reportesNav] },
 ]
 
@@ -128,6 +133,10 @@ function App() {
             <Route path="rutas/:id" element={<RequireRoleRutas admin={<RutaEditorPage />} />} />
             <Route path="adecuacion" element={<EntradaAdecuacionPage />} />
             <Route path="adecuacion/evaluaciones/:id" element={<RequirePermisoAdecuacion clave="desarrollo.adecuacion.ver" fallback={<SinAccesoAdecuacion />}><DetalleAdecuacionPage /></RequirePermisoAdecuacion>} />
+            <Route path="pdi" element={<EntradaPdiPage />} />
+            <Route path="pdi/nuevo" element={<RequirePermisoPdi clave="desarrollo.pdi.gestionar" fallback={<SinAccesoPdi />}><AsistenteDePdiPage /></RequirePermisoPdi>} />
+            <Route path="pdi/:id/editar" element={<RequirePermisoPdi clave="desarrollo.pdi.gestionar" fallback={<SinAccesoPdi />}><AsistenteDePdiPage /></RequirePermisoPdi>} />
+            <Route path="pdi/:id" element={<DetalleDePdiPage />} />
             <Route path="micro-learning" element={<MicroLearningPage />} />
             <Route path="micro-learning/:id" element={<RequireRoleMicro colaborador={<ReproduccionPage />} />} />
             <Route path="puestos" element={<PuestosPage />} />

@@ -37,4 +37,20 @@ return [
         'experiencia_disponible' => (bool) env('DESARROLLO_ADECUACION_EXPERIENCIA_DISPONIBLE', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Plan de desarrollo individual (feature 021)
+    |--------------------------------------------------------------------------
+    |
+    | `conocimientos_con_grado`: con `false` (valor por defecto) la dimensión Conocimiento se desactiva en los
+    | compromisos: la precarga no genera conocimientos, `GET /api/pdi/opciones` no la lista en `dimensiones_disponibles`
+    | y crear o editar un compromiso de Conocimiento responde 422. La rama `true` no está implementada
+    | (specs/021-plan-desarrollo-individual, research.md R5).
+    |
+    */
+
+    'pdi' => [
+        'conocimientos_con_grado' => (bool) env('DESARROLLO_PDI_CONOCIMIENTOS_CON_GRADO', false),
+    ],
+
 ];

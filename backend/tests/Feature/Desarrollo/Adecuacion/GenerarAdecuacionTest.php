@@ -30,7 +30,7 @@ it('guarda la adecuación con código, puesto actual, umbral y usuario, y la dev
         ->and($d['es_vigente'])->toBeTrue()
         ->and($d['brechas'])->toBe(1)
         ->and($d['tiempo_maximo_cierre_meses'])->toBe(6)
-        ->and($d['acciones']['crear_plan']['habilitado'])->toBeFalse();
+        ->and($d['acciones']['crear_plan']['habilitado'])->toBeTrue();
 
     $modelo = AdecuacionModel::query()->firstOrFail();
     expect($modelo->inscripcion_id)->toBe($inscripcion->id)

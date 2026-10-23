@@ -48,15 +48,25 @@ export function TablaDelMapa({ filas }: { filas: FilaDeMapa[] }) {
                   >
                     {t.diagnostico}
                   </Link>
-                  <button
-                    type="button"
-                    disabled
-                    aria-label={t.incluirAria(f.colaborador.nombre)}
-                    title={t.incluirMotivo}
-                    className="min-h-11 cursor-not-allowed rounded-lg border border-border bg-surface px-4 font-semibold text-muted opacity-60"
-                  >
-                    {t.incluir}
-                  </button>
+                  {f.brechas > 0 ? (
+                    <Link
+                      to={`/pdi/nuevo?colaborador=${f.colaborador.id}&tipo=Talento&puesto_objetivo=${f.puesto_objetivo.id}`}
+                      aria-label={t.incluirAria(f.colaborador.nombre)}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-text no-underline hover:bg-soft"
+                    >
+                      {t.incluir}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      aria-label={t.incluirAria(f.colaborador.nombre)}
+                      title={t.incluirMotivo}
+                      className="min-h-11 cursor-not-allowed rounded-lg border border-border bg-surface px-4 font-semibold text-muted opacity-60"
+                    >
+                      {t.incluir}
+                    </button>
+                  )}
                 </div>
               </td>
             </tr>
