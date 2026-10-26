@@ -5,6 +5,7 @@ namespace App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Reposi
 use App\Modules\GestionPersonal\Domain\Entities\AsignacionLaboral;
 use App\Modules\GestionPersonal\Domain\Entities\VinculoLaboral;
 use App\Modules\GestionPersonal\Domain\Exceptions\ConflictoDeUnicidad;
+use App\Modules\GestionPersonal\Domain\Exceptions\IncidenciaDeAplicacion;
 use App\Modules\GestionPersonal\Domain\Exceptions\IngresoNoVerificable;
 use App\Modules\GestionPersonal\Domain\Exceptions\PosicionNoDisponible;
 use App\Modules\GestionPersonal\Domain\Exceptions\VinculoSuperpuesto;
@@ -226,6 +227,54 @@ final class EloquentVinculoLaboralRepository implements VinculoLaboralRepository
             $ahora->toIso8601ZuluString(),
             [new AsignacionLaboral($asignacionId, $vinculoId, $posicionId, $fechaIngreso, null)],
         );
+    }
+
+    public function cerrarYAbrirAsignacion(
+        int $tenantId,
+        int $vinculoId,
+        int $asignacionOrigenId,
+        int $posicionDestinoId,
+        string $fechaEfectiva,
+        int $actuacionId,
+        ?int $actorId,
+    ): int {
+        $ahora = now();
+
+        try {
+            $cerradas = DB::table('asignaciones_laborales')
+                ->where('id', $asignacionOrigenId)
+                ->where('tenant_id', $tenantId)
+                ->where('vinculo_id', $vinculoId)
+                ->whereNull('fecha_fin')
+                ->where('fecha_inicio', '<', $fechaEfectiva)
+                ->update([
+                    'fecha_fin' => $fechaEfectiva,
+                    'version' => DB::raw('version + 1'),
+                    'updated_by' => $actorId ?? 0,
+                    'updated_at' => $ahora,
+                ]);
+            if ($cerradas !== 1) {
+                throw new IncidenciaDeAplicacion(IncidenciaDeAplicacion::ORIGEN_CAMBIO, 'La asignación de origen cambió desde la propuesta.');
+            }
+
+            return (int) DB::table('asignaciones_laborales')->insertGetId([
+                'tenant_id' => $tenantId,
+                'vinculo_id' => $vinculoId,
+                'posicion_id' => $posicionDestinoId,
+                'fecha_inicio' => $fechaEfectiva,
+                'fecha_fin' => null,
+                'version' => 1,
+                'actuacion_id' => $actuacionId,
+                'created_by' => $actorId ?? 0,
+                'updated_by' => $actorId ?? 0,
+                'created_at' => $ahora,
+                'updated_at' => $ahora,
+            ]);
+        } catch (UniqueConstraintViolationException $e) {
+            throw $this->traducirUnicidad($e);
+        } catch (QueryException $e) {
+            throw $this->traducirTrigger($e) ?? $e;
+        }
     }
 
     // ------------------------------------------------------------------ Apoyo

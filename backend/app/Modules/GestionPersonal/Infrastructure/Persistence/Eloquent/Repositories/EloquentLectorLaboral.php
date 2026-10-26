@@ -5,6 +5,7 @@ namespace App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Reposi
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Application\Services\CatalogoDeContratos;
 use App\Modules\GestionPersonal\Domain\Entities\VinculoLaboral;
+use App\Modules\GestionPersonal\Domain\Repositories\ActuacionRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Services\SituacionLaboralDerivada;
 use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
@@ -23,6 +24,7 @@ final class EloquentLectorLaboral implements LectorLaboralPort
         private readonly VinculoLaboralRepositoryInterface $vinculos,
         private readonly SituacionLaboralDerivada $derivada,
         private readonly CatalogoDeContratos $contratos,
+        private readonly ActuacionRepositoryInterface $actuaciones,
     ) {}
 
     public function situacionVigente(int $tenantId, array $colaboradorIds, string $fecha): Lectura
@@ -72,8 +74,10 @@ final class EloquentLectorLaboral implements LectorLaboralPort
     {
         return $this->proteger(function () use ($tenantId, $colaboradorId) {
             $hechos = [];
+            $contratos = [];
             foreach ($this->vinculos->vinculosDeFicha($tenantId, $colaboradorId) as $indice => $vinculo) {
                 $contrato = $this->contratos->describir($vinculo->tipoContratoClave);
+                $contratos[$vinculo->id] = $contrato;
                 $hechos[] = [
                     'vinculo_id' => $vinculo->id,
                     'fecha_efectiva' => $vinculo->fechaIngreso,
@@ -84,6 +88,22 @@ final class EloquentLectorLaboral implements LectorLaboralPort
                     'registrado_en' => $vinculo->createdAt,
                 ];
             }
+
+            // Movimientos efectivamente aplicados (feature 020): ocurren dentro del mismo vínculo.
+            foreach ($this->actuaciones->hechosAplicados($tenantId, $colaboradorId) as $movimiento) {
+                $hechos[] = [
+                    'vinculo_id' => $movimiento['vinculo_id'],
+                    'fecha_efectiva' => $movimiento['fecha_efectiva'],
+                    'tipo' => TipoDeHecho::from($movimiento['tipo'])->value,
+                    'detalle' => 'Movimiento aplicado: '.$movimiento['tipo'],
+                    'tipo_contrato' => $contratos[$movimiento['vinculo_id']] ?? null,
+                    'posicion_id' => $movimiento['posicion_id'],
+                    'registrado_en' => $movimiento['aplicada_en'],
+                    'actuacion_id' => $movimiento['actuacion_id'],
+                    'politica_numero' => $movimiento['politica_numero'],
+                ];
+            }
+            usort($hechos, fn (array $a, array $b) => strcmp($a['fecha_efectiva'], $b['fecha_efectiva']));
 
             return $hechos;
         });

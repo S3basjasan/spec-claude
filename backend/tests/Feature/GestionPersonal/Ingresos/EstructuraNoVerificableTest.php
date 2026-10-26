@@ -20,6 +20,11 @@ function estructuraCaida(): void
         {
             throw new IngresoNoVerificable;
         }
+
+        public function describir(int $posicionId): ?array
+        {
+            throw new IngresoNoVerificable;
+        }
     });
 }
 

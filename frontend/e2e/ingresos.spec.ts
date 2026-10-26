@@ -12,7 +12,7 @@ const ESPACIO = String(Date.now()).slice(-8)
 let contador = 0
 
 function php(codigo: string): string {
-  return execFileSync('php', ['artisan', 'tinker', '--execute', codigo], { cwd: BACKEND, encoding: 'utf8' })
+  return execFileSync('php', ['artisan', 'tinker', '--env=e2e', '--execute', codigo], { cwd: BACKEND, encoding: 'utf8' })
 }
 
 const POSICION = '\\App\\Modules\\Estructura\\Infrastructure\\Persistence\\Eloquent\\Models\\PosicionModel'

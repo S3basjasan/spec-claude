@@ -35,10 +35,28 @@ final class PosicionesAsignablesEstructura implements PosicionesAsignablesPort
             'motivo' => $veredicto['motivo'],
             'posicion' => $posicion === null ? null : [
                 'id' => (int) $posicion['id'],
+                'puesto_id' => (int) ($posicion['puesto_id'] ?? 0),
                 'puesto' => (string) $posicion['puesto'],
                 'unidad' => $posicion['unidad'],
                 'jefatura' => $posicion['jefatura'],
             ],
+        ];
+    }
+
+    public function describir(int $posicionId): ?array
+    {
+        try {
+            $posicion = EstructuraFacade::getPosicionDeGestion($posicionId);
+        } catch (Throwable) {
+            throw new IngresoNoVerificable;
+        }
+
+        return $posicion === null ? null : [
+            'id' => (int) $posicion['id'],
+            'puesto_id' => (int) ($posicion['puesto_id'] ?? 0),
+            'puesto' => (string) $posicion['puesto'],
+            'unidad' => $posicion['unidad'],
+            'jefatura' => $posicion['jefatura'],
         ];
     }
 }

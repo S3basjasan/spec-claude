@@ -2,4 +2,4 @@
 export { CondicionesAplicables } from './components/CondicionesAplicables'
 export type { CondicionesConservadas } from './components/CondicionesAplicables'
 export { politicaAplicableKey, usePoliticaAplicable } from './hooks/usePoliticas'
-export type { PoliticaAplicable, TipoPolitica } from './api'
+export type { Parametros, PoliticaAplicable, TipoPolitica } from './api'

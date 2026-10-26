@@ -102,6 +102,11 @@ it('con Estructura caída responde 503 y no una lista vacía engañosa', functio
             {
                 throw new IngresoNoVerificable;
             }
+
+            public function describir(int $posicionId): ?array
+            {
+                throw new IngresoNoVerificable;
+            }
         },
     );
     actuarComoAdminDeTenant();

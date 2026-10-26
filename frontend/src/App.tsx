@@ -58,6 +58,16 @@ import { FichaDetallePage } from './modules/gestionPersonal/fichas/pages/FichaDe
 import { FichaFormPage } from './modules/gestionPersonal/fichas/pages/FichaFormPage'
 import { MiFichaPage } from './modules/gestionPersonal/fichas/pages/MiFichaPage'
 import { RegistrarIngresoPage } from './modules/gestionPersonal/fichas/pages/RegistrarIngresoPage'
+import {
+  ActuacionDetallePage,
+  MisSolicitudesPage,
+  misSolicitudesNav,
+  MovimientosPage,
+  movimientosNav,
+  NuevaSolicitudPage,
+  ProponerMovimientoPage,
+  RegistrarNovedadPage,
+} from './modules/gestionPersonal/movimientos'
 import { politicasNav } from './modules/gestionPersonal/politicas/nav'
 import { BorradorPage } from './modules/gestionPersonal/politicas/pages/BorradorPage'
 import { PoliticaDetallePage } from './modules/gestionPersonal/politicas/pages/PoliticaDetallePage'
@@ -68,9 +78,9 @@ import { queryClient } from './shared/lib/queryClient'
 
 /** Menú lateral: cada módulo aporta su ítem; aquí se agrupan por área funcional del HRMS. */
 const navGroups: ShellNavGroup[] = [
-  { label: 'Mi espacio', items: [miFichaNav, misDocumentosNav, exportarMiFichaNav] },
+  { label: 'Mi espacio', items: [miFichaNav, misSolicitudesNav, misDocumentosNav, exportarMiFichaNav] },
   { label: 'Organización', items: [organigramaNav, unidadesNav, puestosNav, posicionesNav] },
-  { label: 'Personas', items: [colaboradoresNav, categoriasNav, politicasNav, categoriasReconocimientoNav] },
+  { label: 'Personas', items: [colaboradoresNav, movimientosNav, categoriasNav, politicasNav, categoriasReconocimientoNav] },
   { label: 'Talento y desarrollo', items: [competenciasNav, dnfNav, planFormacionNav, catalogoFormativoNav, actividadesNav, microLearningNav] },
   { label: 'Analítica', items: [reportesNav] },
 ]
@@ -133,6 +143,8 @@ function App() {
             <Route path="posiciones" element={<PosicionesPage />} />
             <Route path="organigrama" element={<OrganigramaPage />} />
             <Route path="mi-ficha" element={<MiFichaPage />} />
+            <Route path="mis-solicitudes" element={<MisSolicitudesPage />} />
+            <Route path="mis-solicitudes/nueva" element={<NuevaSolicitudPage />} />
             <Route path="mis-documentos" element={<MisDocumentosPage />} />
             <Route path="exportar-mi-ficha" element={<MiExportacionPage />} />
             <Route element={<RequireAdminFichas />}>
@@ -141,6 +153,10 @@ function App() {
               <Route path="colaboradores/:colaboradorId" element={<FichaDetallePage />} />
               <Route path="colaboradores/:colaboradorId/editar" element={<FichaFormPage />} />
               <Route path="colaboradores/:colaboradorId/ingreso" element={<RegistrarIngresoPage />} />
+              <Route path="movimientos-personal" element={<MovimientosPage />} />
+              <Route path="movimientos-personal/proponer" element={<ProponerMovimientoPage />} />
+              <Route path="movimientos-personal/novedad" element={<RegistrarNovedadPage />} />
+              <Route path="movimientos-personal/:id" element={<ActuacionDetallePage />} />
               <Route path="categorias-documentales" element={<CategoriasPage />} />
               <Route path="politicas-personal" element={<PoliticasPage />} />
               <Route path="politicas-personal/:tipo" element={<PoliticaDetallePage />} />

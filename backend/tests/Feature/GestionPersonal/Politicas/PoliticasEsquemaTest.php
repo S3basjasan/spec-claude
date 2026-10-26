@@ -3,7 +3,7 @@
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
-function accionDePrueba(int $politicaId, int $versionId, array $extra = []): int
+function accionDePoliticaDePrueba(int $politicaId, int $versionId, array $extra = []): int
 {
     return DB::table('politica_acciones')->insertGetId(array_merge([
         'tenant_id' => 1, 'politica_id' => $politicaId, 'version_id' => $versionId, 'accion' => 'Publicacion',
@@ -64,18 +64,18 @@ it('el número de publicación es único por política', function () {
 
 it('la auditoría es de solo inserción', function () {
     $v = politicaPublicada('Permisos');
-    $id = accionDePrueba($v->politica_id, $v->id);
+    $id = accionDePoliticaDePrueba($v->politica_id, $v->id);
 
     expect(fn () => DB::table('politica_acciones')->where('id', $id)->update(['motivo' => 'x']))->toThrow(QueryException::class)
         ->and(fn () => DB::table('politica_acciones')->where('id', $id)->delete())->toThrow(QueryException::class)
-        ->and(fn () => accionDePrueba($v->politica_id, $v->id, ['accion' => 'Inventada']))->toThrow(QueryException::class);
+        ->and(fn () => accionDePoliticaDePrueba($v->politica_id, $v->id, ['accion' => 'Inventada']))->toThrow(QueryException::class);
 });
 
 it('una clave de operación solo se registra una vez por tenant', function () {
     $v = politicaPublicada('Permisos');
-    accionDePrueba($v->politica_id, $v->id, ['operacion_id' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'operacion_hash' => str_repeat('a', 64)]);
+    accionDePoliticaDePrueba($v->politica_id, $v->id, ['operacion_id' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'operacion_hash' => str_repeat('a', 64)]);
 
-    expect(fn () => accionDePrueba($v->politica_id, $v->id, ['operacion_id' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'operacion_hash' => str_repeat('b', 64)]))
+    expect(fn () => accionDePoliticaDePrueba($v->politica_id, $v->id, ['operacion_id' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'operacion_hash' => str_repeat('b', 64)]))
         ->toThrow(QueryException::class);
 });
 

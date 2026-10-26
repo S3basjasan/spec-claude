@@ -6,6 +6,7 @@ use App\Modules\GestionPersonal\Application\DTO\ContextoDeTenant;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Services\CatalogoDeContratos;
 use App\Modules\GestionPersonal\Domain\Exceptions\ColaboradorNoEncontrado;
+use App\Modules\GestionPersonal\Domain\Repositories\ActuacionRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\ValueObjects\TipoDeHecho;
@@ -21,6 +22,7 @@ final class ConsultarTrayectoria
         private readonly VinculoLaboralRepositoryInterface $vinculos,
         private readonly LectorEstructuraPort $estructura,
         private readonly CatalogoDeContratos $contratos,
+        private readonly ActuacionRepositoryInterface $actuaciones,
     ) {}
 
     /**
@@ -54,6 +56,11 @@ final class ConsultarTrayectoria
             }
         }
 
+        $movimientos = $this->actuaciones->hechosAplicados($contexto->tenantId, $colaboradorId);
+        foreach ($movimientos as $movimiento) {
+            $posicionIds[] = $movimiento['posicion_id'];
+        }
+
         $lectura = $posicionIds === [] ? null : $this->estructura->posiciones(array_values(array_unique($posicionIds)));
         $datos = $lectura !== null && $lectura->estaDisponible() ? $lectura->datos : [];
         $disponibilidad = $lectura !== null && $lectura->fallo() ? 'no_disponible' : 'disponible';
@@ -77,6 +84,32 @@ final class ConsultarTrayectoria
                     'jefatura' => $posicion['jefatura'] ?? null,
                 ],
                 'registrado_en' => $vinculo->createdAt,
+            ];
+        }
+
+        // Movimientos efectivamente aplicados (feature 020): ocurren dentro del mismo vínculo y conservan la referencia
+        // a la solicitud y a la versión de política utilizada.
+        $contratosPorVinculo = [];
+        foreach ($vinculos as $vinculo) {
+            $contratosPorVinculo[$vinculo->id] = $this->contratos->describir($vinculo->tipoContratoClave);
+        }
+        foreach ($movimientos as $movimiento) {
+            $posicion = $datos[$movimiento['posicion_id']] ?? null;
+            $hechos[] = [
+                'vinculo_id' => $movimiento['vinculo_id'],
+                'tipo' => TipoDeHecho::from($movimiento['tipo'])->value,
+                'fecha_efectiva' => $movimiento['fecha_efectiva'],
+                'programado' => false,
+                'tipo_contrato' => $contratosPorVinculo[$movimiento['vinculo_id']] ?? null,
+                'posicion' => [
+                    'id' => $movimiento['posicion_id'],
+                    'puesto' => $posicion['puesto'] ?? null,
+                    'unidad' => $posicion['unidad'] ?? null,
+                    'jefatura' => $posicion['jefatura'] ?? null,
+                ],
+                'registrado_en' => $movimiento['aplicada_en'],
+                'actuacion_id' => $movimiento['actuacion_id'],
+                'politica_numero' => $movimiento['politica_numero'],
             ];
         }
 

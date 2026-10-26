@@ -23,6 +23,9 @@ export default defineConfig({
       url: `http://127.0.0.1:${API_PORT}/up`,
       reuseExistingServer: false,
       timeout: 120_000,
+      // `artisan serve` solo reenvía APP_ENV al servidor (no el indicador --env): sin esto el servidor leía backend/.env y
+      // atendía la base de desarrollo en lugar de la E2E sembrada aquí.
+      env: { APP_ENV: 'e2e' },
     },
     {
       command: `npm run dev -- --host 127.0.0.1 --port ${WEB_PORT} --strictPort`,

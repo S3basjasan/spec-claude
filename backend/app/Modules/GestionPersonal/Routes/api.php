@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\GestionPersonal\Domain\ValueObjects\TipoDePolitica;
+use App\Modules\GestionPersonal\Presentation\Controllers\ActuacionController;
 use App\Modules\GestionPersonal\Presentation\Controllers\CategoriaDocumentalController;
 use App\Modules\GestionPersonal\Presentation\Controllers\ColaboradorController;
 use App\Modules\GestionPersonal\Presentation\Controllers\DesarrolloController;
@@ -11,6 +12,7 @@ use App\Modules\GestionPersonal\Presentation\Controllers\MiDesarrolloController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiDocumentoController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiExportacionController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiFichaController;
+use App\Modules\GestionPersonal\Presentation\Controllers\MiSolicitudController;
 use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaAplicableController;
 use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaBorradorController;
 use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaPersonalController;
@@ -103,5 +105,39 @@ Route::prefix('api/politicas-personal')->middleware('api')->group(function () {
         Route::post('/{tipo}/borrador/{version}/descarte', [PoliticaBorradorController::class, 'descartar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.descarte');
         Route::post('/{tipo}/borrador/{version}/previsualizacion', [PoliticaBorradorController::class, 'previsualizar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.previsualizacion');
         Route::post('/{tipo}/borrador/{version}/publicacion', [PoliticaBorradorController::class, 'publicar'])->where('tipo', $tipo)->whereNumber('version')->name('politicas.borrador.publicacion');
+    });
+});
+
+// Movimientos y novedades de personal (feature 020). Sin PUT, PATCH ni DELETE: lo presentado, resuelto o aplicado no se
+// edita ni se elimina. Las rutas estáticas van antes de `/{id}` para que el texto no se interprete como identificador.
+Route::prefix('api/movimientos-personal')->middleware('api')->group(function () {
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/', [ActuacionController::class, 'index'])->name('movimientos.index');
+        Route::get('/resumen', [ActuacionController::class, 'resumen'])->name('movimientos.resumen');
+        Route::get('/contexto-de-movimiento', [ActuacionController::class, 'contextoDeMovimiento'])->name('movimientos.contexto');
+        Route::get('/documentos', [ActuacionController::class, 'documentos'])->name('movimientos.documentos');
+
+        Route::post('/novedades', [ActuacionController::class, 'novedad'])->defaults('modo', 'novedad_admin')->name('movimientos.novedades.store');
+        Route::post('/ausencias', [ActuacionController::class, 'ausencia'])->defaults('modo', 'ausencia')->name('movimientos.ausencias.store');
+        Route::post('/movimientos', [ActuacionController::class, 'movimiento'])->defaults('modo', 'movimiento')->name('movimientos.movimientos.store');
+
+        Route::get('/{id}', [ActuacionController::class, 'show'])->whereNumber('id')->name('movimientos.show');
+        Route::post('/{id}/revision', [ActuacionController::class, 'revision'])->whereNumber('id')->name('movimientos.revision');
+        Route::post('/{id}/aprobacion', [ActuacionController::class, 'aprobacion'])->whereNumber('id')->name('movimientos.aprobacion');
+        Route::post('/{id}/rechazo', [ActuacionController::class, 'rechazo'])->whereNumber('id')->name('movimientos.rechazo');
+        Route::post('/{id}/retiro', [ActuacionController::class, 'retiro'])->whereNumber('id')->name('movimientos.retiro');
+        Route::post('/{id}/revision-de-ausencia', [ActuacionController::class, 'revisionDeAusencia'])->whereNumber('id')->name('movimientos.revision-de-ausencia');
+        Route::post('/{id}/aplicacion', [ActuacionController::class, 'aplicacion'])->whereNumber('id')->name('movimientos.aplicacion');
+    });
+});
+
+// Solicitudes de la propia ficha: solo autenticación; el caso de uso exige la asociación cuenta–ficha.
+Route::prefix('api/mis-solicitudes')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [MiSolicitudController::class, 'index'])->name('mis-solicitudes.index');
+        Route::get('/documentos', [MiSolicitudController::class, 'documentos'])->name('mis-solicitudes.documentos');
+        Route::post('/novedades', [MiSolicitudController::class, 'novedad'])->defaults('modo', 'novedad')->name('mis-solicitudes.novedades.store');
+        Route::get('/{id}', [MiSolicitudController::class, 'show'])->whereNumber('id')->name('mis-solicitudes.show');
+        Route::post('/{id}/retiro', [MiSolicitudController::class, 'retiro'])->whereNumber('id')->name('mis-solicitudes.retiro');
     });
 });

@@ -75,6 +75,22 @@ class SharedService
         ];
     }
 
+    /**
+     * Mismo contexto que `getContextoDeTenant`, resuelto por tenant (para procesos programados sin cuenta).
+     *
+     * @return array{tenant_id: int, nombre: string, zona_horaria: string}|null
+     */
+    public function getContextoDeTenantPorId(int $tenantId): ?array
+    {
+        $fila = DB::table('tenants')->where('id', $tenantId)->first(['id', 'nombre', 'zona_horaria']);
+
+        return $fila === null ? null : [
+            'tenant_id' => (int) $fila->id,
+            'nombre' => (string) $fila->nombre,
+            'zona_horaria' => (string) $fila->zona_horaria,
+        ];
+    }
+
     /** Máximo de usuarios que devuelve una búsqueda por nombre. */
     public const LIMITE_BUSQUEDA_POR_NOMBRE = 200;
 

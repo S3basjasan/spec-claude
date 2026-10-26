@@ -19,4 +19,15 @@ final class SharedContextoDeTenant implements ContextoDeTenantPort
 
         return new ContextoDeTenant($contexto['tenant_id'], $contexto['nombre'], $contexto['zona_horaria']);
     }
+
+    public function deTenant(int $tenantId): ?ContextoDeTenant
+    {
+        $contexto = SharedFacade::getContextoDeTenantPorId($tenantId);
+
+        if ($contexto === null) {
+            return null;
+        }
+
+        return new ContextoDeTenant($contexto['tenant_id'], $contexto['nombre'], $contexto['zona_horaria']);
+    }
 }

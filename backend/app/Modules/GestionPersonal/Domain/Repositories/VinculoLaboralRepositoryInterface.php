@@ -4,6 +4,8 @@ namespace App\Modules\GestionPersonal\Domain\Repositories;
 
 use App\Modules\GestionPersonal\Domain\Entities\AsignacionLaboral;
 use App\Modules\GestionPersonal\Domain\Entities\VinculoLaboral;
+use App\Modules\GestionPersonal\Domain\Exceptions\ConflictoDeUnicidad;
+use App\Modules\GestionPersonal\Domain\Exceptions\IncidenciaDeAplicacion;
 use App\Modules\GestionPersonal\Domain\Exceptions\IngresoNoVerificable;
 use App\Modules\GestionPersonal\Domain\Exceptions\PosicionNoDisponible;
 use App\Modules\GestionPersonal\Domain\Exceptions\VinculoSuperpuesto;
@@ -100,4 +102,25 @@ interface VinculoLaboralRepositoryInterface
         int $posicionId,
         int $actorId,
     ): VinculoLaboral;
+
+    /**
+     * Hecho laboral de un movimiento: cierra la asignación de origen en la fecha efectiva (fin excluido) y abre la
+     * nueva desde esa fecha con la referencia a su actuación. Debe llamarse dentro de `ejecutarBajoBloqueo`.
+     *
+     * @return int Identificador de la asignación nueva.
+     *
+     * @throws IncidenciaDeAplicacion El origen ya no es la asignación abierta del vínculo.
+     * @throws PosicionNoDisponible
+     * @throws VinculoSuperpuesto
+     * @throws ConflictoDeUnicidad La actuación ya generó su asignación.
+     */
+    public function cerrarYAbrirAsignacion(
+        int $tenantId,
+        int $vinculoId,
+        int $asignacionOrigenId,
+        int $posicionDestinoId,
+        string $fechaEfectiva,
+        int $actuacionId,
+        ?int $actorId,
+    ): int;
 }
