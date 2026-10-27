@@ -6,6 +6,7 @@ use App\Modules\GestionPersonal\Domain\Entities\AsignacionLaboral;
 use App\Modules\GestionPersonal\Domain\Entities\VinculoLaboral;
 use App\Modules\GestionPersonal\Domain\Exceptions\ConflictoDeUnicidad;
 use App\Modules\GestionPersonal\Domain\Exceptions\IncidenciaDeAplicacion;
+use App\Modules\GestionPersonal\Domain\Exceptions\IncidenciaDeSalida;
 use App\Modules\GestionPersonal\Domain\Exceptions\IngresoNoVerificable;
 use App\Modules\GestionPersonal\Domain\Exceptions\PosicionNoDisponible;
 use App\Modules\GestionPersonal\Domain\Exceptions\VinculoSuperpuesto;
@@ -102,6 +103,14 @@ interface VinculoLaboralRepositoryInterface
         int $posicionId,
         int $actorId,
     ): VinculoLaboral;
+
+    /**
+     * Salida efectiva: cierra la asignación abierta y el vínculo en la fecha efectiva (fin excluido), liberando la
+     * posición desde esa fecha. Debe llamarse dentro de `ejecutarBajoBloqueo`.
+     *
+     * @throws IncidenciaDeSalida El vínculo ya no es vigente o la asignación cambió.
+     */
+    public function cerrarVinculoEnFecha(int $tenantId, int $vinculoId, string $fechaEfectiva, ?int $actorId): void;
 
     /**
      * Hecho laboral de un movimiento: cierra la asignación de origen en la fecha efectiva (fin excluido) y abre la

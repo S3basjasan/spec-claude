@@ -7,6 +7,7 @@ use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PuestoMode
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\UnidadModel;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Models\ColaboradorModel;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -39,13 +40,19 @@ class IngresosSeeder extends Seeder
         }
         [$a, $b, $c] = $posiciones->all();
 
-        $tenantDos = PosicionModel::query()->where('tenant_id', 2)->first()
-            ?? PosicionModel::query()->create([
-                'puesto_id' => $otroPuesto->id,
-                'unidad_organizacional_id' => $unidad->id,
-                'estado' => 'Vacante',
-                'tenant_id' => 2,
-            ]);
+        // Tras la regla de máxima autoridad única (posiciones), una posición raíz del tenant 2 puede chocar con la del
+        // tenant 1; la posición del tenant 2 es solo de apoyo para pruebas de aislamiento, así que se omite si choca.
+        try {
+            $tenantDos = PosicionModel::query()->where('tenant_id', 2)->first()
+                ?? PosicionModel::query()->create([
+                    'puesto_id' => $otroPuesto->id,
+                    'unidad_organizacional_id' => $unidad->id,
+                    'estado' => 'Vacante',
+                    'tenant_id' => 2,
+                ]);
+        } catch (UniqueConstraintViolationException) {
+            $tenantDos = null;
+        }
 
         $admin = (int) DB::table('users')->where('email', 'admin@hrms.test')->value('id');
         $hoy = now();

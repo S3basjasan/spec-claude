@@ -8,6 +8,7 @@ use App\Modules\GestionPersonal\Application\Services\CatalogoDeContratos;
 use App\Modules\GestionPersonal\Domain\Exceptions\ColaboradorNoEncontrado;
 use App\Modules\GestionPersonal\Domain\Repositories\ActuacionRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
+use App\Modules\GestionPersonal\Domain\Repositories\ExpedienteRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\ValueObjects\TipoDeHecho;
 
@@ -23,6 +24,7 @@ final class ConsultarTrayectoria
         private readonly LectorEstructuraPort $estructura,
         private readonly CatalogoDeContratos $contratos,
         private readonly ActuacionRepositoryInterface $actuaciones,
+        private readonly ExpedienteRepositoryInterface $expedientes,
     ) {}
 
     /**
@@ -110,6 +112,33 @@ final class ConsultarTrayectoria
                 'registrado_en' => $movimiento['aplicada_en'],
                 'actuacion_id' => $movimiento['actuacion_id'],
                 'politica_numero' => $movimiento['politica_numero'],
+            ];
+        }
+
+        // Salidas efectivas (feature 021): el vínculo terminó en la fecha efectiva con el motivo administrativo registrado.
+        $principalPorVinculo = [];
+        foreach ($vinculos as $vinculo) {
+            $principalPorVinculo[$vinculo->id] = $vinculo->asignacionPrincipal()?->posicionId;
+        }
+        foreach ($this->expedientes->hechosEfectivos($contexto->tenantId, $colaboradorId) as $salida) {
+            $posicionId = $principalPorVinculo[$salida['vinculo_id']] ?? null;
+            $posicion = $posicionId === null ? null : ($datos[$posicionId] ?? null);
+            $hechos[] = [
+                'vinculo_id' => $salida['vinculo_id'],
+                'tipo' => TipoDeHecho::Salida->value,
+                'fecha_efectiva' => $salida['fecha_efectiva'],
+                'programado' => false,
+                'tipo_contrato' => $contratosPorVinculo[$salida['vinculo_id']] ?? null,
+                'posicion' => $posicionId === null ? null : [
+                    'id' => $posicionId,
+                    'puesto' => $posicion['puesto'] ?? null,
+                    'unidad' => $posicion['unidad'] ?? null,
+                    'jefatura' => $posicion['jefatura'] ?? null,
+                ],
+                'registrado_en' => $salida['aplicada_en'],
+                'expediente_id' => $salida['expediente_id'],
+                'motivo' => $salida['motivo'],
+                'politica_numero' => $salida['politica_numero'],
             ];
         }
 

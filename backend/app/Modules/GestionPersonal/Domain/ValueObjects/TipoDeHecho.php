@@ -8,4 +8,5 @@ enum TipoDeHecho: string
     case Reingreso = 'Reingreso';
     case Ascenso = 'Ascenso';
     case Traslado = 'Traslado';
+    case Salida = 'Salida';
 }

@@ -26,6 +26,7 @@ use Tests\TestCase;
 
 require_once __DIR__.'/GestionPersonalHelpers.php';
 require_once __DIR__.'/MovimientosHelpers.php';
+require_once __DIR__.'/OffboardingHelpers.php';
 require_once __DIR__.'/CompensacionesHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/DnfHelpers.php';
 require_once __DIR__.'/Support/Desarrollo/PlanHelpers.php';

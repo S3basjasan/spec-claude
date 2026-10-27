@@ -515,6 +515,15 @@ Sin artboard propio: reutiliza los patrones Listado, Formulario, Detalle de un r
 7. **Formularios** (propuesta, novedad, ausencia): condiciones aplicables de la política a la vista (componente de la feature 016, incluida «Política sin configurar» y «No admite nuevas solicitudes»), anticipación en días calendario, selector de respaldos (referencias, no archivos), advertencia de que **al presentar se fija una versión de política** y botón bloqueado mientras presenta o no hay política vigente. El de **ausencia** lleva un aviso visible de que se informa un hecho ocurrido y no tiene tipo ni anticipación.
 8. **Mis solicitudes** (Colaborador, `/mis-solicitudes`): tabla simplificada sin filtros que revelen a otras personas; de un movimiento solo muestra tipo, fecha efectiva y resultado; «Retirar» (ConfirmDialog) solo en novedades presentadas o en revisión; estados vacío, error y «Sin ficha asociada» distintos.
 
+### Offboarding de colaboradores *(feature 021)*
+Sin artboard propio: reutiliza los patrones Listado, Formulario, Detalle de un registro y Estados con los componentes base de §4.
+
+1. **Listado del Administrador** (`/offboarding`): tarjetas de resumen que filtran (programadas, efectivas, con incidencia, cierre pendiente, entrevistas), filtros en la URL y tabla con colaborador (enlace al expediente), motivo, fecha efectiva y Badges de texto de estado, cierre y entrevista.
+2. **Formalizar** (`/offboarding/formalizar`): formulario con búsqueda de colaborador, motivo del catálogo, fecha efectiva y respaldos; muestra la política vigente y las tareas que se copiarán (incluida la entrevista). «Política sin configurar», sin vínculo vigente o salida ya existente deshabilitan el envío con el motivo visible.
+3. **Expediente** (`/offboarding/:id`): secciones en Cards — Aplicación (programada, efectiva o **incidencia** con Alert y Reintentar; la cuenta figura «pendiente de verificar», nunca como deshabilitada), Checklist (tabla con Completar y evidencia), Cierre administrativo (lista de bloqueos), Entrevista de salida (estado, «no realizada» con motivo, respuestas originales bajo permiso) e Historial.
+4. **Mi desvinculación** (Colaborador, `/mi-desvinculacion`): resumen y actividades con la entrevista como una tarea voluntaria; no muestra respaldos, política, incidencias ni cierre.
+5. **Entrevista de salida** (`/mi-desvinculacion/entrevista`): grupos de radios 1–5 con «Sin responder», categorías con casillas y preguntas abiertas con contador; guardar avance, presentar (confirmación) o no participar; cerrada es solo lectura.
+
 ## 6. Iconos
 
 Se usa **Tabler Icons** (`@tabler/icons-react`), trazo 1.75, 20px en el menú y 18px en botones. Los SVG de los mockups son de referencia; al implementar se usan sus equivalentes de Tabler:

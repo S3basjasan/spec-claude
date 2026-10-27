@@ -6,6 +6,7 @@ use App\Modules\GestionPersonal\Domain\Entities\AsignacionLaboral;
 use App\Modules\GestionPersonal\Domain\Entities\VinculoLaboral;
 use App\Modules\GestionPersonal\Domain\Exceptions\ConflictoDeUnicidad;
 use App\Modules\GestionPersonal\Domain\Exceptions\IncidenciaDeAplicacion;
+use App\Modules\GestionPersonal\Domain\Exceptions\IncidenciaDeSalida;
 use App\Modules\GestionPersonal\Domain\Exceptions\IngresoNoVerificable;
 use App\Modules\GestionPersonal\Domain\Exceptions\PosicionNoDisponible;
 use App\Modules\GestionPersonal\Domain\Exceptions\VinculoSuperpuesto;
@@ -227,6 +228,35 @@ final class EloquentVinculoLaboralRepository implements VinculoLaboralRepository
             $ahora->toIso8601ZuluString(),
             [new AsignacionLaboral($asignacionId, $vinculoId, $posicionId, $fechaIngreso, null)],
         );
+    }
+
+    public function cerrarVinculoEnFecha(int $tenantId, int $vinculoId, string $fechaEfectiva, ?int $actorId): void
+    {
+        $ahora = now();
+        $vinculo = DB::table('vinculos_laborales')->where('id', $vinculoId)->where('tenant_id', $tenantId)->first();
+        if ($vinculo === null || $vinculo->fecha_salida !== null || (string) $vinculo->fecha_ingreso >= $fechaEfectiva) {
+            throw new IncidenciaDeSalida(IncidenciaDeSalida::VINCULO_NO_VIGENTE, 'El colaborador ya no tiene un vínculo laboral vigente en esa fecha.');
+        }
+
+        $futuras = DB::table('asignaciones_laborales')->where('vinculo_id', $vinculoId)->where('fecha_inicio', '>', $fechaEfectiva)->exists();
+        $abierta = DB::table('asignaciones_laborales')->where('vinculo_id', $vinculoId)->whereNull('fecha_fin')->first();
+        if ($futuras || ($abierta !== null && (string) $abierta->fecha_inicio > $fechaEfectiva)) {
+            throw new IncidenciaDeSalida(IncidenciaDeSalida::ASIGNACION_CAMBIO, 'La asignación del colaborador cambió y no es compatible con la fecha de salida.');
+        }
+
+        try {
+            // Primero la asignación: GP-02 no admite acortar un vínculo sobre una asignación abierta.
+            if ($abierta !== null) {
+                DB::table('asignaciones_laborales')->where('id', $abierta->id)->update([
+                    'fecha_fin' => $fechaEfectiva, 'version' => DB::raw('version + 1'), 'updated_by' => $actorId ?? 0, 'updated_at' => $ahora,
+                ]);
+            }
+            DB::table('vinculos_laborales')->where('id', $vinculoId)->update([
+                'fecha_salida' => $fechaEfectiva, 'version' => DB::raw('version + 1'), 'updated_by' => $actorId ?? 0, 'updated_at' => $ahora,
+            ]);
+        } catch (QueryException $e) {
+            throw new IncidenciaDeSalida(IncidenciaDeSalida::INCONSISTENCIA, 'No se pudo cerrar el vínculo de forma consistente.', $e);
+        }
     }
 
     public function cerrarYAbrirAsignacion(

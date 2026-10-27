@@ -14,5 +14,8 @@ Schedule::command('documentos:limpiar-huerfanos')->daily()->withoutOverlapping()
 // Aplicación automática de movimientos aprobados (feature 020): ascensos y traslados cuya fecha efectiva ya llegó. Requiere el planificador activo.
 Schedule::command('movimientos:aplicar-programados')->everyFiveMinutes()->withoutOverlapping();
 
+// Aplicación automática de salidas formalizadas (feature 021): cuya fecha efectiva ya llegó. Requiere el planificador activo.
+Schedule::command('offboarding:aplicar-salidas')->everyFiveMinutes()->withoutOverlapping();
+
 // Rutas de carrera (feature 019): retira las inscripciones activas de quien ya no tiene vínculo laboral vigente. Requiere el planificador activo.
 Schedule::command('rutas:conciliar-bajas')->hourly()->withoutOverlapping();

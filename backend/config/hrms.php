@@ -37,6 +37,11 @@ return [
         // Políticas operativas de personal (feature 016): en false se detienen las escrituras (503) conservando versiones y consultas.
         'politicas_habilitado' => (bool) env('GESTION_PERSONAL_POLITICAS_HABILITADO', true),
 
+        // Offboarding (feature 021): mínimo de entrevistas completadas para mostrar resultados agregados.
+        'offboarding' => [
+            'minimo_agregados' => (int) env('GESTION_PERSONAL_OFFBOARDING_MINIMO_AGREGADOS', 5),
+        ],
+
         'documentos' => [
             // En false se detienen cargas y cambios (503) conservando documentos y consultas.
             'habilitado' => (bool) env('GESTION_PERSONAL_DOCUMENTOS_HABILITADOS', true),

@@ -7,11 +7,13 @@ use App\Modules\GestionPersonal\Application\Ports\AlmacenDeDocumentosPort;
 use App\Modules\GestionPersonal\Application\Ports\CatalogoDeCategoriasPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeLecturaPort;
 use App\Modules\GestionPersonal\Application\Ports\ContextoDeTenantPort;
+use App\Modules\GestionPersonal\Application\Ports\CoordinadorDeCuentaPort;
 use App\Modules\GestionPersonal\Application\Ports\EvaluacionDelDestinoPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorDeCapacidadesPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorDeDesarrolloPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorEstructuraPort;
 use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
+use App\Modules\GestionPersonal\Application\Ports\PermisoDeEntrevistasPort;
 use App\Modules\GestionPersonal\Application\Ports\PosicionesAsignablesPort;
 use App\Modules\GestionPersonal\Application\Ports\RelojPort;
 use App\Modules\GestionPersonal\Application\Ports\RenderizadorDePdfPort;
@@ -24,15 +26,18 @@ use App\Modules\GestionPersonal\Domain\Repositories\CategoriaRepositoryInterface
 use App\Modules\GestionPersonal\Domain\Repositories\ColaboradorRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\DesarrolloRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\DocumentoRepositoryInterface;
+use App\Modules\GestionPersonal\Domain\Repositories\ExpedienteRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\PoliticaRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\AlmacenDeDocumentosDisco;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\CatalogoDeCategoriasEloquent;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\ContextoDeLecturaSnapshot;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\CoordinadorDeCuentaNoInstalado;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\EstructuraFacadeLector;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\EvaluacionDelDestinoNoInstalada;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\LectorDeCapacidadesDesarrollo;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\LectorDeDesarrolloEloquent;
+use App\Modules\GestionPersonal\Infrastructure\Adapters\PermisoDeEntrevistasNoInstalado;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\PosicionesAsignablesEstructura;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\RelojDelSistema;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\RenderizadorDePdfDompdf;
@@ -40,6 +45,7 @@ use App\Modules\GestionPersonal\Infrastructure\Adapters\SharedContextoDeTenant;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\TransaccionLaravel;
 use App\Modules\GestionPersonal\Infrastructure\Adapters\ValidadorDePdfEstructural;
 use App\Modules\GestionPersonal\Infrastructure\Console\AplicarMovimientosProgramadosCommand;
+use App\Modules\GestionPersonal\Infrastructure\Console\AplicarSalidasProgramadasCommand;
 use App\Modules\GestionPersonal\Infrastructure\Console\LimpiarObjetosHuerfanosCommand;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentAccesosDeCuenta;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentActuacionRepository;
@@ -47,6 +53,7 @@ use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentColaboradorRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentDesarrolloRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentDocumentoRepository;
+use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentExpedienteRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentLectorLaboral;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentPoliticaRepository;
 use App\Modules\GestionPersonal\Infrastructure\Persistence\Eloquent\Repositories\EloquentVinculoLaboralRepository;
@@ -63,6 +70,7 @@ class GestionPersonalServiceProvider extends ServiceProvider
         $this->app->bind(ColaboradorRepositoryInterface::class, EloquentColaboradorRepository::class);
         $this->app->bind(DesarrolloRepositoryInterface::class, EloquentDesarrolloRepository::class);
         $this->app->bind(LectorDeDesarrolloPort::class, LectorDeDesarrolloEloquent::class);
+
         $this->app->bind(CategoriaRepositoryInterface::class, EloquentCategoriaRepository::class);
         $this->app->bind(CatalogoDeCategoriasPort::class, CatalogoDeCategoriasEloquent::class);
         $this->app->bind(DocumentoRepositoryInterface::class, EloquentDocumentoRepository::class);
@@ -87,6 +95,11 @@ class GestionPersonalServiceProvider extends ServiceProvider
         $this->app->bind(ActuacionRepositoryInterface::class, EloquentActuacionRepository::class);
         $this->app->bind(EvaluacionDelDestinoPort::class, EvaluacionDelDestinoNoInstalada::class);
 
+        // Offboarding (feature 021). Sin contrato de Identidad y Acceso la cuenta queda «Pendiente» y nadie consulta respuestas.
+        $this->app->bind(ExpedienteRepositoryInterface::class, EloquentExpedienteRepository::class);
+        $this->app->bind(CoordinadorDeCuentaPort::class, CoordinadorDeCuentaNoInstalado::class);
+        $this->app->bind(PermisoDeEntrevistasPort::class, PermisoDeEntrevistasNoInstalado::class);
+
         $this->app->singleton('personal-facade', fn ($app) => $app->make(PersonalService::class));
         $this->app->singleton('politicas-facade', fn ($app) => $app->make(PoliticasService::class));
     }
@@ -94,7 +107,7 @@ class GestionPersonalServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([LimpiarObjetosHuerfanosCommand::class, AplicarMovimientosProgramadosCommand::class]);
+            $this->commands([LimpiarObjetosHuerfanosCommand::class, AplicarMovimientosProgramadosCommand::class, AplicarSalidasProgramadasCommand::class]);
         }
 
         $this->loadViewsFrom(dirname(__DIR__).'/Pdf/plantillas', 'gp-exportacion');

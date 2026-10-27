@@ -12,8 +12,10 @@ it('aplica por la zona horaria de cada tenant y no cruza datos entre tenants (US
     Carbon::setTestNow('2026-10-22 15:00:00 UTC');
     tenantDos();
     tenantConZona('Pacific/Kiritimati', 2);
-    politicaVigente('Ascensos', ['anticipacion_dias' => 0]);
-    politicaVigente('Ascensos', ['anticipacion_dias' => 0], 2);
+    // Las políticas rigen desde antes de las fechas fijas de la prueba, sea cual sea la fecha real de ejecución.
+    foreach ([1, 2] as $tenant) {
+        politicaPublicada('Ascensos', ['tenant_id' => $tenant, 'inicio' => new DateTimeImmutable('2026-01-01 00:00:00 UTC'), 'parametros' => array_merge(parametrosValidos('Ascensos'), ['anticipacion_dias' => 0])]);
+    }
 
     actuarComoAdminDeTenant(1);
     $uno = movimientoAprobado($this, ['fecha_efectiva' => '2026-10-24']);

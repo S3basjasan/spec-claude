@@ -6,6 +6,7 @@ use App\Modules\GestionPersonal\Application\Ports\LectorLaboralPort;
 use App\Modules\GestionPersonal\Application\Services\CatalogoDeContratos;
 use App\Modules\GestionPersonal\Domain\Entities\VinculoLaboral;
 use App\Modules\GestionPersonal\Domain\Repositories\ActuacionRepositoryInterface;
+use App\Modules\GestionPersonal\Domain\Repositories\ExpedienteRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Repositories\VinculoLaboralRepositoryInterface;
 use App\Modules\GestionPersonal\Domain\Services\SituacionLaboralDerivada;
 use App\Modules\GestionPersonal\Domain\ValueObjects\Lectura;
@@ -25,6 +26,7 @@ final class EloquentLectorLaboral implements LectorLaboralPort
         private readonly SituacionLaboralDerivada $derivada,
         private readonly CatalogoDeContratos $contratos,
         private readonly ActuacionRepositoryInterface $actuaciones,
+        private readonly ExpedienteRepositoryInterface $expedientes,
     ) {}
 
     public function situacionVigente(int $tenantId, array $colaboradorIds, string $fecha): Lectura
@@ -101,6 +103,24 @@ final class EloquentLectorLaboral implements LectorLaboralPort
                     'registrado_en' => $movimiento['aplicada_en'],
                     'actuacion_id' => $movimiento['actuacion_id'],
                     'politica_numero' => $movimiento['politica_numero'],
+                ];
+            }
+            // Salidas efectivas (feature 021).
+            $posiciones = [];
+            foreach ($this->vinculos->vinculosDeFicha($tenantId, $colaboradorId) as $vinculo) {
+                $posiciones[$vinculo->id] = $vinculo->asignacionPrincipal()?->posicionId;
+            }
+            foreach ($this->expedientes->hechosEfectivos($tenantId, $colaboradorId) as $salida) {
+                $hechos[] = [
+                    'vinculo_id' => $salida['vinculo_id'],
+                    'fecha_efectiva' => $salida['fecha_efectiva'],
+                    'tipo' => TipoDeHecho::Salida->value,
+                    'detalle' => 'Salida efectiva: '.$salida['motivo'],
+                    'tipo_contrato' => $contratos[$salida['vinculo_id']] ?? null,
+                    'posicion_id' => $posiciones[$salida['vinculo_id']] ?? null,
+                    'registrado_en' => $salida['aplicada_en'],
+                    'expediente_id' => $salida['expediente_id'],
+                    'politica_numero' => $salida['politica_numero'],
                 ];
             }
             usort($hechos, fn (array $a, array $b) => strcmp($a['fecha_efectiva'], $b['fecha_efectiva']));

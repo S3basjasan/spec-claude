@@ -9,10 +9,12 @@ use App\Modules\GestionPersonal\Presentation\Controllers\DocumentoColaboradorCon
 use App\Modules\GestionPersonal\Presentation\Controllers\ExportacionFichaController;
 use App\Modules\GestionPersonal\Presentation\Controllers\IngresoController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiDesarrolloController;
+use App\Modules\GestionPersonal\Presentation\Controllers\MiDesvinculacionController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiDocumentoController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiExportacionController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiFichaController;
 use App\Modules\GestionPersonal\Presentation\Controllers\MiSolicitudController;
+use App\Modules\GestionPersonal\Presentation\Controllers\OffboardingController;
 use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaAplicableController;
 use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaBorradorController;
 use App\Modules\GestionPersonal\Presentation\Controllers\PoliticaPersonalController;
@@ -139,5 +141,38 @@ Route::prefix('api/mis-solicitudes')->middleware('api')->group(function () {
         Route::post('/novedades', [MiSolicitudController::class, 'novedad'])->defaults('modo', 'novedad')->name('mis-solicitudes.novedades.store');
         Route::get('/{id}', [MiSolicitudController::class, 'show'])->whereNumber('id')->name('mis-solicitudes.show');
         Route::post('/{id}/retiro', [MiSolicitudController::class, 'retiro'])->whereNumber('id')->name('mis-solicitudes.retiro');
+    });
+});
+
+// Offboarding de colaboradores (feature 021). Sin PUT, PATCH ni DELETE: lo formalizado, aplicado o respondido no se edita
+// ni se elimina. Las rutas estáticas van antes de `/{id}` para que el texto no se interprete como identificador.
+Route::prefix('api/offboarding')->middleware('api')->group(function () {
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/', [OffboardingController::class, 'index'])->name('offboarding.index');
+        Route::get('/resumen', [OffboardingController::class, 'resumen'])->name('offboarding.resumen');
+        Route::get('/contexto', [OffboardingController::class, 'contextoDeSalida'])->name('offboarding.contexto');
+        Route::get('/documentos', [OffboardingController::class, 'documentos'])->name('offboarding.documentos');
+        Route::get('/agregados', [OffboardingController::class, 'agregados'])->name('offboarding.agregados');
+        Route::post('/', [OffboardingController::class, 'store'])->name('offboarding.store');
+
+        Route::get('/{id}', [OffboardingController::class, 'show'])->whereNumber('id')->name('offboarding.show');
+        Route::post('/{id}/cancelacion', [OffboardingController::class, 'cancelacion'])->whereNumber('id')->name('offboarding.cancelacion');
+        Route::post('/{id}/tareas/{tarea}/completar', [OffboardingController::class, 'completarTarea'])->whereNumber('id')->whereNumber('tarea')->name('offboarding.tareas.completar');
+        Route::post('/{id}/aplicacion', [OffboardingController::class, 'aplicacion'])->whereNumber('id')->name('offboarding.aplicacion');
+        Route::post('/{id}/cierre', [OffboardingController::class, 'cierre'])->whereNumber('id')->name('offboarding.cierre');
+        Route::post('/{id}/entrevista/no-realizada', [OffboardingController::class, 'entrevistaNoRealizada'])->whereNumber('id')->name('offboarding.entrevista.no-realizada');
+        Route::get('/{id}/entrevista/respuestas', [OffboardingController::class, 'respuestas'])->whereNumber('id')->name('offboarding.entrevista.respuestas');
+        Route::get('/{id}/entrevista/estructura', [OffboardingController::class, 'estructura'])->whereNumber('id')->name('offboarding.entrevista.estructura');
+    });
+});
+
+// Desvinculación de la propia ficha: solo autenticación; el caso de uso exige la asociación cuenta–ficha.
+Route::prefix('api/mi-desvinculacion')->middleware('api')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/', [MiDesvinculacionController::class, 'show'])->name('mi-desvinculacion.show');
+        Route::get('/entrevista', [MiDesvinculacionController::class, 'entrevista'])->name('mi-desvinculacion.entrevista');
+        Route::put('/entrevista', [MiDesvinculacionController::class, 'guardar'])->name('mi-desvinculacion.entrevista.guardar');
+        Route::post('/entrevista/confirmacion', [MiDesvinculacionController::class, 'confirmar'])->name('mi-desvinculacion.entrevista.confirmacion');
+        Route::post('/entrevista/declinacion', [MiDesvinculacionController::class, 'declinar'])->name('mi-desvinculacion.entrevista.declinacion');
     });
 });
