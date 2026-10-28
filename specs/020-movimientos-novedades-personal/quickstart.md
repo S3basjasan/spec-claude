@@ -1,5 +1,7 @@
 # Quickstart de validación: movimientos y novedades de personal
 
+**Revisión 2026-10-28**: los apartados originales describen la entrega inicial. La reformulación de promociones internas al final y su contrato complementario están pendientes de implementación.
+
 Guía de verificación de extremo a extremo. Los detalles de campos y errores están en [contracts/api-movimientos.md](contracts/api-movimientos.md) y [data-model.md](data-model.md).
 
 ## Requisitos previos
@@ -51,3 +53,15 @@ El E2E usa la base `database/e2e.sqlite` (nunca la de desarrollo): `playwright.c
 1. Entrar como Administrador → «Movimientos y novedades»: el listado muestra los conteos (pendientes, programados, incidencias) y filtros en la URL.
 2. «Proponer movimiento»: elegir colaborador, destino, fecha efectiva y justificación; el detalle muestra «Evaluación no disponible» y **no** muestra el botón «Aprobar» mientras no exista evaluación verificable.
 3. Entrar como Colaborador → «Mis solicitudes»: presentar un permiso viendo antes las condiciones y la advertencia de que se fija una versión de política; consultar su estado.
+
+## Validación propuesta de promociones internas · 2026-10-28
+
+Estos escenarios están pendientes de implementación; no sustituyen ni dan por ejecutadas las validaciones históricas. Usar una base de pruebas aislada y el contrato [promocion-interna.md](contracts/promocion-interna.md).
+
+1. Preparar una persona con vínculo y asignación, posición destino existente y perfil versionado, política de movimiento vigente y adecuación de Desarrollo con fuentes reales verificables. No asignar niveles ficticios para habilitar la aplicación de producción.
+2. Proponer sin cambiar ocupación. Probar ausencia de diagnóstico, proveedor caído, referencia ajena, perfil antiguo, dimensión obligatoria pendiente y conocimientos desactivados: todos impiden aprobar con causas seguras. Un requisito no aplicable exige fundamento del perfil.
+3. Aprobar una adecuación suficiente con brechas y justificación. Comprobar política y evidencia conservadas, sin aplicar antes de la fecha. Ninguna clasificación de preparación decide por sí sola.
+4. Generar otra evaluación y comprobar que no altera la evidencia de aprobación. Cambiar perfil o vencer evidencia antes de aplicar: incidencia sin cambios laborales. Revalidar con la nueva evidencia y justificación, repetir la misma operación sin duplicados y comprobar que la aprobación original sigue consultable.
+5. Aplicar al llegar la fecha: origen libre, destino ocupado por la persona y consultas coincidentes en ficha, posiciones y organigrama. Fallar deliberadamente el paso de Estructura y comprobar rollback laboral completo. Competir por un destino desde dos movimientos y confirmar una sola ocupación.
+6. Consultar 005 y Mis solicitudes con ambos roles y otro tenant. No filtrar diagnósticos, deliberaciones o documentos restringidos por contadores, referencias o enlaces. Consultar evolución solo cuando Desarrollo declare comparabilidad; completar formación no cambia niveles.
+7. Verificar migración compatible de datos existentes y regresiones de permisos, licencias, vacaciones, ausencias, políticas, ingresos y offboarding. Confirmar las doce condiciones PI-01–PI-12 y registrar qué proveedores quedaron realmente integrados.

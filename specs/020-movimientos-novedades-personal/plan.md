@@ -1,5 +1,7 @@
 # Implementation Plan: Registro de movimientos y novedades de personal
 
+**Revisión 2026-10-28**: los apartados originales describen la entrega inicial. La reformulación de promociones internas al final y su contrato complementario están pendientes de implementación.
+
 **Branch**: `020-movimientos-novedades-personal` | **Date**: 2026-10-21 | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from `/specs/020-movimientos-novedades-personal/spec.md`
@@ -146,3 +148,27 @@ Sin violaciones de la constitución que justificar.
 
 - Zod replica: fechas `AAAA-MM-DD`, `fecha_fin ≥ fecha_inicio`, justificación y documento según la política mostrada, máximos de texto (1000). Los 422 del servidor se asignan a campos por clave de `errors`; los códigos de negocio (`ANTICIPACION_INSUFICIENTE`, `CRUCE_SIN_RECONOCER`, `EVALUACION_NO_VERIFICABLE`…) se muestran como alerta con el texto propio de cada causa, distinta de «lista vacía» y de error de red.
 - En 409 (`SOLICITUD_MODIFICADA`) el formulario conserva lo escrito, explica el cambio y ofrece «Actualizar» sin reenviar la versión obsoleta.
+
+## Reformulación de promociones internas · 2026-10-28 (pendiente)
+
+La arquitectura se amplía según [promocion-interna.md](contracts/promocion-interna.md). Desarrollo y Formación conserva evaluaciones, niveles y diagnósticos; Personal conserva decisiones y asignaciones. La captura evaluativa no se implementa en este módulo. Integrar la adecuación existente y acordar la procedencia de sus niveles es una dependencia de habilitación, no una suposición.
+
+1. Revisar e integrar la funcionalidad `020-adecuacion-puesto-futuro` disponible en `origin/develop`, conservando los cambios locales de 005 y el trabajo separado de offboarding. Esta revisión documental no realiza fusiones. Comprobar el contrato real y resolver con Desarrollo la contradicción histórica de quién produce los niveles individuales.
+2. Extender el contrato público de Desarrollo para suministrar identidad, criterios/versiones, método, vigencia, cobertura y evidencia por dimensión. El resumen `ultimaAdecuacion` y una lista de brechas no bastan. Reutilizar escalas estables del diccionario unificado; no asumir que todas las etiquetas son A–D. Una capacidad desactivada no constituye no aplicabilidad.
+3. Evolucionar el puerto y verificador de Personal y añadir un adaptador real a la fachada pública de Desarrollo. Registrar NoDisponible/NoVerificable cuando falten datos. Las pruebas con dobles verifican el consumidor, pero no habilitan el adaptador de producción.
+4. Acordar con Estructura un contrato de ocupación coherente con las asignaciones, la identidad de colaborador y su cuenta opcional. Actualizar el diseño técnico de la operación atómica y sus restricciones de concurrencia antes de programar; nunca escribir tablas internas ajenas ni presentar conciliaciones manuales como solución. Verificar compatibilidad con ingresos, posiciones y offboarding.
+5. Conservar la evidencia de aprobación y registrar las revalidaciones anteriores a aplicar como eventos adicionales, sin sobrescribir aprobación o diagnósticos. Agregar el caso de uso y ruta de revalidación definidos en el contrato. Verificar criterio/perfil y vigencia al aplicar; si cambiaron, registrar incidencia y exigir la revalidación administrativa correspondiente.
+6. Antes de editar la interfaz, ampliar `design/DESIGN.md` y la referencia de detalle de movimientos: dimensiones, pendientes, fuente/fecha, acceso al diagnóstico, evidencia de aprobación frente a actual y confirmación de revalidación. Mantener las dos proyecciones de permisos. No crear nuevas pantallas de evaluación en Personal.
+7. Ampliar los contratos de consulta para 005 con referencias autorizadas de evidencia y movimiento; Desarrollo mantiene comparabilidad y evolución. No incorporar diagnósticos internos en la proyección comunicable de Mis solicitudes.
+
+### Modelo, compatibilidad y migraciones
+
+Reutilizar los campos de evidencia de movimientos para la instantánea de aprobación y el detalle append-only de transiciones para revalidaciones. No crear tablas de evaluaciones o niveles en Personal. Si las restricciones o proyecciones de ocupación requieren migraciones, deben ser aditivas o incluir una conversión documentada y probada sobre copia de datos, conservando identificadores, decisiones y hechos. No usar migrate:fresh para actualizar una base existente.
+
+Las aprobaciones históricas que carezcan de evidencia suficiente conservan su historia y no se presentan como verificadas bajo el contrato nuevo. Los movimientos ya Aplicada no se revierten ni se reevaluan retroactivamente por esta entrega. Un movimiento aprobado pendiente debe superar la nueva comprobación o quedar con incidencia hasta revalidación. No modificar la política histórica de una actuación.
+
+### Puertas de calidad y habilitación
+
+Pruebas de contrato contra proveedores reales integrados; Pest de suficiencia, permisos, atomicidad, concurrencia, idempotencia y revalidación; regresiones de novedades/políticas/ingresos; Vitest de estados, dimensiones, decisión e historial; Playwright con propuesta, aprobación, fecha efectiva y ocupación coincidente en ficha y Estructura. Incluir PI-01–PI-12 y recuperación de fallas. Registrar capacidades pendientes y fallos preexistentes separadamente. No considerar completa la promoción mientras solo funcione con proveedores de prueba.
+
+Se mantiene el alcance de las novedades originales. La separación entre hecho de ausencia y justificación requiere una revisión conjunta futura de 016 y 020; las reglas existentes no se cambian incidentalmente en esta entrega.

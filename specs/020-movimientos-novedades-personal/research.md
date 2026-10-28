@@ -1,5 +1,7 @@
 # Investigación: Registro de movimientos y novedades de personal
 
+**Revisión 2026-10-28**: los apartados originales describen la entrega inicial. La reformulación de promociones internas al final y su contrato complementario están pendientes de implementación.
+
 **Feature**: 020-movimientos-novedades-personal · **Fecha**: 2026-10-21
 
 Cada decisión se tomó inspeccionando el repositorio real (no el C4 histórico). Ninguna decisión agrega dependencias: todo usa Laravel 13, PHP 8.3+, Pest, SQLite, React 19, TanStack Query, RHF + Zod y Playwright ya instalados.
@@ -109,3 +111,12 @@ Un módulo `frontend/src/modules/gestionPersonal/movimientos/` con rutas `/movim
 | 4. Movimiento aprobado futuro llega a su fecha y la posición está ocupada | El comando registra incidencia sin cambios; el detalle del Administrador muestra la condición y «Reintentar»; el Colaborador sigue viendo «Programada»… | **Vacío G-03**: el Colaborador vería «Programada» aunque haya incidencia. Decisión: para el Colaborador `IncidenciaDeAplicacion` se muestra como «Aprobada, pendiente de aplicar» (nunca «Aplicada», sin detalle de la incidencia), coherente con FR-037. |
 
 Los vacíos G-01 a G-03 se registran en este documento y no se convierten en supuestos nuevos fuera de lo aquí decidido; la spec los cubre sin cambios (G-03 es una precisión de FR-037 y se anota en `spec.md`).
+
+## Decisiones de la reformulación · 2026-10-28
+
+- **PI-D01 · Propiedad**: el diagnóstico del destino pertenece a Desarrollo y Formación, cuya adecuación existe en origin/develop. Se corrige la titularidad abierta de D-03 para el diagnóstico; la captura de niveles sigue siendo un acuerdo pendiente con Desarrollo porque sus puertos antiguos la esperan de Personal y 012 la excluye.
+- **PI-D02 · Suficiencia**: una lista no vacía de requisitos y un resultado de texto solo validan forma. Se exige evidencia identificable por dimensión, perfil y método, incluyendo cobertura y pendientes. NoAplicable procede del perfil propietario; no de la ausencia de un proveedor. La preparación del diagnóstico no decide la aprobación.
+- **PI-D03 · Historia y vigencia**: la evidencia original de aprobación queda congelada. Una revalidación antes de aplicar añade evidencia y justificación sin sustituir esa decisión. Cambios de perfil o vencimiento necesario bloquean ejecución hasta una revalidación válida. El contrato define una operación adicional, sin estados nuevos de aprobación ni corrección de movimientos ya aplicados.
+- **PI-D04 · Ocupación**: las asignaciones efectivas son la fuente de verdad; Estructura publica ocupación coherente por un contrato explícito. La implementación actual de cerrar/abrir asignaciones no basta para garantizar estado y ocupante de posiciones. La operación debe ser atómica; sincronización eventual o reparación manual no acreditan esta revisión.
+- **PI-D05 · Identidad y escalas**: el ocupante es una identidad laboral, con cuenta opcional. Las etiquetas configurables del diccionario no se convierten arbitrariamente a letras; el proveedor conserva significado y versión. Antigüedad o formación declarada no se transforman automáticamente en competencias observadas.
+- **PI-D06 · Alcance**: se reutilizan la adecuación existente y el seguimiento 005. No se crean otro motor, rankings, convocatorias, puestos ni instrumentos en Personal. La clasificación administrativa Ascenso/Traslado se conserva con su limitación actual. La revisión de ausencias se mantiene como trabajo coordinado independiente con 016.

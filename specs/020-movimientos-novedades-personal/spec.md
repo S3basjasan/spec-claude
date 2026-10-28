@@ -4,11 +4,30 @@
 
 **Created**: 2026-10-21
 
+**Updated**: 2026-10-28 · Reformulación de promociones internas e integración con Desarrollo y Formación
+
+**Estado de la revisión**: propuesta funcional pendiente de implementación. Las tareas completadas de la entrega original no acreditan esta ampliación. Se conservan los flujos de novedades existentes; la revisión del registro de ausencias se planificará conjuntamente con 016 y no se introduce aquí.
+
+**Alcance reformulado**: la promoción interna comprende identificar un destino existente, presentar la propuesta, consultar la adecuación verificable, resolver con fundamento, aplicar el movimiento y consultar su seguimiento. Desarrollo y Formación conserva la evaluación y el cálculo de DNF/adecuación; Estructura conserva los perfiles y posiciones; Gestión de Personal conserva la decisión administrativa y las asignaciones. La ficha 005 presenta el seguimiento autorizado. No se crea otra funcionalidad de evaluación dentro de Gestión de Personal.
+
+**Documentos de la revisión**: [contratos de promoción interna](contracts/promocion-interna.md), [plan](plan.md) y [tareas pendientes](tasks.md). Las aclaraciones originales sobre un proveedor evaluativo aún sin titular se sustituyen por esta revisión; las restricciones sobre catálogos no impiden la coordinación de ocupación de FR-024 y FR-051.
+
 **Status**: Draft
 
 **Input**: User description: "Registro de movimientos y novedades de personal. Permitir al Administrador de Talento Humano gestionar ascensos, traslados y novedades laborales (permiso, ausencia, licencia y vacaciones), y al Colaborador presentar las solicitudes de novedades habilitadas y consultar los resultados que le correspondan. La gestión distingue solicitar, revisar, aprobar o rechazar y aplicar: registrar una solicitud no modifica la posición, el vínculo ni el estado laboral, y aprobar un movimiento futuro no lo ejecuta anticipadamente. Consume las políticas publicadas (versión conservada por solicitud) y exige una evaluación verificable frente al puesto destino antes de aprobar ascensos y traslados. No crea ni modifica políticas, puestos, posiciones ni rutas de carrera; no usa IA para decidir, no calcula nómina ni saldos vacacionales y no implementa offboarding. Solo dos roles: Administrador de Talento Humano y Colaborador."
 
 ## Clarifications
+
+### Session 2026-10-28
+
+- El proveedor de diagnóstico del destino es Desarrollo y Formación, reutilizando `020-adecuacion-puesto-futuro`. Su integración y la procedencia de los niveles evaluados son dependencias verificables, no capacidades presumidas por existir una especificación. Los contratos antiguos que atribuyen sin resolver la captura a GP-02 deben armonizarse con el responsable de Desarrollo.
+- Una evaluación válida significa evidencia suficiente y verificable para decidir; no significa ausencia de brechas ni autorización automática. Conocimientos, experiencia y competencias se identifican por separado como evaluados, pendientes o no aplicables. «No aplicable» requiere confirmación del perfil propietario y su fundamento; una capacidad desactivada no equivale a no aplicable.
+- La preparación calculada por Desarrollo es un diagnóstico con su significado original. No se convierte en un porcentaje obligatorio de aprobación ni se recalcula en Personal. La política 016 no puede dispensar la evaluación ni definir su fórmula.
+- Ascenso y traslado conservan la clasificación administrativa justificada mientras Estructura no publique niveles profesionales comparables. La jerarquía de supervisión y el nivel de una ruta de carrera no prueban por sí solos que el movimiento sea vertical u horizontal.
+- El destino es una posición concreta existente. Estructura administra su creación; si la cobertura requiere convocatoria, Selección conserva ese proceso. Proponer o aprobar no crea posiciones ni reserva su ocupación.
+- Las asignaciones laborales efectivas constituyen la fuente de verdad de la ocupación. El estado y ocupante publicados por Estructura deben ser coherentes mediante un contrato explícito, sin escritura directa a tablas ajenas. La cuenta de acceso y la identidad laboral no se confunden ni se crea una cuenta por ejecutar un movimiento.
+- La evidencia usada al aprobar queda conservada. Una reevaluación posterior no la sobrescribe. Si antes de aplicar cambia el perfil de referencia o vence la evidencia necesaria, se requiere una revalidación administrativa trazable; nunca se sustituye la decisión silenciosamente por el diagnóstico más reciente.
+- El Colaborador conserva la visibilidad comunicable de FR-037. El acceso a un diagnóstico propio desde Desarrollo sigue los permisos de Desarrollo; no habilita propuestas o deliberaciones administrativas de Personal.
 
 ### Session 2026-10-21
 
@@ -150,7 +169,7 @@ El Administrador aprueba o rechaza el movimiento con justificación. Un movimien
 
 - **FR-001**: El sistema MUST admitir exactamente seis tipos de actuación definidos por el sistema: ascenso, traslado (movimientos) y permiso, licencia, vacaciones y ausencia (novedades); ningún tenant puede crear otros ni alterar su comportamiento con campos libres, expresiones o flujos propios.
 - **FR-002**: Descensos, cambios contractuales y comisiones de servicio MUST NOT habilitarse por cambiar el texto de una política; requieren una especificación posterior.
-- **FR-003**: Esta funcionalidad MUST NOT crear ni modificar políticas, puestos, posiciones, perfiles de competencias ni rutas de carrera, MUST NOT usar IA para decidir, MUST NOT calcular nómina, remuneraciones ni saldos vacacionales y MUST NOT implementar offboarding ni alterar ingresos o reingresos de GP-02.
+- **FR-003**: Esta funcionalidad MUST NOT administrar políticas, crear posiciones ni modificar puestos, perfiles, jerarquía o rutas de carrera. Solo coordina la ocupación de posiciones existentes mediante FR-024 y FR-051. MUST NOT usar IA para decidir, calcular nómina, remuneraciones o saldos vacacionales, implementar offboarding ni alterar las reglas de ingresos o reingresos de GP-02.
 
 **Datos de una actuación**
 
@@ -180,14 +199,14 @@ El Administrador aprueba o rechaza el movimiento con justificación. Un movimien
 **Movimientos**
 
 - **FR-019**: El Administrador MUST poder proponer un ascenso o traslado seleccionando una ficha con vínculo compatible, una posición destino definida por Estructura Empresarial, fecha efectiva y justificación; el sistema MUST presentar la situación actual y las condiciones que se comprobarán.
-- **FR-020**: Antes de aprobar, el sistema MUST exigir una evaluación verificable del colaborador frente a los requisitos del puesto destino que identifique colaborador, puesto, requisitos considerados, momento y resultado, que corresponda al destino y esté vigente según el proceso evaluador.
+- **FR-020**: Antes de aprobar, el sistema MUST exigir una adecuación verificable suministrada por Desarrollo y Formación que identifique diagnóstico, evaluaciones de origen, colaborador, puesto destino, versión o huella de requisitos, fecha, vigencia y resultados por dimensión. MUST cumplir FR-045–FR-052; una lista genérica de requisitos y un texto de resultado no bastan.
 - **FR-021**: El sistema MUST diferenciar evaluación válida, evaluación ausente o no verificable y condición estructural incumplida; una evaluación válida MUST ser evidencia para decidir y MUST NOT aprobar automáticamente ni imponer ausencia de brechas ni un porcentaje mínimo.
 - **FR-022**: La falta de contrato de evaluación o de evidencia verificable MUST impedir la aprobación y MUST NOT suplirse con una afirmación manual de «apto».
 - **FR-022b**: Mientras no exista el contrato de evaluación, el sistema MUST permitir presentar, consultar, pasar a revisión y rechazar movimientos, y MUST impedir únicamente aprobarlos y, por tanto, aplicarlos; las novedades (permiso, licencia, vacaciones, ausencia) MUST funcionar sin depender de ese contrato.
 - **FR-023**: Un movimiento aprobado con fecha efectiva futura MUST quedar programado y MUST NOT aplicarse antes de esa fecha; presentar o aprobar MUST NOT modificar la posición, el vínculo ni el estado laboral.
 - **FR-023b**: Llegada la fecha efectiva de un movimiento programado, el sistema MUST aplicarlo automáticamente mediante una operación controlada, sin depender de una acción del Administrador, y MUST actuar con identidad de sistema registrada como aplicador; si el proceso automático se retrasa, el movimiento MUST seguir figurando programado y NO aplicado, y al ejecutarse MUST verificar las condiciones del momento.
 - **FR-023c**: El Administrador MUST disponer de una acción manual para reintentar un movimiento con incidencia de aplicación; el reintento MUST usar la misma verificación y MUST ser idempotente frente a la aplicación automática y a otros reintentos.
-- **FR-024**: Al aplicar, el sistema MUST verificar de nuevo la posición destino, el vínculo y la posibilidad de asignación, y MUST NOT crear posiciones ni alterar la jerarquía; si algo lo impide MUST registrar una incidencia de aplicación sin asignación parcial.
+- **FR-024**: Al aplicar, el sistema MUST verificar de nuevo la posición destino, el vínculo, la posibilidad de asignación y la aplicabilidad de la evidencia aprobada o revalidada. MUST cerrar y abrir asignaciones y confirmar la ocupación coherente de origen y destino en una operación atómica mediante el contrato con Estructura; MUST NOT crear posiciones ni alterar la jerarquía. Una falla MUST registrar incidencia sin efectos laborales parciales ni éxito anticipado.
 - **FR-025**: El sistema MUST NOT ocupar posiciones inexistentes, suprimidas u ocupadas de manera incompatible, ni crear simultaneidad de vínculos o dos posiciones vigentes para la misma persona en una fecha.
 
 **Estados y resolución**
@@ -222,6 +241,34 @@ El Administrador aprueba o rechaza el movimiento con justificación. Un movimien
 - **FR-043**: Los hechos laborales efectivamente aplicados MUST alimentar el Historial Laboral con referencia a la solicitud y a la política utilizada; las solicitudes, evaluaciones y resoluciones MUST conservarse como antecedentes administrativos relacionados, sin eliminar solicitudes rechazadas.
 - **FR-044**: Un cambio de estado MUST NOT conceder por sí mismo nuevos permisos; notificaciones, exportaciones y accesos a respaldos MUST obedecer sus permisos propios.
 
+**Promociones internas fundamentadas (revisión 2026-10-28)**
+
+- **FR-045**: El diagnóstico MUST proceder del contrato público de Desarrollo y Formación y corresponder a la persona y puesto destino de la propuesta. Una fuente ausente, caída, incompleta o sin procedencia verificable MUST impedir aprobar, sin convertirse en rechazo del colaborador.
+- **FR-046**: La evidencia MUST identificar requisitos, resultados, referencias y pendientes de conocimientos, experiencia y competencias. Toda dimensión exigida por el perfil MUST estar evaluada con evidencia suficiente. Lo no aplicable MUST estar fundamentado por el proveedor del perfil; una bandera desactivada o un dato faltante MUST NOT contar como cumplimiento.
+- **FR-047**: La comprobación MUST identificar las versiones de criterios y escalas y la cobertura exigida. La vigencia MUST ser acreditada por el proveedor respecto del perfil consultado; «diagnóstico más reciente» por sí solo MUST NOT acreditar vigencia. Un resultado histórico MUST NOT recalcularse silenciosamente con criterios nuevos.
+- **FR-048**: El Administrador MUST poder inspeccionar el diagnóstico autorizado y justificar su decisión frente a las brechas mostradas. Ni la clasificación de preparación ni una calificación de curso MUST aprobar, rechazar o modificar niveles automáticamente. Los estados diagnósticos se muestran con su significado original.
+- **FR-049**: Aprobar MUST conservar la referencia y una instantánea identificable de la evidencia utilizada. La relación propuesta–diagnóstico–resolución–asignación efectiva MUST poder consultarse sin reconstruir la decisión desde valores actuales ni copiar archivos restringidos.
+- **FR-050**: Antes de aplicar, un cambio de identidad del destino, perfil o vigencia necesaria MUST impedir la ejecución e identificar la causa. El Administrador MUST poder registrar una revalidación fundamentada con evidencia suficiente antes de la aplicación, sin alterar la aprobación original, sus condiciones históricas, el origen, destino o fecha de la propuesta. La revalidación MUST ser idempotente, controlar versión y conservar autor, fecha y evidencia como antecedente adicional.
+- **FR-051**: Al ejecutar, la posición de origen MUST dejar de estar ocupada por esa asignación y la de destino MUST reflejar al colaborador; las consultas de Estructura, organigrama y ficha MUST coincidir. Dos aplicaciones incompatibles MUST NOT producir doble ocupación. Una conciliación manual posterior MUST NOT considerarse cumplimiento de esta regla.
+- **FR-052**: La ficha 005 MUST poder consultar, por contrato autorizado, el movimiento efectivo y su evidencia administrativa comunicable; los diagnósticos y resultados posteriores proceden de Desarrollo. La comparación temporal requiere compatibilidad declarada por su propietario. La aplicación del movimiento o la finalización de formación MUST NOT cerrar brechas ni crear reevaluaciones automáticamente.
+
+### Aceptación de la reformulación de promociones internas
+
+| Caso | Resultado verificable |
+|---|---|
+| PI-01 · Proponer | Presentar un ascenso o traslado conserva origen, destino, fecha, motivo y política sin cambiar ocupación. |
+| PI-02 · Evidencia insuficiente | Un resultado que solo dice «Liderazgo» o carece de referencia, perfil o dimensión obligatoria no habilita aprobar. |
+| PI-03 · Dimensión pendiente | Conocimientos deshabilitados o experiencia requerida sin comprobar aparecen pendientes, sin sustituirse por cero o no aplicable. |
+| PI-04 · Dimensión no aplicable | Solo se acepta si el perfil propietario acredita que no la exige y se conserva ese fundamento. |
+| PI-05 · Decisión con brechas | Una adecuación completa con brechas permite una decisión administrativa justificada; no se impone un porcentaje universal. |
+| PI-06 · Historia | Una evaluación posterior no cambia el diagnóstico utilizado en la aprobación ni su justificación. |
+| PI-07 · Cambio anterior a aplicar | Perfil cambiado o evidencia vencida impide aplicar; la revalidación registra un antecedente nuevo y el reintento conserva la aprobación original. |
+| PI-08 · Ocupación | Aplicar libera origen y ocupa destino con resultados coincidentes en ficha y Estructura; una falla revierte toda modificación laboral. |
+| PI-09 · Concurrencia | Dos aplicaciones al mismo destino producen como máximo una ocupación; el otro intento comunica conflicto o incidencia. |
+| PI-10 · Permisos | El Colaborador ve solo el resultado comunicable; las referencias nuevas no filtran deliberaciones, evidencias o diagnósticos restringidos. |
+| PI-11 · Clasificación | Sin niveles profesionales publicados, se conserva el tipo justificado por el Administrador y no se infiere del supervisor. |
+| PI-12 · Seguimiento | Una reevaluación comparable se consulta desde 005; completar formación o aplicar el movimiento no modifica por sí solo las brechas. |
+
 ### Key Entities *(include if feature involves data)*
 
 - **Solicitud de novedad**: permiso, licencia o vacaciones presentada por el Colaborador o por el Administrador en su nombre; lleva período, motivo, respaldos, versión de política y parámetros aplicados, estado y resolución.
@@ -252,14 +299,14 @@ El Administrador aprueba o rechaza el movimiento con justificación. Un movimien
 
 - La aplicación automática no es una decisión: solo aplica lo que ya fue aprobado por un Administrador; la aprobación sigue siendo humana y registrada.
 - La configuración de políticas (feature 016) ya está instalada y es la única fuente de las versiones publicadas; esta funcionalidad solo las consulta mediante su contrato público y conserva la referencia y la copia de los parámetros.
-- Los puestos destino, los niveles y la ocupación permitida de las posiciones los proporciona Estructura Empresarial; Gestión de Personal los consulta y verifica sin mantener un catálogo alternativo.
+- Los puestos y posiciones destino los proporciona Estructura Empresarial. Los contratos actuales no acreditan niveles profesionales comparables; el tipo Ascenso/Traslado mantiene su clasificación administrativa justificada. La ocupación se coordina desde las asignaciones efectivas conforme a FR-051, sin catálogo alternativo.
 - Los ingresos y reingresos siguen siendo competencia de GP-02; esta funcionalidad gestiona cambios posteriores y no modifica sus reglas.
 - Los respaldos documentales los conserva Gestión Documental con permisos independientes; aquí solo se referencian.
 - El Historial Laboral recibe los hechos aplicados y las referencias; esta funcionalidad no implementa ni edita su línea de tiempo ni adopta event sourcing.
 - Se trabaja con los dos roles definidos; no existen aprobadores intermedios, líderes ni gerencias.
 - La zona horaria de la organización ya existe como dato del tenant y rige la anticipación y las fechas de presentación.
 - **Dependencias abiertas que no autorizan reglas implícitas.** Los casos que dependan de ellas no se consideran aprobados hasta que existan sus decisiones:
-  - Contrato y titularidad de la evaluación frente al puesto destino (Selección u otro módulo responsable); sin él la aprobación de ascensos y traslados permanece impedida, aunque se presentan, consultan, revisan y rechazan desde el inicio (FR-022b).
+  - Desarrollo y Formación es el proveedor del diagnóstico de adecuación al destino. Su contrato de evidencia, la procedencia de niveles individuales y su integración real siguen siendo dependencias de habilitación; hasta verificarlas rige FR-022b. Selección participa cuando existe una convocatoria, sin duplicar el diagnóstico.
   - Reglas de fechas y superposición de novedades; mientras no existan, el cruce de períodos se señala y debe reconocerse al aprobar (FR-018b), sin convertirse en bloqueo.
   - Tratamiento de saldos de vacaciones; no se calculan ni se muestran como verificados.
   - Mecanismo de recuperación y corrección de movimientos ya efectivos.

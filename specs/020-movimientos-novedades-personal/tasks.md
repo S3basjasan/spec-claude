@@ -157,3 +157,23 @@
 - **Incremento 2**: US3 (ausencias).
 - **Incremento 3**: US4 y US5 (movimientos). La aprobación permanece impedida por el contrato de evaluación ausente (FR-022b); las pruebas la habilitan con un evaluador falso.
 - **Compuertas abiertas** (no son tareas): P-1 evaluación, P-2 reglas de superposición, P-3 saldos de vacaciones, P-4 corrección de movimientos aplicados.
+
+
+## Reformulación de promociones internas · 2026-10-28 (pendiente)
+
+T001–T062 conservan sus estados históricos. Esta revisión no ejecuta las nuevas tareas ni habilita fuentes pendientes.
+
+- [ ] T063 Confirmar con Desarrollo la titularidad y procedencia de niveles evaluados, integrar la adecuación existente desde develop y revisar sus contratos reales sin mezclar trabajo local de 005 u offboarding; registrar dependencias y capacidades no disponibles.
+- [ ] T064 Acordar y ampliar el contrato público de evidencia de Desarrollo con identidad, requisitos/versiones, método/escalas, vigencia, dimensiones, cobertura y no aplicabilidad fundamentada; añadir pruebas de contrato en el módulo propietario.
+- [ ] T065 Acordar con Estructura el contrato atómico de ocupación y auditoría, identidad de colaborador/cuenta opcional, restricciones de concurrencia y compatibilidad con ingresos y offboarding. Definir migraciones compatibles si corresponden, sin consultas o escrituras a tablas ajenas.
+- [ ] T066 Actualizar design/DESIGN.md y la referencia visual del detalle de movimientos antes del frontend: diagnóstico por dimensión, pendientes, origen/fecha, evidencia de aprobación frente a actual, revalidación y permisos propios.
+- [ ] T067 Añadir pruebas de dominio y Feature de FR-020 y FR-045–FR-050: referencia verificable, tres dimensiones, cobertura incompleta, perfil distinto, vigencia, no aplicabilidad y brechas que permiten decisión humana. Verificar PI-01–PI-07.
+- [ ] T068 Evolucionar EvaluacionDelDestinoPort y VerificadorDeEvaluacion; implementar adaptador a la fachada pública de Desarrollo y presentar motivos específicos seguros. Mantener bloqueo de aprobación hasta verificar el proveedor real.
+- [ ] T069 Implementar instantánea de aprobación y operación de revalidación previa a aplicación, con versión, idempotencia, transiciones adicionales e historial original intacto; actualizar controlador, rutas, recursos y pruebas de autorización.
+- [ ] T070 Coordinar aplicar movimiento y ocupación de Estructura en una transacción, registrar evidencia utilizada e incidencia sin efectos parciales y verificar perfil/vigencia. Probar carreras por destino, reintentos y rollback completo (PI-08–PI-09).
+- [ ] T071 Extender frontend de movimientos con dimensiones, cobertura, acceso autorizado al diagnóstico, decisión fundamentada y revalidación; añadir Vitest de estados pendientes y permisos, sin captura de evaluaciones en Personal.
+- [ ] T072 Ampliar los contratos de lectura y el seguimiento 005 con referencias autorizadas de movimiento, evidencia y revalidaciones; comprobar comparabilidad declarada por Desarrollo y visibilidad propia (PI-10–PI-12).
+- [ ] T073 Añadir E2E de propuesta, evidencia real suficiente, decisión, revalidación y aplicación con ocupación coincidente; comprobar dos tenants, 320/1440 px y las doce condiciones PI. Usar una base aislada.
+- [ ] T074 Ejecutar Pest/Pint, ESLint/TypeScript/Vitest/build y E2E pertinentes; verificar migraciones sobre copia y regresiones de novedades/políticas/ingresos/posiciones/offboarding. Registrar dependencias pendientes y fallos preexistentes sin declarar la integración completa por usar dobles de prueba.
+
+Dependencias: T063 precede a T064 y T068; T065 precede a T070; T066 precede al frontend; T067 acompaña T068–T069; T069 y T070 preceden a T071–T073; T074 cierra la entrega. T072 coordina cambios con 005, sin duplicar su implementación. Los ajustes de ausencias y 016 son una entrega independiente y no se marcan completados por esta reformulación.

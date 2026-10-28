@@ -1,5 +1,7 @@
 # Modelo de datos: Registro de movimientos y novedades de personal
 
+**Revisión 2026-10-28**: los apartados originales describen la entrega inicial. La reformulación de promociones internas al final y su contrato complementario están pendientes de implementación.
+
 **Feature**: 020-movimientos-novedades-personal
 
 Motor: SQLite (como GP-02 y 016). Los índices parciales y los triggers van en SQL crudo; los triggers se crean solo con `DB::getDriverName() === 'sqlite'`. Toda tabla lleva `tenant_id` y toda consulta lo filtra. Ninguna migración modifica datos ni semántica de GP-01…GP-07: solo se **agrega** una columna nullable a `asignaciones_laborales`.
@@ -144,3 +146,15 @@ actuaciones_personal *─1 politica_versiones
 - Documentos: existen en el tenant, pertenecen a la ficha afectada, están `Disponible` y son accesibles para quien presenta; uno no accesible no cuenta como respaldo.
 - Resolución: estado resoluble, `version` actual, política conservada (no se sustituye), condiciones actuales (vínculo, destino) y, en movimientos, evaluación `Valida` verificada por `VerificadorDeEvaluacion`.
 - Cruce: en novedades de ausencia no aplica; en las demás, aprobar con cruces exige reconocimiento.
+
+## Evolución propuesta · evidencia y ocupación (2026-10-28)
+
+Pendiente de implementación. No se crean entidades de evaluación dentro de Personal.
+
+- `movimientos_personal.evaluacion_contexto` conserva la instantánea suficiente que sustentó la aprobación: referencias de origen, perfil/criterios/método, dimensiones, cobertura, vigencia y resultados autorizados. Las columnas de evidencia de aprobación no se sobrescriben al recibir otra evaluación.
+- Las revalidaciones se registran en `actuacion_transiciones.detalle` con evento Revalidada, evidencia, motivo, autor e instante; mantienen el estado e incrementan `actuaciones_personal.version`. Se ajustan las reglas de transición para admitir ese evento solo antes de aplicar. El vínculo entre la aplicación y la evidencia utilizada debe quedar explícito en su transición.
+- Las lecturas distinguen evidencia de aprobación, revalidaciones y diagnóstico actual. Los modelos de dominio y recursos deberán exponer estas referencias con permisos, sin devolver observaciones o evidencias restringidas a la proyección propia.
+- Asignación efectiva y ocupación publicada por Estructura deben coincidir. El contrato técnico acordará proyección o derivación y auditoría dentro de la misma transacción, identidad laboral independiente de cuenta y serialización por destino. No introducir claves foráneas o escrituras directas que violen límites de módulos.
+- Los registros históricos se preservan. Una evidencia mínima antigua no se declara suficiente bajo el contrato nuevo; movimientos pendientes requieren verificación/revalidación y los ya aplicados conservan sus hechos y antecedentes. Las migraciones necesarias se probarán sobre copia sin restablecer datos.
+
+Contrato propuesto: [promocion-interna.md](contracts/promocion-interna.md).

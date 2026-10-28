@@ -1,5 +1,7 @@
 # Contrato HTTP: movimientos y novedades de personal
 
+**Revisión 2026-10-28 (pendiente)**: [promocion-interna.md](promocion-interna.md) amplía la evidencia evaluativa, la ocupación y la operación de revalidación antes de aplicar. Los ejemplos de esta entrega original son la línea base; no acreditan la implementación de esa revisión. Las rutas existentes se conservan y el detalle administrativo se amplía sin exponer campos nuevos en la proyección propia.
+
 **Feature**: 020-movimientos-novedades-personal · Prefijos bajo `/api/…`, JSON, autenticación Sanctum.
 
 Convenciones heredadas del repositorio (no nuevas): respuestas `{ "data": … }`; errores `{ "message", "code", "errors"? }`; paginación `{ data, links, meta }` con `page` y `per_page` (máx. 100, por defecto 20); `Idempotency-Key` (UUID) obligatorio en todo `POST`; `version` (entero) obligatoria en cada cambio de estado de una actuación existente.
