@@ -9,9 +9,9 @@ final class ParametrosResource
 {
     /**
      * @param  array<int, ParametroDTO>  $parametros
-     * @return array{data: array<int, array<string, mixed>>}
+     * @return array{data: array<int, array<string, mixed>>, meta: array{puntuacion_maxima_categoria: int}}
      */
-    public static function coleccion(array $parametros): array
+    public static function coleccion(array $parametros, int $puntuacionMaximaDeCategoria): array
     {
         return ['data' => array_map(fn (ParametroDTO $p) => [
             'clave' => $p->clave,
@@ -22,6 +22,6 @@ final class ParametrosResource
             'por_defecto' => $p->porDefecto,
             'version' => $p->version,
             'ultimo_cambio' => $p->ultimoCambio,
-        ], $parametros)];
+        ], $parametros), 'meta' => ['puntuacion_maxima_categoria' => $puntuacionMaximaDeCategoria]];
     }
 }

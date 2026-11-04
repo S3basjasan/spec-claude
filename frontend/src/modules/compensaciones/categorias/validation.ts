@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { toApiError } from '../../../shared/api/httpClient'
-import type { Categoria, DatosCategoria } from './api'
+import { PUNTUACION_MAXIMA_EXTERIOR, type Categoria, type DatosCategoria } from './api'
 import { ICONO_IDS } from './iconos'
 import { categoriasReconocimientoText } from './text'
 
@@ -22,57 +22,65 @@ export function normalizarTexto(valor: string): string {
     .toLowerCase()
 }
 
-/** Replica las reglas del servidor; la unicidad del nombre y la competencia activa las decide el servidor. */
-export const categoriaSchema = z
-  .object({
-    nombre: z
-      .string()
-      .trim()
-      .min(1, text.required)
-      .min(3, text.nameLength)
-      .max(LIMITE_NOMBRE, text.nameLength)
-      .refine((valor) => !HTML.test(valor), text.html),
-    descripcion: z
-      .string()
-      .trim()
-      .min(1, text.required)
-      .min(10, text.descriptionLength)
-      .max(LIMITE_DESCRIPCION, text.descriptionLength)
-      .refine((valor) => !HTML.test(valor), text.html),
-    competencia_id: z.string().min(1, text.competencia),
-    puntuacion_base: z
-      .string()
-      .trim()
-      .min(1, text.required)
-      .regex(/^\d+$/, text.pointsInteger)
-      .refine((valor) => Number(valor) >= 1 && Number(valor) <= 1000, text.pointsRange),
-    icono: z.string().refine((valor) => (ICONO_IDS as readonly string[]).includes(valor), text.icon),
-    indicadores: z
-      .array(
-        z.object({
-          texto: z
-            .string()
-            .trim()
-            .min(1, text.required)
-            .min(5, text.indicatorLength)
-            .max(LIMITE_INDICADOR, text.indicatorLength)
-            .refine((valor) => !HTML.test(valor), text.html),
-        }),
-      )
-      .min(1, text.indicatorsRange)
-      .max(MAX_INDICADORES, text.indicatorsRange),
-  })
-  .superRefine((valores, contexto) => {
-    const vistos = new Set<string>()
-    valores.indicadores.forEach((indicador, posicion) => {
-      const clave = normalizarTexto(indicador.texto)
-      if (clave === '') return
-      if (vistos.has(clave)) {
-        contexto.addIssue({ code: 'custom', message: text.indicatorRepeated, path: ['indicadores', posicion, 'texto'] })
-      }
-      vistos.add(clave)
+/**
+ * Replica las reglas del servidor; la unicidad del nombre y la competencia activa las decide el servidor. La puntuación
+ * base va de 1 al máximo permitido (puntos por colaborador); sin máximo conocido rige el límite exterior de 1000.
+ */
+export function crearCategoriaSchema(maximo: number = PUNTUACION_MAXIMA_EXTERIOR) {
+  return z
+    .object({
+      nombre: z
+        .string()
+        .trim()
+        .min(1, text.required)
+        .min(3, text.nameLength)
+        .max(LIMITE_NOMBRE, text.nameLength)
+        .refine((valor) => !HTML.test(valor), text.html),
+      descripcion: z
+        .string()
+        .trim()
+        .min(1, text.required)
+        .min(10, text.descriptionLength)
+        .max(LIMITE_DESCRIPCION, text.descriptionLength)
+        .refine((valor) => !HTML.test(valor), text.html),
+      competencia_id: z.string().min(1, text.competencia),
+      puntuacion_base: z
+        .string()
+        .trim()
+        .min(1, text.required)
+        .regex(/^\d+$/, text.pointsInteger)
+        .refine((valor) => Number(valor) >= 1 && Number(valor) <= maximo, text.pointsRange(maximo)),
+      icono: z.string().refine((valor) => (ICONO_IDS as readonly string[]).includes(valor), text.icon),
+      indicadores: z
+        .array(
+          z.object({
+            texto: z
+              .string()
+              .trim()
+              .min(1, text.required)
+              .min(5, text.indicatorLength)
+              .max(LIMITE_INDICADOR, text.indicatorLength)
+              .refine((valor) => !HTML.test(valor), text.html),
+          }),
+        )
+        .min(1, text.indicatorsRange)
+        .max(MAX_INDICADORES, text.indicatorsRange),
     })
-  })
+    .superRefine((valores, contexto) => {
+      const vistos = new Set<string>()
+      valores.indicadores.forEach((indicador, posicion) => {
+        const clave = normalizarTexto(indicador.texto)
+        if (clave === '') return
+        if (vistos.has(clave)) {
+          contexto.addIssue({ code: 'custom', message: text.indicatorRepeated, path: ['indicadores', posicion, 'texto'] })
+        }
+        vistos.add(clave)
+      })
+    })
+}
+
+/** Esquema con el límite exterior; se usa cuando aún no se conoce el máximo permitido. */
+export const categoriaSchema = crearCategoriaSchema()
 
 export interface CategoriaFormValues {
   nombre: string

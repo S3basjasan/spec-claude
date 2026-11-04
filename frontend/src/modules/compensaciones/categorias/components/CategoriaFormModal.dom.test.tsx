@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { httpError, networkError } from '../../../../test/apiErrors'
 import { categoriaReconocimiento, opcionDeCompetencia } from '../../../../test/categoriasReconocimientoFixtures'
-import { crearCategoria, editarCategoria, listarCompetenciasDisponibles, obtenerCategoria, type Categoria } from '../api'
+import { crearCategoria, editarCategoria, listarCompetenciasDisponibles, obtenerCategoria, obtenerPuntuacionMaxima, type Categoria } from '../api'
 import { CategoriaFormModal } from './CategoriaFormModal'
 
 vi.mock('../api', async (importOriginal) => ({
@@ -14,6 +14,7 @@ vi.mock('../api', async (importOriginal) => ({
   editarCategoria: vi.fn(),
   obtenerCategoria: vi.fn(),
   listarCompetenciasDisponibles: vi.fn(),
+  obtenerPuntuacionMaxima: vi.fn(),
 }))
 
 const onCerrar = vi.fn()
@@ -44,7 +45,72 @@ beforeEach(() => {
   vi.mocked(crearCategoria).mockReset().mockResolvedValue(categoriaReconocimiento({ id: 9, codigo: 'CAT-009' }))
   vi.mocked(editarCategoria).mockReset().mockResolvedValue(categoriaReconocimiento())
   vi.mocked(obtenerCategoria).mockReset().mockResolvedValue(categoriaReconocimiento())
+  vi.mocked(obtenerPuntuacionMaxima).mockReset().mockResolvedValue({ maximo: 300, bajaPorProgramado: false })
   vi.mocked(listarCompetenciasDisponibles).mockReset().mockResolvedValue([opcionDeCompetencia(), opcionDeCompetencia({ id: 12, nombre: 'Innovación' })])
+})
+
+describe('CategoriaFormModal · máximo de la puntuación', () => {
+  it('muestra «Máximo: {n} puntos» junto al campo', async () => {
+    vi.mocked(obtenerPuntuacionMaxima).mockResolvedValue({ maximo: 100, bajaPorProgramado: false })
+    renderFormulario()
+
+    expect(await screen.findByText('Máximo: 100 puntos.')).toBeInTheDocument()
+    expect(screen.queryByText(/Baja a/)).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Puntuación base')).toHaveAttribute('max', '100')
+  })
+
+  it('indica que el tope baja cuando proviene de un cambio programado', async () => {
+    vi.mocked(obtenerPuntuacionMaxima).mockResolvedValue({ maximo: 60, bajaPorProgramado: true })
+    renderFormulario()
+
+    expect(await screen.findByText('Máximo: 60 puntos.')).toBeInTheDocument()
+    expect(screen.getByText(/Baja a 60 desde el día 1 del mes siguiente por el cambio de puntos por colaborador\./)).toBeInTheDocument()
+  })
+
+  it('una puntuación mayor al máximo muestra el error en el campo, conserva lo escrito y no envía', async () => {
+    vi.mocked(obtenerPuntuacionMaxima).mockResolvedValue({ maximo: 100, bajaPorProgramado: false })
+    const usuario = userEvent.setup()
+    renderFormulario()
+    await screen.findByText('Máximo: 100 puntos.')
+    await completarValido(usuario)
+    await usuario.clear(screen.getByLabelText('Puntuación base'))
+    await usuario.type(screen.getByLabelText('Puntuación base'), '101')
+
+    await usuario.click(screen.getByRole('button', { name: 'Crear categoría' }))
+
+    expect(await screen.findByText('La puntuación base debe estar entre 1 y 100.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Puntuación base')).toHaveValue(101)
+    expect(screen.getByLabelText('Nombre')).toHaveValue('Orientación al cliente')
+    expect(crearCategoria).not.toHaveBeenCalled()
+  })
+
+  it('un 422 del servidor en la puntuación se muestra junto al campo y conserva los valores', async () => {
+    vi.mocked(crearCategoria).mockRejectedValue(httpError(422, { errors: { puntuacion_base: ['La puntuación base debe estar entre 1 y 100.'] } }))
+    const usuario = userEvent.setup()
+    renderFormulario()
+    await completarValido(usuario)
+
+    await usuario.click(screen.getByRole('button', { name: 'Crear categoría' }))
+
+    expect(await screen.findByText('La puntuación base debe estar entre 1 y 100.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Puntuación base')).toHaveValue(150)
+    expect(screen.getByLabelText('Nombre')).toHaveValue('Orientación al cliente')
+  })
+
+  it.each([
+    ['responde 403', () => httpError(403)],
+    ['falla la red', () => networkError()],
+  ])('si la consulta del máximo %s, el formulario sigue usable y decide el servidor', async (_caso, error) => {
+    vi.mocked(obtenerPuntuacionMaxima).mockRejectedValue(error())
+    const usuario = userEvent.setup()
+    renderFormulario()
+
+    expect(await screen.findByText(/El máximo permitido lo valida el servidor al guardar\./)).toBeInTheDocument()
+    await completarValido(usuario)
+    await usuario.click(screen.getByRole('button', { name: 'Crear categoría' }))
+
+    await waitFor(() => expect(crearCategoria).toHaveBeenCalledTimes(1))
+  })
 })
 
 describe('CategoriaFormModal · crear', () => {

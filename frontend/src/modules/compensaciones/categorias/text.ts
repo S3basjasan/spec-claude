@@ -93,7 +93,11 @@ export const categoriasReconocimientoText = {
       'La competencia actual está inactiva y no puede volver a elegirse. Elige una competencia activa para que la categoría sea seleccionable de nuevo.',
     pointsLabel: 'Puntuación base',
     pointsHint:
-      'Número entero de 1 a 1000. Es solo un valor de ordenamiento para el ranking interno: no es dinero ni se canjea por bienes, días libres ni bonos.',
+      'Número entero de 1 al máximo permitido. Es solo un valor de ordenamiento para el ranking interno: no es dinero ni se canjea por bienes, días libres ni bonos.',
+    pointsMaximum: (maximo: number) => `Máximo: ${maximo} puntos.`,
+    pointsMaximumUnknown: 'El máximo permitido lo valida el servidor al guardar.',
+    pointsMaximumScheduled: (maximo: number) =>
+      `Baja a ${maximo} desde el día 1 del mes siguiente por el cambio de puntos por colaborador.`,
     iconLegend: 'Ícono',
     indicatorsLegend: 'Indicadores cualitativos',
     indicatorsHint:
@@ -150,7 +154,7 @@ export const categoriasReconocimientoText = {
     html: 'El texto no puede contener etiquetas HTML.',
     competencia: 'Selecciona una competencia.',
     pointsInteger: 'La puntuación base debe ser un número entero.',
-    pointsRange: 'La puntuación base debe estar entre 1 y 1000.',
+    pointsRange: (maximo: number) => `La puntuación base debe estar entre 1 y ${maximo}.`,
     icon: 'Selecciona un ícono.',
     indicatorsRange: 'La categoría debe tener entre 1 y 5 indicadores.',
     indicatorLength: 'Cada indicador debe tener entre 5 y 250 caracteres.',

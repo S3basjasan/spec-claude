@@ -26,7 +26,7 @@ final class DatosCategoriaDTO
     /**
      * @throws DatosDeCategoriaInvalidos
      */
-    public function comoPropuesta(EstadoCategoria $estado = EstadoCategoria::Activo): Categoria
+    public function comoPropuesta(EstadoCategoria $estado = EstadoCategoria::Activo, ?int $puntuacionMaxima = null): Categoria
     {
         return Categoria::propuesta(
             $this->nombre,
@@ -36,6 +36,7 @@ final class DatosCategoriaDTO
             $this->icono,
             $this->indicadores,
             $estado,
+            $puntuacionMaxima,
         );
     }
 }

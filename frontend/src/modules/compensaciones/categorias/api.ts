@@ -136,3 +136,26 @@ export async function listarCompetenciasDisponibles(signal?: AbortSignal): Promi
   const response = await http.get<{ data: OpcionDeCompetencia[] }>(`${BASE}/competencias-disponibles`, { signal })
   return response.data.data
 }
+
+/** Límite exterior de la puntuación base; el máximo permitido real lo da el parámetro de puntos por colaborador. */
+export const PUNTUACION_MAXIMA_EXTERIOR = 1000
+
+export interface PuntuacionMaxima {
+  /** Máximo permitido para la puntuación base: el menor entre los puntos vigentes y el cambio programado. */
+  maximo: number
+  /** Verdadero cuando el máximo es menor que los puntos vigentes por un cambio programado del mes siguiente. */
+  bajaPorProgramado: boolean
+}
+
+interface RespuestaParametros {
+  data: { clave: string; valor: number }[]
+  meta: { puntuacion_maxima_categoria: number }
+}
+
+/** Lee el máximo permitido de la respuesta de parámetros (mismo endpoint de 01b.1); exige el permiso de parámetros. */
+export async function obtenerPuntuacionMaxima(signal?: AbortSignal): Promise<PuntuacionMaxima> {
+  const { data } = await http.get<RespuestaParametros>(`${BASE}/parametros`, { signal })
+  const maximo = data.meta.puntuacion_maxima_categoria
+  const vigente = data.data.find((parametro) => parametro.clave === 'puntos_por_colaborador')?.valor ?? maximo
+  return { maximo, bajaPorProgramado: maximo < vigente }
+}

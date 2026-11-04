@@ -46,11 +46,11 @@ it('actualiza los datos, reemplaza y renumera los indicadores y registra quién 
     Sanctum::actingAs($editor, ['admin']);
 
     $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, [
-        'puntuacion_base' => 250,
+        'puntuacion_base' => 90,
         'indicadores' => ['Nuevo indicador uno', 'Nuevo indicador dos', 'Nuevo indicador tres'],
     ]))
         ->assertOk()
-        ->assertJsonPath('data.puntuacion_base', 250)
+        ->assertJsonPath('data.puntuacion_base', 90)
         ->assertJsonPath('data.indicadores.*.orden', [1, 2, 3])
         ->assertJsonPath('data.indicadores.*.texto', ['Nuevo indicador uno', 'Nuevo indicador dos', 'Nuevo indicador tres'])
         ->assertJsonPath('data.codigo', $categoria->codigo)
@@ -64,34 +64,34 @@ it('actualiza los datos, reemplaza y renumera los indicadores y registra quién 
 });
 
 it('escribe una fila de auditoría por cada campo realmente modificado', function () {
-    $categoria = CategoriaReconocimientoModel::factory()->create(['puntuacion_base' => 100]);
+    $categoria = CategoriaReconocimientoModel::factory()->create(['puntuacion_base' => 60]);
     actuarComoAdmin();
 
     $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, [
-        'puntuacion_base' => 300,
+        'puntuacion_base' => 90,
         'indicadores' => ['Indicador distinto'],
     ]))->assertOk();
 
     $filas = AuditoriaCategoriaModel::query()->where('categoria_reconocimiento_id', $categoria->id)->get()->keyBy('campo');
     expect($filas->keys()->sort()->values()->all())->toBe(['indicadores', 'puntuacion_base'])
-        ->and($filas['puntuacion_base']->valor_anterior)->toBe('100')
-        ->and($filas['puntuacion_base']->valor_nuevo)->toBe('300')
+        ->and($filas['puntuacion_base']->valor_anterior)->toBe('60')
+        ->and($filas['puntuacion_base']->valor_nuevo)->toBe('90')
         ->and($filas['indicadores']->valor_anterior)->toContain('Indicador 1 de')
         ->and($filas['indicadores']->valor_nuevo)->toBe('["Indicador distinto"]');
 });
 
 it('rechaza con 409 si la categoría fue modificada y no aplica nada', function () {
-    $categoria = CategoriaReconocimientoModel::factory()->create(['puntuacion_base' => 100]);
+    $categoria = CategoriaReconocimientoModel::factory()->create(['puntuacion_base' => 60]);
     actuarComoAdmin();
-    $cuerpoViejo = cuerpoDeEdicion($categoria, ['puntuacion_base' => 500, 'indicadores' => ['Indicador del cuerpo viejo']]);
+    $cuerpoViejo = cuerpoDeEdicion($categoria, ['puntuacion_base' => 80, 'indicadores' => ['Indicador del cuerpo viejo']]);
 
-    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['puntuacion_base' => 200, 'indicadores' => ['Indicador guardado uno', 'Indicador guardado dos']]))->assertOk();
+    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['puntuacion_base' => 90, 'indicadores' => ['Indicador guardado uno', 'Indicador guardado dos']]))->assertOk();
 
     $this->putJson("/api/compensaciones/categorias/{$categoria->id}", $cuerpoViejo)
         ->assertStatus(409)
         ->assertJsonPath('message', 'La categoría fue modificada por otro usuario. Recarga para ver los cambios.');
 
-    expect($categoria->fresh()->puntuacion_base)->toBe(200)
+    expect($categoria->fresh()->puntuacion_base)->toBe(90)
         ->and($categoria->fresh()->indicadores)->toBe(['Indicador guardado uno', 'Indicador guardado dos']);
 });
 
@@ -125,12 +125,12 @@ it('no considera repetido el nombre de la propia categoría y rechaza el de otra
 });
 
 it('conserva la competencia inactiva si no cambia y exige una activa si la cambia', function () {
-    $categoria = CategoriaReconocimientoModel::factory()->conCompetenciaInactiva()->create(['puntuacion_base' => 100]);
+    $categoria = CategoriaReconocimientoModel::factory()->conCompetenciaInactiva()->create(['puntuacion_base' => 60]);
     $inactivaOtra = CompetenciaModel::factory()->inactiva()->create();
     $activa = CompetenciaModel::factory()->create();
     actuarComoAdmin();
 
-    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['puntuacion_base' => 150]))
+    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['puntuacion_base' => 90]))
         ->assertOk()
         ->assertJsonPath('data.competencia_activa', false)
         ->assertJsonPath('data.seleccionable', false);

@@ -561,10 +561,10 @@ textarea.inp{height:auto;min-height:96px;padding:10px 12px;resize:vertical;line-
 
           <div class="fld" style="max-width: 220px">
             <label for="mf-p">Puntuación base</label>
-            <input class="inp" id="mf-p" type="number" min="1" max="1000" step="1" inputMode="numeric" value="{{fm.pts}}" onChange="{{setPts}}" aria-invalid="{{fm.ariaPts}}" aria-describedby="mf-p-e mf-p-h">
+            <input class="inp" id="mf-p" type="number" min="1" max="100" step="1" inputMode="numeric" value="{{fm.pts}}" onChange="{{setPts}}" aria-invalid="{{fm.ariaPts}}" aria-describedby="mf-p-e mf-p-h">
             <sc-if value="{{fm.hayPts}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-p-e">{{fm.errPts}}</p></sc-if>
           </div>
-          <p class="help" id="mf-p-h" style="margin-top: -10px">Número entero de 1 a 1000. Es solo un valor de ordenamiento para el ranking interno: no es dinero ni se canjea por bienes, días libres ni bonos.</p>
+          <p class="help" id="mf-p-h" style="margin-top: -10px"><strong>Máximo: 100 puntos.</strong> Número entero de 1 al máximo permitido (los puntos por colaborador). Es solo un valor de ordenamiento para el ranking interno: no es dinero ni se canjea por bienes, días libres ni bonos.</p>
 
           <fieldset aria-describedby="mf-i-e">
             <legend class="lbl" style="margin-bottom: 8px">Ícono</legend>
@@ -882,6 +882,7 @@ class Component extends DCLogic {
     const norm = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/\s+/g, ' ');
 
     const comps = this.competencias();
+    const MAX_PTS = 100; // máximo permitido = puntos por colaborador (01b.2); el valor real lo da la API
     const compBy = {};
     comps.forEach((c) => { compBy[c.id] = c; });
     const iconos = this.iconos();
@@ -995,7 +996,7 @@ class Component extends DCLogic {
       else if ((F.modo === 'crear' || F.comp !== F.compOrig) && !(compBy[F.comp] && compBy[F.comp].activa)) errs.comp = 'Selecciona una competencia activa.';
       const pts = F.pts.trim();
       if (!pts) errs.pts = 'Ingresa la puntuación base.';
-      else if (!/^\d+$/.test(pts) || parseInt(pts, 10) < 1 || parseInt(pts, 10) > 1000) errs.pts = 'Ingresa un número entero entre 1 y 1000.';
+      else if (!/^\d+$/.test(pts) || parseInt(pts, 10) < 1 || parseInt(pts, 10) > MAX_PTS) errs.pts = 'La puntuación base debe estar entre 1 y ' + MAX_PTS + '.';
       if (!F.icono || !icoBy[F.icono]) errs.icono = 'Selecciona un ícono.';
       const vistos = {};
       F.inds.forEach((x) => {

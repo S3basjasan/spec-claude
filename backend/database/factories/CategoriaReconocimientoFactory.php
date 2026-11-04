@@ -29,7 +29,7 @@ class CategoriaReconocimientoFactory extends Factory
             'nombre' => 'Categoría '.fake()->unique()->words(2, true).' '.self::$secuencia,
             'descripcion' => fake()->sentence(10),
             'competencia_id' => CompetenciaModel::factory(),
-            'puntuacion_base' => fake()->numberBetween(10, 500),
+            'puntuacion_base' => fake()->numberBetween(10, 100),
             'icono' => fake()->randomElement(Icono::valores()),
             'estado' => 'Activo',
         ];

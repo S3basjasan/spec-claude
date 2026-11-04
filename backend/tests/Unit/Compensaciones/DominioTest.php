@@ -29,6 +29,22 @@ it('acepta los límites de la puntuación', function () {
         ->and((new PuntuacionBase('250'))->valor)->toBe(250);
 });
 
+it('acota la puntuación al máximo recibido y lo nombra en el mensaje', function () {
+    expect((new PuntuacionBase(1, 100))->valor)->toBe(1)
+        ->and((new PuntuacionBase('100', 100))->valor)->toBe(100);
+
+    foreach ([0, 101, '1.5'] as $valor) {
+        expect(fn () => new PuntuacionBase($valor, 100))->toThrow(DatosDeCategoriaInvalidos::class);
+    }
+
+    try {
+        new PuntuacionBase(101, 100);
+    } catch (DatosDeCategoriaInvalidos $e) {
+        expect($e->campo)->toBe('puntuacion_base')
+            ->and($e->getMessage())->toBe('La puntuación base debe estar entre 1 y 100.');
+    }
+});
+
 it('valida el largo del nombre tras recortar espacios', function () {
     expect(fn () => new NombreCategoria('  ab  '))->toThrow(DatosDeCategoriaInvalidos::class)
         ->and((new NombreCategoria('  abc  '))->valor)->toBe('abc')

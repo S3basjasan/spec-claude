@@ -7,7 +7,7 @@ import { httpError } from '../../../../test/apiErrors'
 import { categoriaReconocimiento, opcionDeCompetencia, paginaDeCategoriasReconocimiento } from '../../../../test/categoriasReconocimientoFixtures'
 import { renderRoutes } from '../../../../test/renderRoutes'
 import { useCurrentUser } from '../../../auth/login'
-import { cambiarEstadoCategoria, crearCategoria, editarCategoria, listarCategorias, listarCompetenciasDisponibles, listarCompetenciasFiltro, obtenerCategoria } from '../api'
+import { cambiarEstadoCategoria, crearCategoria, editarCategoria, listarCategorias, listarCompetenciasDisponibles, listarCompetenciasFiltro, obtenerCategoria, obtenerPuntuacionMaxima } from '../api'
 import { CategoriasReconocimientoPage } from './CategoriasReconocimientoPage'
 
 vi.mock('../api', async (importOriginal) => ({
@@ -19,6 +19,7 @@ vi.mock('../api', async (importOriginal) => ({
   cambiarEstadoCategoria: vi.fn(),
   listarCompetenciasFiltro: vi.fn(),
   listarCompetenciasDisponibles: vi.fn(),
+  obtenerPuntuacionMaxima: vi.fn(),
 }))
 vi.mock('../../../auth/login', () => ({ useCurrentUser: vi.fn() }))
 
@@ -47,6 +48,7 @@ beforeEach(() => {
   vi.mocked(obtenerCategoria).mockReset().mockResolvedValue(equipo)
   vi.mocked(crearCategoria).mockReset().mockResolvedValue(categoriaReconocimiento({ id: 9, codigo: 'CAT-009', nombre: 'Nueva' }))
   vi.mocked(editarCategoria).mockReset().mockResolvedValue(categoriaReconocimiento({ nombre: 'Editada' }))
+  vi.mocked(obtenerPuntuacionMaxima).mockReset().mockResolvedValue({ maximo: 1000, bajaPorProgramado: false })
   vi.mocked(cambiarEstadoCategoria).mockReset().mockResolvedValue(categoriaReconocimiento({ estado: 'Inactivo' }))
   vi.mocked(listarCompetenciasFiltro).mockReset().mockResolvedValue([opcionDeCompetencia(), opcionDeCompetencia({ id: 11, nombre: 'Retirada', estado: 'Inactivo' })])
   vi.mocked(listarCompetenciasDisponibles).mockReset().mockResolvedValue([opcionDeCompetencia()])
@@ -298,6 +300,18 @@ describe('CategoriasReconocimientoPage · estado', () => {
     await userEvent.setup().click(await screen.findByRole('button', { name: 'Activar Antigua' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent('La categoría fue modificada por otro usuario. Recarga para ver los cambios.')
+  })
+
+  it('un 422 al activar por puntuación sobre el máximo muestra el mensaje del servidor y la fila sigue inactiva', async () => {
+    vi.mocked(listarCategorias).mockResolvedValue(paginaDeCategoriasReconocimiento([inactiva]))
+    vi.mocked(cambiarEstadoCategoria).mockRejectedValue(httpError(422, { errors: { puntuacion_base: ['Baja primero la puntuación a 100 o menos.'] } }))
+    renderPagina()
+
+    await userEvent.setup().click(await screen.findByRole('button', { name: 'Activar Antigua' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Baja primero la puntuación a 100 o menos.')
+    expect(screen.getByRole('button', { name: 'Activar Antigua' })).toBeInTheDocument()
+    expect(cambiarEstadoCategoria).toHaveBeenCalledTimes(1)
   })
 
   it('otro error muestra un mensaje comprensible y no reintenta la mutación', async () => {
