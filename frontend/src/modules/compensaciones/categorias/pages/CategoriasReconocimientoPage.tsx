@@ -10,6 +10,7 @@ import { SearchField } from '../../../../shared/ui/SearchField'
 import { SelectField, type SelectOption } from '../../../../shared/ui/SelectField'
 import { Skeleton } from '../../../../shared/ui/Skeleton'
 import { useCurrentUser } from '../../../auth/login'
+import { PestanasCompensaciones } from '../../PestanasCompensaciones'
 import { ESTADO_INICIAL, LIMITE_BUSQUEDA, type Categoria, type FiltroEstadoCategoria } from '../api'
 import { CategoriaFormModal } from '../components/CategoriaFormModal'
 import { CategoriasTabla } from '../components/CategoriasTabla'
@@ -32,8 +33,16 @@ const OPCIONES_ESTADO: SelectOption[] = (['Todos', 'Activo', 'Inactivo'] as cons
   label: text.filtros.estados[valor],
 }))
 
-/** Categorías de reconocimiento: todos consultan; el Administrador crea, edita, activa y desactiva. */
+/** Categorías de reconocimiento: todos consultan; el Administrador crea, edita, activa y desactiva. El Gestor ve además las pestañas del módulo. */
 export function CategoriasReconocimientoPage() {
+  return (
+    <PestanasCompensaciones>
+      <ListadoDeCategorias />
+    </PestanasCompensaciones>
+  )
+}
+
+function ListadoDeCategorias() {
   const { data: usuario } = useCurrentUser()
   const esAdmin = usuario?.role === 'admin'
   const { q, competencia, estado, page, update } = useListadoParams()
@@ -170,7 +179,7 @@ export function CategoriasReconocimientoPage() {
   const desactivando = dialogo?.tipo === 'desactivar' ? vigente(dialogo.id) : undefined
 
   return (
-    <div className="mx-auto flex max-w-275 flex-col gap-5">
+    <div className={`mx-auto flex max-w-275 flex-col gap-5 ${esAdmin ? 'pt-5' : ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-[28px] font-bold leading-tight tracking-tight">{text.title}</h1>

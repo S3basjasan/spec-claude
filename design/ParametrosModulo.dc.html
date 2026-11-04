@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Parámetros del módulo (Gestor)</title>
+<script src="./support.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;min-height:44px;padding:6px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.tab{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:600;border-bottom:3px solid transparent}
+.tab[aria-current]{color:var(--accent);border-bottom-color:var(--accent)}
+.nav:focus-visible,.tab:focus-visible,.btn:focus-visible,.inp:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:8px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+.btn:hover:not(:disabled){background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-p{border-color:transparent;background:var(--accent);color:var(--onaccent)}
+.btn-p:hover:not(:disabled){background:var(--accent);filter:brightness(.92)}
+.inp{width:160px;box-sizing:border-box;height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--inputborder);background:var(--surface);color:var(--text);font:inherit;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.main-p{padding:32px}
+@media (max-width:840px){.nav-wrap{display:none!important}.main-p{padding:16px}}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; --bg:#F5F6F8; --surface:#FFFFFF; --border:#E2E5EA; --inputborder:#7A8695; --text:#12171D; --muted:#5A6573; --accent:#0F6F69; --onaccent:#FFFFFF; --soft:#E3F2F0; --danger:#B42318; --dangersoft:#FDECEA; --warn:#B54708; --warnsoft:#FEF0C7; --neutralbg:#ECEEF1; --neutraltx:#475260">
+
+  <header style="height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border); box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <span style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</span>
+      <span style="font-weight: 700; font-size: 18px">HRMS</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px">
+      <span style="width: 36px; height: 36px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px">MC</span>
+      <span style="display: flex; flex-direction: column; line-height: 1.2">
+        <span style="font-size: 14px; font-weight: 600">Marta Cevallos</span>
+        <span style="font-size: 12px; color: var(--muted)">Gestor de Talento</span>
+      </span>
+    </div>
+  </header>
+
+  <div style="flex: 1; display: flex; align-items: stretch">
+    <nav class="nav-wrap" aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Inicio</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg>Reconocimientos</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 00-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 00-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 002 1.2l.4 2.7h4l.4-2.7a7 7 0 002-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Ajustes</a>
+    </nav>
+
+    <main class="main-p" style="flex: 1; min-width: 0; box-sizing: border-box">
+      <div style="max-width: 860px; display: flex; flex-direction: column; gap: 20px">
+
+        <div>
+          <p style="margin: 0 0 6px; font-size: 14px; color: var(--muted)">Reconocimientos / Parámetros</p>
+          <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Reconocimientos</h1>
+        </div>
+
+        <div role="tablist" aria-label="Secciones" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border); flex-wrap: wrap">
+          <a class="tab" href="#">Resumen</a>
+          <a class="tab" href="#">Categorías</a>
+          <a class="tab" href="#" aria-current="page">Parámetros</a>
+          <a class="tab" href="#">Tienda</a>
+          <a class="tab" href="#">Clima</a>
+          <a class="tab" href="#">Reportes</a>
+        </div>
+
+        <sc-if value="{{guardado}}" hint-placeholder-val="{{false}}">
+          <div role="status" style="padding: 12px 16px; border-radius: 8px; background: var(--soft); color: var(--accent); font-size: 15px; font-weight: 600">{{msgGuardado}}</div>
+        </sc-if>
+
+        <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 24px">
+          <div>
+            <h2 style="margin: 0; font-size: 20px">Puntos por colaborador al mes</h2>
+            <p style="margin: 6px 0 0; font-size: 15px; color: var(--muted)">Cada colaborador activo aporta estos puntos al presupuesto mensual de su jefatura. También es el puntaje máximo que puede tener una categoría.</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="pts" style="font-size: 15px; font-weight: 600">Puntos</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+              <input id="pts" class="inp" type="number" min="1" max="1000" step="1" inputmode="numeric" value="{{valor}}" onInput="{{onValor}}" aria-describedby="pts-h pts-e" aria-invalid="{{invalido}}">
+              <span style="font-size: 15px; color: var(--muted)">Actual: {{actualTxt}}</span>
+            </div>
+            <p id="pts-h" style="margin: 0; font-size: 14px; color: var(--muted)">Número entero de 1 a 1000. No puede ser menor que el puntaje de la categoría activa más alta.</p>
+            <sc-if value="{{hayError}}" hint-placeholder-val="{{false}}">
+              <p id="pts-e" role="alert" style="margin: 0; font-size: 14px; font-weight: 600; color: var(--danger)">{{error}}</p>
+            </sc-if>
+          </div>
+
+          <div style="padding: 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 14px; font-weight: 600">Así quedaría</span>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 4px">
+              <li>{{ej1}}</li>
+              <li>{{ej2}}</li>
+            </ul>
+          </div>
+
+          <div style="padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600">El cambio se aplica desde el presupuesto del mes siguiente. Los reconocimientos y el presupuesto de este mes no cambian.</div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-direction: column; gap: 16px">
+            <div>
+              <h2 style="margin: 0; font-size: 20px">Plazo para anular un reconocimiento</h2>
+              <p style="margin: 6px 0 0; font-size: 15px; color: var(--muted)">Días que tiene el líder, desde que otorga un reconocimiento, para anularlo. Pasado ese plazo ya no se puede anular.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="dias" style="font-size: 15px; font-weight: 600">Días</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+                <input id="dias" class="inp" type="number" min="1" max="30" step="1" inputmode="numeric" value="{{plazo}}" onInput="{{onPlazo}}" aria-describedby="dias-h dias-e" aria-invalid="{{invalidoP}}">
+                <span style="font-size: 15px; color: var(--muted)">Actual: {{plazoActualTxt}}</span>
+              </div>
+              <p id="dias-h" style="margin: 0; font-size: 14px; color: var(--muted)">Número entero de 1 a 30. Aunque el plazo esté vigente, no se puede anular si la persona ya canjeó esos puntos.</p>
+              <sc-if value="{{hayErrorP}}" hint-placeholder-val="{{false}}">
+                <p id="dias-e" role="alert" style="margin: 0; font-size: 14px; font-weight: 600; color: var(--danger)">{{errorP}}</p>
+              </sc-if>
+            </div>
+            <div style="padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600">Este cambio se aplica de inmediato a todas las anulaciones desde ese momento.</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-direction: column; gap: 16px">
+            <div>
+              <h2 style="margin: 0; font-size: 20px">Alerta de concentración</h2>
+              <p style="margin: 6px 0 0; font-size: 15px; color: var(--muted)">Si una sola persona recibe más de este porcentaje de los puntos que otorgó su unidad en el mes, el líder y el Gestor reciben un aviso. Es solo informativo y no bloquea nada.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="umbral" style="font-size: 15px; font-weight: 600">Porcentaje</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+                <input id="umbral" class="inp" type="number" min="1" max="100" step="1" inputmode="numeric" value="{{umbral}}" onInput="{{onUmbral}}" aria-describedby="umbral-h umbral-e" aria-invalid="{{invalidoU}}">
+                <span style="font-size: 15px; color: var(--muted)">Actual: {{umbralActualTxt}}</span>
+              </div>
+              <p id="umbral-h" style="margin: 0; font-size: 14px; color: var(--muted)">Número entero de 1 a 100. Con 50, el aviso sale cuando una persona recibe más de la mitad de los puntos de su unidad.</p>
+              <sc-if value="{{hayErrorU}}" hint-placeholder-val="{{false}}">
+                <p id="umbral-e" role="alert" style="margin: 0; font-size: 14px; font-weight: 600; color: var(--danger)">{{errorU}}</p>
+              </sc-if>
+            </div>
+            <div style="padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600">Este cambio se aplica de inmediato a los avisos desde ese momento.</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-direction: column; gap: 16px">
+            <div>
+              <h2 style="margin: 0; font-size: 20px">Plazo máximo de un desafío</h2>
+              <p style="margin: 6px 0 0; font-size: 15px; color: var(--muted)">Días máximos que puede durar un desafío desde que se asigna. Al llegar la fecha límite, el desafío se cierra solo como «No cumplido» y los puntos vuelven al presupuesto del líder.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="maxd" style="font-size: 15px; font-weight: 600">Días</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+                <input id="maxd" class="inp" type="number" min="1" max="90" step="1" inputmode="numeric" value="{{maxd}}" onInput="{{onMaxd}}" aria-describedby="maxd-h maxd-e" aria-invalid="{{invalidoD}}">
+                <span style="font-size: 15px; color: var(--muted)">Actual: {{maxdActualTxt}}</span>
+              </div>
+              <p id="maxd-h" style="margin: 0; font-size: 14px; color: var(--muted)">Número entero de 1 a 90. El líder elige la fecha límite de cada desafío dentro de este máximo.</p>
+              <sc-if value="{{hayErrorD}}" hint-placeholder-val="{{false}}">
+                <p id="maxd-e" role="alert" style="margin: 0; font-size: 14px; font-weight: 600; color: var(--danger)">{{errorD}}</p>
+              </sc-if>
+            </div>
+            <div style="padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600">Este cambio se aplica de inmediato a los desafíos que se asignen desde ese momento.</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-direction: column; gap: 16px">
+            <div>
+              <h2 style="margin: 0; font-size: 20px">Alerta de clima por unidad</h2>
+              <p style="margin: 6px 0 0; font-size: 15px; color: var(--muted)">Si más de este porcentaje de las personas de una unidad está en nivel «riesgo», Gerencia y el Gestor reciben un aviso. Solo se evalúan unidades de 5 personas o más.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="clima" style="font-size: 15px; font-weight: 600">Porcentaje</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+                <input id="clima" class="inp" type="number" min="1" max="100" step="1" inputmode="numeric" value="{{clima}}" onInput="{{onClima}}" aria-describedby="clima-h clima-e" aria-invalid="{{invalidoC}}">
+                <span style="font-size: 15px; color: var(--muted)">Actual: {{climaActualTxt}}</span>
+              </div>
+              <p id="clima-h" style="margin: 0; font-size: 14px; color: var(--muted)">Número entero de 1 a 100. Con 33, el aviso sale cuando más de un tercio de la unidad está en riesgo.</p>
+              <sc-if value="{{hayErrorC}}" hint-placeholder-val="{{false}}"><p id="clima-e" role="alert" style="margin: 0; font-size: 14px; font-weight: 600; color: var(--danger)">{{errorC}}</p></sc-if>
+            </div>
+            <div style="padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600">Este cambio se aplica de inmediato a los avisos desde ese momento.</div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 24px; display: flex; flex-direction: column; gap: 16px">
+            <div>
+              <h2 style="margin: 0; font-size: 20px">Sensibilidad del radar de clima</h2>
+              <p style="margin: 6px 0 0; font-size: 15px; color: var(--muted)">Define qué tan pronto el radar marca a una persona en «atención» o «riesgo». Eliges una opción; los umbrales ya están probados y no se escriben a mano.</p>
+            </div>
+            <div role="radiogroup" aria-label="Sensibilidad del radar" style="display: flex; flex-direction: column; gap: 10px">
+              <label style="display: flex; gap: 12px; align-items: flex-start; min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer"><input type="radio" name="sens" checked="{{sBaja}}" onChange="{{pickBaja}}" style="width: 20px; height: 20px; margin-top: 2px"><span><strong>Baja</strong><br><span style="font-size: 14px; color: var(--muted)">Solo alerta en casos claros. Menos avisos.</span></span></label>
+              <label style="display: flex; gap: 12px; align-items: flex-start; min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer"><input type="radio" name="sens" checked="{{sNormal}}" onChange="{{pickNormal}}" style="width: 20px; height: 20px; margin-top: 2px"><span><strong>Normal</strong> (recomendada)<br><span style="font-size: 14px; color: var(--muted)">Equilibrio entre detectar a tiempo y no saturar al líder.</span></span></label>
+              <label style="display: flex; gap: 12px; align-items: flex-start; min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer"><input type="radio" name="sens" checked="{{sAlta}}" onChange="{{pickAlta}}" style="width: 20px; height: 20px; margin-top: 2px"><span><strong>Alta</strong><br><span style="font-size: 14px; color: var(--muted)">Detecta antes las señales leves. Más avisos.</span></span></label>
+            </div>
+            <div style="padding: 12px 14px; border-radius: 8px; background: var(--warnsoft); color: var(--warn); font-size: 14px; font-weight: 600">Aplica desde el siguiente cálculo semanal. Los líderes verán que la regla cambió en esa medición.</div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 20px">
+            <span style="font-size: 13px; color: var(--muted)">Último cambio: Marta Cevallos, 3 de octubre de 2026 (de 80 a 100)</span>
+            <div style="display: flex; gap: 12px">
+              <button type="button" class="btn" onClick="{{descartar}}">Descartar</button>
+              <button type="button" class="btn btn-p" disabled="{{noGuardar}}" onClick="{{guardar}}">Guardar</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1150}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { actual: 100, valor: '100', guardado: false, msg: '', plazoActual: 7, plazo: '7', umbralActual: 50, umbral: '50', maxdActual: 30, maxd: '30', climaActual: 33, clima: '33', sensActual: 'normal', sens: 'normal' };
+  }
+
+  renderVals() {
+    const S = this.state;
+    const maxCat = 100;
+    const n = Number(S.valor);
+    const entero = S.valor !== '' && Number.isInteger(n);
+    let error = '';
+    if (S.valor === '' || !entero) error = 'Escribe un número entero.';
+    else if (n < 1 || n > 1000) error = 'El valor debe estar entre 1 y 1000.';
+    else if (n < maxCat) error = 'No puede ser menor que ' + maxCat + ', el puntaje de «Liderazgo inspirador». Baja primero el puntaje de esa categoría.';
+    const valido = error === '';
+    const p = Number(S.plazo);
+    let errorP = '';
+    if (S.plazo === '' || !Number.isInteger(p)) errorP = 'Escribe un número entero.';
+    else if (p < 1 || p > 30) errorP = 'El plazo debe estar entre 1 y 30 días.';
+    const validoP = errorP === '';
+    const u = Number(S.umbral);
+    let errorU = '';
+    if (S.umbral === '' || !Number.isInteger(u)) errorU = 'Escribe un número entero.';
+    else if (u < 1 || u > 100) errorU = 'El porcentaje debe estar entre 1 y 100.';
+    const validoU = errorU === '';
+    const d = Number(S.maxd);
+    let errorD = '';
+    if (S.maxd === '' || !Number.isInteger(d)) errorD = 'Escribe un número entero.';
+    else if (d < 1 || d > 90) errorD = 'El plazo debe estar entre 1 y 90 días.';
+    const validoD = errorD === '';
+    const cambioD = validoD && d !== S.maxdActual;
+    const cl = Number(S.clima);
+    let errorC = '';
+    if (S.clima === '' || !Number.isInteger(cl)) errorC = 'Escribe un número entero.';
+    else if (cl < 1 || cl > 100) errorC = 'El porcentaje debe estar entre 1 y 100.';
+    const validoC = errorC === '';
+    const cambioC = validoC && cl !== S.climaActual;
+    const cambioPts = valido && n !== S.actual;
+    const cambioPlazo = validoP && p !== S.plazoActual;
+    const cambioU = validoU && u !== S.umbralActual;
+    const cambioS = S.sens !== S.sensActual;
+    const cambio = valido && validoP && validoU && validoD && validoC && (cambioPts || cambioPlazo || cambioU || cambioD || cambioC || cambioS);
+    const v = valido ? n : S.actual;
+    return {
+      guardado: S.guardado,
+      msgGuardado: S.msg,
+      plazo: S.plazo,
+      onPlazo: (e) => this.setState({ plazo: e.target.value, guardado: false }),
+      invalidoP: validoP ? 'false' : 'true',
+      hayErrorP: !validoP,
+      errorP,
+      plazoActualTxt: S.plazoActual + (S.plazoActual === 1 ? ' día' : ' días'),
+      maxd: S.maxd, onMaxd: (e) => this.setState({ maxd: e.target.value, guardado: false }),
+      invalidoD: validoD ? 'false' : 'true', hayErrorD: !validoD, errorD,
+      maxdActualTxt: S.maxdActual + (S.maxdActual === 1 ? ' día' : ' días'),
+      clima: S.clima, onClima: (e) => this.setState({ clima: e.target.value, guardado: false }),
+      invalidoC: validoC ? 'false' : 'true', hayErrorC: !validoC, errorC,
+      climaActualTxt: S.climaActual + ' %',
+      umbral: S.umbral,
+      onUmbral: (e) => this.setState({ umbral: e.target.value, guardado: false }),
+      invalidoU: validoU ? 'false' : 'true',
+      hayErrorU: !validoU,
+      errorU,
+      umbralActualTxt: S.umbralActual + ' %',
+      valor: S.valor,
+      onValor: (e) => this.setState({ valor: e.target.value, guardado: false }),
+      invalido: valido ? 'false' : 'true',
+      hayError: !valido,
+      error,
+      actualTxt: S.actual + ' puntos',
+      maxCat: String(maxCat),
+      maxCatNombre: 'Liderazgo inspirador',
+      ej1: 'Puntos por colaborador: ' + S.actual + ' → ' + v + ', desde el 1 de diciembre de 2026.',
+      ej2: 'Un equipo de 10 personas tendría ' + (10 * v) + ' puntos al mes.',
+      noGuardar: !cambio,
+      sBaja: S.sens === 'baja', sNormal: S.sens === 'normal', sAlta: S.sens === 'alta',
+      pickBaja: () => this.setState({ sens: 'baja', guardado: false }), pickNormal: () => this.setState({ sens: 'normal', guardado: false }), pickAlta: () => this.setState({ sens: 'alta', guardado: false }),
+      descartar: () => this.setState({ valor: String(S.actual), plazo: String(S.plazoActual), umbral: String(S.umbralActual), maxd: String(S.maxdActual), clima: String(S.climaActual), sens: S.sensActual, guardado: false }),
+      guardar: () => {
+        const partes = [];
+        if (cambioPts) partes.push('Cada colaborador aportará ' + n + ' puntos desde el presupuesto del mes siguiente.');
+        if (cambioPlazo) partes.push('El plazo para anular ahora es de ' + p + (p === 1 ? ' día.' : ' días.'));
+        if (cambioU) partes.push('La alerta de concentración sale desde ' + u + ' %.');
+        if (cambioC) partes.push('La alerta de clima por unidad sale desde ' + cl + ' %.');
+        if (cambioD) partes.push('Los desafíos nuevos pueden durar hasta ' + d + ' días.');
+        if (cambioS) partes.push('La sensibilidad del radar será ' + ({ baja: 'Baja', normal: 'Normal', alta: 'Alta' })[S.sens] + ' desde el siguiente cálculo.');
+        this.setState({ sensActual: S.sens, climaActual: validoC ? cl : S.climaActual, maxdActual: validoD ? d : S.maxdActual, actual: valido ? n : S.actual, plazoActual: validoP ? p : S.plazoActual, umbralActual: validoU ? u : S.umbralActual, guardado: true, msg: 'Parámetros guardados. ' + partes.join(' ') });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

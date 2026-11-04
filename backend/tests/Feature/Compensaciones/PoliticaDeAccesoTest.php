@@ -22,6 +22,15 @@ it('nombra el permiso con el formato recurso.acción', function () {
         ->toMatch('/^[a-z]+\.[a-z]+$/');
 });
 
+it('concede parametros.gestionar solo con la capacidad admin', function () {
+    Sanctum::actingAs(UserModel::factory()->admin()->create(), ['admin']);
+    expect((new PoliticaDeAcceso)->puede(auth()->user(), PoliticaDeAcceso::PARAMETROS_GESTIONAR))->toBeTrue()
+        ->and(PoliticaDeAcceso::PARAMETROS_GESTIONAR)->toBe('parametros.gestionar');
+
+    Sanctum::actingAs(UserModel::factory()->create(), ['user']);
+    expect((new PoliticaDeAcceso)->puede(auth()->user(), PoliticaDeAcceso::PARAMETROS_GESTIONAR))->toBeFalse();
+});
+
 it('deniega por defecto un permiso desconocido, incluso con admin', function () {
     Sanctum::actingAs(UserModel::factory()->admin()->create(), ['admin']);
 
