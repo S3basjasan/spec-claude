@@ -33,7 +33,7 @@ it('crea la categoría Activa con el código CAT-001 y sus indicadores en orden'
         ->assertJsonPath('data.indicadores.*.texto', ['Comparte información con su equipo', 'Ayuda a quien lo necesita']);
 
     $this->assertDatabaseCount('categorias_reconocimiento', 1);
-    $this->assertDatabaseCount('indicadores_reconocimiento', 2);
+    expect(CategoriaReconocimientoModel::query()->first()->indicadores)->toBe(['Comparte información con su equipo', 'Ayuda a quien lo necesita']);
 });
 
 it('asigna códigos consecutivos y pasa de CAT-999 a CAT-1000', function () {
@@ -120,6 +120,7 @@ it('rechaza datos inválidos con el error junto a cada campo', function (array $
     'indicador corto' => [['indicadores' => ['cort']], 'indicadores.0'],
     'indicador largo' => [['indicadores' => [str_repeat('a', 251)]], 'indicadores.0'],
     'indicadores repetidos' => [['indicadores' => ['Trabaja en equipo', ' TRABAJA en equipo ']], 'indicadores.1'],
+    'indicadores repetidos por tildes' => [['indicadores' => ['Ágil en la entrega', 'agil EN la entrega']], 'indicadores.1'],
     'HTML en el nombre' => [['nombre' => '<b>Equipo</b>'], 'nombre'],
     'HTML en la descripción' => [['descripcion' => 'Descripción <script>alert(1)</script> válida'], 'descripcion'],
     'HTML en un indicador' => [['indicadores' => ['Indicador <img src=x onerror=alert(1)>']], 'indicadores.0'],
@@ -201,6 +202,5 @@ it('no deja nada guardado si falla una validación de negocio', function () {
     $this->postJson('/api/compensaciones/categorias', datosCategoria($inactiva->id))->assertUnprocessable();
 
     $this->assertDatabaseCount('categorias_reconocimiento', 0);
-    $this->assertDatabaseCount('indicadores_reconocimiento', 0);
     $this->assertDatabaseCount('auditoria_categorias_reconocimiento', 0);
 });

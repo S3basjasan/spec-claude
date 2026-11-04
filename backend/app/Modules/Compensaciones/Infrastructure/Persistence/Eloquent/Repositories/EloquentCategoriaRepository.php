@@ -14,7 +14,6 @@ use App\Modules\Compensaciones\Domain\ValueObjects\NombreCategoria;
 use App\Modules\Compensaciones\Domain\ValueObjects\PaginaCategorias;
 use App\Modules\Compensaciones\Domain\ValueObjects\PuntuacionBase;
 use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\CategoriaReconocimientoModel;
-use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\IndicadorReconocimientoModel;
 use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Builder;
@@ -66,7 +65,7 @@ class EloquentCategoriaRepository implements CategoriaRepository
 
     public function porId(int $id): ?Categoria
     {
-        $modelo = CategoriaReconocimientoModel::query()->with('indicadores')->find($id);
+        $modelo = CategoriaReconocimientoModel::query()->find($id);
 
         return $modelo === null ? null : $this->aEntidad($modelo);
     }
@@ -78,7 +77,6 @@ class EloquentCategoriaRepository implements CategoriaRepository
         }
 
         return CategoriaReconocimientoModel::query()
-            ->with('indicadores')
             ->whereIn('id', $ids)
             ->get()
             ->map(fn (CategoriaReconocimientoModel $m) => $this->aEntidad($m))
@@ -88,7 +86,6 @@ class EloquentCategoriaRepository implements CategoriaRepository
     public function activas(): array
     {
         return CategoriaReconocimientoModel::query()
-            ->with('indicadores')
             ->where('estado', EstadoCategoria::Activo->value)
             ->orderByRaw('LENGTH(codigo), codigo')
             ->get()
@@ -127,6 +124,7 @@ class EloquentCategoriaRepository implements CategoriaRepository
                 'competencia_id' => $nueva->competenciaId,
                 'puntuacion_base' => $nueva->puntuacion->valor,
                 'icono' => $nueva->icono->value,
+                'indicadores' => $this->textos($nueva->indicadores),
                 'estado' => EstadoCategoria::Activo->value,
                 'created_by' => $actorId,
                 'updated_by' => $actorId,
@@ -146,8 +144,6 @@ class EloquentCategoriaRepository implements CategoriaRepository
             throw $e;
         }
 
-        $this->reemplazarIndicadores((int) $modelo->id, $nueva->indicadores);
-
         return $this->porId((int) $modelo->id) ?? throw new \LogicException('La categoría recién creada no se pudo leer.');
     }
 
@@ -160,14 +156,14 @@ class EloquentCategoriaRepository implements CategoriaRepository
             'competencia_id' => $propuesta->competenciaId,
             'puntuacion_base' => $propuesta->puntuacion->valor,
             'icono' => $propuesta->icono->value,
+            // El UPDATE de consulta no aplica casts: la lista completa se codifica aquí, en el mismo UPDATE condicional.
+            'indicadores' => json_encode($this->textos($propuesta->indicadores), JSON_UNESCAPED_UNICODE),
             'updated_by' => $actorId,
         ]);
 
         if ($afectadas === 0) {
             return null;
         }
-
-        $this->reemplazarIndicadores((int) $actual->id, $propuesta->indicadores);
 
         return $this->porId((int) $actual->id);
     }
@@ -208,19 +204,11 @@ class EloquentCategoriaRepository implements CategoriaRepository
 
     /**
      * @param  array<int, Indicador>  $indicadores
+     * @return array<int, string>
      */
-    private function reemplazarIndicadores(int $categoriaId, array $indicadores): void
+    private function textos(array $indicadores): array
     {
-        IndicadorReconocimientoModel::query()->where('categoria_reconocimiento_id', $categoriaId)->delete();
-
-        foreach ($indicadores as $indicador) {
-            IndicadorReconocimientoModel::query()->create([
-                'categoria_reconocimiento_id' => $categoriaId,
-                'orden' => $indicador->orden,
-                'texto' => $indicador->texto,
-                'texto_normalizado' => $indicador->normalizado(),
-            ]);
-        }
+        return array_map(fn (Indicador $i) => $i->texto, $indicadores);
     }
 
     private function filtrarPorTexto(Builder $consulta, FiltroCategorias $filtro): void
@@ -241,9 +229,9 @@ class EloquentCategoriaRepository implements CategoriaRepository
         $indicadores = [];
 
         if ($conIndicadores) {
-            $indicadores = $m->indicadores
-                ->map(fn (IndicadorReconocimientoModel $i) => new Indicador($i->texto, (int) $i->orden))
-                ->all();
+            foreach (array_values($m->indicadores ?? []) as $posicion => $texto) {
+                $indicadores[] = new Indicador((string) $texto, $posicion + 1);
+            }
         }
 
         $version = $m->getRawOriginal('updated_at');
