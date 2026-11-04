@@ -14,7 +14,12 @@ async function iniciarSesion(page: Page, email: string) {
   await page.getByLabel('Correo electrónico').fill(email)
   await page.getByLabel('Contraseña').fill(PASSWORD)
   await page.getByRole('button', { name: 'Ingresar' }).click()
-  await expect(page.getByRole('heading', { name: 'Inicio' })).toBeVisible()
+  // La página de aterrizaje cambia con el menú; basta con que ya esté dentro de la aplicación.
+  await expect(page.getByRole('navigation', { name: 'Navegación principal' })).toBeVisible()
+}
+
+async function irACategorias(page: Page) {
+  await page.goto('/compensaciones/categorias')
 }
 
 async function buscar(page: Page, texto: string) {
@@ -26,7 +31,7 @@ test.describe.configure({ mode: 'serial' })
 
 test('Administrador: crea, lista, edita, desactiva y activa una categoría', async ({ page }) => {
   await iniciarSesion(page, 'admin@hrms.test')
-  await page.getByRole('link', { name: 'Categorías de reconocimiento', exact: true }).click()
+  await irACategorias(page)
   await expect(page.getByRole('heading', { name: 'Categorías de reconocimiento', level: 1 })).toBeVisible()
 
   // Solo las activas, ordenadas por código, de 15 en 15; sin Eliminar.
@@ -42,9 +47,9 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
   await page.getByLabel('Competencia asociada').selectOption({ index: 1 })
   await page.getByLabel('Puntuación base').fill('120')
   await page.getByRole('radio', { name: 'Trofeo' }).check({ force: true })
-  await page.getByLabel('Indicador 1').fill('Comparte información útil con su equipo')
+  await page.getByLabel('Indicador 1', { exact: true }).fill('Comparte información útil con su equipo')
   await page.getByRole('button', { name: 'Agregar indicador' }).click()
-  await page.getByLabel('Indicador 2').fill('Reconoce los aportes de otras personas')
+  await page.getByLabel('Indicador 2', { exact: true }).fill('Reconoce los aportes de otras personas')
   await page.getByRole('button', { name: 'Crear categoría' }).click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await expect(page.getByText(new RegExp(`Se creó la categoría «${NOMBRE}» \\(CAT-\\d{3,}\\)`))).toBeVisible()
@@ -56,10 +61,10 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
   await page.getByLabel('Competencia asociada').selectOption({ index: 1 })
   await page.getByLabel('Puntuación base').fill('50')
   await page.getByRole('radio', { name: 'Estrella' }).check({ force: true })
-  await page.getByLabel('Indicador 1').fill('Indicador de prueba suficiente')
+  await page.getByLabel('Indicador 1', { exact: true }).fill('Indicador de prueba suficiente')
   await page.getByRole('button', { name: 'Crear categoría' }).click()
   await expect(page.getByText('Ya existe una categoría con ese nombre.')).toBeVisible()
-  await expect(page.getByLabel('Nombre', { exact: true })).toHaveValue(`  ${NOMBRE.toUpperCase()}  `.trim())
+  await expect(page.getByLabel('Nombre', { exact: true })).toHaveValue(`  ${NOMBRE.toUpperCase()}  `)
   await page.getByRole('button', { name: 'Cancelar' }).click()
   await page.getByRole('button', { name: 'Descartar cambios' }).click()
 
@@ -69,7 +74,7 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
 
   // Editar la puntuación y el nombre.
   await page.getByRole('button', { name: `Editar ${NOMBRE}` }).click()
-  await expect(page.getByLabel('Indicador 2')).toHaveValue('Reconoce los aportes de otras personas')
+  await expect(page.getByLabel('Indicador 2', { exact: true })).toHaveValue('Reconoce los aportes de otras personas')
   await page.getByLabel('Nombre', { exact: true }).fill(NOMBRE_CORREGIDO)
   await page.getByLabel('Puntuación base').fill('200')
   await page.getByRole('button', { name: 'Guardar cambios' }).click()
@@ -103,7 +108,7 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
 
 test('Usuario: consulta el catálogo activo sin controles de gestión', async ({ page }) => {
   await iniciarSesion(page, 'usuario@hrms.test')
-  await page.getByRole('link', { name: 'Categorías de reconocimiento', exact: true }).click()
+  await irACategorias(page)
 
   await expect(page.getByRole('row', { name: /CAT-001/ })).toBeVisible({ timeout: 20_000 })
   await expect(page.getByRole('button', { name: 'Nueva categoría' })).toHaveCount(0)

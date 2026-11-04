@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Modules\Compensaciones\Domain\ValueObjects\Icono;
 use App\Modules\Compensaciones\Domain\ValueObjects\Normalizador;
 use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\CategoriaReconocimientoModel;
-use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\IndicadorReconocimientoModel;
 use App\Modules\Estructura\Presentation\Facades\EstructuraFacade;
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Database\Seeder;
@@ -46,7 +45,7 @@ class CategoriasReconocimientoSeeder extends Seeder
                 ? $inactivas[0]
                 : $activas[$posicion % count($activas)];
 
-            $categoria = CategoriaReconocimientoModel::query()->create([
+            CategoriaReconocimientoModel::query()->create([
                 'codigo' => 'CAT-'.str_pad((string) ($posicion + 1), 3, '0', STR_PAD_LEFT),
                 'nombre' => $nombre,
                 'nombre_normalizado' => $normalizado,
@@ -54,19 +53,12 @@ class CategoriasReconocimientoSeeder extends Seeder
                 'competencia_id' => $competencia['id'],
                 'puntuacion_base' => $puntos,
                 'icono' => $iconos[$posicion % count($iconos)],
+                'indicadores' => array_values($indicadores),
                 'estado' => $estado,
                 'created_by' => $actorId,
                 'updated_by' => $actorId,
             ]);
 
-            foreach ($indicadores as $orden => $texto) {
-                IndicadorReconocimientoModel::query()->create([
-                    'categoria_reconocimiento_id' => $categoria->id,
-                    'orden' => $orden + 1,
-                    'texto' => $texto,
-                    'texto_normalizado' => Normalizador::normalizar($texto),
-                ]);
-            }
         }
     }
 

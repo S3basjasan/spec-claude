@@ -14,15 +14,13 @@ use Laravel\Sanctum\Sanctum;
  */
 function cuerpoDeEdicion(CategoriaReconocimientoModel $categoria, array $cambios = []): array
 {
-    $categoria->load('indicadores');
-
     return array_replace([
         'nombre' => $categoria->nombre,
         'descripcion' => $categoria->descripcion,
         'competencia_id' => $categoria->competencia_id,
         'puntuacion_base' => $categoria->puntuacion_base,
         'icono' => $categoria->icono,
-        'indicadores' => $categoria->indicadores->pluck('texto')->all(),
+        'indicadores' => $categoria->indicadores,
         'updated_at' => versionDeCategoria($categoria->id),
     ], $cambios);
 }
@@ -62,7 +60,7 @@ it('actualiza los datos, reemplaza y renumera los indicadores y registra quién 
     expect($categoria->created_by)->toBe($creador->id)
         ->and($categoria->updated_by)->toBe($editor->id)
         ->and(versionDeCategoria($categoria->id))->not->toBe($versionAnterior);
-    $this->assertDatabaseCount('indicadores_reconocimiento', 3);
+    expect($categoria->indicadores)->toBe(['Nuevo indicador uno', 'Nuevo indicador dos', 'Nuevo indicador tres']);
 });
 
 it('escribe una fila de auditoría por cada campo realmente modificado', function () {
@@ -85,15 +83,16 @@ it('escribe una fila de auditoría por cada campo realmente modificado', functio
 it('rechaza con 409 si la categoría fue modificada y no aplica nada', function () {
     $categoria = CategoriaReconocimientoModel::factory()->create(['puntuacion_base' => 100]);
     actuarComoAdmin();
-    $cuerpoViejo = cuerpoDeEdicion($categoria, ['puntuacion_base' => 500]);
+    $cuerpoViejo = cuerpoDeEdicion($categoria, ['puntuacion_base' => 500, 'indicadores' => ['Indicador del cuerpo viejo']]);
 
-    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['puntuacion_base' => 200]))->assertOk();
+    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['puntuacion_base' => 200, 'indicadores' => ['Indicador guardado uno', 'Indicador guardado dos']]))->assertOk();
 
     $this->putJson("/api/compensaciones/categorias/{$categoria->id}", $cuerpoViejo)
         ->assertStatus(409)
         ->assertJsonPath('message', 'La categoría fue modificada por otro usuario. Recarga para ver los cambios.');
 
-    expect($categoria->fresh()->puntuacion_base)->toBe(200);
+    expect($categoria->fresh()->puntuacion_base)->toBe(200)
+        ->and($categoria->fresh()->indicadores)->toBe(['Indicador guardado uno', 'Indicador guardado dos']);
 });
 
 it('acepta un guardado sin cambios sin alterar la versión, el autor ni el historial', function () {
@@ -170,6 +169,29 @@ it('exige la versión leída y rechaza campos prohibidos', function () {
             ->assertUnprocessable()
             ->assertJsonValidationErrors($clave);
     }
+});
+
+it('rechaza indicadores repetidos con otras mayúsculas o tildes y no cambia la lista guardada', function () {
+    $categoria = CategoriaReconocimientoModel::factory()->create(['indicadores' => ['Indicador guardado uno', 'Indicador guardado dos']]);
+    actuarComoAdmin();
+
+    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['indicadores' => ['Ágil en la entrega', ' agil EN la entrega ']]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indicadores.1');
+
+    expect($categoria->fresh()->indicadores)->toBe(['Indicador guardado uno', 'Indicador guardado dos']);
+});
+
+it('rechaza una competencia inexistente al editar y no cambia la categoría', function () {
+    $categoria = CategoriaReconocimientoModel::factory()->create();
+    $competenciaOriginal = $categoria->competencia_id;
+    actuarComoAdmin();
+
+    $this->putJson("/api/compensaciones/categorias/{$categoria->id}", cuerpoDeEdicion($categoria, ['competencia_id' => 9999]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('competencia_id');
+
+    expect($categoria->fresh()->competencia_id)->toBe($competenciaOriginal);
 });
 
 it('valida las mismas reglas que al crear', function () {

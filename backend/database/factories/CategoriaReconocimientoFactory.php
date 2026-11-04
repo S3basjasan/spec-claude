@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Modules\Compensaciones\Domain\ValueObjects\Icono;
 use App\Modules\Compensaciones\Domain\ValueObjects\Normalizador;
 use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\CategoriaReconocimientoModel;
-use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\IndicadorReconocimientoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,9 +16,6 @@ class CategoriaReconocimientoFactory extends Factory
     protected $model = CategoriaReconocimientoModel::class;
 
     private static int $secuencia = 0;
-
-    /** Cantidad de indicadores a crear tras guardar cada categoría (por defecto 2). */
-    private static ?\WeakMap $pendientes = null;
 
     /**
      * @return array<string, mixed>
@@ -41,28 +37,20 @@ class CategoriaReconocimientoFactory extends Factory
 
     public function configure(): static
     {
-        return $this
-            ->afterMaking(function (CategoriaReconocimientoModel $categoria) {
-                $categoria->nombre_normalizado = Normalizador::normalizar($categoria->nombre);
+        return $this->afterMaking(function (CategoriaReconocimientoModel $categoria) {
+            $categoria->nombre_normalizado = Normalizador::normalizar($categoria->nombre);
 
-                self::$pendientes ??= new \WeakMap;
-                self::$pendientes[$categoria] = (int) ($categoria->getAttribute('indicadores_a_crear') ?? 2);
-                $categoria->offsetUnset('indicadores_a_crear');
-            })
-            ->afterCreating(function (CategoriaReconocimientoModel $categoria) {
-                $cantidad = self::$pendientes[$categoria] ?? 2;
+            // `indicadores_a_crear` es un atributo temporal de los estados; si la prueba fija `indicadores`, se respeta.
+            $cantidad = (int) ($categoria->getAttribute('indicadores_a_crear') ?? 2);
+            $categoria->offsetUnset('indicadores_a_crear');
 
-                for ($orden = 1; $orden <= $cantidad; $orden++) {
-                    $texto = "Indicador $orden de {$categoria->codigo}";
-
-                    IndicadorReconocimientoModel::query()->create([
-                        'categoria_reconocimiento_id' => $categoria->id,
-                        'orden' => $orden,
-                        'texto' => $texto,
-                        'texto_normalizado' => Normalizador::normalizar($texto),
-                    ]);
-                }
-            });
+            if (! array_key_exists('indicadores', $categoria->getAttributes())) {
+                $categoria->indicadores = array_map(
+                    fn (int $orden) => "Indicador $orden de {$categoria->codigo}",
+                    $cantidad > 0 ? range(1, $cantidad) : [],
+                );
+            }
+        });
     }
 
     public function inactiva(): static

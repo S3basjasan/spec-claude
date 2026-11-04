@@ -53,7 +53,17 @@ it('asigna el orden de los indicadores desde 1 y exige de 1 a 5', function () {
 
 it('rechaza indicadores repetidos por su forma normalizada', function () {
     expect(fn () => Categoria::indicadoresDesde(['Trabaja en equipo', '  TRABAJA en equipo ']))
+        ->toThrow(DatosDeCategoriaInvalidos::class)
+        ->and(fn () => Categoria::indicadoresDesde(['Ágil en la entrega', 'agil EN la entrega']))
         ->toThrow(DatosDeCategoriaInvalidos::class);
+});
+
+it('exige indicadores de 5 a 250 caracteres y acepta los límites exactos', function () {
+    expect(fn () => Categoria::indicadoresDesde(['cort']))->toThrow(DatosDeCategoriaInvalidos::class)
+        ->and(fn () => Categoria::indicadoresDesde([str_repeat('a', 251)]))->toThrow(DatosDeCategoriaInvalidos::class)
+        ->and(Categoria::indicadoresDesde(['cinco']))->toHaveCount(1)
+        ->and(Categoria::indicadoresDesde([str_repeat('a', 250)]))->toHaveCount(1)
+        ->and(Categoria::indicadoresDesde(['Indicador 1', 'Indicador 2', 'Indicador 3', 'Indicador 4', 'Indicador 5']))->toHaveCount(5);
 });
 
 it('es seleccionable solo si está activa y su competencia está activa', function () {

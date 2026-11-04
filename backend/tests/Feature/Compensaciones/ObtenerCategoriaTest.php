@@ -1,22 +1,13 @@
 <?php
 
 use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\CategoriaReconocimientoModel;
-use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\IndicadorReconocimientoModel;
 
 it('rechaza con 401 sin sesión', function () {
     $this->getJson('/api/compensaciones/categorias/1')->assertUnauthorized();
 });
 
 it('devuelve la categoría con sus indicadores en orden y la versión', function () {
-    $categoria = CategoriaReconocimientoModel::factory()->conIndicadores(0)->create();
-    foreach ([3 => 'Tercero indicador', 1 => 'Primero indicador', 2 => 'Segundo indicador'] as $orden => $texto) {
-        IndicadorReconocimientoModel::query()->create([
-            'categoria_reconocimiento_id' => $categoria->id,
-            'orden' => $orden,
-            'texto' => $texto,
-            'texto_normalizado' => mb_strtolower($texto),
-        ]);
-    }
+    $categoria = CategoriaReconocimientoModel::factory()->create(['indicadores' => ['Primero indicador', 'Segundo indicador', 'Tercero indicador']]);
     actuarComoUsuario();
 
     $this->getJson("/api/compensaciones/categorias/{$categoria->id}")

@@ -98,7 +98,7 @@ it('siembra categorías de prueba que cubren los casos de la paginación y la co
 
     expect(CategoriaReconocimientoModel::query()->count())->toBe(20)
         ->and(CategoriaReconocimientoModel::query()->where('estado', 'Inactivo')->count())->toBe(3)
-        ->and(CategoriaReconocimientoModel::query()->withCount('indicadores')->get()->pluck('indicadores_count')->unique()->sort()->values()->all())->toBe([1, 2, 3, 4, 5]);
+        ->and(CategoriaReconocimientoModel::query()->get()->map(fn ($c) => count($c->indicadores))->unique()->sort()->values()->all())->toBe([1, 2, 3, 4, 5]);
 
     $conCompetenciaInactiva = collect(CategoriasFacade::obtenerPorIds(CategoriaReconocimientoModel::query()->pluck('id')->all()))
         ->filter(fn ($c) => $c['estado'] === 'Activo' && ! $c['competencia_activa']);
