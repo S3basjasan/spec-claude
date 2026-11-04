@@ -56,7 +56,7 @@ class CategoriaResource extends JsonResource
         $datos['updated_at'] = $categoria->tokenParaCliente();
 
         // La auditoría solo se muestra a quien puede gestionar el catálogo.
-        if ($request->user() !== null && app(PoliticaDeAcceso::class)->puedeGestionar($request->user())) {
+        if ($request->user() !== null && app(PoliticaDeAcceso::class)->puede($request->user(), PoliticaDeAcceso::CATEGORIAS_GESTIONAR)) {
             $datos['created_by'] = $categoria->creadaPor;
             $datos['updated_by'] = $categoria->actualizadaPor;
             $datos['created_at'] = $categoria->creadaEn?->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s.u\Z');

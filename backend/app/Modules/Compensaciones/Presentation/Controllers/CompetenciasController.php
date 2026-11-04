@@ -22,6 +22,6 @@ class CompetenciasController
 
     public function filtro(Request $request, ListarCompetenciasParaFiltro $listar): JsonResponse
     {
-        return response()->json(['data' => $listar->ejecutar($this->acceso->puedeGestionar($request->user()))]);
+        return response()->json(['data' => $listar->ejecutar($this->acceso->puede($request->user(), PoliticaDeAcceso::CATEGORIAS_GESTIONAR))]);
     }
 }

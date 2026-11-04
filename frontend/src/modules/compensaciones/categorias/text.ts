@@ -45,7 +45,7 @@ export const categoriasReconocimientoText = {
     loading: 'Cargando categorías…',
     emptyTitle: 'Aún no hay categorías de reconocimiento',
     emptyAdmin: 'Crea la primera categoría para que pueda usarse en hitos y desafíos.',
-    emptyUsuario: 'Cuando Talento Humano cree categorías, aparecerán aquí.',
+    emptyUsuario: 'Cuando el Gestor de Talento cree categorías, aparecerán aquí.',
     noResultsTitle: 'Sin resultados',
     noResultsDescription: 'No se encontraron categorías de reconocimiento que coincidan con la búsqueda.',
     errorTitle: 'No se pudo cargar el listado',
