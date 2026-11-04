@@ -132,7 +132,7 @@ it('acepta los límites exactos', function () {
     $this->postJson('/api/compensaciones/categorias', datosCategoria(null, [
         'nombre' => str_repeat('n', 100),
         'descripcion' => str_repeat('d', 500),
-        'puntuacion_base' => 1000,
+        'puntuacion_base' => 100,
         'indicadores' => [str_repeat('i', 250), 'Indicador dos', 'Indicador tres', 'Indicador cuatro', 'Indicador cinco'],
     ]))->assertCreated();
 });

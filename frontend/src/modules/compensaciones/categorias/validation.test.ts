@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { httpError } from '../../../test/apiErrors'
-import { aDatosDeCategoria, categoriaSchema, normalizarTexto, problemaDeGuardado, valoresIniciales, type CategoriaFormValues } from './validation'
+import { aDatosDeCategoria, categoriaSchema, crearCategoriaSchema, normalizarTexto, problemaDeGuardado, valoresIniciales, type CategoriaFormValues } from './validation'
 import { categoriaReconocimiento } from '../../../test/categoriasReconocimientoFixtures'
 
 function valores(cambios: Partial<CategoriaFormValues> = {}): CategoriaFormValues {
@@ -110,5 +110,31 @@ describe('problemaDeGuardado', () => {
     expect(problemaDeGuardado(httpError(404)).aviso).toBe('noExiste')
     expect(problemaDeGuardado(httpError(500)).aviso).toBe('inesperado')
     expect(problemaDeGuardado(httpError(422, { errors: {} })).aviso).toBe('inesperado')
+  })
+})
+
+describe('crearCategoriaSchema · máximo permitido', () => {
+  const mensajesConMaximo = (maximo: number | undefined, puntuacion: string) => {
+    const resultado = crearCategoriaSchema(maximo).safeParse(valores({ puntuacion_base: puntuacion }))
+    return resultado.success ? [] : resultado.error.issues.filter((i) => i.path[0] === 'puntuacion_base').map((i) => i.message)
+  }
+
+  it('acepta de 1 al máximo y rechaza 0, el máximo más uno, decimales y vacío con el mensaje del máximo', () => {
+    expect(mensajesConMaximo(100, '1')).toEqual([])
+    expect(mensajesConMaximo(100, '100')).toEqual([])
+    expect(mensajesConMaximo(100, '0')).toEqual(['La puntuación base debe estar entre 1 y 100.'])
+    expect(mensajesConMaximo(100, '101')).toEqual(['La puntuación base debe estar entre 1 y 100.'])
+    expect(mensajesConMaximo(100, '1.5')).toEqual(['La puntuación base debe ser un número entero.'])
+    expect(mensajesConMaximo(100, '')[0]).toBe('Este campo es obligatorio.')
+  })
+
+  it('con un máximo menor por cambio programado usa ese máximo', () => {
+    expect(mensajesConMaximo(60, '60')).toEqual([])
+    expect(mensajesConMaximo(60, '61')).toEqual(['La puntuación base debe estar entre 1 y 60.'])
+  })
+
+  it('sin máximo conocido rige el límite exterior de 1000', () => {
+    expect(mensajesConMaximo(undefined, '1000')).toEqual([])
+    expect(mensajesConMaximo(undefined, '1001')).toEqual(['La puntuación base debe estar entre 1 y 1000.'])
   })
 })

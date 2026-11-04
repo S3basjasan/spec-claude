@@ -16,6 +16,12 @@ final class ConsultarParametros
         private readonly NombresDeUsuarioPort $usuarios,
     ) {}
 
+    /** Máximo permitido para la puntuación base de una categoría (menor entre el valor vigente y el programado). */
+    public function puntuacionMaximaDeCategoria(): int
+    {
+        return $this->servicio->puntuacionMaximaDeCategoria();
+    }
+
     /** @return array<int, ParametroDTO> las seis claves, en el orden del enum */
     public function ejecutar(): array
     {

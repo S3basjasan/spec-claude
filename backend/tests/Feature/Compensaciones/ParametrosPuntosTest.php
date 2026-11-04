@@ -126,3 +126,28 @@ it('si la categoría más alta se desactiva después, el valor guardado no cambi
     expect(ParametroModuloModel::query()->count())->toBe(1)
         ->and(ParametroModuloModel::query()->first()->valor)->toBe(250);
 });
+
+it('incluye en meta el máximo permitido para la puntuación de las categorías', function (?int $programado, int $esperado) {
+    actuarComoAdmin();
+    Carbon::setTestNow('2026-11-10 10:00:00');
+    if ($programado !== null) {
+        putParametro('puntos_por_colaborador', $programado)->assertOk();
+    }
+
+    $this->getJson('/api/compensaciones/parametros')
+        ->assertOk()
+        ->assertJsonPath('meta.puntuacion_maxima_categoria', $esperado)
+        ->assertJsonCount(6, 'data');
+})->with([
+    'sin programado' => [null, 100],
+    'programado menor' => [60, 60],
+    'programado mayor' => [150, 100],
+]);
+
+it('devuelve meta también tras guardar y a quien no es Gestor le responde 403', function () {
+    actuarComoAdmin();
+    putParametro('puntos_por_colaborador', 60)->assertOk()->assertJsonPath('meta.puntuacion_maxima_categoria', 60);
+
+    actuarComoUsuario();
+    $this->getJson('/api/compensaciones/parametros')->assertForbidden();
+});

@@ -7,11 +7,13 @@ use App\Modules\Compensaciones\Application\DTOs\DatosCategoriaDTO;
 use App\Modules\Compensaciones\Application\Ports\CompetenciasPort;
 use App\Modules\Compensaciones\Application\Services\ArmadorDeCategoriaDTO;
 use App\Modules\Compensaciones\Application\Services\AuditoriaDeCategoria;
+use App\Modules\Compensaciones\Application\Services\ParametrosDelModulo;
 use App\Modules\Compensaciones\Domain\Exceptions\CodigoDeCategoriaEnUso;
 use App\Modules\Compensaciones\Domain\Exceptions\CompetenciaNoDisponible;
 use App\Modules\Compensaciones\Domain\Exceptions\DatosDeCategoriaInvalidos;
 use App\Modules\Compensaciones\Domain\Exceptions\NombreDeCategoriaRepetido;
 use App\Modules\Compensaciones\Domain\Repositories\CategoriaRepository;
+use App\Modules\Compensaciones\Domain\ValueObjects\EstadoCategoria;
 
 final class CrearCategoria
 {
@@ -22,6 +24,7 @@ final class CrearCategoria
         private readonly CompetenciasPort $competencias,
         private readonly AuditoriaDeCategoria $auditoria,
         private readonly ArmadorDeCategoriaDTO $armador,
+        private readonly ParametrosDelModulo $parametros,
     ) {}
 
     /**
@@ -35,7 +38,7 @@ final class CrearCategoria
      */
     public function ejecutar(DatosCategoriaDTO $datos, int $actorId): CategoriaDTO
     {
-        $propuesta = $datos->comoPropuesta();
+        $propuesta = $datos->comoPropuesta(EstadoCategoria::Activo, $this->parametros->puntuacionMaximaDeCategoria());
         $ultimoError = null;
 
         for ($intento = 1; $intento <= self::INTENTOS_DE_CODIGO; $intento++) {

@@ -8,13 +8,13 @@ import { Modal } from '../../../../shared/ui/Modal'
 import { SelectField, type SelectOption } from '../../../../shared/ui/SelectField'
 import { TextareaField } from '../../../../shared/ui/TextareaField'
 import { TextField } from '../../../../shared/ui/TextField'
-import { obtenerCategoria, type Categoria } from '../api'
-import { useCompetenciasDisponibles } from '../hooks/useCategorias'
+import { obtenerCategoria, PUNTUACION_MAXIMA_EXTERIOR, type Categoria } from '../api'
+import { useCompetenciasDisponibles, usePuntuacionMaxima } from '../hooks/useCategorias'
 import { useGuardarCategoria } from '../hooks/useGuardarCategoria'
 import { categoriasReconocimientoText } from '../text'
 import {
   aDatosDeCategoria,
-  categoriaSchema,
+  crearCategoriaSchema,
   LIMITE_DESCRIPCION,
   LIMITE_NOMBRE,
   problemaDeGuardado,
@@ -63,6 +63,9 @@ function Aviso({ aviso, onRecargar, recargando }: { aviso: ProblemaDeGuardado['a
 export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: CategoriaFormModalProps) {
   const guardar = useGuardarCategoria()
   const disponibles = useCompetenciasDisponibles()
+  const puntuacionMaxima = usePuntuacionMaxima()
+  const maximo = puntuacionMaxima.data?.maximo
+  const resolver = useMemo(() => zodResolver(crearCategoriaSchema(maximo)), [maximo])
   const [version, setVersion] = useState(categoria?.updated_at)
   const [resultado, setResultado] = useState<{ problema: ProblemaDeGuardado; firma: string }>({ problema: SIN_PROBLEMA, firma: '' })
   const [descartando, setDescartando] = useState(false)
@@ -77,7 +80,7 @@ export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: Categori
     getValues,
     formState: { errors, isDirty },
   } = useForm<CategoriaFormValues>({
-    resolver: zodResolver(categoriaSchema),
+    resolver,
     defaultValues: valoresIniciales(categoria),
   })
   const valores = useWatch({ control })
@@ -214,13 +217,21 @@ export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: Categori
               label={text.pointsLabel}
               type="number"
               min={1}
-              max={1000}
+              max={maximo ?? PUNTUACION_MAXIMA_EXTERIOR}
               step={1}
               inputMode="numeric"
               error={error('puntuacion_base', errors.puntuacion_base?.message)}
               {...register('puntuacion_base')}
             />
-            <p className="text-[13px] text-muted">{text.pointsHint}</p>
+            <p className="text-[13px] text-muted">
+              <strong>{maximo === undefined ? text.pointsMaximumUnknown : text.pointsMaximum(maximo)}</strong> {text.pointsHint}
+              {maximo !== undefined && puntuacionMaxima.data?.bajaPorProgramado && (
+                <>
+                  {' '}
+                  {text.pointsMaximumScheduled(maximo)}
+                </>
+              )}
+            </p>
           </div>
 
           <SelectorIcono

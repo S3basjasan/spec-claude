@@ -67,6 +67,19 @@ final class ParametrosDelModulo
         return $this->parametros->programadaDespuesDe($clave, $this->hoy());
     }
 
+    /**
+     * Máximo que puede tener la puntuación base de una categoría: el menor entre los puntos por colaborador vigentes
+     * hoy y el valor programado para el mes siguiente (si lo hay), de modo que ninguna categoría quede por encima del
+     * parámetro cuando el cambio entre en vigencia. Es un valor derivado: no se almacena.
+     */
+    public function puntuacionMaximaDeCategoria(): int
+    {
+        $vigente = $this->valorVigente(ClaveDeParametro::PuntosPorColaborador);
+        $programado = $this->programado(ClaveDeParametro::PuntosPorColaborador);
+
+        return $programado === null ? $vigente : min($vigente, $programado->valor);
+    }
+
     public function porDefecto(ClaveDeParametro $clave): int
     {
         if ($clave !== ClaveDeParametro::PuntosPorColaborador) {

@@ -1,6 +1,13 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { toApiError } from '../../../../shared/api/httpClient'
-import { listarCategorias, listarCompetenciasDisponibles, listarCompetenciasFiltro, obtenerCategoria, type FiltrosCategorias } from '../api'
+import {
+  listarCategorias,
+  listarCompetenciasDisponibles,
+  listarCompetenciasFiltro,
+  obtenerCategoria,
+  obtenerPuntuacionMaxima,
+  type FiltrosCategorias,
+} from '../api'
 
 export const categoriasKey = ['categorias-reconocimiento'] as const
 
@@ -45,6 +52,19 @@ export function useCompetenciasDisponibles(habilitado = true) {
     queryKey: [...categoriasKey, 'competencias-disponibles'],
     queryFn: ({ signal }) => listarCompetenciasDisponibles(signal),
     enabled: habilitado,
+    retry: sinReintentoEn4xx,
+  })
+}
+
+/**
+ * Máximo permitido para la puntuación base. Se vuelve a leer cada vez que se abre el formulario; si la consulta falla
+ * (p. ej. 403 por permiso de parámetros) el formulario sigue usable sin número y decide el servidor.
+ */
+export function usePuntuacionMaxima() {
+  return useQuery({
+    queryKey: [...categoriasKey, 'puntuacion-maxima'],
+    queryFn: ({ signal }) => obtenerPuntuacionMaxima(signal),
+    refetchOnMount: 'always',
     retry: sinReintentoEn4xx,
   })
 }

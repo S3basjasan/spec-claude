@@ -22,7 +22,7 @@ class ParametrosController
             return $this->sinPermiso();
         }
 
-        return response()->json(ParametrosResource::coleccion($consultar->ejecutar()));
+        return response()->json(ParametrosResource::coleccion($consultar->ejecutar(), $consultar->puntuacionMaximaDeCategoria()));
     }
 
     public function update(GuardarParametrosRequest $request, GuardarParametros $guardar, ConsultarParametros $consultar): JsonResponse
@@ -42,7 +42,7 @@ class ParametrosController
             ], 422);
         }
 
-        return response()->json(ParametrosResource::coleccion($consultar->ejecutar()));
+        return response()->json(ParametrosResource::coleccion($consultar->ejecutar(), $consultar->puntuacionMaximaDeCategoria()));
     }
 
     private function puedeGestionar(Request $request): bool

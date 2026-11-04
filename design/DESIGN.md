@@ -585,6 +585,13 @@ Referencia: `ParametrosModulo.dc.html`.
 5. **Un solo Guardar**: «Descartar» y «Guardar» al final para todos los campos juntos; «Guardar» se bloquea sin cambios o con envío pendiente; un 409 muestra el aviso con «Recargar» y conserva lo escrito.
 6. **Estados**: loading (Skeleton), error con «Reintentar», éxito con mensaje, errores junto a cada campo; sin permisos, la pestaña no se muestra.
 
+### Puntuación base de las categorías *(feature 01b.2)*
+Referencia: `CategoriasReconocimiento.dc.html` (formulario en modal, patrón Formulario en modal).
+
+1. **Máximo permitido**: bajo el campo «Puntuación base», el texto de ayuda empieza con «Máximo: {n} puntos» (en negrita); {n} son los puntos por colaborador vigentes o, si hay un cambio programado menor para el mes siguiente, ese valor. En ese caso añade la nota «Baja a {n} desde el día 1 del mes siguiente por el cambio de puntos por colaborador.» No hay tokens nuevos.
+2. **Error**: fuera del rango, el error va junto al campo («La puntuación base debe estar entre 1 y {n}.»), lo escrito se conserva y no se guarda.
+3. **Activar**: en el listado, activar una categoría inactiva cuya puntuación supera el máximo muestra en el aviso de error «Baja primero la puntuación a {n} o menos.» y la fila sigue Inactiva.
+
 ---
 
 ## 9. Diferencias conocidas entre mockups y specs

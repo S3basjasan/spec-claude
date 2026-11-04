@@ -106,6 +106,38 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
   await expect(page.getByRole('alertdialog')).toHaveCount(0)
 })
 
+// 01b.2: sin cambios en los parámetros, los puntos por colaborador valen lo mismo que la categoría activa más alta (200 en
+// los datos sembrados); ese es el máximo permitido de la puntuación base.
+test('Administrador: la puntuación base respeta el máximo permitido y no deja activar una categoría por encima', async ({ page }) => {
+  await iniciarSesion(page, 'admin@hrms.test')
+  await irACategorias(page)
+  await expect(page.getByRole('row', { name: /CAT-001/ })).toBeVisible({ timeout: 20_000 })
+
+  // El formulario muestra el máximo junto al campo y rechaza un valor mayor sin guardar ni perder lo escrito.
+  await page.getByRole('button', { name: 'Nueva categoría' }).first().click()
+  await expect(page.getByText('Máximo: 200 puntos.')).toBeVisible()
+  await page.getByLabel('Nombre', { exact: true }).fill(`Tope de puntuación ${SUFIJO}`)
+  await page.getByLabel('Descripción').fill('Comprueba que la puntuación no supera el máximo permitido.')
+  await expect(page.getByLabel('Competencia asociada').locator('option')).not.toHaveCount(1)
+  await page.getByLabel('Competencia asociada').selectOption({ index: 1 })
+  await page.getByLabel('Puntuación base').fill('201')
+  await page.getByRole('radio', { name: 'Trofeo' }).check({ force: true })
+  await page.getByLabel('Indicador 1', { exact: true }).fill('Indicador de prueba suficiente')
+  await page.getByRole('button', { name: 'Crear categoría' }).click()
+  await expect(page.getByText('La puntuación base debe estar entre 1 y 200.')).toBeVisible()
+  await expect(page.getByLabel('Puntuación base')).toHaveValue('201')
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.getByRole('button', { name: 'Cancelar' }).click()
+  await page.getByRole('button', { name: 'Descartar cambios' }).click()
+
+  // Activar una inactiva con 300 puntos (sembrada) se rechaza y sigue inactiva.
+  await page.getByLabel('Estado').selectOption('Inactivo')
+  await expect(page).toHaveURL(/estado=Inactivo/)
+  await page.getByRole('button', { name: 'Activar Reconocimiento a la trayectoria' }).click()
+  await expect(page.getByRole('alert')).toContainText('Baja primero la puntuación a 200 o menos.')
+  await expect(page.getByRole('button', { name: 'Activar Reconocimiento a la trayectoria' })).toBeVisible()
+})
+
 test('Usuario: consulta el catálogo activo sin controles de gestión', async ({ page }) => {
   await iniciarSesion(page, 'usuario@hrms.test')
   await irACategorias(page)

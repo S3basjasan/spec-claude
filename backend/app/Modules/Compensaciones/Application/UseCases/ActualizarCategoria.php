@@ -7,6 +7,7 @@ use App\Modules\Compensaciones\Application\DTOs\DatosCategoriaDTO;
 use App\Modules\Compensaciones\Application\Ports\CompetenciasPort;
 use App\Modules\Compensaciones\Application\Services\ArmadorDeCategoriaDTO;
 use App\Modules\Compensaciones\Application\Services\AuditoriaDeCategoria;
+use App\Modules\Compensaciones\Application\Services\ParametrosDelModulo;
 use App\Modules\Compensaciones\Domain\Exceptions\CategoriaModificadaPorOtro;
 use App\Modules\Compensaciones\Domain\Exceptions\CategoriaNoEncontrada;
 use App\Modules\Compensaciones\Domain\Exceptions\CompetenciaNoDisponible;
@@ -21,6 +22,7 @@ final class ActualizarCategoria
         private readonly CompetenciasPort $competencias,
         private readonly AuditoriaDeCategoria $auditoria,
         private readonly ArmadorDeCategoriaDTO $armador,
+        private readonly ParametrosDelModulo $parametros,
     ) {}
 
     /**
@@ -29,7 +31,7 @@ final class ActualizarCategoria
      *
      * @throws CategoriaNoEncontrada
      * @throws CategoriaModificadaPorOtro
-     * @throws DatosDeCategoriaInvalidos
+     * @throws DatosDeCategoriaInvalidos incluida una puntuación mayor que el máximo permitido
      * @throws CompetenciaNoDisponible
      * @throws NombreDeCategoriaRepetido
      */
@@ -42,7 +44,8 @@ final class ActualizarCategoria
                 throw new CategoriaModificadaPorOtro;
             }
 
-            $propuesta = $datos->comoPropuesta($actual->estado);
+            // El máximo se valida siempre al guardar, aunque solo cambie otro campo: toda categoría guardada queda dentro.
+            $propuesta = $datos->comoPropuesta($actual->estado, $this->parametros->puntuacionMaximaDeCategoria());
 
             if ($propuesta->competenciaId !== $actual->competenciaId) {
                 $this->exigirCompetenciaActiva($propuesta->competenciaId);

@@ -61,6 +61,7 @@ final class Categoria
         string $icono,
         array $textosDeIndicadores,
         EstadoCategoria $estado = EstadoCategoria::Activo,
+        ?int $puntuacionMaxima = null,
     ): self {
         $descripcion = Normalizador::recortar($descripcion);
         $largo = mb_strlen($descripcion);
@@ -82,7 +83,7 @@ final class Categoria
             new NombreCategoria($nombre),
             $descripcion,
             $competenciaId,
-            new PuntuacionBase($puntuacion),
+            new PuntuacionBase($puntuacion, $puntuacionMaxima ?? PuntuacionBase::MAXIMA),
             $iconoValido,
             $estado,
             self::indicadoresDesde($textosDeIndicadores),

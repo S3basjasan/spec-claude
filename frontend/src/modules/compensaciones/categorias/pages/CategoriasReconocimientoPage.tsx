@@ -99,8 +99,11 @@ function ListadoDeCategorias() {
       {
         onSuccess: (guardada) => exito(text.success.activated(guardada.nombre)),
         onError: (e) => {
-          const conflicto = toApiError(e).status === 409
-          setAviso({ tipo: 'error', texto: conflicto ? text.errors.changed : text.errors.stateFailed })
+          const api = toApiError(e)
+          const conflicto = api.status === 409
+          // 422: la puntuación supera el máximo permitido; el servidor dice a cuánto bajarla.
+          const sobreElMaximo = api.status === 422 ? api.fieldErrors.puntuacion_base?.[0] : undefined
+          setAviso({ tipo: 'error', texto: conflicto ? text.errors.changed : (sobreElMaximo ?? text.errors.stateFailed) })
           if (conflicto) actualizar()
         },
       },
