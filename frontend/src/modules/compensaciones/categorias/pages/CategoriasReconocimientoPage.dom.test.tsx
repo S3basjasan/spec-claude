@@ -155,7 +155,7 @@ describe('CategoriasReconocimientoPage · listado', () => {
     vi.mocked(listarCategorias).mockResolvedValue(paginaDeCategoriasReconocimiento([]))
     renderPagina()
 
-    expect(await screen.findByText('Cuando Talento Humano cree categorías, aparecerán aquí.')).toBeInTheDocument()
+    expect(await screen.findByText('Cuando el Gestor de Talento cree categorías, aparecerán aquí.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Nueva categoría' })).not.toBeInTheDocument()
   })
 

@@ -34,7 +34,7 @@ class CategoriaController
             $request->validated('estado'),
             $request->validated('competencia_id') === null ? null : (int) $request->validated('competencia_id'),
             (int) ($request->validated('page') ?? 1),
-            $this->acceso->puedeGestionar($request->user()),
+            $this->acceso->puede($request->user(), PoliticaDeAcceso::CATEGORIAS_GESTIONAR),
         );
 
         return response()->json([
