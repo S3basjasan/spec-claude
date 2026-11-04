@@ -6,6 +6,7 @@ import { RequireAuth } from './modules/auth/login/components/RequireAuth'
 import { LoginPage } from './modules/auth/login/pages/LoginPage'
 import { categoriasReconocimientoNav } from './modules/compensaciones/categorias/nav'
 import { CategoriasReconocimientoPage } from './modules/compensaciones/categorias/pages/CategoriasReconocimientoPage'
+import { ParametrosPage } from './modules/compensaciones/parametros/pages/ParametrosPage'
 import { RequireRole as RequireRoleActividades } from './modules/desarrollo/actividades/components/RequireRole'
 import { actividadesNav } from './modules/desarrollo/actividades/nav'
 
@@ -145,6 +146,7 @@ function App() {
               <Route path="puestos/:puestoId/editar" element={<PuestoFormPage />} />
             </Route>
             <Route path="compensaciones/categorias" element={<CategoriasReconocimientoPage />} />
+            <Route path="compensaciones/parametros" element={<ParametrosPage />} />
             <Route path="unidades" element={<UnidadesPage />} />
             <Route path="posiciones" element={<PosicionesPage />} />
             <Route path="organigrama" element={<OrganigramaPage />} />

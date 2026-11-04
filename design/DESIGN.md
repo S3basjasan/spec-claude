@@ -575,6 +575,16 @@ Referencias: `PDIAdmin.dc.html` (lista), `PDIAsistente.dc.html` (asistente), `PD
 6. **Insignias semánticas**: Borrador = neutro, Acordado = acento, Cerrado = éxito; Mejora, Carrera y Talento con tres tonos distintos de los tokens existentes; Pendiente = neutro, En curso = acento, Cumplida = éxito, Cancelada = peligro; Brecha cerrada = éxito, Parcial = advertencia, No cerrada = peligro. Sin tokens nuevos.
 7. **Estados**: toda vista implementa loading (Skeleton), vacío, error con «Reintentar» y éxito; un 409 muestra «Recargar» y las devoluciones y el cierre piden confirmación en modal.
 
+### Parámetros del módulo de reconocimientos *(feature 01b.1)*
+Referencia: `ParametrosModulo.dc.html`.
+
+1. **Navegación**: pestañas «Categorías | Parámetros» del módulo (componente `Tabs`, cada pestaña es una ruta); solo las ve el Gestor de Talento.
+2. **Tarjetas**: una `section` por parámetro con título, explicación, campo numérico (etiqueta con la unidad: Puntos, Días, Porcentaje), rango, «Actual», aviso de cuándo aplica y «Último cambio: {nombre}, {fecha} (de {anterior} a {nuevo})»; en el primer cambio, «de valor por defecto a {nuevo}».
+3. **Puntos por colaborador**: bajo el campo, un recuadro suave con «actual → nuevo», la fecha desde la que rige y el ejemplo fijo «Un equipo de 10 personas tendría X puntos al mes»; si hay un cambio programado, se muestra «Programado: X desde el …».
+4. **Sensibilidad del radar**: `fieldset` con tres radios (Baja, Normal «recomendada», Alta), cada uno con su explicación; sin campos numéricos.
+5. **Un solo Guardar**: «Descartar» y «Guardar» al final para todos los campos juntos; «Guardar» se bloquea sin cambios o con envío pendiente; un 409 muestra el aviso con «Recargar» y conserva lo escrito.
+6. **Estados**: loading (Skeleton), error con «Reintentar», éxito con mensaje, errores junto a cada campo; sin permisos, la pestaña no se muestra.
+
 ---
 
 ## 9. Diferencias conocidas entre mockups y specs
@@ -692,3 +702,4 @@ Referencias: `PDIAdmin.dc.html` (lista), `PDIAsistente.dc.html` (asistente), `PD
 | `PDIDetalle.dc.html` usa «Hecha» para las acciones | Los estados son Pendiente, En curso, Cumplida y Cancelada; las acciones vinculadas son de solo lectura |
 | `PDISeguimiento.dc.html` filtra por Tipo y Departamento | Se añade el filtro Responsable y solo se muestran planes Acordados |
 | `PDIColaborador.dc.html` deja firmar sin orden | El colaborador solo ve y responde un Borrador después del acuerdo del responsable; puede devolverlo con comentario |
+| `ParametrosModulo.dc.html` muestra «Último cambio … (de 80 a 100)» siempre con número | En el primer cambio de un parámetro se muestra «de valor por defecto a {nuevo}», sin número anterior |
