@@ -18,13 +18,13 @@ class CategoriaReconocimientoModel extends Model
     /** Sin soft delete ni borrado: el estado es un campo de negocio. */
     protected $fillable = [
         'codigo', 'nombre', 'nombre_normalizado', 'descripcion', 'competencia_id',
-        'puntuacion_base', 'icono', 'indicadores', 'estado', 'created_by', 'updated_by',
+        'puntuacion_base', 'icono', 'indicadores', 'unidades_ids', 'estado', 'created_by', 'updated_by',
     ];
 
     /** @return array<string, string> */
     protected function casts(): array
     {
-        return ['indicadores' => 'array'];
+        return ['indicadores' => 'array', 'unidades_ids' => 'array'];
     }
 
     protected static function newFactory(): CategoriaReconocimientoFactory

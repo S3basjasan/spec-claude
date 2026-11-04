@@ -32,6 +32,9 @@ class CategoriasReconocimientoSeeder extends Seeder
 
         $actorId = UserModel::query()->where('email', 'admin@hrms.test')->value('id');
         $iconos = Icono::valores();
+        // 01b.4: las categorías de prueba aplican a todas las unidades activas (UnidadesSeeder corre antes).
+        $unidadesIds = array_map(fn (array $u) => (int) $u['id'], EstructuraFacade::getUnidadesActivas());
+        sort($unidadesIds);
 
         foreach ($this->categorias() as $posicion => [$nombre, $descripcion, $puntos, $estado, $indicadores]) {
             $normalizado = Normalizador::normalizar($nombre);
@@ -54,6 +57,7 @@ class CategoriasReconocimientoSeeder extends Seeder
                 'puntuacion_base' => $puntos,
                 'icono' => $iconos[$posicion % count($iconos)],
                 'indicadores' => array_values($indicadores),
+                'unidades_ids' => $unidadesIds,
                 'estado' => $estado,
                 'created_by' => $actorId,
                 'updated_by' => $actorId,

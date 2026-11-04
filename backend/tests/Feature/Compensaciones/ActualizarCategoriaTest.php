@@ -21,6 +21,7 @@ function cuerpoDeEdicion(CategoriaReconocimientoModel $categoria, array $cambios
         'puntuacion_base' => $categoria->puntuacion_base,
         'icono' => $categoria->icono,
         'indicadores' => $categoria->indicadores,
+        'unidades_ids' => $categoria->unidades_ids ?? [1],
         'updated_at' => versionDeCategoria($categoria->id),
     ], $cambios);
 }

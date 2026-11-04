@@ -10,6 +10,7 @@ import { iconoDe } from '../iconos'
 import { categoriasReconocimientoText } from '../text'
 import { AdvertenciaCompetencia } from './AdvertenciaCompetencia'
 import { FichaDeIcono } from './IconoCategoria'
+import { UnidadesDeCategoria } from './UnidadesDeCategoria'
 
 const text = categoriasReconocimientoText.detail
 
@@ -110,6 +111,11 @@ export function DetalleCategoria({ id, esAdmin, onCerrar, onEditar }: DetalleCat
               <p className="mt-1 text-[13px] text-muted">{esAdmin ? text.competenciaAyudaAdmin : text.competenciaAyudaUsuario}</p>
             )}
           </Dato>
+          {categoria.unidades !== undefined && (
+            <Dato etiqueta={text.units}>
+              <UnidadesDeCategoria categoria={categoria} />
+            </Dato>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <Dato etiqueta={text.points}>{categoria.puntuacion_base}</Dato>
             <Dato etiqueta={text.icon}>{iconoDe(categoria.icono)?.nombre ?? categoria.icono}</Dato>

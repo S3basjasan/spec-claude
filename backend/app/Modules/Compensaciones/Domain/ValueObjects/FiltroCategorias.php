@@ -19,5 +19,7 @@ final class FiltroCategorias
         public readonly ?int $competenciaId,
         public readonly int $pagina,
         public readonly array $competenciaIdsPorNombre = [],
+        public readonly ?int $unidadId = null,
+        public readonly bool $soloConUnidades = false,
     ) {}
 }

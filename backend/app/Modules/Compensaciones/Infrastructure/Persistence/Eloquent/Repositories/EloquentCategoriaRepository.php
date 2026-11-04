@@ -13,6 +13,7 @@ use App\Modules\Compensaciones\Domain\ValueObjects\Indicador;
 use App\Modules\Compensaciones\Domain\ValueObjects\NombreCategoria;
 use App\Modules\Compensaciones\Domain\ValueObjects\PaginaCategorias;
 use App\Modules\Compensaciones\Domain\ValueObjects\PuntuacionBase;
+use App\Modules\Compensaciones\Domain\ValueObjects\UnidadesAsignadas;
 use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\CategoriaReconocimientoModel;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -39,6 +40,14 @@ class EloquentCategoriaRepository implements CategoriaRepository
 
         if ($filtro->competenciaId !== null) {
             $consulta->where('competencia_id', $filtro->competenciaId);
+        }
+
+        if ($filtro->soloConUnidades) {
+            $consulta->whereNotNull('unidades_ids')->where('unidades_ids', '!=', '[]');
+        }
+
+        if ($filtro->unidadId !== null) {
+            $consulta->whereJsonContains('unidades_ids', $filtro->unidadId);
         }
 
         if ($filtro->texto !== null) {
@@ -125,6 +134,7 @@ class EloquentCategoriaRepository implements CategoriaRepository
                 'puntuacion_base' => $nueva->puntuacion->valor,
                 'icono' => $nueva->icono->value,
                 'indicadores' => $this->textos($nueva->indicadores),
+                'unidades_ids' => $nueva->unidades?->ids(),
                 'estado' => EstadoCategoria::Activo->value,
                 'created_by' => $actorId,
                 'updated_by' => $actorId,
@@ -158,6 +168,7 @@ class EloquentCategoriaRepository implements CategoriaRepository
             'icono' => $propuesta->icono->value,
             // El UPDATE de consulta no aplica casts: la lista completa se codifica aquí, en el mismo UPDATE condicional.
             'indicadores' => json_encode($this->textos($propuesta->indicadores), JSON_UNESCAPED_UNICODE),
+            'unidades_ids' => $propuesta->unidades?->comoJson(),
             'updated_by' => $actorId,
         ]);
 
@@ -251,7 +262,14 @@ class EloquentCategoriaRepository implements CategoriaRepository
             $m->created_by === null ? null : (int) $m->created_by,
             $m->updated_by === null ? null : (int) $m->updated_by,
             $version === null ? null : (string) $version,
+            $this->unidades($m->unidades_ids),
         );
+    }
+
+    /** @param  array<int, mixed>|null  $ids */
+    private function unidades(?array $ids): ?UnidadesAsignadas
+    {
+        return $ids === null || $ids === [] ? null : new UnidadesAsignadas($ids);
     }
 
     private function fecha(?string $crudo): ?DateTimeImmutable

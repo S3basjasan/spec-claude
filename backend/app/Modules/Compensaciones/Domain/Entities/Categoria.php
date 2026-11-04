@@ -9,6 +9,7 @@ use App\Modules\Compensaciones\Domain\ValueObjects\Indicador;
 use App\Modules\Compensaciones\Domain\ValueObjects\NombreCategoria;
 use App\Modules\Compensaciones\Domain\ValueObjects\Normalizador;
 use App\Modules\Compensaciones\Domain\ValueObjects\PuntuacionBase;
+use App\Modules\Compensaciones\Domain\ValueObjects\UnidadesAsignadas;
 use DateTimeImmutable;
 use DateTimeZone;
 
@@ -44,6 +45,7 @@ final class Categoria
         public readonly ?int $creadaPor = null,
         public readonly ?int $actualizadaPor = null,
         public readonly ?string $version = null,
+        public readonly ?UnidadesAsignadas $unidades = null,
     ) {}
 
     /**
@@ -62,6 +64,7 @@ final class Categoria
         array $textosDeIndicadores,
         EstadoCategoria $estado = EstadoCategoria::Activo,
         ?int $puntuacionMaxima = null,
+        ?UnidadesAsignadas $unidades = null,
     ): self {
         $descripcion = Normalizador::recortar($descripcion);
         $largo = mb_strlen($descripcion);
@@ -87,6 +90,7 @@ final class Categoria
             $iconoValido,
             $estado,
             self::indicadoresDesde($textosDeIndicadores),
+            unidades: $unidades,
         );
     }
 
@@ -121,6 +125,12 @@ final class Categoria
         }
 
         return $indicadores;
+    }
+
+    /** Asignación directa a la unidad: sin herencia por la jerarquía de unidades. */
+    public function asignadaA(int $unidadId): bool
+    {
+        return $this->unidades?->contiene($unidadId) ?? false;
     }
 
     public function estaActiva(): bool
@@ -173,6 +183,7 @@ final class Categoria
             'icono' => [$this->icono->value, $propuesta->icono->value],
             'indicadores' => [$this->indicadoresComoJson(), $propuesta->indicadoresComoJson()],
             'estado' => [$this->estado->value, $propuesta->estado->value],
+            'unidades' => [$this->unidades?->comoJson(), $propuesta->unidades?->comoJson()],
         ];
 
         foreach ($pares as $campo => [$antes, $despues]) {

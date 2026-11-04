@@ -5,6 +5,7 @@ import { useVistaAncha } from '../hooks/useVistaAncha'
 import { categoriasReconocimientoText } from '../text'
 import { AdvertenciaCompetencia } from './AdvertenciaCompetencia'
 import { FichaDeIcono } from './IconoCategoria'
+import { UnidadesDeCategoria } from './UnidadesDeCategoria'
 
 const text = categoriasReconocimientoText.table
 
@@ -57,6 +58,7 @@ function Acciones({ categoria, esAdmin, onVer, onEditar, onCambiarEstado, enLine
 export function CategoriasTabla(props: CategoriasTablaProps) {
   const ancha = useVistaAncha()
   const { categorias } = props
+  const conUnidades = categorias.some((categoria) => categoria.unidades !== undefined)
 
   if (!ancha) {
     return (
@@ -78,6 +80,14 @@ export function CategoriasTabla(props: CategoriasTablaProps) {
                   <Competencia categoria={categoria} />
                 </dd>
               </div>
+              {conUnidades && (
+                <div className="col-span-2">
+                  <dt className="text-xs font-semibold text-muted">{text.columns.units}</dt>
+                  <dd className="m-0 mt-0.5">
+                    <UnidadesDeCategoria categoria={categoria} />
+                  </dd>
+                </div>
+              )}
               <div>
                 <dt className="text-xs font-semibold text-muted">{text.columns.points}</dt>
                 <dd className="m-0 mt-0.5">{categoria.puntuacion_base}</dd>
@@ -108,6 +118,11 @@ export function CategoriasTabla(props: CategoriasTablaProps) {
             <th scope="col" className="px-3 py-3.5 font-semibold">
               {text.columns.competencia}
             </th>
+            {conUnidades && (
+              <th scope="col" className="px-3 py-3.5 font-semibold">
+                {text.columns.units}
+              </th>
+            )}
             <th scope="col" className="px-3 py-3.5 text-right font-semibold">
               {text.columns.points}
             </th>
@@ -130,6 +145,11 @@ export function CategoriasTabla(props: CategoriasTablaProps) {
               <td className="px-3 py-3">
                 <Competencia categoria={categoria} />
               </td>
+              {conUnidades && (
+                <td className="px-3 py-3">
+                  <UnidadesDeCategoria categoria={categoria} />
+                </td>
+              )}
               <td className="px-3 py-3 text-right tabular-nums">{categoria.puntuacion_base}</td>
               <td className="px-3 py-3">
                 <Badge variant={categoria.estado === 'Activo' ? 'default' : 'neutral'}>{categoriasReconocimientoText.estados[categoria.estado]}</Badge>

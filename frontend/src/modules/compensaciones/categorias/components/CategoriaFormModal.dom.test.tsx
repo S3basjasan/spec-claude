@@ -4,8 +4,8 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { httpError, networkError } from '../../../../test/apiErrors'
-import { categoriaReconocimiento, opcionDeCompetencia } from '../../../../test/categoriasReconocimientoFixtures'
-import { crearCategoria, editarCategoria, listarCompetenciasDisponibles, obtenerCategoria, obtenerPuntuacionMaxima, type Categoria } from '../api'
+import { categoriaReconocimiento, opcionDeCompetencia, unidadDisponible } from '../../../../test/categoriasReconocimientoFixtures'
+import { crearCategoria, editarCategoria, listarCompetenciasDisponibles, listarUnidadesDisponibles, obtenerCategoria, obtenerPuntuacionMaxima, type Categoria } from '../api'
 import { CategoriaFormModal } from './CategoriaFormModal'
 
 vi.mock('../api', async (importOriginal) => ({
@@ -14,6 +14,7 @@ vi.mock('../api', async (importOriginal) => ({
   editarCategoria: vi.fn(),
   obtenerCategoria: vi.fn(),
   listarCompetenciasDisponibles: vi.fn(),
+  listarUnidadesDisponibles: vi.fn(),
   obtenerPuntuacionMaxima: vi.fn(),
 }))
 
@@ -37,6 +38,7 @@ async function completarValido(usuario: ReturnType<typeof userEvent.setup>) {
   await usuario.type(screen.getByLabelText('Puntuación base'), '150')
   await usuario.click(screen.getByRole('radio', { name: 'Trofeo' }))
   await usuario.type(screen.getByLabelText('Indicador 1'), 'Atiende con amabilidad')
+  await usuario.click(await screen.findByRole('checkbox', { name: 'Operaciones' }))
 }
 
 beforeEach(() => {
@@ -46,6 +48,9 @@ beforeEach(() => {
   vi.mocked(editarCategoria).mockReset().mockResolvedValue(categoriaReconocimiento())
   vi.mocked(obtenerCategoria).mockReset().mockResolvedValue(categoriaReconocimiento())
   vi.mocked(obtenerPuntuacionMaxima).mockReset().mockResolvedValue({ maximo: 300, bajaPorProgramado: false })
+  vi.mocked(listarUnidadesDisponibles)
+    .mockReset()
+    .mockResolvedValue([unidadDisponible(), unidadDisponible({ id: 2, codigo: 'UO-002', nombre: 'Ventas' }), unidadDisponible({ id: 3, codigo: 'UO-003', nombre: 'Finanzas' })])
   vi.mocked(listarCompetenciasDisponibles).mockReset().mockResolvedValue([opcionDeCompetencia(), opcionDeCompetencia({ id: 12, nombre: 'Innovación' })])
 })
 
@@ -140,6 +145,7 @@ describe('CategoriaFormModal · crear', () => {
       puntuacion_base: 150,
       icono: 'trofeo',
       indicadores: ['Atiende con amabilidad'],
+      unidades_ids: [1],
     })
   })
 
@@ -346,5 +352,91 @@ describe('CategoriaFormModal · editar', () => {
     await usuario.click(screen.getByRole('button', { name: 'Guardar cambios' }))
 
     expect(await screen.findByText('La categoría ya no existe.')).toBeInTheDocument()
+  })
+})
+
+describe('CategoriaFormModal · unidades', () => {
+  it('ofrece «Todas las unidades» y una casilla por unidad activa, con el alcance en unidades', async () => {
+    renderFormulario()
+
+    expect(await screen.findByRole('checkbox', { name: 'Todas las unidades' })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'Operaciones' })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'Ventas' })).not.toBeChecked()
+    expect(screen.getByText('Nadie la verá.')).toBeInTheDocument()
+  })
+
+  it('sin unidades muestra el error junto al campo, conserva lo escrito y no envía', async () => {
+    const usuario = userEvent.setup()
+    renderFormulario()
+    await completarValido(usuario)
+    await usuario.click(screen.getByRole('checkbox', { name: 'Operaciones' }))
+
+    await usuario.click(screen.getByRole('button', { name: 'Crear categoría' }))
+
+    expect(await screen.findByText('Elige al menos una unidad.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Nombre')).toHaveValue('Orientación al cliente')
+    expect(crearCategoria).not.toHaveBeenCalled()
+  })
+
+  it('«Todas las unidades» marca todas, se desmarca al quitar una y se envía como bandera', async () => {
+    const usuario = userEvent.setup()
+    renderFormulario()
+    await completarValido(usuario)
+
+    await usuario.click(screen.getByRole('checkbox', { name: 'Todas las unidades' }))
+    expect(screen.getByRole('checkbox', { name: 'Ventas' })).toBeChecked()
+    expect(screen.getByText('La verán los colaboradores de 3 unidades.')).toBeInTheDocument()
+
+    await usuario.click(screen.getByRole('checkbox', { name: 'Ventas' }))
+    expect(screen.getByRole('checkbox', { name: 'Todas las unidades' })).not.toBeChecked()
+
+    await usuario.click(screen.getByRole('checkbox', { name: 'Todas las unidades' }))
+    await usuario.click(screen.getByRole('button', { name: 'Crear categoría' }))
+
+    await waitFor(() => expect(onGuardado).toHaveBeenCalledTimes(1))
+    const datos = vi.mocked(crearCategoria).mock.calls[0][0]
+    expect(datos.todas_las_unidades).toBe(true)
+    expect(datos).not.toHaveProperty('unidades_ids')
+  })
+
+  it('un 422 de unidades del servidor se muestra junto al campo y conserva los valores', async () => {
+    vi.mocked(crearCategoria).mockRejectedValue(httpError(422, { errors: { unidades_ids: ['La unidad seleccionada ya no está activa.'] } }))
+    const usuario = userEvent.setup()
+    renderFormulario()
+    await completarValido(usuario)
+
+    await usuario.click(screen.getByRole('button', { name: 'Crear categoría' }))
+
+    expect(await screen.findByText('La unidad seleccionada ya no está activa.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Nombre')).toHaveValue('Orientación al cliente')
+    expect(screen.getByRole('checkbox', { name: 'Operaciones' })).toBeChecked()
+  })
+
+  it('al editar precarga las unidades activas y avisa de las que ya no están activas', async () => {
+    renderFormulario(
+      categoriaReconocimiento({
+        unidades: [
+          { id: 2, nombre: 'Ventas', activa: true },
+          { id: 4, nombre: 'Tecnología', activa: false },
+        ],
+      }),
+    )
+
+    expect(await screen.findByRole('checkbox', { name: 'Ventas' })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'Operaciones' })).not.toBeChecked()
+    expect(screen.getByText(/Ya no están activas y se quitarán al guardar: Tecnología/)).toBeInTheDocument()
+  })
+
+  it('si no cargan las unidades ofrece reintentar', async () => {
+    vi.mocked(listarUnidadesDisponibles).mockRejectedValue(networkError())
+    const usuario = userEvent.setup()
+    renderFormulario()
+
+    // El hook reintenta una vez los fallos de red (≈1 s) antes de mostrar el error.
+    expect(await screen.findByText('No se pudieron cargar las unidades. Inténtalo de nuevo.', {}, { timeout: 4000 })).toBeInTheDocument()
+    vi.mocked(listarUnidadesDisponibles).mockResolvedValue([unidadDisponible()])
+    await usuario.click(screen.getByRole('button', { name: 'Reintentar' }))
+
+    expect(await screen.findByRole('checkbox', { name: 'Operaciones' })).toBeInTheDocument()
   })
 })

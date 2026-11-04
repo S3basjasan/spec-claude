@@ -20,6 +20,7 @@ use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\UnidadMode
 use App\Modules\Shared\Infrastructure\Persistence\Eloquent\Models\UserModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Tests\Support\Compensaciones\EscenarioCompensaciones;
 use Tests\Support\Desarrollo\BrechasActivasFalsas;
 use Tests\Support\Desarrollo\NivelesDeColaboradorFalso;
 use Tests\TestCase;
@@ -49,6 +50,9 @@ require_once __DIR__.'/Support/Desarrollo/PdiHelpers.php';
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+// Las pruebas de Compensaciones reemplazan los cuatro puertos (unidades, colaboradores, equipo y empresa) por falsos.
+pest()->beforeEach(fn () => EscenarioCompensaciones::iniciar())->in('Feature/Compensaciones');
 
 /*
 |--------------------------------------------------------------------------

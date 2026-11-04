@@ -3,6 +3,7 @@
 use App\Modules\Compensaciones\Presentation\Controllers\CategoriaController;
 use App\Modules\Compensaciones\Presentation\Controllers\CompetenciasController;
 use App\Modules\Compensaciones\Presentation\Controllers\ParametrosController;
+use App\Modules\Compensaciones\Presentation\Controllers\UnidadesController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas del módulo Compensaciones: categorías de reconocimiento (feature 016).
@@ -23,5 +24,6 @@ Route::prefix('api/compensaciones')->middleware('api')->group(function () {
         Route::get('/parametros', [ParametrosController::class, 'index'])->name('compensaciones.parametros.index');
         Route::put('/parametros', [ParametrosController::class, 'update'])->name('compensaciones.parametros.update');
         Route::get('/competencias-disponibles', [CompetenciasController::class, 'disponibles'])->name('compensaciones.competencias.disponibles');
+        Route::get('/unidades-disponibles', [UnidadesController::class, 'disponibles'])->name('compensaciones.unidades.disponibles');
     });
 });

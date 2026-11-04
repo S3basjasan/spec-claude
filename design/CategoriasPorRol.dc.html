@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Categorías visibles por rol</title>
+<script src="./support.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.nav{display:flex;align-items:center;gap:12px;min-height:44px;padding:6px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:500}
+.nav:hover{background:var(--soft);color:var(--text)}
+.nav[aria-current]{background:var(--soft);color:var(--accent);font-weight:600}
+.tab{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;color:var(--muted);text-decoration:none;font-size:15px;font-weight:600;border-bottom:3px solid transparent}
+.tab[aria-current]{color:var(--accent);border-bottom-color:var(--accent)}
+.nav:focus-visible,.tab:focus-visible,.btn:focus-visible,.row:focus-visible,.chk:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:8px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+.btn:hover:not(:disabled){background:var(--soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-p{border-color:transparent;background:var(--accent);color:var(--onaccent)}
+.btn-p:hover:not(:disabled){background:var(--accent);filter:brightness(.92)}
+.seg{height:44px;padding:0 16px;border:1px solid var(--inputborder);background:var(--surface);color:var(--text);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.seg:first-child{border-radius:8px 0 0 8px}
+.seg:last-child{border-radius:0 8px 8px 0}
+.seg[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.row{display:flex;width:100%;box-sizing:border-box;text-align:left;font:inherit;color:var(--text);background:var(--surface);border:0;border-bottom:1px solid var(--border);padding:14px 20px;cursor:pointer;align-items:center;gap:12px;min-height:56px}
+.row:hover{background:var(--bg)}
+.row[aria-pressed="true"]{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.chk{display:flex;align-items:center;gap:12px;min-height:44px;padding:4px 8px;border-radius:8px;cursor:pointer;font-size:15px}
+.chk input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.main-p{padding:32px}
+@media (max-width:840px){.nav-wrap{display:none!important}.main-p{padding:16px}}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: 'Public Sans', system-ui, sans-serif; --bg:#F5F6F8; --surface:#FFFFFF; --border:#E2E5EA; --inputborder:#7A8695; --text:#12171D; --muted:#5A6573; --accent:#0F6F69; --onaccent:#FFFFFF; --soft:#E3F2F0; --danger:#B42318; --warn:#B54708; --warnsoft:#FEF0C7; --neutralbg:#ECEEF1; --neutraltx:#475260">
+
+  <header style="height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border); box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <span style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: flex; align-items: center; justify-content: center; font-weight: 700">H</span>
+      <span style="font-weight: 700; font-size: 18px">HRMS</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px">
+      <span style="width: 36px; height: 36px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px">{{ini}}</span>
+      <span style="display: flex; flex-direction: column; line-height: 1.2">
+        <span style="font-size: 14px; font-weight: 600">{{usuario}}</span>
+        <span style="font-size: 12px; color: var(--muted)">{{rolTxt}}</span>
+      </span>
+    </div>
+  </header>
+
+  <div style="flex: 1; display: flex; align-items: stretch">
+    <nav class="nav-wrap" aria-label="Principal" style="flex: 0 0 248px; box-sizing: border-box; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px">
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Inicio</a>
+      <a class="nav" href="#" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/></svg>Reconocimientos</a>
+      <a class="nav" href="#"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 00-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 00-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 002 1.2l.4 2.7h4l.4-2.7a7 7 0 002-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>Ajustes</a>
+    </nav>
+
+    <main class="main-p" style="flex: 1; min-width: 0; box-sizing: border-box">
+      <div style="max-width: 1120px; display: flex; flex-direction: column; gap: 20px">
+
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end">
+          <div>
+            <p style="margin: 0 0 6px; font-size: 14px; color: var(--muted)">Reconocimientos / Categorías</p>
+            <h1 style="margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em">Categorías de reconocimiento</h1>
+          </div>
+          <div role="group" aria-label="Ver como" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+            <span style="font-size: 14px; color: var(--muted)">Solo en el prototipo, para ver como:</span>
+            <span style="display: flex">
+              <button type="button" class="seg" aria-pressed="{{r.g}}" onClick="{{verGestor}}">Gestor</button>
+              <button type="button" class="seg" aria-pressed="{{r.l}}" onClick="{{verLider}}">Líder</button>
+              <button type="button" class="seg" aria-pressed="{{r.c}}" onClick="{{verColab}}">Colaborador</button>
+            </span>
+          </div>
+        </div>
+
+        <div style="padding: 12px 16px; border-radius: 8px; background: var(--soft); color: var(--accent); font-size: 15px; font-weight: 600">{{banner}}</div>
+
+        <sc-if value="{{hayAviso}}" hint-placeholder-val="{{false}}">
+          <div role="status" style="padding: 12px 16px; border-radius: 8px; background: var(--soft); color: var(--accent); font-size: 15px; font-weight: 600">{{aviso}}</div>
+        </sc-if>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+          <section aria-label="Categorías" style="flex: 999 1 520px; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden">
+            <sc-if value="{{vacio}}" hint-placeholder-val="{{false}}">
+              <div style="padding: 40px 24px; text-align: center">
+                <p style="margin: 0; font-size: 16px; font-weight: 600">Todavía no tienes categorías asignadas</p>
+                <p style="margin: 8px 0 0; font-size: 15px; color: var(--muted)">Cuando el Gestor de Talento asigne categorías a tu unidad, las verás aquí.</p>
+              </div>
+            </sc-if>
+            <sc-for list="{{filas}}" as="f" hint-placeholder-count="5">
+              <button type="button" class="row" aria-pressed="{{f.sel}}" onClick="{{f.pick}}" disabled="{{f.sinClick}}" style="{{f.estilo}}">
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+                  <span style="font-size: 16px; font-weight: 600">{{f.nombre}}</span>
+                  <span style="font-size: 13px; color: var(--muted)">{{f.competencia}}</span>
+                  <sc-if value="{{f.verUnidades}}" hint-placeholder-val="{{true}}">
+                    <span style="font-size: 13px; color: var(--muted)">Aplica a: {{f.unidadesTxt}}</span>
+                  </sc-if>
+                </span>
+                <span style="font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums">{{f.pts}} pts</span>
+              </button>
+            </sc-for>
+          </section>
+
+          <sc-if value="{{editor}}" hint-placeholder-val="{{true}}">
+            <aside aria-label="Asignación" style="flex: 1 1 300px; max-width: 400px; min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+              <div>
+                <h2 style="margin: 0; font-size: 18px">Asignar «{{catNombre}}»</h2>
+                <p style="margin: 6px 0 0; font-size: 14px; color: var(--muted)">Elige las unidades cuyos colaboradores podrán ver y recibir esta categoría.</p>
+              </div>
+              <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px">
+                <legend style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Unidades</legend>
+                <label class="chk" style="font-weight: 600"><input type="checkbox" checked="{{todas}}" onChange="{{toggleTodas}}">Todas las unidades</label>
+                <sc-for list="{{unidades}}" as="u" hint-placeholder-count="5">
+                  <label class="chk"><input type="checkbox" checked="{{u.on}}" onChange="{{u.toggle}}"><span style="flex: 1">{{u.nombre}}</span><span style="font-size: 13px; color: var(--muted)">{{u.personas}} personas</span></label>
+                </sc-for>
+              </fieldset>
+              <div style="padding: 12px 14px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); font-size: 14px">{{alcanceTxt}}</div>
+              <sc-if value="{{sinUnidad}}" hint-placeholder-val="{{false}}">
+                <p role="alert" style="margin: 0; font-size: 14px; font-weight: 600; color: var(--danger)">Elige al menos una unidad. Si no, nadie podrá recibir esta categoría.</p>
+              </sc-if>
+              <div style="display: flex; gap: 12px; justify-content: flex-end">
+                <button type="button" class="btn" onClick="{{descartar}}">Descartar</button>
+                <button type="button" class="btn btn-p" disabled="{{noGuardar}}" onClick="{{guardar}}">Guardar</button>
+              </div>
+            </aside>
+          </sc-if>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const ids = ['op', 've', 'fi', 'ti', 'th'];
+    this.state = {
+      rol: 'g',
+      sel: 'c1',
+      asign: {
+        c1: ids.slice(), c2: ['op', 've'], c3: ['op', 'ti'], c4: ['ti', 'fi'], c5: ['ve', 'op'], c6: ids.slice()
+      },
+      borrador: null,
+      aviso: ''
+    };
+  }
+
+  renderVals() {
+    const S = this.state;
+    const unidades = [
+      { id: 'op', nombre: 'Operaciones', personas: 24 },
+      { id: 've', nombre: 'Ventas', personas: 18 },
+      { id: 'fi', nombre: 'Finanzas', personas: 9 },
+      { id: 'ti', nombre: 'TI', personas: 15 },
+      { id: 'th', nombre: 'Talento Humano', personas: 6 }
+    ];
+    const cats = [
+      { id: 'c1', nombre: 'Colaboración destacada', comp: 'Trabajo en equipo', pts: 50 },
+      { id: 'c2', nombre: 'Superación de metas', comp: 'Orientación a resultados', pts: 80 },
+      { id: 'c3', nombre: 'Liderazgo inspirador', comp: 'Liderazgo', pts: 100 },
+      { id: 'c4', nombre: 'Idea innovadora', comp: 'Innovación', pts: 90 },
+      { id: 'c5', nombre: 'Servicio excepcional', comp: 'Orientación al cliente', pts: 60 },
+      { id: 'c6', nombre: 'Comunicación clara', comp: 'Comunicación', pts: 40 }
+    ];
+    const nombreUni = (id) => unidades.find((u) => u.id === id).nombre;
+    const txtUni = (arr) => arr.length === unidades.length ? 'todas las unidades' : arr.map(nombreUni).join(', ');
+    const rol = S.rol;
+    const miUnidad = 'op';
+    const actual = S.asign[S.sel] || [];
+    const draft = S.borrador || actual;
+    const cambio = JSON.stringify(draft.slice().sort()) !== JSON.stringify(actual.slice().sort());
+    const personas = unidades.filter((u) => draft.indexOf(u.id) >= 0).reduce((a, u) => a + u.personas, 0);
+    const visibles = rol === 'c' ? cats.filter((c) => S.asign[c.id].indexOf(miUnidad) >= 0) : cats;
+    const cat = cats.find((c) => c.id === S.sel);
+    const set = (p) => this.setState(p);
+    const base = { g: ['MC', 'Marta Cevallos', 'Gestor de Talento'], l: ['LM', 'Lucía Mena', 'Líder · Operaciones'], c: ['AP', 'Ana Pérez', 'Colaboradora · Operaciones'] }[rol];
+    const banners = {
+      g: 'Administras todas las categorías. Cada una se asigna a las unidades cuyos colaboradores pueden verla y recibirla.',
+      l: 'Consultas todas las categorías activas. Al reconocer, solo puedes usar las asignadas a la unidad de la persona.',
+      c: 'Ves las categorías asignadas a tu unidad (Operaciones). Así sabes qué conductas pueden reconocerte.'
+    };
+    return {
+      ini: base[0], usuario: base[1], rolTxt: base[2],
+      r: { g: rol === 'g' ? 'true' : 'false', l: rol === 'l' ? 'true' : 'false', c: rol === 'c' ? 'true' : 'false' },
+      verGestor: () => set({ rol: 'g', aviso: '' }),
+      verLider: () => set({ rol: 'l', aviso: '' }),
+      verColab: () => set({ rol: 'c', aviso: '' }),
+      banner: banners[rol],
+      hayAviso: !!S.aviso, aviso: S.aviso,
+      vacio: visibles.length === 0,
+      filas: visibles.map((c) => ({
+        nombre: c.nombre, competencia: c.comp, pts: c.pts,
+        sel: rol === 'g' && S.sel === c.id ? 'true' : 'false',
+        pick: () => set({ sel: c.id, borrador: null, aviso: '' }),
+        sinClick: rol !== 'g',
+        estilo: rol !== 'g' ? 'cursor: default; opacity: 1' : '',
+        verUnidades: rol !== 'c',
+        unidadesTxt: txtUni(S.asign[c.id])
+      })),
+      editor: rol === 'g',
+      catNombre: cat.nombre,
+      todas: draft.length === unidades.length,
+      toggleTodas: () => set({ borrador: draft.length === unidades.length ? [] : unidades.map((u) => u.id) }),
+      unidades: unidades.map((u) => ({
+        nombre: u.nombre, personas: u.personas, on: draft.indexOf(u.id) >= 0,
+        toggle: () => set({ borrador: draft.indexOf(u.id) >= 0 ? draft.filter((x) => x !== u.id) : draft.concat([u.id]) })
+      })),
+      alcanceTxt: draft.length === 0 ? 'Nadie la verá.' : 'La verán ' + personas + ' colaboradores de ' + draft.length + (draft.length === 1 ? ' unidad.' : ' unidades.'),
+      sinUnidad: draft.length === 0,
+      noGuardar: !cambio || draft.length === 0,
+      descartar: () => set({ borrador: null }),
+      guardar: () => {
+        const nuevo = Object.assign({}, S.asign); nuevo[S.sel] = draft.slice();
+        set({ asign: nuevo, borrador: null, aviso: 'Asignación guardada. «' + cat.nombre + '» aplica a ' + txtUni(draft) + '.' });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

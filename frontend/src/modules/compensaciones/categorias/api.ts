@@ -20,6 +20,19 @@ export interface Indicador {
   texto: string
 }
 
+/** Unidad a la que aplica una categoría; `activa: false` si la unidad ya no está activa. */
+export interface UnidadDeCategoria {
+  id: number
+  nombre: string
+  activa: boolean
+}
+
+export interface UnidadDisponible {
+  id: number
+  codigo: string
+  nombre: string
+}
+
 export interface Categoria {
   id: number
   codigo: string
@@ -35,6 +48,11 @@ export interface Categoria {
   indicadores?: Indicador[]
   /** Versión leída (ISO 8601 con microsegundos): se devuelve tal cual al editar o cambiar el estado. */
   updated_at: string
+  /** Solo la reciben el Gestor y el líder; el colaborador ve únicamente las de su unidad y no recibe unidades. */
+  unidades?: UnidadDeCategoria[]
+  aplica_a_todas?: boolean
+  /** Solo el Gestor: ninguna unidad asignada está activa (o no tiene unidades). */
+  sin_unidades_activas?: boolean
   /** Auditoría: solo la recibe el Administrador. */
   created_by?: number | null
   updated_by?: number | null
@@ -77,6 +95,10 @@ export interface DatosCategoria {
   puntuacion_base: number
   icono: string
   indicadores: string[]
+  /** Ids de las unidades elegidas; se omite cuando se marca «Todas las unidades». */
+  unidades_ids?: number[]
+  /** El servidor resuelve a las unidades activas del momento de guardar. */
+  todas_las_unidades?: boolean
 }
 
 const BASE = '/api/compensaciones'
@@ -134,6 +156,12 @@ export async function listarCompetenciasFiltro(signal?: AbortSignal): Promise<Op
 /** Competencias activas para el formulario (solo Administrador). */
 export async function listarCompetenciasDisponibles(signal?: AbortSignal): Promise<OpcionDeCompetencia[]> {
   const response = await http.get<{ data: OpcionDeCompetencia[] }>(`${BASE}/competencias-disponibles`, { signal })
+  return response.data.data
+}
+
+/** Unidades activas para el selector del formulario (solo Administrador). */
+export async function listarUnidadesDisponibles(signal?: AbortSignal): Promise<UnidadDisponible[]> {
+  const response = await http.get<{ data: UnidadDisponible[] }>(`${BASE}/unidades-disponibles`, { signal })
   return response.data.data
 }
 

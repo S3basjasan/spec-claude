@@ -50,6 +50,7 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
   await page.getByLabel('Indicador 1', { exact: true }).fill('Comparte información útil con su equipo')
   await page.getByRole('button', { name: 'Agregar indicador' }).click()
   await page.getByLabel('Indicador 2', { exact: true }).fill('Reconoce los aportes de otras personas')
+  await page.getByRole('checkbox', { name: 'Todas las unidades' }).check()
   await page.getByRole('button', { name: 'Crear categoría' }).click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
   await expect(page.getByText(new RegExp(`Se creó la categoría «${NOMBRE}» \\(CAT-\\d{3,}\\)`))).toBeVisible()
@@ -62,6 +63,7 @@ test('Administrador: crea, lista, edita, desactiva y activa una categoría', asy
   await page.getByLabel('Puntuación base').fill('50')
   await page.getByRole('radio', { name: 'Estrella' }).check({ force: true })
   await page.getByLabel('Indicador 1', { exact: true }).fill('Indicador de prueba suficiente')
+  await page.getByRole('checkbox', { name: 'Todas las unidades' }).check()
   await page.getByRole('button', { name: 'Crear categoría' }).click()
   await expect(page.getByText('Ya existe una categoría con ese nombre.')).toBeVisible()
   await expect(page.getByLabel('Nombre', { exact: true })).toHaveValue(`  ${NOMBRE.toUpperCase()}  `)
@@ -123,6 +125,7 @@ test('Administrador: la puntuación base respeta el máximo permitido y no deja 
   await page.getByLabel('Puntuación base').fill('201')
   await page.getByRole('radio', { name: 'Trofeo' }).check({ force: true })
   await page.getByLabel('Indicador 1', { exact: true }).fill('Indicador de prueba suficiente')
+  await page.getByRole('checkbox', { name: 'Todas las unidades' }).check()
   await page.getByRole('button', { name: 'Crear categoría' }).click()
   await expect(page.getByText('La puntuación base debe estar entre 1 y 200.')).toBeVisible()
   await expect(page.getByLabel('Puntuación base')).toHaveValue('201')
@@ -136,6 +139,71 @@ test('Administrador: la puntuación base respeta el máximo permitido y no deja 
   await page.getByRole('button', { name: 'Activar Reconocimiento a la trayectoria' }).click()
   await expect(page.getByRole('alert')).toContainText('Baja primero la puntuación a 200 o menos.')
   await expect(page.getByRole('button', { name: 'Activar Reconocimiento a la trayectoria' })).toBeVisible()
+})
+
+// 01b.4: los datos sembrados ubican a usuario@hrms.test (Ana) en «Gerencia de Talento Humano».
+const UNIDAD_DE_ANA = 'Gerencia de Talento Humano'
+const OTRA_UNIDAD = 'Gerencia de Tecnología'
+const NOMBRE_POR_UNIDAD = `Reconocimiento por unidad ${SUFIJO}`
+
+async function cerrarSesion(page: Page) {
+  await page.context().clearCookies()
+  await page.goto('/login')
+  await page.evaluate(() => {
+    window.localStorage.clear()
+    window.sessionStorage.clear()
+  })
+}
+
+test('Gestor asigna una categoría a una unidad: el colaborador de otra unidad no la ve y el de esa unidad sí', async ({ page }) => {
+  await iniciarSesion(page, 'admin@hrms.test')
+  await irACategorias(page)
+  await expect(page.getByRole('row', { name: /CAT-001/ })).toBeVisible({ timeout: 20_000 })
+
+  // Sin unidades no se guarda: el error aparece junto al selector y lo escrito se conserva.
+  await page.getByRole('button', { name: 'Nueva categoría' }).first().click()
+  await page.getByLabel('Nombre', { exact: true }).fill(NOMBRE_POR_UNIDAD)
+  await page.getByLabel('Descripción').fill('Se asigna solo a una unidad para comprobar la visibilidad.')
+  await expect(page.getByLabel('Competencia asociada').locator('option')).not.toHaveCount(1)
+  await page.getByLabel('Competencia asociada').selectOption({ index: 1 })
+  await page.getByLabel('Puntuación base').fill('50')
+  await page.getByRole('radio', { name: 'Trofeo' }).check({ force: true })
+  await page.getByLabel('Indicador 1', { exact: true }).fill('Indicador de prueba suficiente')
+  await page.getByRole('button', { name: 'Crear categoría' }).click()
+  await expect(page.getByText('Elige al menos una unidad.')).toBeVisible()
+  await expect(page.getByLabel('Nombre', { exact: true })).toHaveValue(NOMBRE_POR_UNIDAD)
+
+  // Se asigna solo a otra unidad.
+  await page.getByRole('checkbox', { name: OTRA_UNIDAD }).check()
+  await expect(page.getByText('La verán los colaboradores de 1 unidad.')).toBeVisible()
+  await page.getByRole('button', { name: 'Crear categoría' }).click()
+  await expect(page.getByText(new RegExp(`Se creó la categoría «${NOMBRE_POR_UNIDAD}»`))).toBeVisible()
+  await buscar(page, NOMBRE_POR_UNIDAD)
+  await expect(page.getByRole('row', { name: new RegExp(`${NOMBRE_POR_UNIDAD}.*${OTRA_UNIDAD}`) })).toBeVisible()
+
+  // Ana, de otra unidad, no la ve.
+  await cerrarSesion(page)
+  await iniciarSesion(page, 'usuario@hrms.test')
+  await page.goto(`/compensaciones/categorias?q=${encodeURIComponent(NOMBRE_POR_UNIDAD)}`)
+  await expect(page.getByText('Sin resultados')).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByRole('row', { name: new RegExp(NOMBRE_POR_UNIDAD) })).toHaveCount(0)
+
+  // El Gestor agrega la unidad de Ana.
+  await cerrarSesion(page)
+  await iniciarSesion(page, 'admin@hrms.test')
+  await page.goto(`/compensaciones/categorias?q=${encodeURIComponent(NOMBRE_POR_UNIDAD)}`)
+  await page.getByRole('button', { name: `Editar ${NOMBRE_POR_UNIDAD}` }).click()
+  await expect(page.getByRole('checkbox', { name: OTRA_UNIDAD })).toBeChecked()
+  await page.getByRole('checkbox', { name: UNIDAD_DE_ANA }).check()
+  await page.getByRole('button', { name: 'Guardar cambios' }).click()
+  await expect(page.getByText(`Se guardaron los cambios de «${NOMBRE_POR_UNIDAD}».`)).toBeVisible()
+
+  // Ahora Ana sí la ve, sin columna de unidades.
+  await cerrarSesion(page)
+  await iniciarSesion(page, 'usuario@hrms.test')
+  await page.goto(`/compensaciones/categorias?q=${encodeURIComponent(NOMBRE_POR_UNIDAD)}`)
+  await expect(page.getByRole('row', { name: new RegExp(NOMBRE_POR_UNIDAD) })).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByRole('columnheader', { name: 'Unidades' })).toHaveCount(0)
 })
 
 test('Usuario: consulta el catálogo activo sin controles de gestión', async ({ page }) => {
