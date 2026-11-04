@@ -2,6 +2,7 @@
 
 use App\Modules\Compensaciones\Infrastructure\Persistence\Eloquent\Models\CategoriaReconocimientoModel;
 use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\CompetenciaModel;
+use Tests\Support\Compensaciones\EscenarioCompensaciones;
 
 /**
  * Cuerpo válido para crear (o, con `updated_at`, editar) una categoría de reconocimiento.
@@ -18,6 +19,7 @@ function datosCategoria(?int $competenciaId = null, array $cambios = []): array
         'puntuacion_base' => 100,
         'icono' => 'equipo',
         'indicadores' => ['Comparte información con su equipo', 'Ayuda a quien lo necesita'],
+        'unidades_ids' => [1],
     ], $cambios);
 }
 
@@ -36,6 +38,7 @@ function cuerpoDeCategoria(CategoriaReconocimientoModel $categoria, array $cambi
         'puntuacion_base' => $categoria->puntuacion_base,
         'icono' => $categoria->icono,
         'indicadores' => $categoria->indicadores,
+        'unidades_ids' => $categoria->unidades_ids ?? [1],
         'updated_at' => versionDeCategoria($categoria->id),
     ], $cambios);
 }
@@ -50,4 +53,22 @@ function versionDeCategoria(int $id): string
     return (new DateTimeImmutable($crudo, new DateTimeZone(config('app.timezone'))))
         ->setTimezone(new DateTimeZone('UTC'))
         ->format('Y-m-d\TH:i:s.u\Z');
+}
+
+/** Escenario de puertos falsos de la prueba en curso (unidades 1 a 3 activas y la 4 inactiva). */
+function escenarioCompensaciones(): EscenarioCompensaciones
+{
+    return EscenarioCompensaciones::$actual ?? EscenarioCompensaciones::iniciar();
+}
+
+/** Autentica a un colaborador sin permisos de gestión, con ficha y unidad actual. */
+function actuarComoColaboradorDeUnidad(?int $unidadId = 1): void
+{
+    escenarioCompensaciones()->actuarComoColaborador($unidadId);
+}
+
+/** Autentica a un líder (colaborador con equipo a cargo). */
+function actuarComoLiderDeEquipo(int $unidadId = 1): void
+{
+    escenarioCompensaciones()->actuarComoLider($unidadId);
 }

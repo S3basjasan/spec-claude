@@ -4,6 +4,7 @@ namespace App\Modules\Compensaciones\Presentation\Controllers;
 
 use App\Modules\Compensaciones\Application\DTOs\CategoriaDTO;
 use App\Modules\Compensaciones\Application\Services\PoliticaDeAcceso;
+use App\Modules\Compensaciones\Application\Services\VisibilidadDeCategorias;
 use App\Modules\Compensaciones\Application\UseCases\ActualizarCategoria;
 use App\Modules\Compensaciones\Application\UseCases\CambiarEstadoCategoria;
 use App\Modules\Compensaciones\Application\UseCases\CrearCategoria;
@@ -27,14 +28,14 @@ class CategoriaController
 {
     public function __construct(private readonly PoliticaDeAcceso $acceso) {}
 
-    public function index(ListarCategoriasRequest $request, ListarCategorias $listar): JsonResponse
+    public function index(ListarCategoriasRequest $request, ListarCategorias $listar, VisibilidadDeCategorias $visibilidad): JsonResponse
     {
         $pagina = $listar->ejecutar(
             $request->validated('q'),
             $request->validated('estado'),
             $request->validated('competencia_id') === null ? null : (int) $request->validated('competencia_id'),
             (int) ($request->validated('page') ?? 1),
-            $this->acceso->puede($request->user(), PoliticaDeAcceso::CATEGORIAS_GESTIONAR),
+            $visibilidad->para($request->user()),
         );
 
         return response()->json([
@@ -51,9 +52,11 @@ class CategoriaController
         ]);
     }
 
-    public function show(Request $request, int $categoria, ObtenerCategoria $obtener): JsonResponse
+    public function show(Request $request, int $categoria, ObtenerCategoria $obtener, VisibilidadDeCategorias $visibilidad): JsonResponse
     {
-        return $this->responder(fn () => (new CategoriaResource($obtener->ejecutar($categoria)))->response($request));
+        return $this->responder(fn () => (new CategoriaResource(
+            $obtener->ejecutar($categoria, $visibilidad->para($request->user())),
+        ))->response($request));
     }
 
     public function store(GuardarCategoriaRequest $request, CrearCategoria $crear): JsonResponse

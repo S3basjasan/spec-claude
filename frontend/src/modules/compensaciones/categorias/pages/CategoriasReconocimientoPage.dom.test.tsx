@@ -7,7 +7,7 @@ import { httpError } from '../../../../test/apiErrors'
 import { categoriaReconocimiento, opcionDeCompetencia, paginaDeCategoriasReconocimiento } from '../../../../test/categoriasReconocimientoFixtures'
 import { renderRoutes } from '../../../../test/renderRoutes'
 import { useCurrentUser } from '../../../auth/login'
-import { cambiarEstadoCategoria, crearCategoria, editarCategoria, listarCategorias, listarCompetenciasDisponibles, listarCompetenciasFiltro, obtenerCategoria, obtenerPuntuacionMaxima } from '../api'
+import { cambiarEstadoCategoria, crearCategoria, editarCategoria, listarCategorias, listarCompetenciasDisponibles, listarCompetenciasFiltro, listarUnidadesDisponibles, obtenerCategoria, obtenerPuntuacionMaxima } from '../api'
 import { CategoriasReconocimientoPage } from './CategoriasReconocimientoPage'
 
 vi.mock('../api', async (importOriginal) => ({
@@ -19,6 +19,7 @@ vi.mock('../api', async (importOriginal) => ({
   cambiarEstadoCategoria: vi.fn(),
   listarCompetenciasFiltro: vi.fn(),
   listarCompetenciasDisponibles: vi.fn(),
+  listarUnidadesDisponibles: vi.fn(),
   obtenerPuntuacionMaxima: vi.fn(),
 }))
 vi.mock('../../../auth/login', () => ({ useCurrentUser: vi.fn() }))
@@ -52,6 +53,7 @@ beforeEach(() => {
   vi.mocked(cambiarEstadoCategoria).mockReset().mockResolvedValue(categoriaReconocimiento({ estado: 'Inactivo' }))
   vi.mocked(listarCompetenciasFiltro).mockReset().mockResolvedValue([opcionDeCompetencia(), opcionDeCompetencia({ id: 11, nombre: 'Retirada', estado: 'Inactivo' })])
   vi.mocked(listarCompetenciasDisponibles).mockReset().mockResolvedValue([opcionDeCompetencia()])
+  vi.mocked(listarUnidadesDisponibles).mockReset().mockResolvedValue([{ id: 1, codigo: 'UO-001', nombre: 'Operaciones' }])
 })
 
 describe('CategoriasReconocimientoPage · listado', () => {
@@ -157,8 +159,25 @@ describe('CategoriasReconocimientoPage · listado', () => {
     vi.mocked(listarCategorias).mockResolvedValue(paginaDeCategoriasReconocimiento([]))
     renderPagina()
 
-    expect(await screen.findByText('Cuando el Gestor de Talento cree categorías, aparecerán aquí.')).toBeInTheDocument()
+    expect(await screen.findByText('Todavía no tienes categorías asignadas')).toBeInTheDocument()
+    expect(screen.getByText('Cuando el Gestor de Talento asigne categorías a tu unidad, las verás aquí.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Nueva categoría' })).not.toBeInTheDocument()
+  })
+
+  it('muestra el banner según el rol: Gestor, líder (recibe unidades) y colaborador (no las recibe)', async () => {
+    comoRol('admin')
+    const gestor = renderPagina()
+    expect(await screen.findByText(/Administras todas las categorías\./)).toBeInTheDocument()
+    gestor.unmount()
+
+    comoRol('user')
+    const lider = renderPagina()
+    expect(await screen.findByText(/Consultas todas las categorías activas\./)).toBeInTheDocument()
+    lider.unmount()
+
+    vi.mocked(listarCategorias).mockResolvedValue(paginaDeCategoriasReconocimiento([categoriaReconocimiento({ unidades: undefined })]))
+    renderPagina()
+    expect(await screen.findByText(/Ves las categorías activas asignadas a tu unidad\./)).toBeInTheDocument()
   })
 
   it('con búsqueda sin coincidencias muestra el mensaje de la spec', async () => {

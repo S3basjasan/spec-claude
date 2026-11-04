@@ -115,6 +115,10 @@ function ListadoDeCategorias() {
     else activar(categoria)
   }
 
+  // El servidor decide el alcance: solo Gestor y líder reciben las unidades, de modo que su presencia distingue al líder.
+  const esLider = !esAdmin && filas.some((fila) => fila.unidades !== undefined)
+  const banner = esAdmin ? text.banner.gestor : esLider ? text.banner.lider : text.banner.colaborador
+
   const nueva = esAdmin ? (
     <Button onClick={() => abrir({ tipo: 'crear' })}>
       <IconPlus size={18} />
@@ -150,8 +154,8 @@ function ListadoDeCategorias() {
         ) : (
           <EmptyState
             icon={<IconAward size={24} />}
-            title={text.states.emptyTitle}
-            description={esAdmin ? text.states.emptyAdmin : text.states.emptyUsuario}
+            title={esAdmin ? text.states.emptyTitle : text.states.emptyColaboradorTitle}
+            description={esAdmin ? text.states.emptyAdmin : text.states.emptyColaboradorDescription}
             action={nueva ?? undefined}
           />
         )}
@@ -190,6 +194,8 @@ function ListadoDeCategorias() {
         </div>
         {nueva}
       </div>
+
+      <Alert tone="neutral">{banner}</Alert>
 
       <div role="status" aria-live="polite">
         {aviso?.tipo === 'ok' && (

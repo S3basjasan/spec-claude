@@ -182,7 +182,7 @@ it('registra la auditoría inicial y quién la creó', function () {
         ->and($categoria->updated_by)->toBe($admin->id);
 
     $filas = AuditoriaCategoriaModel::query()->where('categoria_reconocimiento_id', $id)->get();
-    expect($filas->pluck('campo')->all())->toBe(['nombre', 'descripcion', 'competencia_id', 'puntuacion_base', 'icono', 'indicadores', 'estado'])
+    expect($filas->pluck('campo')->all())->toBe(['nombre', 'descripcion', 'competencia_id', 'puntuacion_base', 'icono', 'indicadores', 'estado', 'unidades'])
         ->and($filas->every(fn ($f) => $f->valor_anterior === null && $f->user_id === $admin->id))->toBeTrue()
         ->and($filas->firstWhere('campo', 'indicadores')->valor_nuevo)->toBe('["Comparte información con su equipo","Ayuda a quien lo necesita"]');
 });

@@ -287,6 +287,7 @@ textarea.inp{height:auto;min-height:96px;padding:10px 12px;resize:vertical;line-
                         <th scope="col" style="padding: 14px 8px; font-weight: 600">Ícono</th>
                         <th scope="col" style="padding: 14px 12px; font-weight: 600">Nombre</th>
                         <th scope="col" style="padding: 14px 12px; font-weight: 600">Competencia asociada</th>
+                        <sc-if value="{{verUnidades}}" hint-placeholder-val="{{true}}"><th scope="col" style="padding: 14px 12px; font-weight: 600">Unidades</th></sc-if>
                         <th scope="col" style="padding: 14px 12px; font-weight: 600; text-align: right">Puntuación base</th>
                         <th scope="col" style="padding: 14px 12px; font-weight: 600">Estado</th>
                         <th scope="col" style="padding: 14px 12px 14px 12px; font-weight: 600; text-align: right">Acciones</th>
@@ -308,6 +309,7 @@ textarea.inp{height:auto;min-height:96px;padding:10px 12px;resize:vertical;line-
                               </sc-if>
                             </div>
                           </td>
+                          <sc-if value="{{verUnidades}}" hint-placeholder-val="{{true}}"><td style="padding: 10px 12px; overflow-wrap: anywhere">{{r.uniTxt}}</td></sc-if>
                           <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums">{{r.pts}}</td>
                           <td style="padding: 10px 12px"><span style="{{r.badgeStyle}}">{{r.estado}}</span></td>
                           <td style="padding: 8px 12px">
@@ -566,6 +568,25 @@ textarea.inp{height:auto;min-height:96px;padding:10px 12px;resize:vertical;line-
           </div>
           <p class="help" id="mf-p-h" style="margin-top: -10px"><strong>Máximo: 100 puntos.</strong> Número entero de 1 al máximo permitido (los puntos por colaborador). Es solo un valor de ordenamiento para el ranking interno: no es dinero ni se canjea por bienes, días libres ni bonos.</p>
 
+          <fieldset aria-describedby="mf-u-h mf-u-e">
+            <legend class="lbl" style="margin-bottom: 4px">Unidades a las que aplica</legend>
+            <p class="help" id="mf-u-h" style="margin-bottom: 8px">Elige las unidades cuyos colaboradores podrán ver y recibir esta categoría.</p>
+            <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 8px; font-size: 15px; font-weight: 600; cursor: pointer">
+              <input type="checkbox" checked="{{fm.todas}}" onChange="{{fm.toggleTodas}}" style="width: 20px; height: 20px; accent-color: var(--accent)">Todas las unidades
+            </label>
+            <ul style="list-style: none; margin: 0; padding: 0">
+              <sc-for list="{{fm.unidades}}" as="u" hint-placeholder-count="4">
+                <li>
+                  <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 8px; font-size: 15px; cursor: pointer">
+                    <input type="checkbox" checked="{{u.sel}}" onChange="{{u.pick}}" style="width: 20px; height: 20px; accent-color: var(--accent)">{{u.nombre}}
+                  </label>
+                </li>
+              </sc-for>
+            </ul>
+            <p class="help" aria-live="polite" style="margin-top: 6px; font-weight: 600">{{fm.alcance}}</p>
+            <sc-if value="{{fm.hayUni}}" hint-placeholder-val="{{false}}"><p class="err" id="mf-u-e" style="margin-top: 6px">{{fm.errUni}}</p></sc-if>
+          </fieldset>
+
           <fieldset aria-describedby="mf-i-e">
             <legend class="lbl" style="margin-bottom: 8px">Ícono</legend>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 8px">
@@ -799,6 +820,7 @@ class Component extends DCLogic {
       nombre: c ? c.nombre : '', desc: c ? c.desc : '',
       comp: c ? c.comp : '', compOrig: c ? c.comp : '',
       pts: c ? String(c.pts) : '', icono: c ? c.icono : '',
+      uni: c ? this.unidadesDe(c.id) : [],
       inds, seq: inds.length,
       intento: false, enviando: false, conflicto: false, errSrv: false
     };
@@ -806,8 +828,18 @@ class Component extends DCLogic {
     return f;
   }
 
+  // Unidades activas y asignación de ejemplo: C2 aplica a Operaciones y Ventas, C3 solo a Operaciones; el resto, a todas.
+  unidadesTodas() {
+    return [{ id: 'op', n: 'Operaciones' }, { id: 've', n: 'Ventas' }, { id: 'fi', n: 'Finanzas' }, { id: 'ti', n: 'Tecnología' }];
+  }
+
+  unidadesDe(catId) {
+    const muestra = { C2: ['op', 've'], C3: ['op'] };
+    return muestra[catId] || this.unidadesTodas().map((u) => u.id);
+  }
+
   firma(f) {
-    return JSON.stringify([f.nombre, f.desc, f.comp, f.pts, f.icono, f.inds.map((x) => x.t)]);
+    return JSON.stringify([f.nombre, f.desc, f.comp, f.pts, f.icono, f.uni, f.inds.map((x) => x.t)]);
   }
 
   // ---------- Lógica de guardado simulada ----------
@@ -933,6 +965,7 @@ class Component extends DCLogic {
       const activo = c.estado === 'Activo';
       return {
         id: c.id, nombre: c.nombre, pts: c.pts, estado: c.estado,
+        uniTxt: this.unidadesDe(c.id).length === this.unidadesTodas().length ? 'Todas las unidades' : this.unidadesDe(c.id).map((i) => this.unidadesTodas().find((u) => u.id === i).n).join(', '),
         compNombre: cp.nombre, compInactiva: !cp.activa, warnStyle,
         badgeStyle: activo ? badgeActivo : badgeInactivo,
         tileStyle: tile(activo, 36),
@@ -998,6 +1031,7 @@ class Component extends DCLogic {
       if (!pts) errs.pts = 'Ingresa la puntuación base.';
       else if (!/^\d+$/.test(pts) || parseInt(pts, 10) < 1 || parseInt(pts, 10) > MAX_PTS) errs.pts = 'La puntuación base debe estar entre 1 y ' + MAX_PTS + '.';
       if (!F.icono || !icoBy[F.icono]) errs.icono = 'Selecciona un ícono.';
+      if (!F.uni.length) errs.uni = 'Elige al menos una unidad.';
       const vistos = {};
       F.inds.forEach((x) => {
         const t = x.t.trim();
@@ -1020,6 +1054,8 @@ class Component extends DCLogic {
     const opcionesComp = comps
       .filter((c) => c.activa || (F.modo === 'editar' && c.id === F.compOrig))
       .map((c) => ({ id: c.id, label: c.activa ? c.nombre : c.nombre + ' (inactiva)', off: !c.activa }));
+    const todasUni = this.unidadesTodas();
+    const toggleUni = (id) => upd({ uni: F.uni.indexOf(id) >= 0 ? F.uni.filter((x) => x !== id) : F.uni.concat([id]), conflicto: false, errSrv: false });
     const nombreLen = F.nombre.trim().length;
     const descLen = F.desc.trim().length;
     const fm = {
@@ -1036,6 +1072,11 @@ class Component extends DCLogic {
         ? 'La competencia actual está inactiva y no puede volver a elegirse. Elige una competencia activa para que la categoría sea seleccionable de nuevo.'
         : 'Solo se muestran competencias activas del Diccionario de Competencias.',
       hayPts: ver && !!errs.pts, errPts: errs.pts || '', ariaPts: ver && errs.pts ? 'true' : 'false',
+      hayUni: ver && !!errs.uni, errUni: errs.uni || '',
+      todas: F.uni.length === todasUni.length,
+      toggleTodas: () => upd({ uni: F.uni.length === todasUni.length ? [] : todasUni.map((u) => u.id), conflicto: false, errSrv: false }),
+      unidades: todasUni.map((u) => ({ id: u.id, nombre: u.n, sel: F.uni.indexOf(u.id) >= 0, pick: () => toggleUni(u.id) })),
+      alcance: F.uni.length === 0 ? 'Nadie la verá.' : 'La verán los colaboradores de ' + F.uni.length + (F.uni.length === 1 ? ' unidad.' : ' unidades.'),
       hayIcono: ver && !!errs.icono, errIcono: errs.icono || '', ariaIcono: ver && errs.icono ? 'true' : 'false',
       iconos: iconos.map((o) => ({ id: o.id, nombre: o.nombre, d: o.d, sel: F.icono === o.id, pick: () => upd({ icono: o.id, conflicto: false, errSrv: false }) })),
       inds: F.inds.map((x, i) => ({
@@ -1078,6 +1119,7 @@ class Component extends DCLogic {
       navToggle: () => set({ navOpen: !S.navOpen }),
 
       esAdmin, sinPermiso, conPermiso: !sinPermiso,
+      verUnidades: S.rol !== 'colaborador' && S.rol !== 'candidato',
       subtitulo: esAdmin
         ? 'Administra el catálogo de categorías que usan los hitos, los desafíos y el ranking.'
         : 'Consulta las categorías de reconocimiento disponibles y los indicadores que describen cada conducta.',

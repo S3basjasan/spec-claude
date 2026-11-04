@@ -9,7 +9,7 @@ import { SelectField, type SelectOption } from '../../../../shared/ui/SelectFiel
 import { TextareaField } from '../../../../shared/ui/TextareaField'
 import { TextField } from '../../../../shared/ui/TextField'
 import { obtenerCategoria, PUNTUACION_MAXIMA_EXTERIOR, type Categoria } from '../api'
-import { useCompetenciasDisponibles, usePuntuacionMaxima } from '../hooks/useCategorias'
+import { useCompetenciasDisponibles, usePuntuacionMaxima, useUnidadesDisponibles } from '../hooks/useCategorias'
 import { useGuardarCategoria } from '../hooks/useGuardarCategoria'
 import { categoriasReconocimientoText } from '../text'
 import {
@@ -24,6 +24,7 @@ import {
 } from '../validation'
 import { AdvertenciaCompetencia } from './AdvertenciaCompetencia'
 import { ListaIndicadores } from './ListaIndicadores'
+import { SelectorDeUnidades } from './SelectorDeUnidades'
 import { SelectorIcono } from './SelectorIcono'
 
 const text = categoriasReconocimientoText.form
@@ -64,6 +65,7 @@ export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: Categori
   const guardar = useGuardarCategoria()
   const disponibles = useCompetenciasDisponibles()
   const puntuacionMaxima = usePuntuacionMaxima()
+  const unidades = useUnidadesDisponibles()
   const maximo = puntuacionMaxima.data?.maximo
   const resolver = useMemo(() => zodResolver(crearCategoriaSchema(maximo)), [maximo])
   const [version, setVersion] = useState(categoria?.updated_at)
@@ -78,6 +80,7 @@ export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: Categori
     control,
     reset,
     getValues,
+    setValue,
     formState: { errors, isDirty },
   } = useForm<CategoriaFormValues>({
     resolver,
@@ -105,6 +108,8 @@ export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: Categori
     }
     return activas
   }, [disponibles.data, competenciaActual])
+
+  const unidadesInactivas = (categoria?.unidades ?? []).filter((unidad) => !unidad.activa).map((unidad) => unidad.nombre)
 
   const error = (campo: keyof ProblemaDeGuardado['campos'], zod?: string) => zod ?? problema.campos[campo]
   const hayErrores =
@@ -233,6 +238,21 @@ export function CategoriaFormModal({ categoria, onCerrar, onGuardado }: Categori
               )}
             </p>
           </div>
+
+          <SelectorDeUnidades
+            disponibles={unidades.data}
+            cargando={unidades.isPending}
+            fallo={unidades.isError}
+            seleccion={{ unidades_ids: valores.unidades_ids ?? [], todas: valores.todas ?? false }}
+            onCambiar={(siguiente) => {
+              setValue('unidades_ids', siguiente.unidades_ids, { shouldDirty: true, shouldValidate: true })
+              setValue('todas', siguiente.todas, { shouldDirty: true, shouldValidate: true })
+            }}
+            onReintentar={() => void unidades.refetch()}
+            error={error('unidades_ids', errors.unidades_ids?.message)}
+            inactivas={unidadesInactivas}
+            disabled={ocupado}
+          />
 
           <SelectorIcono
             registro={register('icono')}

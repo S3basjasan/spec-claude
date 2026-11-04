@@ -1,4 +1,4 @@
-import type { Categoria, OpcionDeCompetencia, PaginaCategorias } from '../modules/compensaciones/categorias/api'
+import type { Categoria, OpcionDeCompetencia, PaginaCategorias, UnidadDisponible } from '../modules/compensaciones/categorias/api'
 
 export function categoriaReconocimiento(cambios: Partial<Categoria> = {}): Categoria {
   return {
@@ -16,6 +16,9 @@ export function categoriaReconocimiento(cambios: Partial<Categoria> = {}): Categ
       { orden: 1, texto: 'Comparte información con su equipo' },
       { orden: 2, texto: 'Ayuda a quien lo necesita' },
     ],
+    unidades: [{ id: 1, nombre: 'Operaciones', activa: true }],
+    aplica_a_todas: false,
+    sin_unidades_activas: false,
     updated_at: '2026-10-16T14:00:00.123456Z',
     created_by: 1,
     updated_by: 2,
@@ -37,6 +40,10 @@ export function paginaDeCategoriasReconocimiento(items: Categoria[], meta: Parti
       ...meta,
     },
   }
+}
+
+export function unidadDisponible(cambios: Partial<UnidadDisponible> = {}): UnidadDisponible {
+  return { id: 1, codigo: 'UO-001', nombre: 'Operaciones', ...cambios }
 }
 
 export function opcionDeCompetencia(cambios: Partial<OpcionDeCompetencia> = {}): OpcionDeCompetencia {

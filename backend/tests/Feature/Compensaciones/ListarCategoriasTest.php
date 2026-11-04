@@ -10,7 +10,7 @@ it('rechaza con 401 sin sesión', function () {
 it('lista para un Usuario solo las activas, aunque pida todas', function () {
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Activa uno']);
     CategoriaReconocimientoModel::factory()->inactiva()->create(['nombre' => 'Inactiva uno']);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias?estado=Todos')
         ->assertOk()
@@ -40,7 +40,7 @@ it('muestra al Administrador las activas por defecto y filtra por estado', funct
 it('devuelve los datos del listado sin indicadores y con la competencia resuelta', function () {
     $competencia = CompetenciaModel::factory()->create(['nombre' => 'Colaboración']);
     CategoriaReconocimientoModel::factory()->create(['competencia_id' => $competencia->id, 'icono' => 'equipo', 'puntuacion_base' => 120]);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias')
         ->assertOk()
@@ -56,7 +56,7 @@ it('devuelve los datos del listado sin indicadores y con la competencia resuelta
 
 it('marca la competencia inactiva y deja la categoría no seleccionable', function () {
     CategoriaReconocimientoModel::factory()->conCompetenciaInactiva()->create();
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias')
         ->assertOk()
@@ -68,7 +68,7 @@ it('marca la competencia inactiva y deja la categoría no seleccionable', functi
 it('busca por nombre de categoría sin distinguir mayúsculas ni tildes', function () {
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Orientación al cliente']);
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Innovación']);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias?q=ORIENTACION')
         ->assertOk()
@@ -83,7 +83,7 @@ it('busca por nombre de competencia', function () {
     $otra = CompetenciaModel::factory()->create(['nombre' => 'Orientación a resultados']);
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Primera', 'competencia_id' => $liderazgo->id]);
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Segunda', 'competencia_id' => $otra->id]);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias?q=LIDERAZGO')
         ->assertOk()
@@ -94,7 +94,7 @@ it('busca por nombre de competencia', function () {
 it('no interpreta los comodines de LIKE en la búsqueda', function () {
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Cien por ciento']);
     CategoriaReconocimientoModel::factory()->create(['nombre' => 'Descuento 100%']);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias?q=%25')
         ->assertOk()
@@ -107,7 +107,7 @@ it('filtra por competencia', function () {
     $b = CompetenciaModel::factory()->create();
     CategoriaReconocimientoModel::factory()->create(['competencia_id' => $a->id, 'nombre' => 'De A']);
     CategoriaReconocimientoModel::factory()->create(['competencia_id' => $b->id, 'nombre' => 'De B']);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson("/api/compensaciones/categorias?competencia_id={$b->id}")
         ->assertOk()
@@ -117,7 +117,7 @@ it('filtra por competencia', function () {
 
 it('pagina de 15 en 15 y muestra la última página si se pide una fuera de rango', function () {
     CategoriaReconocimientoModel::factory()->count(17)->conIndicadores(1)->create();
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias')
         ->assertOk()
@@ -137,7 +137,7 @@ it('ordena por código de forma numérica', function () {
     CategoriaReconocimientoModel::factory()->create(['codigo' => 'CAT-1000', 'nombre' => 'Mil']);
     CategoriaReconocimientoModel::factory()->create(['codigo' => 'CAT-999', 'nombre' => 'Novecientos']);
     CategoriaReconocimientoModel::factory()->create(['codigo' => 'CAT-010', 'nombre' => 'Diez']);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias')
         ->assertOk()
@@ -145,7 +145,7 @@ it('ordena por código de forma numérica', function () {
 });
 
 it('responde 422 ante parámetros inválidos', function (string $consulta) {
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson("/api/compensaciones/categorias?{$consulta}")->assertUnprocessable();
 })->with([

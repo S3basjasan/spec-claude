@@ -592,6 +592,15 @@ Referencia: `CategoriasReconocimiento.dc.html` (formulario en modal, patrón For
 2. **Error**: fuera del rango, el error va junto al campo («La puntuación base debe estar entre 1 y {n}.»), lo escrito se conserva y no se guarda.
 3. **Activar**: en el listado, activar una categoría inactiva cuya puntuación supera el máximo muestra en el aviso de error «Baja primero la puntuación a {n} o menos.» y la fila sigue Inactiva.
 
+### Categorías por unidad y por rol *(feature 01b.4)*
+Referencias: `CategoriasReconocimiento.dc.html` (selector de unidades en el formulario en modal y columna «Unidades») y `CategoriasPorRol.dc.html` (listado por rol, banner y estado vacío).
+
+1. **Selector de unidades**: `fieldset` «Unidades a las que aplica» dentro del formulario en modal, entre la puntuación base y el ícono. Casilla «Todas las unidades» (en negrita) y una casilla por unidad activa, de 44 px de alto con foco visible; quitar cualquier unidad desmarca «Todas». Bajo la lista, el alcance en unidades («La verán los colaboradores de {n} unidades.» o «Nadie la verá.», `aria-live`) y, si falla, el error «Elige al menos una unidad.» junto al campo. Si la categoría tiene unidades que ya no están activas, una nota las nombra y avisa que se quitan al guardar. Sin conteo de personas por unidad.
+2. **Columna «Unidades»**: solo para el Gestor y el líder; texto plano («Todas las unidades», los nombres separados por comas o «Sin unidades asignadas»), con «(inactiva)» tras una unidad inactiva y la insignia neutra «Sin unidades activas» si ninguna lo está. El colaborador no ve la columna ni las unidades.
+3. **Banner por rol** bajo el título (`Alert` neutro): Gestor «Administras todas las categorías…», líder «Consultas todas las categorías activas…», colaborador «Ves las categorías activas asignadas a tu unidad…».
+4. **Estado vacío del colaborador**: «Todavía no tienes categorías asignadas» con «Cuando el Gestor de Talento asigne categorías a tu unidad, las verás aquí.»
+5. **Sin tokens nuevos**; claro/oscuro y responsive como el resto del formulario (tarjetas por debajo de 1181 px, con las unidades como una fila más de la tarjeta).
+
 ---
 
 ## 9. Diferencias conocidas entre mockups y specs
@@ -710,3 +719,4 @@ Referencia: `CategoriasReconocimiento.dc.html` (formulario en modal, patrón For
 | `PDISeguimiento.dc.html` filtra por Tipo y Departamento | Se añade el filtro Responsable y solo se muestran planes Acordados |
 | `PDIColaborador.dc.html` deja firmar sin orden | El colaborador solo ve y responde un Borrador después del acuerdo del responsable; puede devolverlo con comentario |
 | `ParametrosModulo.dc.html` muestra «Último cambio … (de 80 a 100)» siempre con número | En el primer cambio de un parámetro se muestra «de valor por defecto a {nuevo}», sin número anterior |
+| `CategoriasPorRol.dc.html` guarda las unidades desde un panel lateral propio (Guardar y Descartar), confirma con «Asignación guardada…» y muestra «N personas» por unidad | Las unidades se asignan dentro del formulario en modal de crear y editar (un solo «Guardar» con control de versión); se reutiliza el mensaje de éxito de la categoría y no hay conteo de personas por unidad (ningún módulo lo publica). El resto (banner por rol, estado vacío, textos de alcance) se sigue tal cual |

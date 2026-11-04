@@ -60,6 +60,6 @@ final class CambiarEstadoCategoria
             return $guardada;
         });
 
-        return $this->armador->uno($resultado);
+        return $this->armador->uno($resultado, true);
     }
 }

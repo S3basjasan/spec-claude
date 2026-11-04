@@ -3,6 +3,7 @@
 namespace App\Modules\Compensaciones\Application\Services;
 
 use App\Modules\Compensaciones\Application\Ports\CompetenciasPort;
+use App\Modules\Compensaciones\Application\Ports\UnidadesPort;
 use App\Modules\Compensaciones\Domain\Entities\Categoria;
 use App\Modules\Compensaciones\Domain\Repositories\CategoriaRepository;
 use App\Modules\Compensaciones\Domain\ValueObjects\Indicador;
@@ -16,6 +17,7 @@ class CategoriasService
     public function __construct(
         private readonly CategoriaRepository $categorias,
         private readonly CompetenciasPort $competencias,
+        private readonly UnidadesPort $unidades,
     ) {}
 
     /**
@@ -24,6 +26,20 @@ class CategoriasService
      * @return array<int, array{id: int, codigo: string, nombre: string, icono: string, competencia_id: int, puntuacion_base: int}>
      */
     public function listarSeleccionables(): array
+    {
+        return array_map(function (array $c) {
+            unset($c['unidades_ids']);
+
+            return $c;
+        }, $this->seleccionables());
+    }
+
+    /**
+     * Seleccionables con las unidades a las que aplica cada una (uso interno).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function seleccionables(): array
     {
         $activas = $this->categorias->activas();
         $competencias = $this->competencias->porIds(array_map(fn (Categoria $c) => $c->competenciaId, $activas));
@@ -40,7 +56,30 @@ class CategoriasService
             'icono' => $c->icono->value,
             'competencia_id' => $c->competenciaId,
             'puntuacion_base' => $c->puntuacion->valor,
+            'unidades_ids' => $c->unidades?->ids() ?? [],
         ], $seleccionables));
+    }
+
+    /**
+     * Categorías seleccionables para reconocer o asignar un desafío a una persona de la unidad: activas, con su competencia
+     * activa y asignadas directamente a esa unidad (sin herencia por jerarquía). Unidad inexistente o inactiva: vacío.
+     * Quien registra (desafíos 02.3, reconocimientos 03.1) rechaza con 422 toda categoría que no esté en esta lista.
+     *
+     * @return array<int, array{id: int, codigo: string, nombre: string, icono: string, competencia_id: int, puntuacion_base: int}>
+     */
+    public function seleccionablesParaUnidad(int $unidadId): array
+    {
+        if (($this->unidades->porIds([$unidadId])[$unidadId]['estado'] ?? null) !== 'Activo') {
+            return [];
+        }
+
+        $asignadas = array_filter($this->seleccionables(), fn (array $c) => in_array($unidadId, $c['unidades_ids'], true));
+
+        return array_values(array_map(function (array $c) {
+            unset($c['unidades_ids']);
+
+            return $c;
+        }, $asignadas));
     }
 
     /**
@@ -95,6 +134,7 @@ class CategoriasService
             'seleccionable' => $c->esSeleccionable($competenciaActiva),
             'puntuacion_base' => $c->puntuacion->valor,
             'indicadores' => array_map(fn (Indicador $i) => ['orden' => $i->orden, 'texto' => $i->texto], $c->indicadores),
+            'unidades_ids' => $c->unidades?->ids() ?? [],
         ];
     }
 }

@@ -53,10 +53,17 @@ class CategoriaResource extends JsonResource
             $datos['indicadores'] = $dto->indicadores();
         }
 
+        // Las unidades las ven el Gestor y el líder; el colaborador no (su lista ya viene filtrada por su unidad).
+        if ($dto->unidades !== null) {
+            $datos['unidades'] = $dto->unidades;
+            $datos['aplica_a_todas'] = $dto->aplicaATodas;
+        }
+
         $datos['updated_at'] = $categoria->tokenParaCliente();
 
         // La auditoría solo se muestra a quien puede gestionar el catálogo.
         if ($request->user() !== null && app(PoliticaDeAcceso::class)->puede($request->user(), PoliticaDeAcceso::CATEGORIAS_GESTIONAR)) {
+            $datos['sin_unidades_activas'] = $dto->sinUnidadesActivas;
             $datos['created_by'] = $categoria->creadaPor;
             $datos['updated_by'] = $categoria->actualizadaPor;
             $datos['created_at'] = $categoria->creadaEn?->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s.u\Z');

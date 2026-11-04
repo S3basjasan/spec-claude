@@ -8,6 +8,7 @@ use App\Modules\Compensaciones\Application\Ports\CompetenciasPort;
 use App\Modules\Compensaciones\Application\Services\ArmadorDeCategoriaDTO;
 use App\Modules\Compensaciones\Application\Services\AuditoriaDeCategoria;
 use App\Modules\Compensaciones\Application\Services\ParametrosDelModulo;
+use App\Modules\Compensaciones\Application\Services\ResolutorDeUnidades;
 use App\Modules\Compensaciones\Domain\Exceptions\CodigoDeCategoriaEnUso;
 use App\Modules\Compensaciones\Domain\Exceptions\CompetenciaNoDisponible;
 use App\Modules\Compensaciones\Domain\Exceptions\DatosDeCategoriaInvalidos;
@@ -25,6 +26,7 @@ final class CrearCategoria
         private readonly AuditoriaDeCategoria $auditoria,
         private readonly ArmadorDeCategoriaDTO $armador,
         private readonly ParametrosDelModulo $parametros,
+        private readonly ResolutorDeUnidades $unidades,
     ) {}
 
     /**
@@ -38,7 +40,11 @@ final class CrearCategoria
      */
     public function ejecutar(DatosCategoriaDTO $datos, int $actorId): CategoriaDTO
     {
-        $propuesta = $datos->comoPropuesta(EstadoCategoria::Activo, $this->parametros->puntuacionMaximaDeCategoria());
+        $propuesta = $datos->comoPropuesta(
+            EstadoCategoria::Activo,
+            $this->parametros->puntuacionMaximaDeCategoria(),
+            $this->unidades->resolver($datos),
+        );
         $ultimoError = null;
 
         for ($intento = 1; $intento <= self::INTENTOS_DE_CODIGO; $intento++) {
@@ -56,7 +62,7 @@ final class CrearCategoria
                     return $creada;
                 });
 
-                return $this->armador->uno($creada);
+                return $this->armador->uno($creada, true);
             } catch (CodigoDeCategoriaEnUso $e) {
                 $ultimoError = $e;
             }

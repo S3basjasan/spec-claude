@@ -4,6 +4,7 @@ import {
   listarCategorias,
   listarCompetenciasDisponibles,
   listarCompetenciasFiltro,
+  listarUnidadesDisponibles,
   obtenerCategoria,
   obtenerPuntuacionMaxima,
   type FiltrosCategorias,
@@ -52,6 +53,17 @@ export function useCompetenciasDisponibles(habilitado = true) {
     queryKey: [...categoriasKey, 'competencias-disponibles'],
     queryFn: ({ signal }) => listarCompetenciasDisponibles(signal),
     enabled: habilitado,
+    retry: sinReintentoEn4xx,
+  })
+}
+
+/** Unidades activas del selector del formulario (solo Administrador); se vuelven a leer al abrir el formulario. */
+export function useUnidadesDisponibles(habilitado = true) {
+  return useQuery({
+    queryKey: [...categoriasKey, 'unidades-disponibles'],
+    queryFn: ({ signal }) => listarUnidadesDisponibles(signal),
+    enabled: habilitado,
+    refetchOnMount: 'always',
     retry: sinReintentoEn4xx,
   })
 }

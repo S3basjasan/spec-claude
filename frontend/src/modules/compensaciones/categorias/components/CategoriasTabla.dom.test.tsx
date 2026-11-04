@@ -39,7 +39,31 @@ describe('CategoriasTabla · pantalla ancha', () => {
 
     const tabla = screen.getByRole('table', { name: 'Categorías de reconocimiento, ordenadas por código' })
     const encabezados = within(tabla).getAllByRole('columnheader').map((c) => c.textContent)
-    expect(encabezados).toEqual(['Código', 'Ícono', 'Nombre', 'Competencia asociada', 'Puntuación base', 'Estado', 'Acciones'])
+    expect(encabezados).toEqual(['Código', 'Ícono', 'Nombre', 'Competencia asociada', 'Unidades', 'Puntuación base', 'Estado', 'Acciones'])
+  })
+
+  it('muestra las unidades como texto («Todas las unidades», nombres o el aviso de sin unidades)', () => {
+    simularAncho(true)
+    renderTabla(true, [
+      categoriaReconocimiento({ id: 1, nombre: 'Para todas', unidades: [{ id: 1, nombre: 'Operaciones', activa: true }], aplica_a_todas: true }),
+      categoriaReconocimiento({ id: 2, nombre: 'Para dos', unidades: [{ id: 1, nombre: 'Operaciones', activa: true }, { id: 2, nombre: 'Ventas', activa: true }] }),
+      categoriaReconocimiento({ id: 3, nombre: 'Sin nada', unidades: [], sin_unidades_activas: true }),
+      categoriaReconocimiento({ id: 4, nombre: 'Solo inactiva', unidades: [{ id: 4, nombre: 'Tecnología', activa: false }], sin_unidades_activas: true }),
+    ])
+
+    expect(screen.getByText('Todas las unidades')).toBeInTheDocument()
+    expect(screen.getByText('Operaciones, Ventas')).toBeInTheDocument()
+    expect(screen.getByText('Sin unidades asignadas')).toBeInTheDocument()
+    expect(screen.getByText('Tecnología (inactiva)')).toBeInTheDocument()
+    expect(screen.getByText('Sin unidades activas')).toBeInTheDocument()
+  })
+
+  it('sin unidades en la respuesta (colaborador) no muestra la columna', () => {
+    simularAncho(true)
+    renderTabla(false, [categoriaReconocimiento({ unidades: undefined, aplica_a_todas: undefined, sin_unidades_activas: undefined })])
+
+    const tabla = screen.getByRole('table', { name: 'Categorías de reconocimiento, ordenadas por código' })
+    expect(within(tabla).getAllByRole('columnheader').map((c) => c.textContent)).not.toContain('Unidades')
   })
 
   it('el Administrador ve Ver, Editar y Activar / Desactivar con texto según el estado', () => {

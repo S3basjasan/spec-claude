@@ -57,6 +57,9 @@ class GuardarCategoriaRequest extends FormRequest
             'icono' => ['required', 'string', Rule::in(Icono::valores())],
             'indicadores' => ['required', 'array', 'min:1', 'max:5'],
             'indicadores.*' => ['required', 'string', 'min:5', 'max:250', self::SIN_HTML],
+            'todas_las_unidades' => ['sometimes', 'boolean'],
+            'unidades_ids' => [Rule::requiredIf(! $this->boolean('todas_las_unidades')), 'nullable', 'array', 'min:1'],
+            'unidades_ids.*' => ['integer', 'min:1', 'distinct'],
             'updated_at' => $this->isMethod('PUT') ? ['required', 'date'] : ['missing'],
         ];
 
@@ -113,6 +116,13 @@ class GuardarCategoriaRequest extends FormRequest
             'puntuacion_base.integer' => 'La puntuación base debe ser un número entero.',
             'puntuacion_base.between' => 'La puntuación base debe estar entre 1 y 1000.',
             'icono.in' => 'El ícono seleccionado no es válido.',
+            'unidades_ids.required' => 'Elige al menos una unidad.',
+            'unidades_ids.array' => 'Elige al menos una unidad.',
+            'unidades_ids.min' => 'Elige al menos una unidad.',
+            'unidades_ids.*.integer' => 'Elige al menos una unidad.',
+            'unidades_ids.*.min' => 'Elige al menos una unidad.',
+            'unidades_ids.*.distinct' => 'Las unidades no pueden repetirse.',
+            'todas_las_unidades.boolean' => 'El valor de «Todas las unidades» no es válido.',
             'indicadores.min' => 'La categoría debe tener al menos 1 indicador.',
             'indicadores.max' => 'La categoría no puede tener más de 5 indicadores.',
             'indicadores.*.min' => 'Cada indicador debe tener al menos 5 caracteres.',
@@ -132,6 +142,8 @@ class GuardarCategoriaRequest extends FormRequest
             (int) $this->validated('puntuacion_base'),
             (string) $this->validated('icono'),
             array_values($this->validated('indicadores')),
+            $this->boolean('todas_las_unidades') ? null : array_values((array) $this->validated('unidades_ids')),
+            $this->boolean('todas_las_unidades'),
         );
     }
 

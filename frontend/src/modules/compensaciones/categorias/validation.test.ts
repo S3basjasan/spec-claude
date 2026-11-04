@@ -11,6 +11,8 @@ function valores(cambios: Partial<CategoriaFormValues> = {}): CategoriaFormValue
     puntuacion_base: '100',
     icono: 'equipo',
     indicadores: [{ texto: 'Comparte información' }],
+    unidades_ids: [1],
+    todas: false,
     ...cambios,
   }
 }
@@ -49,6 +51,7 @@ describe('categoriaSchema', () => {
     ['sin ícono', { icono: '' }, 'icono'],
     ['ícono fuera de la lista', { icono: 'cohete' }, 'icono'],
     ['sin indicadores', { indicadores: [] }, 'indicadores'],
+    ['sin unidades', { unidades_ids: [], todas: false }, 'unidades_ids'],
     ['seis indicadores', { indicadores: Array.from({ length: 6 }, (_, i) => ({ texto: `Indicador número ${i}` })) }, 'indicadores'],
     ['indicador corto', { indicadores: [{ texto: 'cort' }] }, 'indicadores.0.texto'],
     ['indicador largo', { indicadores: [{ texto: 'a'.repeat(251) }] }, 'indicadores.0.texto'],
@@ -82,6 +85,8 @@ describe('conversión de valores', () => {
       puntuacion_base: '100',
       icono: 'equipo',
       indicadores: [{ texto: 'Comparte información con su equipo' }, { texto: 'Ayuda a quien lo necesita' }],
+      unidades_ids: [1],
+      todas: false,
     })
     expect(aDatosDeCategoria({ ...inicial, nombre: '  Nuevo nombre ' })).toMatchObject({
       nombre: 'Nuevo nombre',
@@ -90,6 +95,28 @@ describe('conversión de valores', () => {
       indicadores: ['Comparte información con su equipo', 'Ayuda a quien lo necesita'],
     })
     expect(valoresIniciales().indicadores).toEqual([{ texto: '' }])
+  })
+
+  it('acepta «Todas las unidades» sin ids y la envía como bandera; si no, envía la lista', () => {
+    expect(mensajes(valores({ unidades_ids: [], todas: true }))).toEqual([])
+    expect(aDatosDeCategoria(valores({ unidades_ids: [], todas: true }))).toMatchObject({ todas_las_unidades: true })
+    expect(aDatosDeCategoria(valores({ unidades_ids: [2, 3], todas: true }))).not.toHaveProperty('unidades_ids')
+    expect(aDatosDeCategoria(valores({ unidades_ids: [2, 3] }))).toMatchObject({ unidades_ids: [2, 3] })
+    expect(aDatosDeCategoria(valores({ unidades_ids: [2, 3] }))).not.toHaveProperty('todas_las_unidades')
+  })
+
+  it('precarga solo las unidades activas y respeta «aplica a todas»', () => {
+    const categoria = categoriaReconocimiento({
+      unidades: [
+        { id: 1, nombre: 'Operaciones', activa: true },
+        { id: 4, nombre: 'Tecnología', activa: false },
+      ],
+      aplica_a_todas: false,
+    })
+
+    expect(valoresIniciales(categoria)).toMatchObject({ unidades_ids: [1], todas: false })
+    expect(valoresIniciales(categoriaReconocimiento({ aplica_a_todas: true }))).toMatchObject({ todas: true })
+    expect(valoresIniciales(categoriaReconocimiento({ unidades: undefined }))).toMatchObject({ unidades_ids: [], todas: false })
   })
 })
 
@@ -103,6 +130,16 @@ describe('problemaDeGuardado', () => {
     expect(problema.campos.competencia_id).toBe('Inactiva')
     expect(problema.indicadores[1]).toBe('Los indicadores no pueden repetirse.')
     expect(problema.aviso).toBeNull()
+  })
+
+  it('asigna el 422 de unidades al campo de unidades', () => {
+    const problema = problemaDeGuardado(httpError(422, { errors: { unidades_ids: ['Elige al menos una unidad.'] } }))
+
+    expect(problema.campos.unidades_ids).toBe('Elige al menos una unidad.')
+    expect(problema.aviso).toBeNull()
+    expect(problemaDeGuardado(httpError(422, { errors: { 'unidades_ids.0': ['La unidad seleccionada ya no está activa.'] } })).campos.unidades_ids).toBe(
+      'La unidad seleccionada ya no está activa.',
+    )
   })
 
   it('distingue conflicto, inexistente y error inesperado', () => {

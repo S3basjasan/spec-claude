@@ -6,7 +6,7 @@ use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\Competenci
 it('entrega la primera página del listado en menos de 2 segundos con 500 categorías', function () {
     $competencia = CompetenciaModel::factory()->create();
     CategoriaReconocimientoModel::factory()->count(500)->conIndicadores(1)->create(['competencia_id' => $competencia->id]);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $inicio = microtime(true);
     $respuesta = $this->getJson('/api/compensaciones/categorias');

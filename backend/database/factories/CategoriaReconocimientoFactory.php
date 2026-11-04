@@ -31,6 +31,7 @@ class CategoriaReconocimientoFactory extends Factory
             'competencia_id' => CompetenciaModel::factory(),
             'puntuacion_base' => fake()->numberBetween(10, 100),
             'icono' => fake()->randomElement(Icono::valores()),
+            'unidades_ids' => [1],
             'estado' => 'Activo',
         ];
     }

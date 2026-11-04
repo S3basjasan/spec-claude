@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array listarSeleccionables() Categorías Activas con competencia activa (únicas válidas para nuevos registros).
  * @method static array|null obtener(int $id) Categoría en cualquier estado, o null; resuelve registros históricos.
  * @method static array obtenerPorIds(array $ids) Categorías existentes entre los ids dados, en cualquier estado.
+ * @method static array seleccionablesParaUnidad(int $unidadId) Categorías activas, con competencia activa y asignadas a la unidad (vacío si la unidad no existe o está inactiva). Desafíos y reconocimientos rechazan con 422 toda categoría que no esté aquí.
  * @method static bool esSeleccionable(int $id) Indica si existe, está Activa y su competencia está activa.
  *
  * @see CategoriasService

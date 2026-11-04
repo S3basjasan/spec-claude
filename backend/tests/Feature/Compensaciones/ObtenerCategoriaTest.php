@@ -8,7 +8,7 @@ it('rechaza con 401 sin sesión', function () {
 
 it('devuelve la categoría con sus indicadores en orden y la versión', function () {
     $categoria = CategoriaReconocimientoModel::factory()->create(['indicadores' => ['Primero indicador', 'Segundo indicador', 'Tercero indicador']]);
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson("/api/compensaciones/categorias/{$categoria->id}")
         ->assertOk()
@@ -19,10 +19,13 @@ it('devuelve la categoría con sus indicadores en orden y la versión', function
         ->assertJsonPath('data.seleccionable', true);
 });
 
-it('devuelve también las categorías inactivas a un Usuario', function () {
+it('responde 404 a un Usuario si la categoría está inactiva y al Administrador se la devuelve', function () {
     $categoria = CategoriaReconocimientoModel::factory()->inactiva()->create();
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
+    $this->getJson("/api/compensaciones/categorias/{$categoria->id}")->assertNotFound();
+
+    actuarComoAdmin();
     $this->getJson("/api/compensaciones/categorias/{$categoria->id}")
         ->assertOk()
         ->assertJsonPath('data.estado', 'Inactivo')
@@ -30,7 +33,7 @@ it('devuelve también las categorías inactivas a un Usuario', function () {
 });
 
 it('responde 404 si no existe', function () {
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
 
     $this->getJson('/api/compensaciones/categorias/9999')->assertNotFound();
     $this->getJson('/api/compensaciones/categorias/abc')->assertNotFound();
@@ -39,7 +42,7 @@ it('responde 404 si no existe', function () {
 it('incluye la auditoría solo para el Administrador', function () {
     $categoria = CategoriaReconocimientoModel::factory()->create(['created_by' => 7, 'updated_by' => 8]);
 
-    actuarComoUsuario();
+    actuarComoColaboradorDeUnidad();
     $this->getJson("/api/compensaciones/categorias/{$categoria->id}")
         ->assertOk()
         ->assertJsonMissingPath('data.created_by')

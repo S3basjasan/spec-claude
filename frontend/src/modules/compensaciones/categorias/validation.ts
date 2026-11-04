@@ -65,8 +65,14 @@ export function crearCategoriaSchema(maximo: number = PUNTUACION_MAXIMA_EXTERIOR
         )
         .min(1, text.indicatorsRange)
         .max(MAX_INDICADORES, text.indicatorsRange),
+      unidades_ids: z.array(z.number()),
+      todas: z.boolean(),
     })
     .superRefine((valores, contexto) => {
+      if (!valores.todas && valores.unidades_ids.length === 0) {
+        contexto.addIssue({ code: 'custom', message: text.unitsRequired, path: ['unidades_ids'] })
+      }
+
       const vistos = new Set<string>()
       valores.indicadores.forEach((indicador, posicion) => {
         const clave = normalizarTexto(indicador.texto)
@@ -89,11 +95,14 @@ export interface CategoriaFormValues {
   puntuacion_base: string
   icono: string
   indicadores: { texto: string }[]
+  /** Unidades activas elegidas; con `todas`, el servidor las resuelve al guardar. */
+  unidades_ids: number[]
+  todas: boolean
 }
 
 export function valoresIniciales(categoria?: Categoria): CategoriaFormValues {
   if (!categoria) {
-    return { nombre: '', descripcion: '', competencia_id: '', puntuacion_base: '', icono: '', indicadores: [{ texto: '' }] }
+    return { nombre: '', descripcion: '', competencia_id: '', puntuacion_base: '', icono: '', indicadores: [{ texto: '' }], unidades_ids: [], todas: false }
   }
   return {
     nombre: categoria.nombre,
@@ -102,6 +111,9 @@ export function valoresIniciales(categoria?: Categoria): CategoriaFormValues {
     puntuacion_base: String(categoria.puntuacion_base),
     icono: categoria.icono,
     indicadores: (categoria.indicadores ?? []).map((indicador) => ({ texto: indicador.texto })),
+    // Solo las unidades activas pueden volver a elegirse: las inactivas se quitan al guardar.
+    unidades_ids: (categoria.unidades ?? []).filter((unidad) => unidad.activa).map((unidad) => unidad.id),
+    todas: categoria.aplica_a_todas ?? false,
   }
 }
 
@@ -113,6 +125,7 @@ export function aDatosDeCategoria(valores: CategoriaFormValues): DatosCategoria 
     puntuacion_base: Number(valores.puntuacion_base),
     icono: valores.icono,
     indicadores: valores.indicadores.map((indicador) => indicador.texto.trim()),
+    ...(valores.todas ? { todas_las_unidades: true } : { unidades_ids: valores.unidades_ids }),
   }
 }
 
@@ -120,14 +133,14 @@ export type AvisoDeGuardado = 'conflicto' | 'noExiste' | 'red' | 'inesperado'
 
 export interface ProblemaDeGuardado {
   /** Mensajes del servidor por campo del formulario (422). */
-  campos: Partial<Record<'nombre' | 'descripcion' | 'competencia_id' | 'puntuacion_base' | 'icono' | 'indicadores', string>>
+  campos: Partial<Record<'nombre' | 'descripcion' | 'competencia_id' | 'puntuacion_base' | 'icono' | 'indicadores' | 'unidades_ids', string>>
   /** Mensajes del servidor por posición de indicador (422). */
   indicadores: Record<number, string>
   /** Aviso general sobre el formulario; null si solo hay errores de campo. */
   aviso: AvisoDeGuardado | null
 }
 
-const CAMPOS = ['nombre', 'descripcion', 'competencia_id', 'puntuacion_base', 'icono', 'indicadores'] as const
+const CAMPOS = ['nombre', 'descripcion', 'competencia_id', 'puntuacion_base', 'icono', 'indicadores', 'unidades_ids'] as const
 
 /** Traduce un error de la API (422 por campo, 409, 404, red) a lo que muestra el formulario. */
 export function problemaDeGuardado(error: unknown): ProblemaDeGuardado {
@@ -143,7 +156,8 @@ export function problemaDeGuardado(error: unknown): ProblemaDeGuardado {
       const mensaje = mensajes[0]
       if (!mensaje) continue
       const coincidencia = /^indicadores\.(\d+)/.exec(clave)
-      if (coincidencia) problema.indicadores[Number(coincidencia[1])] = mensaje
+      if (clave.startsWith('unidades_ids')) problema.campos.unidades_ids ??= mensaje
+      else if (coincidencia) problema.indicadores[Number(coincidencia[1])] = mensaje
       else if ((CAMPOS as readonly string[]).includes(clave)) problema.campos[clave as (typeof CAMPOS)[number]] = mensaje
     }
     const hayErrores = Object.keys(problema.campos).length > 0 || Object.keys(problema.indicadores).length > 0

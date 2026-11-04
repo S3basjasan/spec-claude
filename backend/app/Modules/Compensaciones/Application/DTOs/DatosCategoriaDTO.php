@@ -5,6 +5,7 @@ namespace App\Modules\Compensaciones\Application\DTOs;
 use App\Modules\Compensaciones\Domain\Entities\Categoria;
 use App\Modules\Compensaciones\Domain\Exceptions\DatosDeCategoriaInvalidos;
 use App\Modules\Compensaciones\Domain\ValueObjects\EstadoCategoria;
+use App\Modules\Compensaciones\Domain\ValueObjects\UnidadesAsignadas;
 
 /**
  * Datos de entrada para crear o editar una categoría (ya validados en el borde HTTP).
@@ -21,12 +22,15 @@ final class DatosCategoriaDTO
         public readonly mixed $puntuacionBase,
         public readonly string $icono,
         public readonly array $indicadores,
+        /** @var array<int, int>|null */
+        public readonly ?array $unidadesIds = null,
+        public readonly bool $todasLasUnidades = false,
     ) {}
 
     /**
      * @throws DatosDeCategoriaInvalidos
      */
-    public function comoPropuesta(EstadoCategoria $estado = EstadoCategoria::Activo, ?int $puntuacionMaxima = null): Categoria
+    public function comoPropuesta(EstadoCategoria $estado = EstadoCategoria::Activo, ?int $puntuacionMaxima = null, ?UnidadesAsignadas $unidades = null): Categoria
     {
         return Categoria::propuesta(
             $this->nombre,
@@ -37,6 +41,7 @@ final class DatosCategoriaDTO
             $this->indicadores,
             $estado,
             $puntuacionMaxima,
+            $unidades,
         );
     }
 }

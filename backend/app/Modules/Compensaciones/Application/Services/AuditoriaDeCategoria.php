@@ -4,6 +4,7 @@ namespace App\Modules\Compensaciones\Application\Services;
 
 use App\Modules\Compensaciones\Domain\Entities\Categoria;
 use App\Modules\Compensaciones\Domain\Repositories\AuditoriaCategoriaRepository;
+use App\Modules\Compensaciones\Domain\ValueObjects\UnidadesAsignadas;
 
 /**
  * Historial de cambios de una categoría: una fila por campo realmente modificado.
@@ -23,9 +24,16 @@ final class AuditoriaDeCategoria
             'icono' => [null, $creada->icono->value],
             'indicadores' => [null, $creada->indicadoresComoJson()],
             'estado' => [null, $creada->estado->value],
+            'unidades' => [null, $creada->unidades?->comoJson()],
         ];
 
         $this->historial->registrar((int) $creada->id, $cambios, $actorId);
+    }
+
+    /** Asignación inicial de unidades por el comando de migración (sin actor). */
+    public function alAsignarUnidades(int $categoriaId, ?UnidadesAsignadas $antes, UnidadesAsignadas $despues, ?int $actorId): void
+    {
+        $this->historial->registrar($categoriaId, ['unidades' => [$antes?->comoJson(), $despues->comoJson()]], $actorId);
     }
 
     /** Registra las diferencias entre dos versiones y devuelve cuántos campos cambiaron. */
