@@ -59,7 +59,7 @@ use App\Modules\Desarrollo\Infrastructure\Adapters\AsistenciaRegistradaDesdeActi
 use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasActivasDesdeDnf;
 use App\Modules\Desarrollo\Infrastructure\Adapters\BrechasParaPdiDesdeDnfYAdecuacion;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CertificadoPdfDompdf;
-use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesSinDatos;
+use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresEvaluablesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ColaboradoresVigentesDesdePersonal;
 use App\Modules\Desarrollo\Infrastructure\Adapters\CompetenciasDesdeEstructura;
 use App\Modules\Desarrollo\Infrastructure\Adapters\ConfiguracionDePdiDesdeConfig;
@@ -169,7 +169,7 @@ class DesarrolloServiceProvider extends ServiceProvider
         // PROVISIONAL: Gestion de Personal (GP-02) aun no publica puesto ni nivel actual. El Plan de Formacion (013) ya existe.
         $this->app->bind(NivelesDeColaboradorInterface::class, NivelesDeColaboradorSinDatos::class);
         $this->app->bind(NombresDeUsuarioInterface::class, NombresDeUsuarioDesdeShared::class);
-        $this->app->bind(ColaboradoresEvaluablesInterface::class, ColaboradoresEvaluablesSinDatos::class);
+        $this->app->bind(ColaboradoresEvaluablesInterface::class, ColaboradoresEvaluablesDesdePersonal::class);
         $this->app->bind(NivelesActualesInterface::class, NivelesActualesSinDatos::class);
         $this->app->bind(PlanDeFormacionInterface::class, PlanDeFormacionDesdePlanes::class);
 
@@ -178,6 +178,9 @@ class DesarrolloServiceProvider extends ServiceProvider
             $this->app->bind(ColaboradoresEvaluablesInterface::class, ColaboradoresEvaluablesDePrueba::class);
             $this->app->bind(NivelesActualesInterface::class, NivelesActualesDePrueba::class);
             $this->app->bind(ColaboradoresVigentesInterface::class, ColaboradoresVigentesDePrueba::class);
+        } elseif ($this->app->environment('local')) {
+            // Aún no existe la evaluación de desempeño que aporte el nivel actual: en desarrollo local se usan niveles de demostración.
+            $this->app->bind(NivelesActualesInterface::class, NivelesActualesDePrueba::class);
         }
 
         $this->app->singleton('desarrollo-facade', fn ($app) => $app->make(DesarrolloService::class));

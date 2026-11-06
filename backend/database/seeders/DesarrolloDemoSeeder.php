@@ -34,6 +34,7 @@ use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\PlanAccion
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\PlanHistorialModel;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\PlanModel;
 use App\Modules\Desarrollo\Infrastructure\Persistence\Eloquent\Models\SeguimientoImpactoModel;
+use App\Modules\Estructura\Infrastructure\Persistence\Eloquent\Models\PosicionModel;
 use App\Modules\Estructura\Presentation\Facades\EstructuraFacade;
 use App\Modules\GestionPersonal\Domain\Services\NormalizadorDeTexto;
 use App\Modules\GestionPersonal\Domain\ValueObjects\CodigoColaborador;
@@ -79,11 +80,59 @@ class DesarrolloDemoSeeder extends Seeder
 
         DB::transaction(function () use ($competencias) {
             $personas = $this->colaboradores();
+            $this->vinculosLaborales($personas);
             $cursos = $this->catalogo($competencias);
             $this->microLearning($personas);
             $this->dnfs($personas, $competencias);
             $this->planYActividades($personas, $competencias, $cursos);
         });
+    }
+
+    /**
+     * Da vínculo laboral vigente y una posición propia (con puesto y unidad) a los colaboradores de prueba, a Luis y a María,
+     * para que la DNF los considere evaluables. Cada posición cuelga de la máxima autoridad sembrada.
+     *
+     * @param  list<int>  $personas
+     */
+    private function vinculosLaborales(array $personas): void
+    {
+        $normalizador = new NormalizadorDeTexto;
+        foreach ([['Cedula', '0912345678'], ['Pasaporte', 'AB123']] as [$tipo, $numero]) {
+            $id = ColaboradorModel::query()->where('tenant_id', self::TENANT)->where('tipo_identificacion', $tipo)
+                ->where('identificacion_clave', $normalizador->claveDeIdentificacion($numero))->value('id');
+            if ($id !== null && ! DB::table('vinculos_laborales')->where('colaborador_id', $id)->exists()) {
+                $personas[] = (int) $id;
+            }
+        }
+
+        $puestos = DB::table('puestos')->where('estado', 'Activo')->orderBy('id')->pluck('id')->all();
+        $unidades = DB::table('unidades_organizacionales')->where('estado', 'Activa')->whereNotNull('unidad_padre_id')->orderBy('id')->pluck('id')->all();
+        $jefe = DB::table('posiciones')->where('tenant_id', self::TENANT)->whereNull('posicion_jefe_id')->where('estado', '!=', 'Suprimida')->value('id');
+        if ($puestos === [] || $unidades === [] || $jefe === null) {
+            return;
+        }
+
+        $ahora = now();
+        foreach ($personas as $i => $colaboradorId) {
+            $posicionId = DB::table('posiciones')->insertGetId([
+                'puesto_id' => $puestos[$i % count($puestos)], 'unidad_organizacional_id' => $unidades[$i % count($unidades)], 'tenant_id' => self::TENANT,
+                'estado' => 'Ocupada', 'posicion_jefe_id' => $jefe, 'modalidad' => 'Nombramiento', 'version' => 1, 'created_by' => $this->admin,
+                'created_at' => $ahora, 'updated_at' => $ahora,
+            ]);
+            DB::table('posiciones')->where('id', $posicionId)->update(['codigo' => PosicionModel::codigoDeId($posicionId)]);
+
+            $ingreso = $ahora->copy()->subMonths(6 + $i * 3)->toDateString();
+            $vinculoId = DB::table('vinculos_laborales')->insertGetId([
+                'tenant_id' => self::TENANT, 'colaborador_id' => $colaboradorId, 'fecha_ingreso' => $ingreso, 'fecha_salida' => null,
+                'tipo_contrato_clave' => $i % 3 === 0 ? 'plazo_fijo' : 'indefinido', 'version' => 1, 'operacion_id' => (string) Str::uuid(),
+                'operacion_hash' => hash('sha256', "demo-vinculo-$colaboradorId"), 'created_by' => $this->admin, 'updated_by' => $this->admin,
+                'created_at' => $ahora, 'updated_at' => $ahora,
+            ]);
+            DB::table('asignaciones_laborales')->insert([
+                'tenant_id' => self::TENANT, 'vinculo_id' => $vinculoId, 'posicion_id' => $posicionId, 'fecha_inicio' => $ingreso, 'fecha_fin' => null,
+                'version' => 1, 'created_by' => $this->admin, 'updated_by' => $this->admin, 'created_at' => $ahora, 'updated_at' => $ahora,
+            ]);
+        }
     }
 
     /** @return list<int> ids de las ocho fichas de prueba */
